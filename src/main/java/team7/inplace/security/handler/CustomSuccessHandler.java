@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import team7.inplace.security.application.dto.CustomOAuth2User;
@@ -16,6 +17,9 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final CookieUtil cookieUtil;
+
+    @Value("${spring.redirect.front-end-url}")
+    private String frontEndUrl;
 
     public CustomSuccessHandler(
         JwtUtil jwtUtil,
@@ -60,9 +64,9 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         CustomOAuth2User customOAuth2User
     ) throws IOException {
         if (customOAuth2User.isFirstUser()) {
-            response.sendRedirect("/choice");
+            response.sendRedirect(frontEndUrl + "/choice");
             return;
         }
-        response.sendRedirect("/auth");
+        response.sendRedirect(frontEndUrl + "/auth");
     }
 }
