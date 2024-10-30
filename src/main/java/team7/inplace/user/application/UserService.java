@@ -1,6 +1,7 @@
 package team7.inplace.user.application;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,6 +11,7 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErroCode;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.user.application.dto.UserCommand;
+import team7.inplace.user.application.dto.UserCommand.Info;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
 
@@ -24,7 +26,6 @@ public class UserService {
     public UserCommand.Info registerUser(UserCommand.Create userCreate) {
         User user = userCreate.toEntity();
         userRepository.save(user);
-        System.out.println("user id = " + user.getId());
         return UserCommand.Info.of(user);
     }
 
@@ -37,6 +38,12 @@ public class UserService {
     public UserCommand.Info getUserByUsername(String username) {
         return UserCommand.Info.of(userRepository.findByUsername(username)
             .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND)));
+    }
+
+    @Transactional
+    public Optional<Info> findUserByUsername(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        return userOptional.map(Info::of);
     }
 
     @Transactional(readOnly = true)

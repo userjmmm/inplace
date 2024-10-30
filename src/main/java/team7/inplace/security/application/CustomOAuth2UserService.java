@@ -1,5 +1,6 @@
 package team7.inplace.security.application;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -22,13 +23,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = defaultOAuth2UserService.loadUser(oAuth2UserRequest);
         KakaoOAuthResponse kakaoOAuthResponse = new KakaoOAuthResponse(oAuth2User.getAttributes());
-        if (userService.isExistUser(kakaoOAuthResponse.getEmail())) {
-            UserCommand.Info userInfo = userService.getUserByUsername(
-                kakaoOAuthResponse.getEmail());
-            return CustomOAuth2User.makeExistUser(userInfo);
+        Optional<UserCommand.Info> userInfo = userService.findUserByUsername(
+            kakaoOAuthResponse.getEmail());
+        if (userInfo.isPresent()) {
+            return CustomOAuth2User.makeExistUser(userInfo.get());
         }
-        UserCommand.Info userInfo = userService.registerUser(
+        UserCommand.Info newUser = userService.registerUser(
             UserCommand.Create.of(kakaoOAuthResponse));
-        return CustomOAuth2User.makeNewUser(userInfo);
+        return CustomOAuth2User.makeNewUser(newUser);
     }
 }
