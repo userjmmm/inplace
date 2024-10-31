@@ -1,5 +1,6 @@
 package team7.inplace.review.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team7.inplace.global.exception.InplaceException;
@@ -7,6 +8,7 @@ import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.ReviewErrorCode;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.review.application.dto.ReviewInfo;
 import team7.inplace.review.domain.Review;
 import team7.inplace.review.persistence.ReviewRepository;
 import team7.inplace.security.util.AuthorizationUtil;
@@ -35,5 +37,13 @@ public class ReviewService {
         }
         Review review = new Review(user, place, isLiked, comment);
         reviewRepository.save(review);
+    }
+
+    public List<ReviewInfo> getReviews(Long placeId) {
+        Place place = placeRepository.findById(placeId).orElseThrow();
+        List<Review> reviews = reviewRepository.findByPlaceId(placeId);
+        return reviews.stream()
+            .map(ReviewInfo::from)
+            .toList();
     }
 }

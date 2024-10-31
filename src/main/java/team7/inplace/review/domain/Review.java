@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team7.inplace.place.domain.Place;
@@ -38,10 +39,13 @@ public class Review {
     @Column(length = 100)
     private String comment;
 
+    private Date createdDate;
+
     public Review(User user, Place place, boolean isLiked, String comment) {
         this.user = user;
         this.place = place;
         this.isLiked = isLiked;
         this.comment = comment;
+        this.createdDate = new Date();
     }
 }
