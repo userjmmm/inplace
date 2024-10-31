@@ -62,7 +62,7 @@ public class PlaceService {
         return new PageImpl<>(placeInfos, placesPage.getPageable(), placeInfos.size());
     }
 
-    private static List<PlaceInfo> convertToPlaceInfos(Page<Place> placesPage,
+    private List<PlaceInfo> convertToPlaceInfos(Page<Place> placesPage,
         Map<Long, String> placeIdToInfluencerName) {
         return placesPage.getContent().stream()
             .map(place -> {
@@ -73,7 +73,7 @@ public class PlaceService {
             .toList();
     }
 
-    private static Map<Long, String> getMapPlaceIdToInfluencerName(List<Video> videos) {
+    private Map<Long, String> getMapPlaceIdToInfluencerName(List<Video> videos) {
         return videos.stream()
             .collect(Collectors.toMap(
                 video -> video.getPlace().getId(),
@@ -82,7 +82,7 @@ public class PlaceService {
             ));
     }
 
-    private static List<Long> getPlaceIds(Page<Place> placesPage) {
+    private List<Long> getPlaceIds(Page<Place> placesPage) {
         return placesPage.getContent().stream()
             .map(Place::getId)
             .toList();
