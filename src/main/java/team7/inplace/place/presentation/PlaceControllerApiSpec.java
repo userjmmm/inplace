@@ -5,10 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.place.presentation.dto.PlaceDetailResponse;
 import team7.inplace.place.presentation.dto.PlacesResponse;
+import team7.inplace.place.presentation.dto.ReviewRequest;
 
 public interface PlaceControllerApiSpec {
 
@@ -31,5 +33,11 @@ public interface PlaceControllerApiSpec {
     @Operation(summary = "장소 상세 조회", description = "장소 ID를 통해 특정 장소의 상세 정보를 조회합니다.")
     public ResponseEntity<PlaceDetailResponse> getPlaceDetail(
         @PathVariable("id") Long placeId
+    );
+
+    @Operation(summary = "특정 장소 리뷰 추가", description = "특정 장소에 리뷰를 추가합니다. 한 장소에 하나의 리뷰만 가능합니다.")
+    public ResponseEntity<Void> createReview(
+        @PathVariable("id") Long placeId,
+        @RequestBody ReviewRequest request
     );
 }
