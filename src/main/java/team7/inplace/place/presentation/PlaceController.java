@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,8 @@ import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.place.presentation.dto.PlaceDetailResponse;
 import team7.inplace.place.presentation.dto.PlacesResponse;
+import team7.inplace.place.presentation.dto.ReviewRequest;
+import team7.inplace.review.application.ReviewService;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     private final PlaceService placeService;
     private final CategoryService categoryService;
+    private final ReviewService reviewService;
 
     @GetMapping
     public ResponseEntity<PlacesResponse> getPlaces(
@@ -77,5 +82,12 @@ public class PlaceController implements PlaceControllerApiSpec {
             placeService.getPlaceDetailInfo(placeId));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/reviews")
+    public ResponseEntity<Void> createReview(@PathVariable("id") Long placeId,
+        @RequestBody ReviewRequest request) {
+        reviewService.createReview(placeId, request.comments(), request.likes());
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
