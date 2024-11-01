@@ -3,12 +3,14 @@ package team7.inplace.global.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class InplaceExceptionHandler {
@@ -56,6 +58,7 @@ public class InplaceExceptionHandler {
 
     public String getStackTrace(Exception exception) {
         StringBuilder sb = new StringBuilder();
+        sb.append(exception.toString()).append("\n");
         for (StackTraceElement element : exception.getStackTrace()) {
             sb.append(element.toString()).append("\n");
         }
