@@ -23,7 +23,7 @@ public class AdminPageController {
 
     @GetMapping("/error-logs")
     public String getErrorLogs(Model model) {
-        List<ErrorLog> errorLogs = errorLogRepository.findAll();
+        List<ErrorLog> errorLogs = errorLogRepository.findByIsResolvedFalse();
         model.addAttribute("errorLogs", errorLogs);
         return "admin/error-logs.html";
     }
