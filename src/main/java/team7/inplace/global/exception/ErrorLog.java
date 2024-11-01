@@ -22,13 +22,20 @@ public class ErrorLog {
     @Column(columnDefinition = "TEXT")
     private String stackTrace;
 
+    private boolean isResolved;
+
     private ErrorLog(String errorUrl, String errorMessage, String stackTrace) {
         this.errorUrl = errorUrl;
         this.errorMessage = errorMessage;
         this.stackTrace = stackTrace;
+        this.isResolved = false;
     }
 
     public static ErrorLog of(String url, String message, String stackTrace) {
         return new ErrorLog(url, message, stackTrace);
+    }
+
+    public void resolve() {
+        this.isResolved = true;
     }
 }
