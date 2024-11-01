@@ -9,7 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.Date;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,9 @@ import team7.inplace.user.domain.User;
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
+@Table(name = "review", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"user_id", "place_id"})
+})
 public class Review {
 
     @Id
@@ -29,7 +33,7 @@ public class Review {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
