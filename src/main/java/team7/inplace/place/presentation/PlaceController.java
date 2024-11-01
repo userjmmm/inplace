@@ -27,6 +27,7 @@ import team7.inplace.place.presentation.dto.ReviewListResponse;
 import team7.inplace.place.presentation.dto.ReviewRequest;
 import team7.inplace.place.presentation.dto.ReviewResponse;
 import team7.inplace.review.application.ReviewService;
+import team7.inplace.review.application.dto.ReviewCommand;
 import team7.inplace.review.application.dto.ReviewInfo;
 
 @RestController
@@ -90,7 +91,9 @@ public class PlaceController implements PlaceControllerApiSpec {
     @PostMapping("/{id}/reviews")
     public ResponseEntity<Void> createReview(@PathVariable("id") Long placeId,
         @RequestBody ReviewRequest request) {
-        reviewService.createReview(placeId, request.comments(), request.likes());
+        ReviewCommand reviewCommand = ReviewRequest.to(request);
+
+        reviewService.createReview(placeId, reviewCommand);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

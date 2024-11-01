@@ -8,6 +8,7 @@ import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.ReviewErrorCode;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.review.application.dto.ReviewCommand;
 import team7.inplace.review.application.dto.ReviewInfo;
 import team7.inplace.review.domain.Review;
 import team7.inplace.review.persistence.ReviewRepository;
@@ -23,7 +24,7 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
 
-    public void createReview(Long placeId, String comment, boolean isLiked) {
+    public void createReview(Long placeId, ReviewCommand command) {
         Long userId = AuthorizationUtil.getUserId();
         if (userId == null) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
@@ -35,7 +36,7 @@ public class ReviewService {
         if (reviewRepository.existsByUserIdAndPlaceId(userId, placeId)) {
             throw InplaceException.of(ReviewErrorCode.REVIEW_ALREADY_EXISTS);
         }
-        Review review = new Review(user, place, isLiked, comment);
+        Review review = ReviewCommand.toEntity(user, place, command);
         reviewRepository.save(review);
     }
 

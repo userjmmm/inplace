@@ -22,6 +22,7 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.review.application.ReviewService;
+import team7.inplace.review.application.dto.ReviewCommand;
 import team7.inplace.review.domain.Review;
 import team7.inplace.review.persistence.ReviewRepository;
 import team7.inplace.security.util.AuthorizationUtil;
@@ -51,6 +52,7 @@ public class ReviewServiceTest {
     private boolean isLiked;
     private User user;
     private Place place;
+    private ReviewCommand command;
 
     @BeforeEach
     public void setUp() {
@@ -69,6 +71,8 @@ public class ReviewServiceTest {
             LocalDateTime.of(2024, 3, 28, 5, 30),
             Arrays.asList("menuBoard1.url", "menuBoard2.url")
         );
+        command = new ReviewCommand(isLiked, comment);
+
     }
 
     @Test
@@ -80,7 +84,7 @@ public class ReviewServiceTest {
         given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
         given(reviewRepository.existsByUserIdAndPlaceId(userId, placeId)).willReturn(false);
 
-        assertDoesNotThrow(() -> reviewService.createReview(placeId, comment, isLiked));
+        assertDoesNotThrow(() -> reviewService.createReview(placeId, command));
 
         verify(reviewRepository).save(any(Review.class));
 
@@ -97,7 +101,7 @@ public class ReviewServiceTest {
         given(reviewRepository.existsByUserIdAndPlaceId(userId, placeId)).willReturn(true);
 
         InplaceException exception = assertThrows(InplaceException.class,
-            () -> reviewService.createReview(placeId, comment, isLiked)
+            () -> reviewService.createReview(placeId, command)
         );
 
         assertEquals("place에 대한 리뷰가 이미 존재합니다.", exception.getErrorMessage());
