@@ -1,8 +1,7 @@
 package team7.inplace.review;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mockStatic;
@@ -12,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -92,7 +92,8 @@ public class ReviewServiceTest {
     }
 
     @Test
-    public void 이미리뷰가존재하면예외발생() {
+    @DisplayName("장소에 대해 사용자의 리뷰가 이미 존재하면 예외 발생")
+    public void createReviewTest_ReviewAlreadyExists() {
         MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
 
         given(AuthorizationUtil.getUserId()).willReturn(userId);
@@ -100,11 +101,9 @@ public class ReviewServiceTest {
         given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
         given(reviewRepository.existsByUserIdAndPlaceId(userId, placeId)).willReturn(true);
 
-        InplaceException exception = assertThrows(InplaceException.class,
-            () -> reviewService.createReview(placeId, command)
-        );
-
-        assertEquals("place에 대한 리뷰가 이미 존재합니다.", exception.getErrorMessage());
+        assertThatThrownBy(() -> reviewService.createReview(placeId, command))
+            .isInstanceOf(InplaceException.class)
+            .hasMessage("place에 대한 리뷰가 이미 존재합니다.");
 
         authorizationUtil.close();
     }
