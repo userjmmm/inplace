@@ -89,7 +89,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     @PostMapping("/{id}/reviews")
     public ResponseEntity<Void> createReview(@PathVariable("id") Long placeId,
         @RequestBody ReviewRequest request) {
-        ReviewCommand reviewCommand = ReviewRequest.to(request);
+        ReviewCommand reviewCommand = request.toCommand();
 
         reviewService.createReview(placeId, reviewCommand);
         return new ResponseEntity<>(HttpStatus.CREATED);

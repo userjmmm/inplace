@@ -7,10 +7,10 @@ public record ReviewRequest(
     String comments
 ) {
 
-    public static ReviewCommand to(ReviewRequest request) {
+    public ReviewCommand toCommand() {
         return new ReviewCommand(
-            request.likes(),
-            request.comments()
+            this.likes(),
+            this.comments()
         );
     }
 }
