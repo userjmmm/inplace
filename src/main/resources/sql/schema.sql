@@ -89,15 +89,17 @@ create table favorite_influencer
 
 create table video
 (
-    id            bigint auto_increment
+    id                  bigint auto_increment
         primary key,
-    influencer_id bigint not null,
-    place_id      bigint null,
-    video_url     text   not null,
+    influencer_id       bigint not null,
+    place_id            bigint null,
+    view_count          bigint null,
+    view_count_increase bigint null,
+    video_url           text   not null,
     constraint FK7hqjxq4phfph44evu5d5atq8d
-        foreign key (place_id) references inplace.places (id),
+        foreign key (place_id) references places (id),
     constraint FKl9cosu6upjb1w6wcfjrb5n2l2
-        foreign key (influencer_id) references inplace.influencer (id)
+        foreign key (influencer_id) references influencer (id)
 );
 
 create table youtube_channel
