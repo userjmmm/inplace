@@ -1,13 +1,16 @@
 package team7.inplace.global.exception;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ErrorLog {
     @Id
@@ -16,6 +19,7 @@ public class ErrorLog {
 
     private String errorUrl;
     private String errorMessage;
+    @Column(columnDefinition = "TEXT")
     private String stackTrace;
 
     private ErrorLog(String errorUrl, String errorMessage, String stackTrace) {
