@@ -12,6 +12,7 @@ public class CrawlingFacade {
     private final VideoCrawlingService videoCrawlingService;
     private final VideoFacade videoFacade;
 
+    //TODO: 스케쥴링 추가 예정
     public void updateVideos() {
         var crawlingInfos = youtubeCrawlingService.crawlAllVideos();
         for (var crawlingInfo : crawlingInfos) {
@@ -21,7 +22,8 @@ public class CrawlingFacade {
             videoFacade.createVideos(videoCommands, placesCommands);
         }
     }
-
+    
+    //TODO: 스케쥴링 추가 예정
     public void updateVideoView() {
         var crawlingInfos = videoCrawlingService.crawlingVideoView();
         var videoCommands = crawlingInfos.stream()
