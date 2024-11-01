@@ -23,12 +23,10 @@ import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.place.presentation.dto.PlaceDetailResponse;
 import team7.inplace.place.presentation.dto.PlacesResponse;
-import team7.inplace.place.presentation.dto.ReviewListResponse;
 import team7.inplace.place.presentation.dto.ReviewRequest;
 import team7.inplace.place.presentation.dto.ReviewResponse;
 import team7.inplace.review.application.ReviewService;
 import team7.inplace.review.application.dto.ReviewCommand;
-import team7.inplace.review.application.dto.ReviewInfo;
 
 @RestController
 @RequiredArgsConstructor
@@ -98,13 +96,12 @@ public class PlaceController implements PlaceControllerApiSpec {
     }
 
     @GetMapping("/{id}/reviews")
-    public ResponseEntity<ReviewListResponse> getReviews(@PathVariable("id") Long placeId) {
-        List<ReviewInfo> reviewsInfoList = reviewService.getReviews(placeId);
-        List<ReviewResponse> reviews = reviewsInfoList.stream()
-            .map(ReviewResponse::from)
-            .toList();
-        ReviewListResponse response = new ReviewListResponse(reviews);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<Page<ReviewResponse>> getReviews(
+        @PathVariable("id") Long placeId,
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        Page<ReviewResponse> reviews = reviewService.getReviews(placeId, pageable)
+            .map(ReviewResponse::from);
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 }

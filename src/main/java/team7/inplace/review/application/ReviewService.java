@@ -1,11 +1,15 @@
 package team7.inplace.review.application;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
+import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.exception.code.ReviewErrorCode;
+import team7.inplace.global.exception.code.UserErroCode;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.review.application.dto.ReviewCommand;
@@ -24,14 +28,17 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
 
+    @Transactional
     public void createReview(Long placeId, ReviewCommand command) {
         Long userId = AuthorizationUtil.getUserId();
         if (userId == null) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
 
-        User user = userRepository.findById(userId).orElseThrow();
-        Place place = placeRepository.findById(placeId).orElseThrow();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
+        Place place = placeRepository.findById(placeId)
+            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
 
         if (reviewRepository.existsByUserIdAndPlaceId(userId, placeId)) {
             throw InplaceException.of(ReviewErrorCode.REVIEW_ALREADY_EXISTS);
@@ -40,11 +47,9 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public List<ReviewInfo> getReviews(Long placeId) {
-        Place place = placeRepository.findById(placeId).orElseThrow();
-        List<Review> reviews = reviewRepository.findByPlaceId(placeId);
-        return reviews.stream()
-            .map(ReviewInfo::from)
-            .toList();
+    @Transactional(readOnly = true)
+    public Page<ReviewInfo> getReviews(Long placeId, Pageable pageable) {
+        Page<Review> reviewPage = reviewRepository.findByPlaceId(placeId, pageable);
+        return reviewPage.map(ReviewInfo::from);
     }
 }
