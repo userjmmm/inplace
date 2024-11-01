@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.ReviewErrorCode;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.review.application.ReviewService;
@@ -103,7 +104,7 @@ public class ReviewServiceTest {
 
         assertThatThrownBy(() -> reviewService.createReview(placeId, command))
             .isInstanceOf(InplaceException.class)
-            .hasMessage("place에 대한 리뷰가 이미 존재합니다.");
+            .hasMessage(ReviewErrorCode.REVIEW_ALREADY_EXISTS.getMessage());
 
         authorizationUtil.close();
     }
