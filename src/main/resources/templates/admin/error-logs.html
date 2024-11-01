@@ -5,6 +5,7 @@
     <title>Error Logs</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/error_logs_style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="header">
@@ -20,6 +21,7 @@
         <th>Error URL</th>
         <th>Error Message</th>
         <th>Stack Trace</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -31,6 +33,9 @@
             <button class="toggle-btn" onclick="openModal(this)" th:data-stacktrace="${errorLog.stackTrace}">View Stack
                 Trace
             </button>
+        </td>
+        <td>
+            <button class="resolve-btn" th:onclick="'resolveErrorLog(' + ${errorLog.id} + ')'">Resolve</button>
         </td>
     </tr>
     </tbody>
