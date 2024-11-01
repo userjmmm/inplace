@@ -9,9 +9,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import team7.inplace.LikedPlace.domain.LikedPlace;
+import team7.inplace.LikedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
+import team7.inplace.global.exception.code.UserErroCode;
 import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
@@ -19,6 +25,9 @@ import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.security.util.AuthorizationUtil;
+import team7.inplace.user.domain.User;
+import team7.inplace.user.persistence.UserRepository;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 
@@ -29,6 +38,10 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
 
     private final VideoRepository videoRepository;
+
+    private final UserRepository userRepository;
+
+    private final LikedPlaceRepository likedPlaceRepository;
 
     public Page<PlaceInfo> getPlacesWithinRadius(
         PlacesCoordinateCommand placesCoordinateCommand,
@@ -145,5 +158,25 @@ public class PlaceService {
             .toList();
 
         return savedPlacesId;
+    }
+
+    public void likeToPlace(PlaceLikeCommand comm) {
+
+        String username = AuthorizationUtil.getUsername();
+        if (!StringUtils.hasText(username)) {
+            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
+        }
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
+
+        Place place = placeRepository.findById(comm.placeId())
+            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+
+        LikedPlace likedPlace = likedPlaceRepository.findByUserIdAndPlaceId(user.getId(),
+                place.getId())
+            .orElseGet(() -> new LikedPlace(user, place));
+
+        likedPlace.updateLike(comm.likes());
+        likedPlaceRepository.save(likedPlace);
     }
 }

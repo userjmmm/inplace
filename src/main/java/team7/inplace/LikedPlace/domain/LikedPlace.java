@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import team7.inplace.place.domain.Place;
 import team7.inplace.user.domain.User;
@@ -26,11 +27,13 @@ public class LikedPlace {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @NonNull
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "place_id", nullable = false)
+    @NonNull
+    @JoinColumn(name = "place_id")
     private Place place;
 
     @Column

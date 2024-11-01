@@ -2,6 +2,9 @@ package team7.inplace.place.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
@@ -19,7 +22,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import team7.inplace.LikedPlace.domain.LikedPlace;
+import team7.inplace.LikedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
 import team7.inplace.place.application.dto.PlaceDetailInfo;
@@ -27,6 +37,11 @@ import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.security.application.dto.CustomOAuth2User;
+import team7.inplace.user.domain.Role;
+import team7.inplace.user.domain.User;
+import team7.inplace.user.domain.UserType;
+import team7.inplace.user.persistence.UserRepository;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 
@@ -37,12 +52,17 @@ class PlaceServiceTest {
     private VideoRepository videoRepository;
     @Mock
     private PlaceRepository placeRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private LikedPlaceRepository likedPlaceRepository;
     @InjectMocks
     private PlaceService placeService;
 
     private Place place1, place2, place3, place4;
     private Video video1, video2, video3;
     private Influencer influencer1, influencer2;
+    private User user1, user2;
 
 //     * 테스트 Place 좌표 (longitude, latitude)
 //     * (10.0, 10.0) -> video1 -> 성시경
@@ -159,6 +179,13 @@ class PlaceServiceTest {
         video1 = Video.from(influencer1, place1, "video1.url");
         video2 = Video.from(influencer2, place4, "video2.url");
         video3 = Video.from(influencer1, place4, "video3.url");
+
+        Field userIdField = User.class.getDeclaredField("id");
+        userIdField.setAccessible(true);
+        user1 = new User("user1", "pass1", "nick1", UserType.KAKAO, Role.USER);
+        userIdField.set(user1, 1L);
+        user2 = new User("user2", "pass2", "nick2", UserType.KAKAO, Role.USER);
+        userIdField.set(user2, 2L);
     }
 
     @Test
@@ -361,4 +388,36 @@ class PlaceServiceTest {
             expected.placeInfo().influencerName());
     }
 
+    // LikedPlace 테스트
+    @Test
+    @DisplayName("장소 좋아요 추가 및 업데이트 테스트")
+    public void likedTest1() {
+        // given
+        // 사용자 인증 정보 설정
+        CustomOAuth2User user = new CustomOAuth2User("user1", 1L, "ROLE_USER");
+
+        // Authentication 객체 생성 및 SecurityContext에 설정
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        
+        PlaceLikeCommand command = new PlaceLikeCommand(place1.getId(), true);
+
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(user1));
+        when(placeRepository.findById(any())).thenReturn(Optional.of(place1));
+        when(likedPlaceRepository.findByUserIdAndPlaceId(user1.getId(), place1.getId()))
+            .thenReturn(Optional.of(new LikedPlace(user1, place1)));
+
+        // when
+        placeService.likeToPlace(command);  // 좋아요 기능 호출
+
+        // then
+        verify(likedPlaceRepository, times(1)).save(any(LikedPlace.class));  // likedPlace 저장 확인
+        assertThat(
+            likedPlaceRepository.findByUserIdAndPlaceId(user1.getId(), place1.getId())
+                .get()
+                .isLiked())
+            .isTrue();  // 좋아요 상태 확인
+    }
 }
