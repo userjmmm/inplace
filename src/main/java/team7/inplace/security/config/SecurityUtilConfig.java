@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import team7.inplace.security.util.CookieUtil;
 import team7.inplace.security.util.JwtUtil;
 
 @Configuration
@@ -22,8 +21,4 @@ public class SecurityUtilConfig {
         return new JwtUtil(jwtProperties);
     }
 
-    @Bean
-    public CookieUtil cookieUtil() {
-        return new CookieUtil();
-    }
 }

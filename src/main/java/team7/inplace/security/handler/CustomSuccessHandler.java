@@ -16,19 +16,16 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
-    private final CookieUtil cookieUtil;
 
     @Value("${spring.redirect.front-end-url}")
     private String frontEndUrl;
 
     public CustomSuccessHandler(
         JwtUtil jwtUtil,
-        RefreshTokenService refreshTokenService,
-        CookieUtil cookieUtil
+        RefreshTokenService refreshTokenService
     ) {
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
-        this.cookieUtil = cookieUtil;
     }
 
     @Override
@@ -51,8 +48,8 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         HttpServletResponse response,
         String accessToken, String refreshToken
     ) {
-        Cookie accessTokenCookie = cookieUtil.createCookie("access_token", accessToken);
-        Cookie refreshTokenCookie = cookieUtil.createCookie("refresh_token", refreshToken);
+        Cookie accessTokenCookie = CookieUtil.createCookie("access_token", accessToken);
+        Cookie refreshTokenCookie = CookieUtil.createCookie("refresh_token", refreshToken);
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
