@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
-public enum UserErroCode implements ErrorCode {
-    NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "User is not found");
+public enum UserErrorCode implements ErrorCode {
+    NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "User is not found"),
+    OAUTH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "U002", "OauthToken is not found");
 
     private final HttpStatus status;
     private final String code;
