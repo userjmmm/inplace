@@ -49,7 +49,16 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<ReviewInfo> getReviews(Long placeId, Pageable pageable) {
+        Long userId = AuthorizationUtil.getUserId();
         Page<Review> reviewPage = reviewRepository.findByPlaceId(placeId, pageable);
-        return reviewPage.map(ReviewInfo::from);
+        // 로그인 안된 경우 mine을 모두 false로 설정
+        if (userId == null) {
+            return reviewPage.map(review -> ReviewInfo.from(review, false));
+        }
+
+        return reviewPage.map(review -> {
+            boolean isMine = review.getUser().getId().equals(userId);
+            return ReviewInfo.from(review, isMine);
+        });
     }
 }
