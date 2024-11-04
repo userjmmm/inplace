@@ -1,6 +1,5 @@
 package team7.inplace.admin;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,12 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import team7.inplace.global.exception.ErrorLog;
 import team7.inplace.global.exception.ErrorLogRepository;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 public class AdminPageController {
     private final ErrorLogRepository errorLogRepository;
-
 
     @GetMapping("/video")
     public String adminPage() {
