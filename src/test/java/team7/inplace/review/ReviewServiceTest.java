@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
@@ -120,17 +120,15 @@ public class ReviewServiceTest {
     @Test
     void getReviews_LoggedIn() {
         Pageable pageable = PageRequest.of(0, 10);
-        Review review = new Review(user, place, isLiked, comment);
-        Review spyReview = spy(review);
-        User spyUser = spy(user);
-        Page<Review> reviewPage = new PageImpl<>(List.of(spyReview));
+        User userMock = mock(User.class); // getId()를 위한 모의 객체
+        Review review = new Review(userMock, place, isLiked, comment);
+        Page<Review> reviewPage = new PageImpl<>(List.of(review));
 
         MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
 
-        given(AuthorizationUtil.getUserId()).willReturn(userId);
+        given(AuthorizationUtil.getUserId()).willReturn(1L); // userId=1이 로그인
         given(reviewRepository.findByPlaceId(placeId, pageable)).willReturn(reviewPage);
-        given(spyReview.getUser()).willReturn(spyUser);
-        given(spyUser.getId()).willReturn(1L);
+        given(userMock.getId()).willReturn(1L); // 리뷰의 userId가 1L
 
         Page<ReviewInfo> result = reviewService.getReviews(placeId, pageable);
 
@@ -157,6 +155,27 @@ public class ReviewServiceTest {
         assertThat(result.getContent().get(0))
             .extracting("comment", "mine")
             .containsExactly(comment, false);
+
+        authorizationUtil.close();
+    }
+
+    @Test
+    @DisplayName("다른 유저의 리뷰 삭제 요청시 에러 발생")
+    void deleteReview_NotOwner() {
+        Long userId2 = 2L;
+        Long reviewId = 1L;
+        User userMock = mock(User.class);
+        Review review = new Review(userMock, place, isLiked, comment); // userId=1의 리뷰
+
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+
+        given(AuthorizationUtil.getUserId()).willReturn(userId2);
+        given(reviewRepository.findById(reviewId)).willReturn(Optional.of(review));
+        given(userMock.getId()).willReturn(1L); // 리뷰의 userId가 1L
+
+        assertThatThrownBy(() -> reviewService.deleteReview(reviewId))
+            .isInstanceOf(InplaceException.class)
+            .hasMessage(ReviewErrorCode.NOT_OWNER.getMessage());
 
         authorizationUtil.close();
     }
