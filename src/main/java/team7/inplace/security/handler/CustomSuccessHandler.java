@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import team7.inplace.security.application.dto.CustomOAuth2User;
+import team7.inplace.security.filter.TokenType;
 import team7.inplace.security.util.CookieUtil;
 import team7.inplace.security.util.JwtUtil;
 import team7.inplace.token.application.RefreshTokenService;
@@ -48,8 +49,10 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         HttpServletResponse response,
         String accessToken, String refreshToken
     ) {
-        Cookie accessTokenCookie = CookieUtil.createCookie("access_token", accessToken);
-        Cookie refreshTokenCookie = CookieUtil.createCookie("refresh_token", refreshToken);
+        Cookie accessTokenCookie = CookieUtil.createCookie(TokenType.ACCESS_TOKEN.getValue(),
+            accessToken);
+        Cookie refreshTokenCookie = CookieUtil.createCookie(TokenType.REFRESH_TOKEN.getValue(),
+            refreshToken);
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
