@@ -61,4 +61,21 @@ public class ReviewService {
             return ReviewInfo.from(review, isMine);
         });
     }
+
+    @Transactional
+    public void deleteReview(Long reviewId) {
+        Long userId = AuthorizationUtil.getUserId();
+        if (userId == null) {
+            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
+        }
+
+        Review review = reviewRepository.findById(reviewId)
+            .orElseThrow(() -> InplaceException.of(ReviewErrorCode.NOT_FOUND));
+
+        if (!review.getUser().getId().equals(userId)) {
+            throw InplaceException.of(ReviewErrorCode.NOT_OWNER);
+        }
+
+        reviewRepository.delete(review);
+    }
 }
