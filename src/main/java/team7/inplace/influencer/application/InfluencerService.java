@@ -9,7 +9,7 @@ import team7.inplace.favoriteInfluencer.domain.FavoriteInfluencer;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
-import team7.inplace.global.exception.code.UserErroCode;
+import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.domain.Influencer;
@@ -83,7 +83,7 @@ public class InfluencerService {
         }
 
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         Influencer influencer = influencerRepository.findById(param.influencerId()).orElseThrow();
 
         FavoriteInfluencer favorite = favoriteRepository.findByUserIdAndInfluencerId(user.getId(),
