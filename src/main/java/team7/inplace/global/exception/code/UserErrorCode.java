@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 public enum UserErrorCode implements ErrorCode {
-    NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "User is not found"),
-    OAUTH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "U002", "OauthToken is not found");
+    NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "User가 없습니다."),
+    OAUTH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "U002", "OauthToken이 없습니다.");
 
     private final HttpStatus status;
     private final String code;
