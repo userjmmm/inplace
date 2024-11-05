@@ -1,7 +1,7 @@
 package team7.inplace.crawling.application;
 
 import lombok.RequiredArgsConstructor;
-import team7.inplace.crawling.application.dto.CrawlingVideoViewInfo;
+import team7.inplace.crawling.application.dto.CrawlingInfo;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.video.application.VideoFacade;
 
@@ -22,12 +22,12 @@ public class CrawlingFacade {
             videoFacade.createVideos(videoCommands, placesCommands);
         }
     }
-    
+
     //TODO: 스케쥴링 추가 예정
     public void updateVideoView() {
         var crawlingInfos = videoCrawlingService.crawlingVideoView();
         var videoCommands = crawlingInfos.stream()
-                .map(CrawlingVideoViewInfo::toVideoCommand)
+                .map(CrawlingInfo.ViewInfo::toVideoCommand)
                 .toList();
         videoFacade.updateVideoViews(videoCommands);
     }

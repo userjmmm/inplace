@@ -27,7 +27,7 @@ public class YoutubeCrawlingService {
         3. 마지막 비디오 UUID를 업데이트 한다.
         4. 카카오 API를 호출해 장소 정보를 가져온다
      */
-    public List<CrawlingInfo> crawlAllVideos() {
+    public List<CrawlingInfo.VideoPlaceInfo> crawlAllVideos() {
         var youtubeChannels = youtubeChannelRepository.findAll();
 
         var crawlInfos = youtubeChannels.stream()
@@ -48,7 +48,7 @@ public class YoutubeCrawlingService {
                             })
                             .toList();
 
-                    return new CrawlingInfo(channel.getInfluencerId(), videoSnippets, placeNodes);
+                    return new CrawlingInfo.VideoPlaceInfo(channel.getInfluencerId(), videoSnippets, placeNodes);
                 }).toList();
 
         return crawlInfos;
