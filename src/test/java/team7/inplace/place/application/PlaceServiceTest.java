@@ -2,7 +2,9 @@ package team7.inplace.place.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,15 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import team7.inplace.LikedPlace.domain.LikedPlace;
 import team7.inplace.LikedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.influencer.domain.Influencer;
@@ -37,7 +36,7 @@ import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
-import team7.inplace.security.application.dto.CustomOAuth2User;
+import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.Role;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.domain.UserType;
@@ -193,6 +192,8 @@ class PlaceServiceTest {
     public void test1() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place4, place1), pageable, 3);
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn(null);
         when(
             placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
                 any(), any(), any()))
@@ -214,6 +215,8 @@ class PlaceServiceTest {
         assertThat(result.getContent().get(1).influencerName()).isEqualTo("아이유");
         assertThat(result.getContent().get(2).placeName()).isEqualTo("Place 1");
         assertThat(result.getContent().get(2).influencerName()).isEqualTo("성시경");
+
+        authorizationUtil.close();
     }
 
     @Test
@@ -221,6 +224,8 @@ class PlaceServiceTest {
     public void test2() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place4, place1), pageable, 3);
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn(null);
         when(
             placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
                 any(), any(), any()))
@@ -249,6 +254,8 @@ class PlaceServiceTest {
         assertThat(result.getContent().get(2).placeName()).isEqualTo("Place 1");
         assertThat(result.getContent().get(2).category()).isEqualTo(Category.CAFE.name());
         assertThat(result.getContent().get(2).influencerName()).isEqualTo("성시경");
+
+        authorizationUtil.close();
     }
 
     @Test
@@ -256,6 +263,8 @@ class PlaceServiceTest {
     public void test3() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place4), pageable, 2);
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn(null);
         when(placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(),
             any(),
             any(), any(), any()))
@@ -280,6 +289,8 @@ class PlaceServiceTest {
         assertThat(result.getContent().get(1).category()).isEqualTo(
             Category.JAPANESE.toString());
         assertThat(result.getContent().get(1).influencerName()).isEqualTo("아이유");
+
+        authorizationUtil.close();
     }
 
     @Test
@@ -287,6 +298,8 @@ class PlaceServiceTest {
     public void test4() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4, place1), pageable, 1);
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn(null);
         when(
             placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(),
                 any(),
@@ -306,8 +319,12 @@ class PlaceServiceTest {
         assertThat(result).hasSize(2);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 4");
         assertThat(result.getContent().get(0).influencerName()).isEqualTo("아이유");
+        assertThat(result.getContent().get(0).likes()).isEqualTo(false);
         assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 1");
         assertThat(result.getContent().get(1).influencerName()).isEqualTo("성시경");
+        assertThat(result.getContent().get(1).likes()).isEqualTo(false);
+
+        authorizationUtil.close();
     }
 
     @Test
@@ -315,6 +332,8 @@ class PlaceServiceTest {
     public void test5() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4), pageable, 1);
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn(null);
         when(placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(),
             any(), any(),
             any(), any(), any()))
@@ -334,6 +353,8 @@ class PlaceServiceTest {
         assertThat(result).hasSize(1);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 4");
         assertThat(result.getContent().get(0).influencerName()).isEqualTo("아이유");
+
+        authorizationUtil.close();
     }
 
     @Test
@@ -341,6 +362,8 @@ class PlaceServiceTest {
     public void test6() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4), pageable, 1);
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn(null);
         when(placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(),
             any(), any(),
             any(), any(), any()))
@@ -360,16 +383,19 @@ class PlaceServiceTest {
         assertThat(result).hasSize(1);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 4");
         assertThat(result.getContent().get(0).influencerName()).isEqualTo("아이유");
+
+        authorizationUtil.close();
     }
 
     @Test
     @DisplayName("장소 세부정보 조회")
     public void test7() {
         // given
-//        Place place = video1.getPlace();
-//        Influencer influencer = video1.getInfluencer();
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn(null);
+
         PlaceDetailInfo expected = PlaceDetailInfo.from(place4,
-            influencer2, video2);
+            influencer2, video2, false);
 
         when(placeRepository.findById(place4.getId()))
             .thenReturn(Optional.of(place4));
@@ -386,6 +412,162 @@ class PlaceServiceTest {
             expected.menuInfos().menuList());
         assertThat(result.placeInfo().influencerName()).isEqualTo(
             expected.placeInfo().influencerName());
+        assertThat(result.placeInfo().likes()).isEqualTo(
+            expected.placeInfo().likes());
+
+        authorizationUtil.close();
+    }
+
+    @Test
+    @DisplayName("user2 로그인, 인플루언서(아이유, 성시경) 필터링")
+    public void test8() {
+        // given
+        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4, place1), pageable, 1);
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn("user2");
+        when(
+            placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(),
+                any(),
+                any(), any(), any()))
+            .thenReturn(placesPage);
+        when(videoRepository.findByPlaceIdIn(
+            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+            Arrays.asList(video1, video2, video3));
+        PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null,
+            "성시경, 아이유");
+
+        when(userRepository.findByUsername(user2.getUsername())).thenReturn(Optional.of(user2));
+        lenient().when(placeRepository.findById(place4.getId())).thenReturn(Optional.of(place4));
+        when(likedPlaceRepository.findByUserIdAndPlaceId(user2.getId(), place4.getId()))
+            .thenReturn(Optional.of(new LikedPlace(user2, place4)));
+
+        // when
+        //PlaceLikeCommand command = new PlaceLikeCommand(place4.getId(), true);
+        //placeService.likeToPlace(command);
+
+        Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
+            filterParams);
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 4");
+        assertThat(result.getContent().get(0).influencerName()).isEqualTo("아이유");
+        assertThat(result.getContent().get(0).likes()).isEqualTo(false);
+        assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 1");
+        assertThat(result.getContent().get(1).influencerName()).isEqualTo("성시경");
+        assertThat(result.getContent().get(1).likes()).isEqualTo(false);
+
+        authorizationUtil.close();
+    }
+
+    @Test
+    @DisplayName("user2 로그인, place4 좋아요, 인플루언서(아이유, 성시경) 필터링")
+    public void test9() {
+        // given
+        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4, place1), pageable, 1);
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn("user2");
+        when(
+            placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(),
+                any(),
+                any(), any(), any()))
+            .thenReturn(placesPage);
+        when(videoRepository.findByPlaceIdIn(
+            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+            Arrays.asList(video1, video2, video3));
+        PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null,
+            "성시경, 아이유");
+
+        when(userRepository.findByUsername(user2.getUsername())).thenReturn(Optional.of(user2));
+        when(placeRepository.findById(place4.getId())).thenReturn(Optional.of(place4));
+        when(likedPlaceRepository.findByUserIdAndPlaceId(user2.getId(), place4.getId()))
+            .thenReturn(Optional.of(new LikedPlace(user2, place4)));
+
+        // when
+        PlaceLikeCommand command = new PlaceLikeCommand(place4.getId(), true);
+        placeService.likeToPlace(command);
+
+        Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
+            filterParams);
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 4");
+        assertThat(result.getContent().get(0).influencerName()).isEqualTo("아이유");
+        assertThat(result.getContent().get(0).likes()).isEqualTo(true);
+        assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 1");
+        assertThat(result.getContent().get(1).influencerName()).isEqualTo("성시경");
+        assertThat(result.getContent().get(1).likes()).isEqualTo(false);
+
+        authorizationUtil.close();
+    }
+
+    @Test
+    @DisplayName("user1 로그인, 장소 세부정보 조회")
+    public void test10() {
+        // given
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn("user1");
+
+        PlaceDetailInfo expected = PlaceDetailInfo.from(place4,
+            influencer2, video2, false);
+
+        when(placeRepository.findById(place4.getId()))
+            .thenReturn(Optional.of(place4));
+        when(videoRepository.findByPlaceId(place4.getId()))
+            .thenReturn(Arrays.asList(video2, video3));
+
+        // when
+        PlaceDetailInfo result = placeService.getPlaceDetailInfo(4L);
+
+        // then
+        // menuInfos의 timeExp는 실시간으로 바껴서 테스트에서 제외함
+        assertThat(result).isEqualToIgnoringGivenFields(expected, "menuInfos");
+        assertThat(result.menuInfos().menuList()).isEqualTo(
+            expected.menuInfos().menuList());
+        assertThat(result.placeInfo().influencerName()).isEqualTo(
+            expected.placeInfo().influencerName());
+        assertThat(result.placeInfo().likes()).isEqualTo(
+            expected.placeInfo().likes());
+
+        authorizationUtil.close();
+    }
+
+    @Test
+    @DisplayName("user1 로그인, place4 좋아요, 장소 세부정보 조회")
+    public void test11() {
+        // given
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn("user1");
+
+        PlaceDetailInfo expected = PlaceDetailInfo.from(place4,
+            influencer2, video2, true);
+
+        when(placeRepository.findById(place4.getId()))
+            .thenReturn(Optional.of(place4));
+        when(videoRepository.findByPlaceId(place4.getId()))
+            .thenReturn(Arrays.asList(video2, video3));
+        when(userRepository.findByUsername(user1.getUsername())).thenReturn(Optional.of(user1));
+        when(likedPlaceRepository.findByUserIdAndPlaceId(user1.getId(), place4.getId()))
+            .thenReturn(Optional.of(new LikedPlace(user1, place4)));
+
+        // when
+        PlaceLikeCommand placeLikeCommand = new PlaceLikeCommand(place4.getId(), true);
+        placeService.likeToPlace(placeLikeCommand);
+
+        PlaceDetailInfo result = placeService.getPlaceDetailInfo(4L);
+
+        // then
+        // menuInfos의 timeExp는 실시간으로 바껴서 테스트에서 제외함
+        assertThat(result).isEqualToIgnoringGivenFields(expected, "menuInfos");
+        assertThat(result.menuInfos().menuList()).isEqualTo(
+            expected.menuInfos().menuList());
+        assertThat(result.placeInfo().influencerName()).isEqualTo(
+            expected.placeInfo().influencerName());
+        assertThat(result.placeInfo().likes()).isEqualTo(
+            expected.placeInfo().likes());
+
+        authorizationUtil.close();
     }
 
     // LikedPlace 테스트
@@ -394,19 +576,14 @@ class PlaceServiceTest {
     public void likedTest1() {
         // given
         // 사용자 인증 정보 설정
-        CustomOAuth2User user = new CustomOAuth2User("user1", 1L, "ROLE_USER");
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn("user1");
 
-        // Authentication 객체 생성 및 SecurityContext에 설정
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
-        SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        
         PlaceLikeCommand command = new PlaceLikeCommand(place1.getId(), true);
 
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(user1));
         when(placeRepository.findById(any())).thenReturn(Optional.of(place1));
-        when(likedPlaceRepository.findByUserIdAndPlaceId(user1.getId(), place1.getId()))
+        when(likedPlaceRepository.findByUserIdAndPlaceId(any(), any()))
             .thenReturn(Optional.of(new LikedPlace(user1, place1)));
 
         // when
@@ -419,5 +596,38 @@ class PlaceServiceTest {
                 .get()
                 .isLiked())
             .isTrue();  // 좋아요 상태 확인
+
+        authorizationUtil.close();
+    }
+
+    @Test
+    @DisplayName("좋아요한 장소 취소하기")
+    public void likedTest2() {
+        // given
+        // 사용자 인증 정보 설정
+        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        given(AuthorizationUtil.getUsername()).willReturn("user1");
+
+        PlaceLikeCommand command1 = new PlaceLikeCommand(place1.getId(), true);
+        PlaceLikeCommand command2 = new PlaceLikeCommand(place1.getId(), false);
+
+        when(userRepository.findByUsername(any())).thenReturn(Optional.of(user1));
+        when(placeRepository.findById(any())).thenReturn(Optional.of(place1));
+        when(likedPlaceRepository.findByUserIdAndPlaceId(any(), any()))
+            .thenReturn(Optional.of(new LikedPlace(user1, place1)));
+
+        // when
+        placeService.likeToPlace(command1);  // 좋아요 기능 호출
+        placeService.likeToPlace(command2);
+
+        // then
+        verify(likedPlaceRepository, times(2)).save(any(LikedPlace.class));  // likedPlace 저장 확인
+        assertThat(
+            likedPlaceRepository.findByUserIdAndPlaceId(user1.getId(), place1.getId())
+                .get()
+                .isLiked())
+            .isFalse();  // 좋아요 상태 확인
+
+        authorizationUtil.close();
     }
 }

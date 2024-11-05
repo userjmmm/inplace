@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -81,7 +82,7 @@ public class PlaceService {
             .map(place -> {
                 // map에서 조회되지 않은 placeId는 null로 처리
                 String influencerName = placeIdToInfluencerName.getOrDefault(place.getId(), null);
-                return PlaceInfo.of(place, influencerName);
+                return PlaceInfo.of(place, influencerName, isLikedPlace(place.getId()));
             })
             .toList();
     }
@@ -131,7 +132,7 @@ public class PlaceService {
         }
         Influencer influencer = (video != null) ? video.getInfluencer() : null;
 
-        return PlaceDetailInfo.from(place, influencer, video);
+        return PlaceDetailInfo.from(place, influencer, video, isLikedPlace(place.getId()));
     }
 
     public List<Long> createPlaces(List<Create> placeCommands) {
@@ -161,22 +162,40 @@ public class PlaceService {
     }
 
     public void likeToPlace(PlaceLikeCommand comm) {
+        LikedPlace likedPlace = findOrCreateLikedPlace(comm.placeId(), comm.likes());
+        likedPlaceRepository.save(likedPlace);
+    }
 
-        String username = AuthorizationUtil.getUsername();
-        if (!StringUtils.hasText(username)) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
+    private LikedPlace findOrCreateLikedPlace(Long placeId, boolean likes) {
+
+        String username = getUsername().orElseThrow(
+            () -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+
         User user = userRepository.findByUsername(username)
             .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
 
-        Place place = placeRepository.findById(comm.placeId())
+        Place place = placeRepository.findById(placeId)
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
 
         LikedPlace likedPlace = likedPlaceRepository.findByUserIdAndPlaceId(user.getId(),
                 place.getId())
             .orElseGet(() -> new LikedPlace(user, place));
 
-        likedPlace.updateLike(comm.likes());
-        likedPlaceRepository.save(likedPlace);
+        likedPlace.updateLike(likes);
+
+        return likedPlace;
+    }
+
+    private Optional<String> getUsername() {
+        String username = AuthorizationUtil.getUsername();
+        return StringUtils.hasText(username) ? Optional.of(username) : Optional.empty();
+    }
+
+    private boolean isLikedPlace(Long placeId) {
+        return getUsername()
+            .flatMap(userRepository::findByUsername)
+            .flatMap(user -> likedPlaceRepository.findByUserIdAndPlaceId(user.getId(), placeId))
+            .map(LikedPlace::isLiked)
+            .orElse(false);
     }
 }
