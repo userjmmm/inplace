@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import team7.inplace.crawling.client.dto.PlaceNode;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.kakao.config.KakaoApiProperties;
 
 @Slf4j
@@ -33,6 +35,18 @@ public class KakaoMapClient {
         }
 
         var placeInfo = searchPlaceInfo(placeId);
+        return PlaceNode.of(locationInfo, placeInfo);
+    }
+
+    public PlaceNode searchPlaceWithPlaceId(Long placeId) {
+        var placeInfo = searchPlaceInfo(String.valueOf(placeId));
+        var placeName = placeInfo.has("basicInfo") ? placeInfo.get("basicInfo").get("placenamefull").asText() : null;
+        if (Objects.isNull(placeName)) {
+            throw InplaceException.of(PlaceErrorCode.PLACE_LOCATION_ERROR);
+        }
+
+        var locationInfo = searchLocateInfo(placeName, null);
+
         return PlaceNode.of(locationInfo, placeInfo);
     }
 
