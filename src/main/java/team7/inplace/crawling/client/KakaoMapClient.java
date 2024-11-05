@@ -25,18 +25,18 @@ public class KakaoMapClient {
 
     public PlaceNode searchPlaceWithAddress(String address, String category) {
         log.info("KakaoMapClient search address: {}, category: {}", address, category);
-        var locationInfo = getLocateInfo(address, category);
+        var locationInfo = searchLocateInfo(address, category);
         var placeId = locationInfo.has("documents") && locationInfo.get("documents").hasNonNull(1) ?
                 locationInfo.get("documents").get(0).get("id").asText() : null;
         if (Objects.isNull(placeId)) {
             return null;
         }
 
-        var placeInfo = searchPlaceWithPlaceId(placeId);
+        var placeInfo = searchPlaceInfo(placeId);
         return PlaceNode.of(locationInfo, placeInfo);
     }
 
-    private JsonNode getLocateInfo(String address, String category) {
+    private JsonNode searchLocateInfo(String address, String category) {
         var url = KAKAO_MAP_LOCATE_SEARCH_URL + KAKAO_MAP_LOCATE_SEARCH_PARAMS.formatted(address);
         url = url + (Objects.isNull(category) ? "" : "&category_group_code=" + category);
 
@@ -48,7 +48,7 @@ public class KakaoMapClient {
         return response.getBody();
     }
 
-    public JsonNode searchPlaceWithPlaceId(String placeId) {
+    private JsonNode searchPlaceInfo(String placeId) {
         var url = KAKAO_MAP_PLACE_SEARCH_URL + placeId;
 
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(url, JsonNode.class);
