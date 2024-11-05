@@ -43,7 +43,8 @@ public class YoutubeCrawlingService {
                                 if (Objects.isNull(address)) {
                                     return null;
                                 }
-                                return kakaoMapClient.search(address, channel.getChannelType().getCode());
+                                return kakaoMapClient.searchPlaceWithAddress(address,
+                                        channel.getChannelType().getCode());
                             })
                             .toList();
 
