@@ -23,3 +23,6 @@ spring:
     refresh-token-expired-time: ${JWT_REFRESH_TOKEN_EXPIRED_TIME}
   redirect:
     front-end-url: ${FRONT_END_URL}
+  oauth:
+    password: ${OAUTH_PASSWORD}
+    salt: ${OAUTH_SALT}

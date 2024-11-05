@@ -9,6 +9,7 @@ import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.oauthToken.application.command.OauthTokenCommand;
 import team7.inplace.oauthToken.domain.OauthToken;
 import team7.inplace.oauthToken.persistence.OauthTokenRepository;
+import team7.inplace.security.util.TokenEncryptionUtil;
 import team7.inplace.user.domain.User;
 
 @Service
@@ -17,19 +18,20 @@ public class OauthTokenService {
 
     private final OauthTokenRepository oauthTokenRepository;
     private final EntityManager entityManager;
+    private final TokenEncryptionUtil tokenEncryptionUtil;
 
     @Transactional(readOnly = true)
     public String findOAuthTokenByUserId(Long userId) throws InplaceException {
-        return oauthTokenRepository.findByUserId(userId)
+        return tokenEncryptionUtil.decrypt(oauthTokenRepository.findByUserId(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.OAUTH_TOKEN_NOT_FOUND))
-            .getOauthToken();
+            .getOauthToken());
     }
 
     @Transactional
-    public void insertOauthToken(OauthTokenCommand oauthTokenCommand) {
+    public void insertOauthToken(OauthTokenCommand oauthTokenCommand) throws InplaceException {
         User userProxy = entityManager.getReference(User.class, oauthTokenCommand.userId());
         OauthToken oauthToken = OauthToken.of(
-            oauthTokenCommand.oauthToken(),
+            tokenEncryptionUtil.encrypt(oauthTokenCommand.oauthToken()),
             oauthTokenCommand.expiresAt(),
             userProxy
         );
@@ -38,12 +40,12 @@ public class OauthTokenService {
     }
 
     @Transactional
-    public void updateOauthToken(OauthTokenCommand oauthTokenCommand) {
+    public void updateOauthToken(OauthTokenCommand oauthTokenCommand) throws InplaceException {
         OauthToken oauthToken = oauthTokenRepository.findByUserId(oauthTokenCommand.userId())
             .orElseThrow(() -> InplaceException.of(UserErrorCode.OAUTH_TOKEN_NOT_FOUND));
 
         oauthToken.updateInfo(
-            oauthTokenCommand.oauthToken(),
+            tokenEncryptionUtil.encrypt(oauthTokenCommand.oauthToken()),
             oauthTokenCommand.expiresAt()
         );
     }
