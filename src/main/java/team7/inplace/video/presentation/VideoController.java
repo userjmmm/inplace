@@ -21,8 +21,8 @@ public class VideoController implements VideoControllerApiSpec {
 
     @GetMapping()
     public ResponseEntity<Page<VideoResponse>> readVideos(
-            @RequestParam String longitude,
-            @RequestParam String latitude,
+            @RequestParam(value = "longitude", defaultValue = "10.0") String longitude,
+            @RequestParam(value = "latitude", defaultValue = "10.0") String latitude,
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
         VideoSearchParams searchParams = VideoSearchParams.from(longitude, latitude);

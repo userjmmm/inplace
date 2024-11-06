@@ -24,18 +24,18 @@ public record VideoSearchParams(
     }
 
     private static String calculateTopLeftLongitude(String longitude) {
-        return String.valueOf(Double.parseDouble(longitude) - 2.5); // example shift
+        return String.valueOf(Double.parseDouble(longitude) - 5.0);
     }
 
     private static String calculateTopLeftLatitude(String latitude) {
-        return String.valueOf(Double.parseDouble(latitude) + 2.5); // example shift
+        return String.valueOf(Double.parseDouble(latitude) + 5.0);
     }
 
     private static String calculateBottomRightLongitude(String longitude) {
-        return String.valueOf(Double.parseDouble(longitude) + 2.5); // example shift
+        return String.valueOf(Double.parseDouble(longitude) + 5.0);
     }
 
     private static String calculateBottomRightLatitude(String latitude) {
-        return String.valueOf(Double.parseDouble(latitude) - 2.5); // example shift
+        return String.valueOf(Double.parseDouble(latitude) - 5.0);
     }
 }
