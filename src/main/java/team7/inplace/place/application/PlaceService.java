@@ -19,6 +19,7 @@ import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.placeMessage.application.command.PlaceMessageCommand;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 
@@ -145,5 +146,17 @@ public class PlaceService {
             .toList();
 
         return savedPlacesId;
+    }
+
+    public PlaceMessageCommand getPlaceMessageCommand(Long placeId) {
+        Place place = placeRepository.findById(placeId)
+            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+
+        Video video = videoRepository.findByPlaceId(placeId)
+            .stream().findFirst().orElse(null);
+
+        Influencer influencer = (video != null) ? video.getInfluencer() : null;
+
+        return PlaceMessageCommand.of(place, influencer, video);
     }
 }

@@ -23,8 +23,7 @@ public class PlaceMessageFacade {
         }
 
         String oauthToken = oauthTokenService.findOAuthTokenByUserId(AuthorizationUtil.getUserId());
-        PlaceMessageCommand placeMessageCommand = PlaceMessageCommand
-            .of(placeService.getPlaceDetailInfo(placeId));
+        PlaceMessageCommand placeMessageCommand = placeService.getPlaceMessageCommand(placeId);
         kakaoMessageService.sendLocationMessageToMe(oauthToken, placeMessageCommand);
     }
 }

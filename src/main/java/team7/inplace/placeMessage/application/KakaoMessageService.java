@@ -26,6 +26,8 @@ public class KakaoMessageService {
             .header("Authorization", "Bearer " + oauthToken)
             .body(BodyInserters.fromFormData(
                 kakaoMessageMaker.createLocationTemplate(placeMessageCommand)))
-            .retrieve().bodyToMono(String.class).subscribe();
+            .retrieve()
+            .bodyToMono(String.class)
+            .subscribe();
     }
 }

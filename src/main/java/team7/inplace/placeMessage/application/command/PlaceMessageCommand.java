@@ -1,44 +1,30 @@
 package team7.inplace.placeMessage.application.command;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import team7.inplace.place.application.dto.PlaceDetailInfo;
-import team7.inplace.place.domain.Category;
+import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.place.domain.Place;
 import team7.inplace.video.application.AliasUtil;
+import team7.inplace.video.domain.Video;
 
 public record PlaceMessageCommand(
     Long placeId,
     String title,
     String address,
-    String videoUrl,
     String imageUrl,
     String description
 ) {
 
-    private static final String REGEX = "(?:https?:\\/\\/)?(?:www\\.)?youtu(?:be\\.com\\/watch\\?v=|\\.be\\/)([\\w-]*)(&(amp;)?[\\w?=]*)?";
-
-    public static PlaceMessageCommand of(PlaceDetailInfo placeDetailInfo) {
+    public static PlaceMessageCommand of(Place place, Influencer influencer, Video video) {
+        String influencerName = influencer != null ? influencer.getName() : null;
+        String videoUUID = video != null ? video.getVideoUUID() : null;
         return new PlaceMessageCommand(
-            placeDetailInfo.placeInfo().placeId(),
-            placeDetailInfo.placeInfo().placeName(),
-            placeDetailInfo.placeInfo().address().getAddress(),
-            placeDetailInfo.videoUrl(),
-            videoUrlToImgUrl(placeDetailInfo.videoUrl()),
+            place.getId(),
+            place.getName(),
+            place.getAddress().toString(),
+            String.format("https://img.youtube.com/vi/%s/maxresdefault.jpg", videoUUID),
             AliasUtil.makeAlias(
-                placeDetailInfo.placeInfo().influencerName(),
-                Category.valueOf(placeDetailInfo.placeInfo().category())
+                influencerName,
+                place.getCategory()
             )
         );
-    }
-
-    public static String videoUrlToImgUrl(String videoUrl) {
-        Matcher matcher = Pattern.compile(REGEX).matcher(videoUrl);
-
-        if (matcher.find()) {
-            String videoId = matcher.group(1);
-            return String.format("https://img.youtube.com/vi/%s/maxresdefault.jpg", videoId);
-        } else {
-            return null;
-        }
     }
 }
