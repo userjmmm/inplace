@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import team7.inplace.LikedPlace.domain.LikedPlace;
 import team7.inplace.LikedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.global.exception.InplaceException;
@@ -131,7 +130,6 @@ public class PlaceService {
             video = videos.get(0);
         }
         Influencer influencer = (video != null) ? video.getInfluencer() : null;
-
         return PlaceDetailInfo.from(place, influencer, video, isLikedPlace(place.getId()));
     }
 
@@ -167,34 +165,34 @@ public class PlaceService {
 
     private LikedPlace findOrCreateLikedPlace(Long placeId, boolean likes) {
 
-        String username = getUsername().orElseThrow(
-            () -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = getUserId().orElseThrow(
+            () -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY)
+        );
 
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
-
-        Place place = placeRepository.findById(placeId)
-            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
-
-        LikedPlace likedPlace = likedPlaceRepository.findByUserIdAndPlaceId(user.getId(),
-                place.getId())
-            .orElseGet(() -> new LikedPlace(user, place));
+        LikedPlace likedPlace = likedPlaceRepository.findByUserIdAndPlaceId(userId, placeId)
+            .orElseGet(() -> {
+                // 존재하지 않는 경우에만 Place 조회 후 LikedPlace 생성
+                Place place = placeRepository.findById(placeId)
+                    .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+                User user = userRepository.findById(userId)
+                    .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
+                return new LikedPlace(user, place);
+            });
 
         likedPlace.updateLike(likes);
         likedPlaceRepository.save(likedPlace);
-        
+
         return likedPlace;
     }
 
-    private Optional<String> getUsername() {
-        String username = AuthorizationUtil.getUsername();
-        return StringUtils.hasText(username) ? Optional.of(username) : Optional.empty();
+    private Optional<Long> getUserId() {
+        Long userId = AuthorizationUtil.getUserId();
+        return userId != null ? Optional.of(userId) : Optional.empty();
     }
 
     private boolean isLikedPlace(Long placeId) {
-        return getUsername()
-            .flatMap(userRepository::findByUsername)
-            .flatMap(user -> likedPlaceRepository.findByUserIdAndPlaceId(user.getId(), placeId))
+        return getUserId()
+            .flatMap(userId -> likedPlaceRepository.findByUserIdAndPlaceId(userId, placeId))
             .map(LikedPlace::isLiked)
             .orElse(false);
     }
