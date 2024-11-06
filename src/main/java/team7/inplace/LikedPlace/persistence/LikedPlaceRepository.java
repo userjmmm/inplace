@@ -6,5 +6,5 @@ import team7.inplace.LikedPlace.domain.LikedPlace;
 
 public interface LikedPlaceRepository extends JpaRepository<LikedPlace, Long> {
 
-    public Optional<LikedPlace> findByUserIdAndPlaceId(Long userId, Long placeId);
+    Optional<LikedPlace> findByUserIdAndPlaceId(Long userId, Long placeId);
 }
