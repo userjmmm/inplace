@@ -45,8 +45,15 @@
 </table>
 
 <div>
-    <button th:disabled="${isFirst}" th:href="@{/videos(page=${currentPage - 1}, size=${pageSize})}">Previous</button>
-    <button th:disabled="${isLast}" th:href="@{/videos(page=${currentPage + 1}, size=${pageSize})}">Next</button>
+    <div>
+        <!-- Previous 링크 -->
+        <a th:if="${!isFirst}"
+           th:href="@{/admin/video(page=${currentPage - 1}, size=10)}">Previous</a>
+
+        <!-- Next 링크 -->
+        <a th:if="${!isLast}"
+           th:href="@{/admin/video(page=${currentPage + 1}, size=10)}">Next</a>
+    </div>
 </div>
 
 <!-- Modal for Video and Place Search -->
