@@ -25,6 +25,10 @@ import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.place.presentation.dto.PlaceDetailResponse;
 import team7.inplace.place.presentation.dto.PlaceLikeRequest;
 import team7.inplace.place.presentation.dto.PlacesResponse;
+import team7.inplace.place.presentation.dto.ReviewRequest;
+import team7.inplace.place.presentation.dto.ReviewResponse;
+import team7.inplace.review.application.ReviewService;
+import team7.inplace.review.application.dto.ReviewCommand;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +37,7 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     private final PlaceService placeService;
     private final CategoryService categoryService;
+    private final ReviewService reviewService;
 
     @GetMapping
     public ResponseEntity<PlacesResponse> getPlaces(
@@ -87,5 +92,24 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<Void> likeToPlace(@RequestBody PlaceLikeRequest param) {
         placeService.likeToPlace(new PlaceLikeCommand(param.placeId(), param.likes()));
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/reviews")
+    public ResponseEntity<Void> createReview(@PathVariable("id") Long placeId,
+        @RequestBody ReviewRequest request) {
+        ReviewCommand reviewCommand = request.toCommand();
+
+        reviewService.createReview(placeId, reviewCommand);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}/reviews")
+    public ResponseEntity<Page<ReviewResponse>> getReviews(
+        @PathVariable("id") Long placeId,
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        Page<ReviewResponse> reviews = reviewService.getReviews(placeId, pageable)
+            .map(ReviewResponse::from);
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 }
