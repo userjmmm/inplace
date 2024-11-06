@@ -163,7 +163,6 @@ public class PlaceService {
 
     public void likeToPlace(PlaceLikeCommand comm) {
         LikedPlace likedPlace = findOrCreateLikedPlace(comm.placeId(), comm.likes());
-        likedPlaceRepository.save(likedPlace);
     }
 
     private LikedPlace findOrCreateLikedPlace(Long placeId, boolean likes) {
@@ -182,7 +181,8 @@ public class PlaceService {
             .orElseGet(() -> new LikedPlace(user, place));
 
         likedPlace.updateLike(likes);
-
+        likedPlaceRepository.save(likedPlace);
+        
         return likedPlace;
     }
 
