@@ -24,6 +24,10 @@ public record PlaceInfo(
         String address3
     ) {
 
+        public String getAddress() {
+            return address1 + " " + address2 + " " + address3;
+        }
+
         public static AddressInfo of(Address address) {
             return new PlaceInfo.AddressInfo(
                 address.getAddress1(),
