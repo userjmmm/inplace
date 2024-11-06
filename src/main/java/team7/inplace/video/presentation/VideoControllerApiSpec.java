@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.video.presentation.dto.VideoResponse;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
 
@@ -15,7 +16,8 @@ public interface VideoControllerApiSpec {
             description = "Parameter로 입력받은 위치의 주변 장소 Video를 조회합니다."
     )
     ResponseEntity<Page<VideoResponse>> readVideos(
-            @ModelAttribute VideoSearchParams searchParams,
+            @RequestParam String longitude,
+            @RequestParam String latitude,
             @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 

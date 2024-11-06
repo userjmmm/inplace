@@ -6,10 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import team7.inplace.video.application.VideoFacade;
 import team7.inplace.video.application.VideoService;
 import team7.inplace.video.presentation.dto.VideoResponse;
@@ -24,9 +21,11 @@ public class VideoController implements VideoControllerApiSpec {
 
     @GetMapping()
     public ResponseEntity<Page<VideoResponse>> readVideos(
-            @ModelAttribute VideoSearchParams searchParams,
+            @RequestParam String longitude,
+            @RequestParam String latitude,
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
+        VideoSearchParams searchParams = VideoSearchParams.from(longitude, latitude);
         Page<VideoResponse> videoResponses = videoService.getVideosBySurround(searchParams, pageable)
                 .map(VideoResponse::from);
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
