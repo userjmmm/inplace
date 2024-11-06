@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Getter
 public enum LikedPlaceErrorCode implements ErrorCode {
-    NOT_FOUND(HttpStatus.NOT_FOUND, "L001", "Can't find such liked place info");
+    NOT_FOUND(HttpStatus.NOT_FOUND, "L001", "LikedPlace 정보를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String errorCode;
