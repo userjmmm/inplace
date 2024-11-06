@@ -66,4 +66,8 @@ public class Video {
         this.viewCountIncrease = viewCount - this.viewCount;
         this.viewCount = viewCount;
     }
+
+    public void addPlace(Place place) {
+        this.place = place;
+    }
 }
