@@ -1,64 +1,88 @@
 <!DOCTYPE html>
-<html lang="KR">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>인플레이스 어드민 페이지</title>
+    <title>Video List</title>
     <link rel="stylesheet" href="/css/style.css">
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=c6eb498481bef28050981d6c3f49357e&libraries=services"></script>
+    <script type="text/javascript"
+            src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=c6eb498481bef28050981d6c3f49357e&libraries=services"></script>
+    <script src="/js/video.js"></script>
 </head>
 <body>
 <div class="header">
     <a href="/" class="header-link">Home</a>
     <a href="/admin" class="header-link">Admin</a>
 </div>
-<h1>Administrator Manage Page</h1>
-<table id="video-data">
+
+<h1>Video List</h1>
+<table>
     <thead>
     <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Thumbnail</th>
-        <th scope="col">Action</th>
+        <th>Video ID</th>
+        <th>Thumbnail</th>
+        <th>Action</th>
     </tr>
     </thead>
-
-    <tbody id="video-tbody">
-
+    <tbody>
+    <tr th:each="video : ${videos}">
+        <td th:text="${video.id}">Video ID</td>
+        <td>
+            <img th:src="'https://img.youtube.com/vi/' + ${video.videoUUID} + '/0.jpg'"
+                 alt="Video Thumbnail" style="cursor:pointer;width:100px;"
+                 th:attr="data-video-url=${video.videoUUID}, data-video-id=${video.id}"
+                 onclick="openModal(this)"/>
+        </td>
+        <td>
+            <button
+                    th:attr="data-video-url=${video.videoUUID}, data-video-id=${video.id}"
+                    onclick="openModal(this)">
+                장소 등록
+            </button>
+        </td>
+    </tr>
     </tbody>
 </table>
 
 <div>
-    <button id="prevPage">Previous</button>
-    <button id="search" onclick="getNullVideos(currentPage)">검색</button>
-    <button id="nextPage">Next</button>
+    <div>
+        <!-- Previous 링크 -->
+        <a th:if="${!isFirst}"
+           th:href="@{/admin/video(page=${currentPage - 1}, size=10)}">Previous</a>
+
+        <!-- Next 링크 -->
+        <a th:if="${!isLast}"
+           th:href="@{/admin/video(page=${currentPage + 1}, size=10)}">Next</a>
+    </div>
 </div>
 
-<!-- Modal Structure -->
+<!-- Modal for Video and Place Search -->
 <div id="placeSearchModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>장소 검색</h2>
+
+        <iframe id="videoIframe" width="560" height="315" src=""
+                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+
+        <!-- Place search form -->
         <form onsubmit="searchPlaces(); return false;">
-            키워드 : <input type="text" value="이태원 맛집" id="keyword" size="15">
+            키워드: <input type="text" id="keyword" placeholder="장소를 입력하세요"/>
             <button type="submit">검색하기</button>
         </form>
-        <table id="search-data">
+
+        <table id="search-results">
             <thead>
             <tr>
-                <th scope="col">장소명</th>
-                <th scope="col">주소</th>
-                <th scope="col">ID</th>
-                <th scope="col">등록</th>
+                <th>장소명</th>
+                <th>주소</th>
+                <th>등록</th>
             </tr>
             </thead>
-
-            <tbody id="search-tbody">
-
-            </tbody>
+            <tbody id="search-tbody"></tbody>
         </table>
     </div>
 </div>
-
-<script src="/js/video.js"></script>
 </body>
 </html>

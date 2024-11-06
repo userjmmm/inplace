@@ -38,6 +38,12 @@ public class VideoFacade {
         videoService.updateVideoViews(videoCommands);
     }
 
+    @Transactional
+    public void addPlaceInfo(Long videoId, PlacesCommand.Create placeCommand) {
+        var placeId = placeService.createPlace(placeCommand);
+        videoService.addPlaceInfo(videoId, placeId);
+    }
+
     public Page<VideoInfo> getVideosByMyInfluencer(Pageable pageable) {
         // User 정보를 쿠키에서 추출
         Long userId = AuthorizationUtil.getUserId();
