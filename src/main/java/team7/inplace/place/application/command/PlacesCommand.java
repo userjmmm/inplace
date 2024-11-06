@@ -89,26 +89,26 @@ public class PlacesCommand {
             var basicInfo = placeNode.get("basicInfo");
 
             String placeName =
-                    basicInfo.has("placenamefull") ? basicInfo.get("placenamefull").asText() : "";
+                    basicInfo.has("placenamefull") ? basicInfo.get("placenamefull").asText() : " ";
             String facility = basicInfo.has("facilityInfo")
-                    ? basicInfo.get("facilityInfo").toString() : "";
+                    ? basicInfo.get("facilityInfo").toString() : " ";
 
             String menuImgUrl =
-                    basicInfo.has("mainphotourl") ? basicInfo.get("mainphotourl").asText() : "";
+                    basicInfo.has("mainphotourl") ? basicInfo.get("mainphotourl").asText() : " ";
             String category =
                     basicInfo.has("category") && basicInfo.get("category").has("cate1name")
-                            ? basicInfo.get("category").get("cate1name").asText() : "";
+                            ? basicInfo.get("category").get("cate1name").asText() : " ";
             String address =
                     basicInfo.has("address") && basicInfo.get("address").has("region") && basicInfo.get(
                                     "address")
                             .get("region").has("newaddrfullname")
                             ? basicInfo.get("address").get("region").get("newaddrfullname").asText()
-                            : "";
+                            : " ";
             String addressDetail =
                     basicInfo.has("address") && basicInfo.get("address").has("newaddr")
                             && basicInfo.get("address")
                             .get("newaddr").has("newaddrfull")
-                            ? basicInfo.get("address").get("newaddr").get("newaddrfull").asText() : "";
+                            ? basicInfo.get("address").get("newaddr").get("newaddrfull").asText() : " ";
 
             String x =
                     locationNode.has("documents") && locationNode.get("documents").get(0).has("x")
@@ -227,7 +227,7 @@ public class PlacesCommand {
 
         public static Menu from(JsonNode menuNode) {
             if (Objects.isNull(menuNode)) {
-                return new Menu("", "0", false, "", "");
+                return new Menu(" ", "0", false, " ", " ");
             }
             String menuName = menuNode.has("menu") ? menuNode.get("menu").asText() : " ";
             String menuPrice = menuNode.has("price") ? menuNode.get("price").asText() : " ";
