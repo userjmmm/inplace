@@ -12,7 +12,7 @@ import team7.inplace.video.presentation.dto.VideoSearchParams;
 public interface VideoControllerApiSpec {
     @Operation(
             summary = "내 주변 그곳 ",
-            description = "Parameter로 입력받은 위치의 주변 장소들을 조회합니다."
+            description = "Parameter로 입력받은 위치의 주변 장소 Video를 조회합니다."
     )
     ResponseEntity<Page<VideoResponse>> readVideos(
             @ModelAttribute VideoSearchParams searchParams,
