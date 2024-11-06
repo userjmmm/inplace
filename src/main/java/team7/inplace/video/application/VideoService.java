@@ -1,8 +1,5 @@
 package team7.inplace.video.application;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,6 +18,10 @@ import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +61,14 @@ public class VideoService {
     public Page<VideoInfo> getAllVideosDesc(Pageable pageable) {
         // id를 기준으로 내림차순 정렬하여 비디오 정보 불러오기
         Page<Video> videos = videoRepository.findAllByOrderByIdDesc(pageable);
+
+        // DTO 형식에 맞게 대입
+        return videos.map(this::videoToInfo);
+    }
+
+    public Page<VideoInfo> getCoolVideo(Pageable pageable) {
+        // 조회수 증가량을 기준으로 오름차순 정렬하여 비디오 정보 불러오기
+        Page<Video> videos = videoRepository.findVideosByOrderByViewCountIncreaseDesc(pageable);
 
         // DTO 형식에 맞게 대입
         return videos.map(this::videoToInfo);
