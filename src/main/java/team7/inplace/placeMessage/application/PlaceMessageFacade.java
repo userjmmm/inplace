@@ -1,5 +1,7 @@
 package team7.inplace.placeMessage.application;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.global.exception.InplaceException;
@@ -16,6 +18,7 @@ public class PlaceMessageFacade {
     private final PlaceService placeService;
     private final OauthTokenService oauthTokenService;
     private final KakaoMessageService kakaoMessageService;
+    private final ScheduledExecutorService scheduledExecutorService;
 
     public void sendPlaceMessage(Long placeId) throws InplaceException {
         if (AuthorizationUtil.isNotLoginUser()) {
@@ -25,5 +28,6 @@ public class PlaceMessageFacade {
         String oauthToken = oauthTokenService.findOAuthTokenByUserId(AuthorizationUtil.getUserId());
         PlaceMessageCommand placeMessageCommand = placeService.getPlaceMessageCommand(placeId);
         kakaoMessageService.sendLocationMessageToMe(oauthToken, placeMessageCommand);
+        scheduledExecutorService.schedule(() -> System.out.println("hello"), 3, TimeUnit.SECONDS);
     }
 }
