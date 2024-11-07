@@ -3,6 +3,8 @@ package team7.inplace.place.application.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.LocalDateTime;
 import java.util.List;
 import team7.inplace.influencer.domain.Influencer;
@@ -40,13 +42,17 @@ public record PlaceDetailInfo(
 
     private static JsonNode facilityTree(String facility) {
         ObjectMapper objectMapper = new ObjectMapper();
+        if (facility == null || facility.isBlank()) {
+            ObjectNode noDataNode = JsonNodeFactory.instance.objectNode();
+            noDataNode.put("message", "NO DATA");
+            return noDataNode;
+        }
         try {
-            if (facility == null || facility.isEmpty()) {
-                return objectMapper.createObjectNode();
-            }
             return objectMapper.readTree(facility);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse facility JSON", e);
+            ObjectNode noDataNode = JsonNodeFactory.instance.objectNode();
+            noDataNode.put("message", "NO DATA");
+            return noDataNode;
         }
     }
 
