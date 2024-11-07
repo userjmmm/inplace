@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -97,6 +98,8 @@ class PlaceServiceTest {
 
     private MockedStatic<AuthorizationUtil> authorizationUtil;
 
+    ObjectMapper objectMapper = new ObjectMapper();
+
     @BeforeEach
     public void init() throws NoSuchFieldException, IllegalAccessException {
         Field placeIdField = Place.class.getDeclaredField("id");
@@ -151,7 +154,7 @@ class PlaceServiceTest {
         );
 
         place4 = new Place("Place 4",
-            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "",
             "menuImg.url", "일식",
             "Address 1|Address 2|Address 3",
             "50.0", "50.0",
@@ -405,6 +408,7 @@ class PlaceServiceTest {
             expected.placeInfo().influencerName());
         assertThat(result.placeInfo().likes()).isEqualTo(
             expected.placeInfo().likes());
+        assertThat(result.facilityInfo()).isEqualTo(objectMapper.createObjectNode());
     }
 
     @Test
