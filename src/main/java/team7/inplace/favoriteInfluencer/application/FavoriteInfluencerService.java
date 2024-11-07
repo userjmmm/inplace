@@ -10,7 +10,7 @@ import team7.inplace.favoriteInfluencer.domain.FavoriteInfluencer;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
-import team7.inplace.global.exception.code.UserErroCode;
+import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.security.util.AuthorizationUtil;
@@ -33,7 +33,7 @@ public class FavoriteInfluencerService {
         }
 
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         Influencer influencer = influencerRepository.findById(command.influencerId()).orElseThrow();
 
         FavoriteInfluencer favorite = favoriteRepository.findByUserIdAndInfluencerId(userId,
@@ -52,7 +52,7 @@ public class FavoriteInfluencerService {
         }
 
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         List<Influencer> influencers = influencerRepository.findAllById(command.influencerIds());
 
