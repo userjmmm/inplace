@@ -20,7 +20,8 @@ public record PlaceDetailInfo(
     String videoUrl
 ) {
 
-    public static PlaceDetailInfo from(Place place, Influencer influencer, Video video, boolean isLiked) {
+    public static PlaceDetailInfo from(Place place, Influencer influencer, Video video,
+        boolean isLiked) {
         String influencerName = (influencer != null) ? influencer.getName() : "";
         String videoUrl = (video != null) ? video.getVideoUrl() : "";
 
@@ -40,6 +41,9 @@ public record PlaceDetailInfo(
     private static JsonNode facilityTree(String facility) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
+            if (facility == null || facility.isEmpty()) {
+                return objectMapper.createObjectNode();
+            }
             return objectMapper.readTree(facility);
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse facility JSON", e);
