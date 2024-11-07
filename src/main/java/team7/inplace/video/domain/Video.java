@@ -59,7 +59,7 @@ public class Video {
     public void updateViewCount(Long viewCount) {
         if (this.viewCount == -1L) {
             this.viewCount = viewCount;
-            this.viewCountIncrease = 0L;
+            this.viewCountIncrease = viewCount;
             return;
         }
 
