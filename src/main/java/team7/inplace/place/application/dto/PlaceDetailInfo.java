@@ -20,19 +20,19 @@ public record PlaceDetailInfo(
     String videoUrl
 ) {
 
-    public static PlaceDetailInfo from(Place place, Influencer influencer, Video video) {
+    public static PlaceDetailInfo from(Place place, Influencer influencer, Video video, boolean isLiked) {
         String influencerName = (influencer != null) ? influencer.getName() : "";
         String videoUrl = (video != null) ? video.getVideoUrl() : "";
 
         return new PlaceDetailInfo(
-            PlaceInfo.of(place, influencerName),
+            PlaceInfo.of(place, influencerName, isLiked),
             facilityTree(place.getFacility()),
             MenuInfos.of(
                 place.getMenuboardphotourlList(),
                 place.getMenus(),
                 place.getMenuUpdatedAt()),
             OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
-            PlaceLikes.of(null), //추후 추가 예정
+            PlaceLikes.of(isLiked),
             videoUrl
         );
     }
@@ -123,7 +123,7 @@ public record PlaceDetailInfo(
             if (likes == null) {
                 return new PlaceLikes(0, 0);
             }
-            if (likes == true) {
+            if (likes) {
                 return new PlaceLikes(1, 0);
             }
             return new PlaceLikes(0, 1);
