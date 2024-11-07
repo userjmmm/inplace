@@ -135,4 +135,12 @@ public class VideoService {
     private boolean hasNoPlace(Long placeId) {
         return placeId == -1;
     }
+
+    public void addPlaceInfo(Long videoId, Long placeId) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+        video.addPlace(place);
+    }
 }

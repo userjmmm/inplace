@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
-import team7.inplace.influencer.presentation.dto.InfluencerLikeRequest;
 import team7.inplace.influencer.presentation.dto.InfluencerListResponse;
 import team7.inplace.influencer.presentation.dto.InfluencerRequest;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
@@ -66,11 +65,5 @@ public class InfluencerController implements InfluencerControllerApiSpec {
         influencerService.deleteInfluencer(id);
 
         return new ResponseEntity<>(id, HttpStatus.OK);
-    }
-
-    @PostMapping("/likes")
-    public ResponseEntity<Void> likeToInfluencer(@RequestBody InfluencerLikeRequest param) {
-        influencerService.likeToInfluencer(param);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
