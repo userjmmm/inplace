@@ -40,7 +40,6 @@ public class VideoController implements VideoControllerApiSpec {
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
-    // 조회수 반환 기능 개발 시 개발
     @GetMapping("/cool")
     public ResponseEntity<Page<VideoResponse>> readByCool(
             @PageableDefault(page = 0, size = 10) Pageable pageable
