@@ -31,8 +31,7 @@ public class VideoService {
     private final PlaceRepository placeRepository;
     private final InfluencerRepository influencerRepository;
 
-    public Page<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams,
-                                               Pageable pageable) {
+    public Page<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
         // Place 엔티티 조회
         Page<Place> places = placeRepository.findPlacesByDistanceAndFilters(
                 videoSearchParams.topLeftLongitude(),
@@ -41,8 +40,8 @@ public class VideoService {
                 videoSearchParams.bottomRightLatitude(),
                 videoSearchParams.longitude(),
                 videoSearchParams.latitude(),
-                new ArrayList<>(),
-                new ArrayList<>(),
+                null,
+                null,
                 pageable
         );
         // 조회된 엔티티가 비어있는지 아닌지 확인
@@ -55,7 +54,7 @@ public class VideoService {
             videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place)
                     .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND)));
         }
-        return new PageImpl<>(videos).map(this::videoToInfo);
+        return new PageImpl<>(videos, pageable, videos.size()).map(this::videoToInfo);
     }
 
     public Page<VideoInfo> getAllVideosDesc(Pageable pageable) {
