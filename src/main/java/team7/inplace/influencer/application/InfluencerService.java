@@ -5,18 +5,12 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.favoriteInfluencer.domain.FavoriteInfluencer;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
-import team7.inplace.global.exception.code.UserErroCode;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
-import team7.inplace.influencer.presentation.dto.InfluencerLikeRequest;
 import team7.inplace.security.util.AuthorizationUtil;
-import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
 
 @RequiredArgsConstructor
@@ -73,24 +67,5 @@ public class InfluencerService {
         Influencer influencer = influencerRepository.findById(id).orElseThrow();
 
         influencerRepository.delete(influencer);
-    }
-
-    @Transactional
-    public void likeToInfluencer(InfluencerLikeRequest param) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
-
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
-        Influencer influencer = influencerRepository.findById(param.influencerId()).orElseThrow();
-
-        FavoriteInfluencer favorite = favoriteRepository.findByUserIdAndInfluencerId(user.getId(),
-                influencer.getId())
-            .orElseGet(() -> new FavoriteInfluencer(user, influencer)); // 존재하지 않으면 새로 생성
-
-        favorite.updateLike(param.likes());
-        favoriteRepository.save(favorite);
     }
 }
