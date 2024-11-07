@@ -23,7 +23,7 @@ public record LocationTemplate(
             OBJECT_TYPE,
             placeMessageCommand.address(),
             placeMessageCommand.title(),
-            Content.of(placeMessageCommand, link),
+            Content.of(placeMessageCommand, placeMessageCommand.description(), link),
             List.of(Button.of(BUTTON_NAME, link))
         );
     }

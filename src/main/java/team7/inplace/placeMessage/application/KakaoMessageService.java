@@ -30,4 +30,17 @@ public class KakaoMessageService {
             .bodyToMono(String.class)
             .subscribe();
     }
+
+    public void sendFeedMessageToMe(String oauthToken,
+        PlaceMessageCommand placeMessageCommand) {
+        webClient.post()
+            .uri(URI.create(kakaoApiProperties.sendMessageToMeUrl()))
+            .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .header("Authorization", "Bearer " + oauthToken)
+            .body(BodyInserters.fromFormData(
+                kakaoMessageMaker.createFeedTemplate(placeMessageCommand)))
+            .retrieve()
+            .bodyToMono(String.class)
+            .subscribe();
+    }
 }

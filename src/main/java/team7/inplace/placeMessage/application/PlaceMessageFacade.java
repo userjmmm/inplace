@@ -28,6 +28,8 @@ public class PlaceMessageFacade {
         String oauthToken = oauthTokenService.findOAuthTokenByUserId(AuthorizationUtil.getUserId());
         PlaceMessageCommand placeMessageCommand = placeService.getPlaceMessageCommand(placeId);
         kakaoMessageService.sendLocationMessageToMe(oauthToken, placeMessageCommand);
-        scheduledExecutorService.schedule(() -> System.out.println("hello"), 3, TimeUnit.SECONDS);
+        scheduledExecutorService.schedule(
+            () -> kakaoMessageService.sendFeedMessageToMe(oauthToken, placeMessageCommand), 3,
+            TimeUnit.DAYS);
     }
 }

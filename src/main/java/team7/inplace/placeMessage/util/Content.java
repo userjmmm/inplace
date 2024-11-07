@@ -17,13 +17,14 @@ public record Content(
     private static final Integer DEFAULT_IMAGE_WIDTH = 1280;
     private static final Integer DEFAULT_IMAGE_HEIGHT = 720;
 
-    public static Content of(PlaceMessageCommand placeMessageCommand, Link link) {
+    public static Content of(PlaceMessageCommand placeMessageCommand, String description,
+        Link link) {
         return new Content(
             placeMessageCommand.title(),
             placeMessageCommand.imageUrl(),
             DEFAULT_IMAGE_WIDTH,
             DEFAULT_IMAGE_HEIGHT,
-            placeMessageCommand.description(),
+            description,
             link);
     }
 }
