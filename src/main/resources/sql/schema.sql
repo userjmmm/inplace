@@ -28,7 +28,7 @@ create table places_menuboardphotourl_list
     places_id              bigint       not null,
     menuboardphotourl_list varchar(255) null,
     constraint FKtmhlcak5ftr3ci4lkvj3u9hi4
-        foreign key (places_id) references inplace.places (id)
+        foreign key (places_id) references inplace.places (id) ON DELETE CASCADE
 );
 
 create table places_menus
@@ -40,7 +40,7 @@ create table places_menus
     menu_img_url varchar(255)     null,
     price        varchar(255)     null,
     constraint FK25iaekuierywsqcdisrunisvv
-        foreign key (places_id) references inplace.places (id)
+        foreign key (places_id) references inplace.places (id) ON DELETE CASCADE
 );
 
 create table places_off_days
@@ -50,7 +50,7 @@ create table places_off_days
     temporary_holidays varchar(255) null,
     week_and_day       varchar(255) null,
     constraint FKpepqysie7r3tcu8s0lmc491s2
-        foreign key (places_id) references inplace.places (id)
+        foreign key (places_id) references inplace.places (id) ON DELETE CASCADE
 );
 
 create table places_open_periods
@@ -60,7 +60,7 @@ create table places_open_periods
     time_name   varchar(255) null,
     timese      varchar(255) null,
     constraint FKra4w0ld7a59n8xaq03ig8kckl
-        foreign key (places_id) references inplace.places (id)
+        foreign key (places_id) references inplace.places (id) ON DELETE CASCADE
 );
 
 create table user
