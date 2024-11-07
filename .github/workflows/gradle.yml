@@ -130,10 +130,10 @@ jobs:
       # 이전 컨테이너 정리
       - name: Remove previous docker container
         run: |
-          if [[ "${{ env.CURRENT_VERSION }}" != "none" ]]; then 
-            echo "Removing previous container inplace-${{ env.CURRENT_VERSION }}" 
-            sudo docker stop inplace-${{ env.CURRENT_VERSION }} || true 
-            sudo docker rm inplace-${{ env.CURRENT_VERSION }} || true 
+          if [[ "${{ env.current_version }}" != "none" ]]; then 
+            echo "Removing previous container inplace-${{ env.current_version }}" 
+            sudo docker stop inplace-${{ env.current_version }} || true 
+            sudo docker rm inplace-${{ env.current_version }} || true 
           else 
             echo "No active container to remove" 
           fi
