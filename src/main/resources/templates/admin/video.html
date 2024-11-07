@@ -1,98 +1,88 @@
 <!DOCTYPE html>
-<html lang="KR">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>인플레이스 어드민 페이지</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>Video List</title>
+    <link rel="stylesheet" href="/css/style.css">
     <script type="text/javascript" src="http://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript"
+            src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=c6eb498481bef28050981d6c3f49357e&libraries=services"></script>
+    <script src="/js/video.js"></script>
 </head>
 <body>
-<div class="header" id="header">
-
+<div class="header">
+    <a href="/" class="header-link">Home</a>
+    <a href="/admin" class="header-link">Admin</a>
 </div>
-<h1>Administrator Manage Page</h1>
-<table id="video-data">
+
+<h1>Video List</h1>
+<table>
     <thead>
     <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Url</th>
-        <th scope="col">PlaceId</th>
-        <th scope="col">PlaceName</th>
+        <th>Video ID</th>
+        <th>Thumbnail</th>
+        <th>Action</th>
     </tr>
     </thead>
-
-    <tbody id="video-tbody">
-
+    <tbody>
+    <tr th:each="video : ${videos}">
+        <td th:text="${video.id}">Video ID</td>
+        <td>
+            <img th:src="'https://img.youtube.com/vi/' + ${video.videoUUID} + '/0.jpg'"
+                 alt="Video Thumbnail" style="cursor:pointer;width:100px;"
+                 th:attr="data-video-url=${video.videoUUID}, data-video-id=${video.id}"
+                 onclick="openModal(this)"/>
+        </td>
+        <td>
+            <button
+                    th:attr="data-video-url=${video.videoUUID}, data-video-id=${video.id}"
+                    onclick="openModal(this)">
+                장소 등록
+            </button>
+        </td>
+    </tr>
     </tbody>
 </table>
 
 <div>
-    <button id="prevPage">Previous</button>
-    <button id="search" onclick="getNullVideos(currentPage)">검색</button>
-    <button id="nextPage">Next</button>
+    <div>
+        <!-- Previous 링크 -->
+        <a th:if="${!isFirst}"
+           th:href="@{/admin/video(page=${currentPage - 1}, size=10)}">Previous</a>
+
+        <!-- Next 링크 -->
+        <a th:if="${!isLast}"
+           th:href="@{/admin/video(page=${currentPage + 1}, size=10)}">Next</a>
+    </div>
+</div>
+
+<!-- Modal for Video and Place Search -->
+<div id="placeSearchModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>장소 검색</h2>
+
+        <iframe id="videoIframe" width="560" height="315" src=""
+                frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+
+        <!-- Place search form -->
+        <form onsubmit="searchPlaces(); return false;">
+            키워드: <input type="text" id="keyword" placeholder="장소를 입력하세요"/>
+            <button type="submit">검색하기</button>
+        </form>
+
+        <table id="search-results">
+            <thead>
+            <tr>
+                <th>장소명</th>
+                <th>주소</th>
+                <th>등록</th>
+            </tr>
+            </thead>
+            <tbody id="search-tbody"></tbody>
+        </table>
+    </div>
 </div>
 </body>
-<script>
-    var currentPage = 0;
-    var pageSize = 10;
-
-    function getNullVideos(page) {
-        $.ajax({
-            url: '/videos/null?page=' + page + '&size=' + pageSize,
-            method: 'GET',
-            success: function (data) {
-                var contents = data.content;
-                var tbody = $('#video-tbody');
-                tbody.empty(); // 초기화
-
-                // 데이터에 따라 테이블 행을 생성
-                contents.forEach(function (video) {
-                    imageUrl = "https://img.youtube.com/vi/" + getYouTubeVideoId(video.videoUrl) + "/0.jpg"
-                    // 한 행의 내용
-                    var row = `
-                        <tr>
-                            <td>${video.videoId}</td>
-                            <td><img src="${imageUrl}" alt="유튜브썸네일"></td>
-                            <td>${video.place.placeId}</td>
-                            <td>${video.place.placeName}</td>
-                        </tr>
-                    `;
-                    tbody.append(row);
-
-                    currentPage = data.number;
-
-                    $('#prevPage').prop('disabled', data.first);
-                    $('#nextPage').prop('disabled', data.last);
-                });
-            },
-            error: function (err) {
-                if (err.responseJSON) {
-                    var s = JSON.stringify(err.responseJSON);
-                    alert(s);
-                } else {
-                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
-                }
-            }
-        });
-    }
-
-    $(document).ready(function () {
-        getNullVideos(currentPage);
-
-        $('#prevPage').click(function () {
-            if (currentPage > 0) {
-                getNullVideos(currentPage - 1);
-            }
-        });
-
-        $('#nextPage').click(function () {
-            getNullVideos(currentPage + 1);
-        });
-    });
-
-    function getYouTubeVideoId(url) {
-        const urlObj = new URL(url);  // Create a URL object from the input URL
-        return urlObj.searchParams.get('v');  // Extract the 'v' parameter from the query string
-    }
-</script>
 </html>

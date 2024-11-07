@@ -9,7 +9,7 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.exception.code.ReviewErrorCode;
-import team7.inplace.global.exception.code.UserErroCode;
+import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.review.application.dto.ReviewCommand;
@@ -36,7 +36,7 @@ public class ReviewService {
         }
 
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         Place place = placeRepository.findById(placeId)
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
 
