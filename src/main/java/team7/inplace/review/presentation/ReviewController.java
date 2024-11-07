@@ -1,4 +1,4 @@
-package team7.inplace.review;
+package team7.inplace.review.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
