@@ -123,3 +123,32 @@ create table error_log
     is_resolved   bit          not null
 );
 
+create table review
+(
+    id           bigint auto_increment
+        primary key,
+    is_liked     bit          not null,
+    created_date datetime(6)  null,
+    place_id     bigint       not null,
+    user_id      bigint       not null,
+    comment      varchar(100) null,
+    constraint UKktwck3ql0eo5oss6sw8nftsbq
+        unique (user_id, place_id),
+    constraint FKfb1me8dhpyswvhgjmbvgkcti2
+        foreign key (place_id) references places (id),
+    constraint FKj8m0asijw8lfl4jxhcps8tf4y
+        foreign key (user_id) references user (id)
+);
+
+create table oauth_token
+(
+    expires_at   datetime(6)  null,
+    id           bigint auto_increment
+        primary key,
+    user_id      bigint       null,
+    access_token varchar(255) null,
+    constraint UKr56mcwhkhg1tts2riw1cifaw8
+        unique (user_id),
+    constraint FK9bq3t9xrvellgudfdm1xrore7
+        foreign key (user_id) references user (id)
+);
