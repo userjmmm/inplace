@@ -25,6 +25,7 @@ import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.placeMessage.application.command.PlaceMessageCommand;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
@@ -160,10 +161,10 @@ public class PlaceService {
     }
 
     public void likeToPlace(PlaceLikeCommand comm) {
-        LikedPlace likedPlace = findOrCreateLikedPlace(comm.placeId(), comm.likes());
+        findOrCreateLikedPlace(comm.placeId(), comm.likes());
     }
 
-    private LikedPlace findOrCreateLikedPlace(Long placeId, boolean likes) {
+    private void findOrCreateLikedPlace(Long placeId, boolean likes) {
 
         Long userId = getUserId().orElseThrow(
             () -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY)
@@ -182,7 +183,6 @@ public class PlaceService {
         likedPlace.updateLike(likes);
         likedPlaceRepository.save(likedPlace);
 
-        return likedPlace;
     }
 
     private Optional<Long> getUserId() {
@@ -201,6 +201,17 @@ public class PlaceService {
         var place = placeCommand.toEntity();
         placeRepository.save(place);
         return place.getId();
+    }
 
+    public PlaceMessageCommand getPlaceMessageCommand(Long placeId) {
+        Place place = placeRepository.findById(placeId)
+            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+
+        Video video = videoRepository.findByPlaceId(placeId)
+            .stream().findFirst().orElse(null);
+
+        Influencer influencer = (video != null) ? video.getInfluencer() : null;
+
+        return PlaceMessageCommand.of(place, influencer, video);
     }
 }
