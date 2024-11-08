@@ -52,4 +52,12 @@ public interface VideoControllerApiSpec {
     ResponseEntity<Page<VideoResponse>> readPlaceNullVideo(
             @PageableDefault(page = 0, size = 10) Pageable pageable
     );
+
+    @Operation(
+            summary = "비디오 삭제",
+            description = "비디오를 삭제합니다."
+    )
+    ResponseEntity<Void> deleteVideo(
+            @RequestParam Long videoId
+    );
 }

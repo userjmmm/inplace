@@ -143,4 +143,8 @@ public class VideoService {
                 .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
         video.addPlace(place);
     }
+
+    public void deleteVideo(Long videoId) {
+        videoRepository.deleteById(videoId);
+    }
 }
