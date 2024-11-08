@@ -66,10 +66,6 @@ public class InfluencerServiceTest {
         assertThat(influencerInfoPage.getContent().get(1))
             .extracting("influencerName", "likes")
             .containsExactly(influencer2.getName(), false);
-//        assertThat(influencerInfoList.get(0).influencerName()).isEqualTo("influencer1");
-//        assertThat(influencerInfoList.get(0).likes()).isFalse();
-//        assertThat(influencerInfoList.get(1).influencerName()).isEqualTo("influencer2");
-//        assertThat(influencerInfoList.get(1).likes()).isFalse();
 
         authorizationUtil.close();
     }
@@ -111,12 +107,6 @@ public class InfluencerServiceTest {
         assertThat(influencerInfoPage.getContent().get(2))
             .extracting("influencerName", "likes")
             .containsExactly(influencer1.getName(), false);
-//        assertThat(influencerInfoList.get(0).influencerName()).isEqualTo("influencer2");
-//        assertThat(influencerInfoList.get(0).likes()).isTrue();
-//        assertThat(influencerInfoList.get(1).influencerName()).isEqualTo("influencer3");
-//        assertThat(influencerInfoList.get(1).likes()).isTrue();
-//        assertThat(influencerInfoList.get(2).influencerName()).isEqualTo("influencer1");
-//        assertThat(influencerInfoList.get(2).likes()).isFalse();
 
         authorizationUtil.close();
     }

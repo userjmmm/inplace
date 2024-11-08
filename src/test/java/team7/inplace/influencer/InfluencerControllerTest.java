@@ -51,29 +51,6 @@ public class InfluencerControllerTest {
         objectMapper = new ObjectMapper();
     }
 
-    //    @Test
-//    public void getAllInfluencersTest() throws Exception {
-//        InfluencerInfo influencerInfo1 = new InfluencerInfo(1L, "influencer1", "imgUrl1", "job1",
-//            false);
-//        InfluencerInfo influencerInfo2 = new InfluencerInfo(2L, "influencer2", "imgUrl2", "job2",
-//            false);
-//        List<InfluencerInfo> influencerInfoList = List.of(influencerInfo1, influencerInfo2);
-//        given(influencerService.getAllInfluencers()).willReturn(influencerInfoList);
-//
-//        // 예상 json 값
-//        List<InfluencerResponse> responseList = influencerInfoList.stream()
-//            .map(InfluencerResponse::from)
-//            .toList();
-//        InfluencerListResponse expectedResponse = new InfluencerListResponse(responseList);
-//        String expectedJson = objectMapper.writeValueAsString(expectedResponse);
-//
-//        mockMvc.perform(get("/influencers")
-//                .contentType(MediaType.APPLICATION_JSON))
-//            .andDo(print())
-//            .andExpect(status().isOk())
-//            .andExpect(content().json(expectedJson));
-//        verify(influencerService, times(1)).getAllInfluencers(); // 서비스 호출 확인
-//    }
     @Test
     public void getAllInfluencersTest() throws Exception {
         InfluencerInfo influencerInfo1 = new InfluencerInfo(1L, "influencer1",
