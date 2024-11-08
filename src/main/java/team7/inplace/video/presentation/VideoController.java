@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -29,9 +28,11 @@ public class VideoController implements VideoControllerApiSpec {
 
     @GetMapping()
     public ResponseEntity<Page<VideoResponse>> readVideos(
-            @ModelAttribute VideoSearchParams searchParams,
+            @RequestParam(value = "longitude", defaultValue = "128.6") String longitude,
+            @RequestParam(value = "latitude", defaultValue = "35.9") String latitude,
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
+        VideoSearchParams searchParams = VideoSearchParams.from(longitude, latitude);
         Page<VideoResponse> videoResponses = videoService.getVideosBySurround(searchParams, pageable)
                 .map(VideoResponse::from);
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
@@ -46,13 +47,13 @@ public class VideoController implements VideoControllerApiSpec {
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
-    // 조회수 반환 기능 개발 시 개발
     @GetMapping("/cool")
     public ResponseEntity<Page<VideoResponse>> readByCool(
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        List<VideoResponse> videoResponses = new ArrayList<>();
-        return new ResponseEntity<>(new PageImpl<>(videoResponses, pageable, 0), HttpStatus.OK);
+        Page<VideoResponse> videoResponses = videoService.getCoolVideo(pageable)
+                .map(VideoResponse::from);
+        return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
     // 토큰 필요 메서드

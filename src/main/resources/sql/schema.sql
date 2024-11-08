@@ -152,3 +152,16 @@ create table oauth_token
     constraint FK9bq3t9xrvellgudfdm1xrore7
         foreign key (user_id) references user (id)
 );
+
+create table liked_places
+(
+    is_liked bit    null,
+    id       bigint auto_increment
+        primary key,
+    place_id bigint null,
+    user_id  bigint null,
+    constraint FK3rej4k2wur49vvsmkvy99051h
+        foreign key (user_id) references user (id),
+    constraint FK7x24ubd2axm81hx0ggiy4l4ao
+        foreign key (place_id) references places (id)
+);

@@ -10,6 +10,7 @@ import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.application.dto.UserCommand;
 import team7.inplace.user.application.dto.UserCommand.Info;
 import team7.inplace.user.domain.User;
@@ -46,5 +47,14 @@ public class UserService {
         List<FavoriteInfluencer> likes = favoriteInfluencerRepository.findByUserId(userId);
         return likes.stream().map(FavoriteInfluencer::getInfluencer).map(Influencer::getId)
             .toList();
+    }
+
+    @Transactional
+    public void updateNickname(String nickname){
+        User user = userRepository.findByUsername(AuthorizationUtil.getUsername()).orElseThrow(
+                ()-> InplaceException.of(UserErrorCode.NOT_FOUND)
+        );
+
+        user.updateInfo(nickname);
     }
 }
