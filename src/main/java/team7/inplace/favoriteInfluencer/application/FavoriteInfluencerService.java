@@ -27,11 +27,11 @@ public class FavoriteInfluencerService {
 
     @Transactional
     public void likeToInfluencer(FavoriteInfluencerCommand command) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
+        if (AuthorizationUtil.isNotLoginUser()) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
 
+        Long userId = AuthorizationUtil.getUserId();
         User user = userRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         Influencer influencer = influencerRepository.findById(command.influencerId()).orElseThrow();
@@ -46,11 +46,11 @@ public class FavoriteInfluencerService {
 
     @Transactional
     public void likeToManyInfluencer(FavoriteInfluencerListCommand command) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
+        if (AuthorizationUtil.isNotLoginUser()) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
 
+        Long userId = AuthorizationUtil.getUserId();
         User user = userRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
