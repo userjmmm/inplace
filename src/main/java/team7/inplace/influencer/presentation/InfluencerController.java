@@ -1,5 +1,6 @@
 package team7.inplace.influencer.presentation;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
+import team7.inplace.influencer.presentation.dto.InfluencerNameResponse;
 import team7.inplace.influencer.presentation.dto.InfluencerRequest;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 
@@ -33,6 +35,14 @@ public class InfluencerController implements InfluencerControllerApiSpec {
             .map(InfluencerResponse::from);
 
         return new ResponseEntity<>(influencers, HttpStatus.OK);
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<InfluencerNameResponse>> getAllInfluencerNames() {
+        List<InfluencerNameResponse> names = influencerService.getAllInfluencerNames().stream()
+            .map(InfluencerNameResponse::from)
+            .toList();
+        return new ResponseEntity<>(names, HttpStatus.OK);
     }
 
     @PostMapping()

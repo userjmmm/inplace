@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
+import team7.inplace.influencer.application.dto.InfluencerNameInfo;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.security.util.AuthorizationUtil;
@@ -46,6 +47,14 @@ public class InfluencerService {
             .toList();
 
         return new PageImpl<>(influencerInfos, pageable, influencersPage.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public List<InfluencerNameInfo> getAllInfluencerNames() {
+        List<String> names = influencerRepository.findAllInfluencerNames();
+        return names.stream()
+            .map(InfluencerNameInfo::new)
+            .toList();
     }
 
     @Transactional
