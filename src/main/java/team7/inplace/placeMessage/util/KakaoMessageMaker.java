@@ -37,8 +37,6 @@ public class KakaoMessageMaker {
             LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add(TEMPLATE_OBJECT, objectMapper.writeValueAsString(
                 FeedTemplate.of(frontEndUrl, placeMessageCommand)));
-            System.out.println(objectMapper.writeValueAsString(
-                FeedTemplate.of(frontEndUrl, placeMessageCommand)));
             return body;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
