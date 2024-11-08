@@ -35,8 +35,9 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             return;
         }
         String token = getTokenCookie(request).getValue();
-        jwtUtil.validateExpired(token);
-        addUserToAuthentication(token);
+        if (jwtUtil.isNotExpired(token)) {
+            addUserToAuthentication(token);
+        }
         filterChain.doFilter(request, response);
     }
 
