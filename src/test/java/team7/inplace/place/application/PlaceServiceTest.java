@@ -408,7 +408,8 @@ class PlaceServiceTest {
             expected.placeInfo().influencerName());
         assertThat(result.placeInfo().likes()).isEqualTo(
             expected.placeInfo().likes());
-        assertThat(result.facilityInfo()).isEqualTo(objectMapper.createObjectNode());
+        assertThat(result.facilityInfo()).isEqualTo(
+            objectMapper.createObjectNode().put("message", "NO DATA"));
     }
 
     @Test
