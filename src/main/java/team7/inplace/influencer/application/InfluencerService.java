@@ -3,11 +3,15 @@ package team7.inplace.influencer.application;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
+import team7.inplace.influencer.application.dto.InfluencerNameInfo;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.security.util.AuthorizationUtil;
@@ -22,21 +26,19 @@ public class InfluencerService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<InfluencerInfo> getAllInfluencers() {
-        List<Influencer> influencers = influencerRepository.findAll();
-        Long userId = AuthorizationUtil.getUserId();
+    public Page<InfluencerInfo> getAllInfluencers(Pageable pageable) {
+        Page<Influencer> influencersPage = influencerRepository.findAll(pageable);
 
         // 로그인 안된 경우, likes를 모두 false로 설정
-        if (userId == null) {
-            return influencers.stream()
-                .map(influencer -> InfluencerInfo.from(influencer, false))
-                .toList();
+        if (AuthorizationUtil.isNotLoginUser()) {
+            return influencersPage.map(influencer -> InfluencerInfo.from(influencer, false));
         }
 
         // 로그인 된 경우
+        Long userId = AuthorizationUtil.getUserId();
         Set<Long> likedInfluencerIds = favoriteRepository.findLikedInfluencerIdsByUserId(userId);
 
-        List<InfluencerInfo> influencerInfos = influencers.stream()
+        List<InfluencerInfo> influencerInfos = influencersPage.stream()
             .map(influencer -> {
                 boolean isLiked = likedInfluencerIds.contains(influencer.getId());
                 return InfluencerInfo.from(influencer, isLiked);
@@ -44,7 +46,15 @@ public class InfluencerService {
             .sorted((a, b) -> Boolean.compare(b.likes(), a.likes()))
             .toList();
 
-        return influencerInfos;
+        return new PageImpl<>(influencerInfos, pageable, influencersPage.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public List<InfluencerNameInfo> getAllInfluencerNames() {
+        List<String> names = influencerRepository.findAllInfluencerNames();
+        return names.stream()
+            .map(InfluencerNameInfo::new)
+            .toList();
     }
 
     @Transactional
