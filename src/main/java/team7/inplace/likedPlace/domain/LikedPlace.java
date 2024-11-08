@@ -1,4 +1,4 @@
-package team7.inplace.LikedPlace.domain;
+package team7.inplace.likedPlace.domain;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
