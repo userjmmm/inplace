@@ -27,9 +27,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import team7.inplace.LikedPlace.domain.LikedPlace;
-import team7.inplace.LikedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.likedPlace.domain.LikedPlace;
+import team7.inplace.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
@@ -408,7 +408,8 @@ class PlaceServiceTest {
             expected.placeInfo().influencerName());
         assertThat(result.placeInfo().likes()).isEqualTo(
             expected.placeInfo().likes());
-        assertThat(result.facilityInfo()).isEqualTo(objectMapper.createObjectNode());
+        assertThat(result.facilityInfo()).isEqualTo(
+            objectMapper.createObjectNode().put("message", "NO DATA"));
     }
 
     @Test

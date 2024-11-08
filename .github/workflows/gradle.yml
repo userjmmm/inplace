@@ -86,7 +86,7 @@ jobs:
       # 다음 배포 버전을 결정
       - name: Set next version
         run: |
-          if [[ "$CURRENT_VERSION" == "blue" ]]; then
+          if [[ "${{ env.current_version }}" == "blue" ]]; then
             NEXT_VERSION="green"
             PORT=8081
           else
@@ -126,7 +126,17 @@ jobs:
           else
             aws elbv2 modify-listener --listener-arn ${{ secrets.LISTENER_ARN_443 }} --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN_GREEN
           fi
-      
+
+      # 이전 컨테이너 정리
+      - name: Remove previous docker container
+        run: |
+          if [[ "${{ env.current_version }}" != "none" ]]; then 
+            echo "Removing previous container inplace-${{ env.current_version }}" 
+            sudo docker stop inplace-${{ env.current_version }} || true 
+            sudo docker rm inplace-${{ env.current_version }} || true 
+          else 
+            echo "No active container to remove" 
+          fi
       
       # 미사용 이미지를 정리
       - name: delete old docker image

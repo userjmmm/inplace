@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
-import team7.inplace.LikedPlace.domain.LikedPlace;
-import team7.inplace.LikedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.likedPlace.domain.LikedPlace;
+import team7.inplace.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
@@ -172,7 +172,7 @@ public class PlaceService {
 
         LikedPlace likedPlace = likedPlaceRepository.findByUserIdAndPlaceId(userId, placeId)
             .orElseGet(() -> {
-                // 존재하지 않는 경우에만 Place 조회 후 LikedPlace 생성
+                // 존재하지 않는 경우에만 Place 조회 후 likedPlace 생성
                 Place place = placeRepository.findById(placeId)
                     .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
                 User user = userRepository.findById(userId)

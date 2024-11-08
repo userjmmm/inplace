@@ -48,15 +48,16 @@ public class YoutubeCrawlingService {
                             })
                             .toList();
 
-                    return new CrawlingInfo.VideoPlaceInfo(channel.getInfluencerId(), videoSnippets, placeNodes);
+                    return new CrawlingInfo.VideoPlaceInfo(channel.getInfluencerId(), channel.getPlayListUUID(),
+                            videoSnippets, placeNodes);
                 }).toList();
 
         return crawlInfos;
     }
 
     @Transactional
-    public void updateLastVideoUUID(Long influencerId, String lastVideoUUID) {
-        var youtubeChannel = youtubeChannelRepository.findYoutubeChannelByInfluencerId(influencerId)
+    public void updateLastVideoUUID(String playListUUID, String lastVideoUUID) {
+        var youtubeChannel = youtubeChannelRepository.findYoutubeChannelByPlayListUUID(playListUUID)
                 .orElseThrow(() -> InplaceException.of(ChannelErrorCode.CHANNEL_NOT_FOUND));
 
         youtubeChannel.updateLastVideoUUID(lastVideoUUID);

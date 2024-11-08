@@ -1,4 +1,4 @@
-package team7.inplace.LikedPlace.domain;
+package team7.inplace.likedPlace.domain;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -20,6 +21,7 @@ import team7.inplace.user.domain.User;
 @RequiredArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @Entity
+@Table(name = "liked_places")
 public class LikedPlace {
 
     @Id

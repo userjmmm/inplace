@@ -3,6 +3,7 @@ package team7.inplace.video.application;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import team7.inplace.video.application.command.VideoCommand;
 import team7.inplace.video.application.dto.VideoInfo;
 
 @Facade
+@Slf4j
 @RequiredArgsConstructor
 public class VideoFacade {
     private final VideoService videoService;
@@ -26,10 +28,12 @@ public class VideoFacade {
     private final UserService userService;
 
     @Transactional
-    public void createVideos(List<VideoCommand.Create> videoCommands, List<PlacesCommand.Create> placeCommands) {
-
+    public void createVideos(List<VideoCommand.Create> videoCommands, List<PlacesCommand.Create> placeCommands,
+                             String chanelUUID) {
         var placeIds = placeService.createPlaces(placeCommands);
-        youtubeCrawlingService.updateLastVideoUUID(videoCommands.get(0).influencerId(), videoCommands.get(0).videoId());
+        log.info("placeIds: {}", placeIds);
+        log.info("videoCommands: {}", videoCommands);
+        youtubeCrawlingService.updateLastVideoUUID(chanelUUID, videoCommands.get(0).videoId());
         videoService.createVideos(videoCommands, placeIds);
     }
 
