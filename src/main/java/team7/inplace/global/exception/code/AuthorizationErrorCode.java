@@ -7,9 +7,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Getter
 public enum AuthorizationErrorCode implements ErrorCode {
-    TOKEN_IS_EMPTY(HttpStatus.BAD_REQUEST, "A001", "Token is Empty"),
-    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "A002", "Invalid Token"),
-    TOKEN_IS_EXPIRED(HttpStatus.BAD_REQUEST, "A003", "Token is Expired");
+    NOT_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "A000", "Authentication 실패"),
+    TOKEN_IS_EMPTY(HttpStatus.BAD_REQUEST, "A001", "토큰 없음"),
+    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "A002", "Invalid 토큰"),
+    TOKEN_IS_EXPIRED(HttpStatus.BAD_REQUEST, "A003", "토큰 만료");
 
     private final HttpStatus httpStatus;
     private final String errorCode;
