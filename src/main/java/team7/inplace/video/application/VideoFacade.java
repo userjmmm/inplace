@@ -49,7 +49,7 @@ public class VideoFacade {
     }
 
     @Transactional(readOnly = true)
-    public Page<VideoInfo> getVideosByMyInfluencer(Pageable pageable) {
+    public List<VideoInfo> getVideosByMyInfluencer() {
         // 토큰 정보에 대한 검증
         if (AuthorizationUtil.isNotLoginUser()) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
@@ -59,6 +59,6 @@ public class VideoFacade {
         // 유저 정보를 이용하여 유저가 좋아요를 누른 인플루언서 id 리스트를 조회
         List<Long> influencerIds = userService.getInfluencerIdsByUsername(userId);
         // 인플루언서 id를 사용하여 영상을 조회
-        return videoService.getVideosByMyInfluencer(influencerIds, pageable);
+        return videoService.getVideosByMyInfluencer(influencerIds);
     }
 }
