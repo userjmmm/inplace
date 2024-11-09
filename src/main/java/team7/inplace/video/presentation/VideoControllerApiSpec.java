@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.video.presentation.dto.VideoResponse;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
@@ -58,6 +59,6 @@ public interface VideoControllerApiSpec {
             description = "비디오를 삭제합니다."
     )
     ResponseEntity<Void> deleteVideo(
-            @RequestParam Long videoId
+            @PathVariable Long videoId
     );
 }
