@@ -38,7 +38,7 @@ public class VideoRepositoryTest {
     private VideoRepository videoRepository;
     @Autowired
     private PlaceRepository placeRepository;
-    private Pageable pageable = PageRequest.of(0, 10);
+    private final Pageable pageable = PageRequest.of(0, 10);
 
     @BeforeEach
     void init() {
@@ -106,26 +106,26 @@ public class VideoRepositoryTest {
         List<Long> influencerIds = new ArrayList<>();
         influencerIds.add(1L);
 
-        Page<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(
+        List<Video> savedVideos = videoRepository.findTop10ByInfluencerIdIn(
                 influencerIds,
                 pageable
         );
         // then
-        Assertions.assertThat(savedVideos.getContent().size()).isEqualTo(3);
+        Assertions.assertThat(savedVideos.size()).isEqualTo(3);
     }
 
     @Test
-    @DisplayName("findAllByOrderByIdDesc Test")
+    @DisplayName("findTop10ByOrderByIdDesc Test")
     void test2() {
         // given
         /* Before Each */
 
         // when
-        Page<Video> videos = videoRepository.findAllByOrderByIdDesc(pageable);
+        List<Video> videos = videoRepository.findTop10ByOrderByIdDesc(pageable);
 
         // then
         Long number = 5L;
-        for (Video video : videos.getContent()) {
+        for (Video video : videos) {
             Assertions.assertThat(video.getId()).isEqualTo(number);
             number -= 1L;
         }
@@ -133,7 +133,7 @@ public class VideoRepositoryTest {
 
     @Test
     @DisplayName("findAllByPlaceIsNull Test")
-    void test3(){
+    void test3() {
         // given
 
         // when
@@ -148,7 +148,7 @@ public class VideoRepositoryTest {
         // given
 
         // when
-        Place place = placeRepository.findById(1L).orElseThrow(()->InplaceException.of(PlaceErrorCode.NOT_FOUND));
+        Place place = placeRepository.findById(1L).orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
         Video video = videoRepository.findTopByPlaceOrderByIdDesc(place).orElseThrow(NoSuchFieldError::new);
 
         // then
@@ -158,7 +158,7 @@ public class VideoRepositoryTest {
 
     @Test
     @DisplayName("findByPlaceIdIn Test")
-    void test5(){
+    void test5() {
         // given
 
         // when
@@ -170,7 +170,7 @@ public class VideoRepositoryTest {
 
     @Test
     @DisplayName("findByPlaceId Test")
-    void test6(){
+    void test6() {
         // given
 
         // when
@@ -181,7 +181,7 @@ public class VideoRepositoryTest {
 
     @Test
     @DisplayName("findVideosByOrderByViewCountIncreaseDesc Test")
-    void test7(){
+    void test7() {
         // given
 
         // when
@@ -190,12 +190,12 @@ public class VideoRepositoryTest {
         video1.updateViewCount(10L);
         video2.updateViewCount(100L);
 
-        Page<Video> videos = videoRepository.findVideosByOrderByViewCountIncreaseDesc(pageable);
+        List<Video> videos = videoRepository.findTop10ByOrderByViewCountIncreaseDesc(PageRequest.of(0, 10));
         // then
         for (Video video : videos) {
             System.out.println("video = " + video.getId() + " " + video.getVideoUrl() + " " + video.getViewCountIncrease());
         }
-        Assertions.assertThat(videos.getContent().size()).isEqualTo(7);
-        Assertions.assertThat(videos.getContent().get(0)).isEqualTo(video2);
+        Assertions.assertThat(videos.size()).isEqualTo(5);
+        Assertions.assertThat(videos.get(0)).isEqualTo(video2);
     }
 }
