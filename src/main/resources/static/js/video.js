@@ -61,9 +61,28 @@ function registerPlace(placeId) {
         success: function () {
             alert("장소가 등록되었습니다.");
             closeModal();
+            location.reload();
         },
         error: function () {
             alert("장소 등록에 실패했습니다.");
+        }
+    });
+}
+
+function deleteVideo(element) {
+    if (!confirm("정말로 이 영상을 삭제하시겠습니까?")) {
+        return;
+    }
+    const videoId = element.getAttribute("data-video-id");
+    $.ajax({
+        url: `/videos/${videoId}`,
+        method: 'DELETE',
+        success: function () {
+            alert("장소가 삭제되었습니다.");
+            location.reload()
+        },
+        error: function () {
+            alert("장소 삭제에 실패했습니다.");
         }
     });
 }

@@ -1,4 +1,4 @@
-package team7.inplace.LikedPlace.persistence;
+package team7.inplace.likedPlace.persistence;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.LikedPlace.domain.LikedPlace;
+import team7.inplace.likedPlace.domain.LikedPlace;
 import team7.inplace.place.domain.Place;
 import team7.inplace.user.domain.Role;
 import team7.inplace.user.domain.User;

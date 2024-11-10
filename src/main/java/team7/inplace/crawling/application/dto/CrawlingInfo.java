@@ -10,6 +10,7 @@ import team7.inplace.video.application.command.VideoCommand;
 public class CrawlingInfo {
     public record VideoPlaceInfo(
             Long influencerId,
+            String playListUUID,
             List<JsonNode> videoSnippets,
             List<PlaceNode> placeNodes
     ) {

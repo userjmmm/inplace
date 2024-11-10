@@ -30,11 +30,11 @@ public class ReviewService {
 
     @Transactional
     public void createReview(Long placeId, ReviewCommand command) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
+        if (AuthorizationUtil.isNotLoginUser()) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
 
+        Long userId = AuthorizationUtil.getUserId();
         User user = userRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         Place place = placeRepository.findById(placeId)
@@ -49,12 +49,13 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<ReviewInfo> getReviews(Long placeId, Pageable pageable) {
-        Long userId = AuthorizationUtil.getUserId();
         Page<Review> reviewPage = reviewRepository.findByPlaceId(placeId, pageable);
         // 로그인 안된 경우 mine을 모두 false로 설정
-        if (userId == null) {
+        if (AuthorizationUtil.isNotLoginUser()) {
             return reviewPage.map(review -> ReviewInfo.from(review, false));
         }
+
+        Long userId = AuthorizationUtil.getUserId();
 
         return reviewPage.map(review -> {
             boolean isMine = review.getUser().getId().equals(userId);
@@ -64,11 +65,11 @@ public class ReviewService {
 
     @Transactional
     public void deleteReview(Long reviewId) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
+        if (AuthorizationUtil.isNotLoginUser()) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
 
+        Long userId = AuthorizationUtil.getUserId();
         Review review = reviewRepository.findById(reviewId)
             .orElseThrow(() -> InplaceException.of(ReviewErrorCode.NOT_FOUND));
 
