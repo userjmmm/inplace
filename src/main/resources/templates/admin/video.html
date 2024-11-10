@@ -5,7 +5,7 @@
     <title>Video List</title>
     <link href="/css/style.css" rel="stylesheet">
     <script src="http://code.jquery.com/jquery-3.6.0.min.js" type="text/javascript"></script>
-    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=c6eb498481bef28050981d6c3f49357e&libraries=services"
+    <script th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoApiKey} + '&libraries=services'"
             type="text/javascript"></script>
     <script src="/js/video.js"></script>
 </head>

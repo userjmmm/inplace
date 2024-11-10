@@ -118,10 +118,10 @@ public class VideoServiceTest {
                 }
         );
         // when
-        Page<VideoInfo> videoInfos = videoService.getVideosBySurround(videoSearchParams, pageable);
+        List<VideoInfo> videoInfos = videoService.getVideosBySurround(videoSearchParams);
         // then
-        Assertions.assertThat(videoInfos.getContent().get(0).place().placeName()).isEqualTo("Place 1");
-        Assertions.assertThat(videoInfos.getContent().get(1).place().placeName()).isEqualTo("Place 2");
+        Assertions.assertThat(videoInfos.get(0).place().placeName()).isEqualTo("Place 1");
+        Assertions.assertThat(videoInfos.get(1).place().placeName()).isEqualTo("Place 2");
     }
 
     @Test
@@ -160,10 +160,10 @@ public class VideoServiceTest {
                 invocation -> videos
         );
         // when
-        Page<VideoInfo> videoInfos = videoService.getAllVideosDesc(pageable);
+        List<VideoInfo> videoInfos = videoService.getAllVideosDesc();
         // then
-        Assertions.assertThat(videoInfos.getContent().get(0).videoId()).isEqualTo(2L);
-        Assertions.assertThat(videoInfos.getContent().get(1).videoId()).isEqualTo(1L);
+        Assertions.assertThat(videoInfos.get(0).videoId()).isEqualTo(2L);
+        Assertions.assertThat(videoInfos.get(1).videoId()).isEqualTo(1L);
     }
 
     @Test
@@ -210,10 +210,10 @@ public class VideoServiceTest {
         );
 
         // when
-        Page<VideoInfo> videoInfos = videoService.getVideosByMyInfluencer(ids, pageable);
+        List<VideoInfo> videoInfos = videoService.getVideosByMyInfluencer(ids);
 
         // then
-        Assertions.assertThat(videoInfos.getContent().size()).isEqualTo(3);
+        Assertions.assertThat(videoInfos.size()).isEqualTo(3);
     }
 
     @Test
