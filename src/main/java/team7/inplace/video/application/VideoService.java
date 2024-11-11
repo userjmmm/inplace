@@ -2,7 +2,6 @@ package team7.inplace.video.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +33,7 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final PlaceRepository placeRepository;
     private final InfluencerRepository influencerRepository;
+    private final Pageable pageable = PageRequest.of(0, 10);
 
     @Transactional(readOnly = true)
     public List<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams) {
@@ -70,20 +70,16 @@ public class VideoService {
     @Transactional(readOnly = true)
     public List<VideoInfo> getAllVideosDesc() {
         // id를 기준으로 내림차순 정렬하여 비디오 정보 불러오기
-        Page<Video> videos = videoRepository.findAllByOrderByIdDesc(
-                PageRequest.of(0, 10)
-        );
+        List<Video> videos = videoRepository.findTop10ByOrderByIdDesc(pageable);
 
         // DTO 형식에 맞게 대입
-        return videos.getContent().stream().map(this::videoToInfo).toList();
+        return videos.stream().map(this::videoToInfo).toList();
     }
 
     @Transactional(readOnly = true)
     public List<VideoInfo> getCoolVideo() {
         // 조회수 증가량을 기준으로 오름차순 정렬하여 비디오 정보 불러오기
-        Page<Video> videos = videoRepository.findVideosByOrderByViewCountIncreaseDesc(
-                PageRequest.of(0, 10)
-        );
+        List<Video> videos = videoRepository.findTop10ByOrderByViewCountIncreaseDesc(pageable);
 
         // DTO 형식에 맞게 대입
         return videos.stream().map(this::videoToInfo).toList();
@@ -91,10 +87,7 @@ public class VideoService {
 
     @Transactional(readOnly = true)
     public List<VideoInfo> getVideosByMyInfluencer(List<Long> influencerIds) {
-        Page<Video> videos = videoRepository.findVideosByInfluencerIdIn(
-                influencerIds,
-                PageRequest.of(0, 10)
-        );
+        List<Video> videos = videoRepository.findTop10ByInfluencerIdIn(influencerIds, pageable);
         return videos.stream().map(this::videoToInfo).toList();
     }
 
@@ -102,28 +95,6 @@ public class VideoService {
     public Page<VideoInfo> getPlaceNullVideo(Pageable pageable) {
         Page<Video> videos = videoRepository.findAllByPlaceIsNull(pageable);
         return videos.map(this::videoToInfo);
-    }
-
-    private VideoInfo videoToInfo(Video savedVideo) {
-        Place place = savedVideo.getPlace();
-        if (Objects.isNull(place)) {
-            return new VideoInfo(
-                    savedVideo.getId(),
-                    "장소 정보 없음",
-                    savedVideo.getVideoUrl(),
-                    PlaceForVideo.of(-1L, "장소 정보 없음")
-            );
-        }
-        String alias = AliasUtil.makeAlias(
-                savedVideo.getInfluencer().getName(),
-                place.getCategory()
-        );
-        return new VideoInfo(
-                savedVideo.getId(),
-                alias,
-                savedVideo.getVideoUrl(),
-                PlaceForVideo.of(place.getId(), place.getName())
-        );
     }
 
     @Transactional
@@ -155,10 +126,6 @@ public class VideoService {
         }
     }
 
-    private boolean hasNoPlace(Long placeId) {
-        return placeId == -1;
-    }
-
     @Transactional
     public void addPlaceInfo(Long videoId, Long placeId) {
         Video video = videoRepository.findById(videoId)
@@ -171,5 +138,31 @@ public class VideoService {
     @Transactional
     public void deleteVideo(Long videoId) {
         videoRepository.deleteById(videoId);
+    }
+
+    private VideoInfo videoToInfo(Video savedVideo) {
+        Place place = savedVideo.getPlace();
+        if (Objects.isNull(place)) {
+            return new VideoInfo(
+                    savedVideo.getId(),
+                    "장소 정보 없음",
+                    savedVideo.getVideoUrl(),
+                    PlaceForVideo.of(-1L, "장소 정보 없음")
+            );
+        }
+        String alias = AliasUtil.makeAlias(
+                savedVideo.getInfluencer().getName(),
+                place.getCategory()
+        );
+        return new VideoInfo(
+                savedVideo.getId(),
+                alias,
+                savedVideo.getVideoUrl(),
+                PlaceForVideo.of(place.getId(), place.getName())
+        );
+    }
+
+    private boolean hasNoPlace(Long placeId) {
+        return placeId == -1;
     }
 }

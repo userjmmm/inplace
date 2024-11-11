@@ -9,23 +9,26 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import team7.inplace.influencer.domain.Influencer;
-import team7.inplace.influencer.persistence.InfluencerRepository;
-import team7.inplace.place.application.dto.PlaceForVideo;
 import team7.inplace.place.domain.*;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.security.application.dto.CustomOAuth2User;
+import team7.inplace.user.domain.Role;
 import team7.inplace.util.TestUtil;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
@@ -38,15 +41,21 @@ public class VideoServiceTest {
     private VideoRepository videoRepository;
     @Mock
     private PlaceRepository placeRepository;
-    @Mock
-    private InfluencerRepository influencerRepository;
     @InjectMocks
     private VideoService videoService;
+
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     @DisplayName("getVideosBySurround Test")
     void test1(){
         // given
+        // 유저 정보 설정
+        setUser();
         // 매개변수
         VideoSearchParams videoSearchParams = new VideoSearchParams(
                 "10.0",
@@ -100,8 +109,8 @@ public class VideoServiceTest {
                 videoSearchParams.bottomRightLatitude(),
                 videoSearchParams.longitude(),
                 videoSearchParams.latitude(),
-                new ArrayList<>(),
-                new ArrayList<>(),
+                null,
+                null,
                 pageable)
         ).willAnswer(invocation -> places);
 
@@ -154,10 +163,9 @@ public class VideoServiceTest {
         // method 1 실행 결과 값 설정
         Pageable pageable = PageRequest.of(0, 10);
         List<Video> videoList = Arrays.asList(video2, video1);
-        Page<Video> videos = new PageImpl<>(videoList, pageable, 2);
 
-        given(videoRepository.findAllByOrderByIdDesc(pageable)).willAnswer(
-                invocation -> videos
+        given(videoRepository.findTop10ByOrderByIdDesc(pageable)).willAnswer(
+                invocation -> videoList
         );
         // when
         List<VideoInfo> videoInfos = videoService.getAllVideosDesc();
@@ -202,11 +210,10 @@ public class VideoServiceTest {
         Video video3 = Video.from(influencers.get(1), place1, "url_3");
         Video video4 = Video.from(influencers.get(2), place1, "url_4");
         List<Video> videoList = Arrays.asList(video1, video2, video3);
-        Page<Video> videos = new PageImpl<>(videoList, pageable, 3);
 
         // method 1 설정
-        given(videoRepository.findVideosByInfluencerIdIn(ids, pageable)).willAnswer(
-                invocation -> videos
+        given(videoRepository.findTop10ByInfluencerIdIn(ids, pageable)).willAnswer(
+                invocation -> videoList
         );
 
         // when
@@ -259,5 +266,12 @@ public class VideoServiceTest {
 
         //
         Assertions.assertThat(videoInfos.getContent().size()).isEqualTo(2);
+    }
+
+    private void setUser() {
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User("test", 1L, Role.USER.getRoles());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(customOAuth2User,
+                null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
