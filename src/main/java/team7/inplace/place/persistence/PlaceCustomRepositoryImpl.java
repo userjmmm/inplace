@@ -3,14 +3,15 @@ package team7.inplace.place.persistence;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import team7.inplace.influencer.domain.QInfluencer;
 import team7.inplace.place.domain.Category;
@@ -57,26 +58,8 @@ public class PlaceCustomRepositoryImpl implements PlaceCustomRepository {
             Double.parseDouble(latitude), place.coordinate.latitude, place.coordinate.longitude,
             Double.parseDouble(longitude));
 
-        // 전체 데이터 개수 계산
-        long totalElements = Optional.ofNullable(
-            jpaQueryFactory.select(place.count())
-                .from(place)
-                .leftJoin(video).on(video.place.eq(place))
-                .leftJoin(influencer).on(video.influencer.eq(influencer))
-                .where(
-                    withinBoundary(
-                        place,
-                        Double.parseDouble(topLeftLongitude),
-                        Double.parseDouble(topLeftLatitude),
-                        Double.parseDouble(bottomRightLongitude),
-                        Double.parseDouble(bottomRightLatitude)
-                    ),
-                    placeCategoryIn(categories),
-                    placeInfluencerIn(influencers)
-                ).fetchOne()
-        ).orElse(0L);
-
-        List<Place> places = jpaQueryFactory.selectFrom(place)
+        // 1. content를 가져오는 fetch() 쿼리
+        List<Place> content = jpaQueryFactory.selectFrom(place)
             .leftJoin(video).on(video.place.eq(place))
             .leftJoin(influencer).on(video.influencer.eq(influencer))
             .where(
@@ -89,12 +72,31 @@ public class PlaceCustomRepositoryImpl implements PlaceCustomRepository {
                 ),
                 placeCategoryIn(categories),
                 placeInfluencerIn(influencers)
-            ).orderBy(distanceExpression.asc())
+            )
+            .orderBy(distanceExpression.asc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
-        return new PageImpl<>(places, pageable, totalElements);
+        // 2. countQuery를 따로 선언하여 필요할 때만 실행
+        JPAQuery<Long> countQuery = jpaQueryFactory.select(place.count())
+            .from(place)
+            .leftJoin(video).on(video.place.eq(place))
+            .leftJoin(influencer).on(video.influencer.eq(influencer))
+            .where(
+                withinBoundary(
+                    place,
+                    Double.parseDouble(topLeftLongitude),
+                    Double.parseDouble(topLeftLatitude),
+                    Double.parseDouble(bottomRightLongitude),
+                    Double.parseDouble(bottomRightLatitude)
+                ),
+                placeCategoryIn(categories),
+                placeInfluencerIn(influencers)
+            );
+
+        // 3. PageableExecutionUtils를 사용하여 필요할 때 countQuery 실행
+        return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression withinBoundary(QPlace place, double topLeftLongitude,
