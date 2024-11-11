@@ -1,29 +1,35 @@
 package team7.inplace.place.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import team7.inplace.config.annotation.CustomRepositoryTest;
+import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
+import team7.inplace.video.domain.Video;
 
-@SpringBootTest
+
+@CustomRepositoryTest
 @Transactional
 class PlaceRepositoryTest {
 
-    @MockBean
+    @PersistenceContext
+    EntityManager entityManager;
+
+    @Autowired
     private PlaceRepository placeRepository;
 
 //     * 테스트 Place 좌표 (longitude, latitude)
@@ -46,11 +52,10 @@ class PlaceRepositoryTest {
     String longitude = "10.0";
     String latitude = "51.0";
     Pageable pageable = PageRequest.of(0, 10);
-    Place place1, place2, place3, place4;
 
     @BeforeEach
     public void init() {
-        place1 = new Place("Place 1",
+        Place place1 = new Place("Place 1",
             "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
             "menuImg.url", "카페",
             "Address 1|Address 2|Address 3",
@@ -66,7 +71,7 @@ class PlaceRepositoryTest {
             )
         );
 
-        place2 = new Place("Place 2",
+        Place place2 = new Place("Place 2",
             "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
             "menuImg.url", "일식",
             "Address 1|Address 2|Address 3",
@@ -82,7 +87,7 @@ class PlaceRepositoryTest {
             )
         );
 
-        place3 = new Place("Place 3",
+        Place place3 = new Place("Place 3",
             "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
             "menuImg.url", "카페",
             "Address 1|Address 2|Address 3",
@@ -98,7 +103,7 @@ class PlaceRepositoryTest {
             )
         );
 
-        place4 = new Place("Place 4",
+        Place place4 = new Place("Place 4",
             "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
             "menuImg.url", "일식",
             "Address 1|Address 2|Address 3",
@@ -114,20 +119,27 @@ class PlaceRepositoryTest {
             )
         );
 
-//        Influencer influencer1 = new Influencer("성시경", "가수", "img.url");
-//        Influencer influencer2 = new Influencer("아이유", "가수", "img.rul");
-//
-//        Video video1 = Video.from(influencer1, place1, "video.url");
-//        Video video2 = Video.from(influencer2, place4, "video.url");
+        entityManager.persist(place1);
+        entityManager.persist(place2);
+        entityManager.persist(place3);
+        entityManager.persist(place4);
+
+        Influencer influencer1 = new Influencer("성시경", "가수", "img.url");
+        Influencer influencer2 = new Influencer("아이유", "가수", "img.rul");
+        entityManager.persist(influencer1);
+        entityManager.persist(influencer2);
+
+        Video video1 = Video.from(influencer1, place1, "video.url");
+        Video video2 = Video.from(influencer2, place4, "video.url");
+
+        entityManager.persist(video1);
+        entityManager.persist(video2);
     }
 
     @Test
     @DisplayName("거리 기반 장소 조회")
     public void test1() {
         // given
-        List<Place> mockPlaces = Arrays.asList(place2, place4, place1, place3);
-        when(placeRepository.findPlacesByDistance(longitude, latitude, pageable))
-            .thenReturn(new PageImpl<>(mockPlaces, pageable, mockPlaces.size()));
 
         // when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistance(
@@ -153,19 +165,6 @@ class PlaceRepositoryTest {
         // given
         List<String> categories = null;
         List<String> influencers = null;
-
-        List<Place> mockPlaces = Arrays.asList(place2, place4, place1);
-        when(placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            null,
-            null,
-            pageable
-        )).thenReturn(new PageImpl<>(mockPlaces, pageable, mockPlaces.size()));
 
         // when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
@@ -193,20 +192,8 @@ class PlaceRepositoryTest {
         // given
         List<String> categories = Arrays.asList(Category.CAFE.getName(),
             Category.JAPANESE.getName());
-        List<String> influencers = null;
 
-        List<Place> mockPlaces = Arrays.asList(place2, place4, place1);
-        when(placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            categories,
-            null,
-            pageable
-        )).thenReturn(new PageImpl<>(mockPlaces, pageable, mockPlaces.size()));
+        List<String> influencers = null;
         // when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
@@ -235,20 +222,6 @@ class PlaceRepositoryTest {
         // given
         List<String> categories = Arrays.asList(Category.JAPANESE.getName());
         List<String> influencers = null;
-
-        List<Place> mockPlaces = Arrays.asList(place2, place4);
-        when(placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            categories,
-            null,
-            pageable
-        )).thenReturn(new PageImpl<>(mockPlaces, pageable, mockPlaces.size()));
-
         // when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
@@ -276,19 +249,6 @@ class PlaceRepositoryTest {
         List<String> categories = null;
         List<String> influencers = List.of("성시경", "아이유");
 
-        List<Place> mockPlaces = Arrays.asList(place4, place1);
-        when(placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            null,
-            influencers,
-            pageable
-        )).thenReturn(new PageImpl<>(mockPlaces, pageable, mockPlaces.size()));
-
         //when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
@@ -315,19 +275,6 @@ class PlaceRepositoryTest {
         List<String> categories = null;
         List<String> influencers = List.of("성시경");
 
-        List<Place> mockPlaces = Arrays.asList(place1);
-        when(placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            null,
-            influencers,
-            pageable
-        )).thenReturn(new PageImpl<>(mockPlaces, pageable, mockPlaces.size()));
-
         //when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
@@ -352,19 +299,6 @@ class PlaceRepositoryTest {
         // given
         List<String> categories = Arrays.asList(Category.JAPANESE.getName());
         List<String> influencers = List.of("아이유");
-
-        List<Place> mockPlaces = Arrays.asList(place4);
-        when(placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            categories,
-            influencers,
-            pageable
-        )).thenReturn(new PageImpl<>(mockPlaces, pageable, mockPlaces.size()));
 
         //when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
