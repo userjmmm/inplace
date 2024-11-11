@@ -31,6 +31,7 @@ public class AdminPageController {
         model.addAttribute("totalPages", videoPage.getTotalPages());
         model.addAttribute("isFirst", videoPage.isFirst());
         model.addAttribute("isLast", videoPage.isLast());
+        model.addAttribute("kakaoApiKey", kakaoApiProperties.jsKey());
         return "admin/video.html";
     }
 

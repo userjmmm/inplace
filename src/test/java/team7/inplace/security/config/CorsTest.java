@@ -1,6 +1,6 @@
 package team7.inplace.security.config;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,8 +21,8 @@ class CorsTest {
     @Test
     void cors() throws Exception {
         mockMvc.perform(
-                options("/login")
-                    .header(HttpHeaders.ORIGIN, "http://localhost:1234")
+                get("/places/categories")
+                    .header(HttpHeaders.ORIGIN, "https://www.inplace.my")
                     .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
             )

@@ -75,7 +75,7 @@ function deleteVideo(element) {
     }
     const videoId = element.getAttribute("data-video-id");
     $.ajax({
-        url: `/videos/${videoId}`,
+        url: '/videos/' +  videoId,
         method: 'DELETE',
         success: function () {
             alert("장소가 삭제되었습니다.");

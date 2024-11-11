@@ -82,13 +82,14 @@ public class JwtUtil {
         }
     }
 
-    public void validateExpired(String token) throws InplaceException {
+    public boolean isNotExpired(String token) {
         try {
             jwtParser.parseSignedClaims(token).getPayload().getExpiration();
         } catch (ExpiredJwtException e) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EXPIRED);
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
             throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }
+        return true;
     }
 }

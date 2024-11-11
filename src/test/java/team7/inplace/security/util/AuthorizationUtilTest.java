@@ -2,6 +2,7 @@ package team7.inplace.security.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,11 @@ import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.user.domain.Role;
 
 class AuthorizationUtilTest {
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void 유저가_있는_경우_getUsername() {
