@@ -97,13 +97,6 @@ jobs:
           echo "next_version=${NEXT_VERSION}" >> $GITHUB_ENV
           echo "port=${PORT}" >> $GITHUB_ENV
 
-      # 기존의 동일한 컨테이너를 중지 (블루/그린 중 다음 배포 타겟에 해당하는 컨테이너)
-      - name: Stop current docker container
-        run: |
-          echo "Stopping container inplace-${{ env.next_version }}"
-          sudo docker stop inplace-${{ env.next_version }} || true
-          sudo docker rm inplace-${{ env.next_version }} || true
-
       # .env 파일 생성
       - name: Create .env file
         run: |
@@ -116,7 +109,13 @@ jobs:
           echo "Running new container inplace-${{ env.next_version }}"
           sudo docker run --name "inplace-${{ env.next_version }}" --rm -d -p ${{ env.port }}:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
 
-      # 로드 밸런서 타겟 그룹을 업데이트하여 트래픽을 새 컨테이너로 전환합니다.
+      # 새 컨테이너의 준비 상태를 기다리기 위해 일정 시간 대기 TODO: 헬스 체크로 대기하도록
+      - name: Wait 30s for new container to be ready
+        run: |
+          echo "Waiting for new container to be ready..."
+          sleep 30 
+
+      # 로드 밸런서 타겟 그룹을 업데이트하여 트래픽을 새 컨테이너로 전환
       - name: Update Load Balancer Target Group
         run: |
           TARGET_GROUP_ARN_BLUE="${{ secrets.TARGET_GROUP_ARN_8080 }}"
