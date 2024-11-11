@@ -109,11 +109,23 @@ jobs:
           echo "Running new container inplace-${{ env.next_version }}"
           sudo docker run --name "inplace-${{ env.next_version }}" --rm -d -p ${{ env.port }}:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
 
-      # 새 컨테이너의 준비 상태를 기다리기 위해 일정 시간 대기 TODO: 헬스 체크로 대기하도록
-      - name: Wait 30s for new container to be ready
+      # 스프링부트 시작을 기다리기 위해 헬스 체크로 대기
+      - name: Wait for Spring Boot Application to Start
         run: |
-          echo "Waiting for new container to be ready..."
-          sleep 30 
+          echo "Waiting for the application to be healthy on PORT: ${{ env.port }}..."
+          for i in {1..40}; do
+            if curl -s http://localhost:${{ env.port }}/actuator/health | grep '"status":"UP"' > /dev/null; then
+              echo "Application is healthy"
+              break
+            fi
+            echo "Waiting for new application to start...($i)"
+            sleep 5
+          done
+          
+          if [ $i -eq 40 ]; then
+            echo "Application failed to start after 40 attempts."
+            exit 1
+          fi
 
       # 로드 밸런서 타겟 그룹을 업데이트하여 트래픽을 새 컨테이너로 전환
       - name: Update Load Balancer Target Group
