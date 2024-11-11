@@ -11,6 +11,7 @@ import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.exception.code.ReviewErrorCode;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.review.application.dto.MyReviewInfo;
 import team7.inplace.review.application.dto.ReviewCommand;
 import team7.inplace.review.application.dto.ReviewInfo;
 import team7.inplace.review.domain.Review;
@@ -18,14 +19,12 @@ import team7.inplace.review.persistence.ReviewRepository;
 import team7.inplace.security.application.CurrentUserProvider;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.User;
-import team7.inplace.user.persistence.UserRepository;
 
 @RequiredArgsConstructor
 @Service
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
     private final CurrentUserProvider currentUserProvider;
 
@@ -77,5 +76,12 @@ public class ReviewService {
         }
 
         reviewRepository.delete(review);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MyReviewInfo> getMyReviews(Long userId, Pageable pageable) {
+        Page<Review> reviewPage = reviewRepository.findByUserId(userId, pageable);
+
+        return reviewPage.map(MyReviewInfo::from);
     }
 }
