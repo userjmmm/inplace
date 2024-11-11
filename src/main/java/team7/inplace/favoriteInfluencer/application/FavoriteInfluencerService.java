@@ -2,6 +2,8 @@ package team7.inplace.favoriteInfluencer.application;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.favoriteInfluencer.application.dto.FavoriteInfluencerCommand;
@@ -10,6 +12,7 @@ import team7.inplace.favoriteInfluencer.domain.FavoriteInfluencer;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
+import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.security.application.CurrentUserProvider;
@@ -59,6 +62,15 @@ public class FavoriteInfluencerService {
         if (favorite.getId() == null) {
             favoriteRepository.save(favorite);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<InfluencerInfo> getFavoriteInfluencers(Long userId, Pageable pageable) {
+        Page<FavoriteInfluencer> influencerPage = favoriteRepository.findByUserIdAndIsLikedTrue(
+            userId, pageable);
+
+        return influencerPage.map(
+            favorite -> InfluencerInfo.from(favorite.getInfluencer(), favorite.isLiked()));
     }
 }
 
