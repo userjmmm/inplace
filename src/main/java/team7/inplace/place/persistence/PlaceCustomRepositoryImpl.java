@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -56,6 +57,25 @@ public class PlaceCustomRepositoryImpl implements PlaceCustomRepository {
             Double.parseDouble(latitude), place.coordinate.latitude, place.coordinate.longitude,
             Double.parseDouble(longitude));
 
+        // 전체 데이터 개수 계산
+        long totalElements = Optional.ofNullable(
+            jpaQueryFactory.select(place.count())
+                .from(place)
+                .leftJoin(video).on(video.place.eq(place))
+                .leftJoin(influencer).on(video.influencer.eq(influencer))
+                .where(
+                    withinBoundary(
+                        place,
+                        Double.parseDouble(topLeftLongitude),
+                        Double.parseDouble(topLeftLatitude),
+                        Double.parseDouble(bottomRightLongitude),
+                        Double.parseDouble(bottomRightLatitude)
+                    ),
+                    placeCategoryIn(categories),
+                    placeInfluencerIn(influencers)
+                ).fetchOne()
+        ).orElse(0L);
+
         List<Place> places = jpaQueryFactory.selectFrom(place)
             .leftJoin(video).on(video.place.eq(place))
             .leftJoin(influencer).on(video.influencer.eq(influencer))
@@ -74,7 +94,7 @@ public class PlaceCustomRepositoryImpl implements PlaceCustomRepository {
             .limit(pageable.getPageSize())
             .fetch();
 
-        return new PageImpl<>(places, pageable, places.size());
+        return new PageImpl<>(places, pageable, totalElements);
     }
 
     private BooleanExpression withinBoundary(QPlace place, double topLeftLongitude,
