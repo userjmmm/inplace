@@ -3,13 +3,16 @@ package team7.inplace.token.presentation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
+import team7.inplace.security.filter.TokenType;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.security.util.CookieUtil;
 import team7.inplace.security.util.JwtUtil;
@@ -39,12 +42,15 @@ public class RefreshTokenController implements RefreshTokenControllerApiSpec {
     }
 
     private void addTokenToCookie(HttpServletResponse response, ReIssued reIssuedToken) {
-        Cookie accessTokenCookie = CookieUtil.createCookie("access_token",
+        ResponseCookie accessTokenCookie = CookieUtil.createCookie(
+            TokenType.ACCESS_TOKEN.getValue(),
             reIssuedToken.accessToken());
-        Cookie refreshTokenCookie = CookieUtil.createCookie("refresh_token",
+        ResponseCookie refreshTokenCookie = CookieUtil.createCookie(
+            TokenType.REFRESH_TOKEN.getValue(),
             reIssuedToken.refreshToken());
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
     }
 
     private boolean cannotRefreshToken(Cookie cookie) {

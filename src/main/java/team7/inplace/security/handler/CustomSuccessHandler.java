@@ -1,10 +1,11 @@
 package team7.inplace.security.handler;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import team7.inplace.security.application.dto.CustomOAuth2User;
@@ -49,13 +50,15 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         HttpServletResponse response,
         String accessToken, String refreshToken
     ) {
-        Cookie accessTokenCookie = CookieUtil.createCookie(TokenType.ACCESS_TOKEN.getValue(),
+        ResponseCookie accessTokenCookie = CookieUtil.createCookie(
+            TokenType.ACCESS_TOKEN.getValue(),
             accessToken);
-        Cookie refreshTokenCookie = CookieUtil.createCookie(TokenType.REFRESH_TOKEN.getValue(),
+        ResponseCookie refreshTokenCookie = CookieUtil.createCookie(
+            TokenType.REFRESH_TOKEN.getValue(),
             refreshToken);
 
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
     }
 
     private void setRedirectUrlToResponse(
