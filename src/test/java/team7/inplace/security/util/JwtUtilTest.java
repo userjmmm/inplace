@@ -1,7 +1,6 @@
 package team7.inplace.security.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import io.jsonwebtoken.Jwts;
@@ -12,7 +11,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import team7.inplace.global.exception.InplaceException;
 import team7.inplace.security.config.JwtProperties;
 import team7.inplace.user.domain.Role;
 
@@ -73,8 +71,6 @@ class JwtUtilTest {
             .signWith(secretKey)
             .compact();
 
-        assertThatExceptionOfType(InplaceException.class).isThrownBy(
-            () -> jwtUtil.validateExpired(expiredToken)
-        );
+        assertThat(jwtUtil.isNotExpired(expiredToken)).isFalse();
     }
 }

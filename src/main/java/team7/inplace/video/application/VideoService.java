@@ -2,16 +2,19 @@ package team7.inplace.video.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.exception.code.VideoErrorCode;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.application.dto.PlaceForVideo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.command.VideoCommand;
 import team7.inplace.video.application.command.VideoCommand.Create;
 import team7.inplace.video.application.dto.VideoInfo;
@@ -30,8 +33,15 @@ public class VideoService {
     private final VideoRepository videoRepository;
     private final PlaceRepository placeRepository;
     private final InfluencerRepository influencerRepository;
+    private final Pageable pageable = PageRequest.of(0, 10);
 
-    public Page<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
+    @Transactional(readOnly = true)
+    public List<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams) {
+        // 토큰 정보에 대한 검증
+        if (AuthorizationUtil.isNotLoginUser()) {
+            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
+        }
+
         // Place 엔티티 조회
         Page<Place> places = placeRepository.findPlacesByDistanceAndFilters(
                 videoSearchParams.topLeftLongitude(),
@@ -42,7 +52,7 @@ public class VideoService {
                 videoSearchParams.latitude(),
                 null,
                 null,
-                pageable
+                PageRequest.of(0, 10)
         );
         // 조회된 엔티티가 비어있는지 아닌지 확인
         if (places.isEmpty()) {
@@ -54,33 +64,80 @@ public class VideoService {
             videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place)
                     .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND)));
         }
-        return new PageImpl<>(videos, pageable, videos.size()).map(this::videoToInfo);
+        return videos.stream().map(this::videoToInfo).toList();
     }
 
-    public Page<VideoInfo> getAllVideosDesc(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public List<VideoInfo> getAllVideosDesc() {
         // id를 기준으로 내림차순 정렬하여 비디오 정보 불러오기
-        Page<Video> videos = videoRepository.findAllByOrderByIdDesc(pageable);
+        List<Video> videos = videoRepository.findTop10ByOrderByIdDesc(pageable);
 
         // DTO 형식에 맞게 대입
-        return videos.map(this::videoToInfo);
+        return videos.stream().map(this::videoToInfo).toList();
     }
 
-    public Page<VideoInfo> getCoolVideo(Pageable pageable) {
+    @Transactional(readOnly = true)
+    public List<VideoInfo> getCoolVideo() {
         // 조회수 증가량을 기준으로 오름차순 정렬하여 비디오 정보 불러오기
-        Page<Video> videos = videoRepository.findVideosByOrderByViewCountIncreaseDesc(pageable);
+        List<Video> videos = videoRepository.findTop10ByOrderByViewCountIncreaseDesc(pageable);
 
         // DTO 형식에 맞게 대입
-        return videos.map(this::videoToInfo);
+        return videos.stream().map(this::videoToInfo).toList();
     }
 
-    public Page<VideoInfo> getVideosByMyInfluencer(List<Long> influencerIds, Pageable pageable) {
-        Page<Video> videos = videoRepository.findVideosByInfluencerIdIn(influencerIds, pageable);
-        return videos.map(this::videoToInfo);
+    @Transactional(readOnly = true)
+    public List<VideoInfo> getVideosByMyInfluencer(List<Long> influencerIds) {
+        List<Video> videos = videoRepository.findTop10ByInfluencerIdIn(influencerIds, pageable);
+        return videos.stream().map(this::videoToInfo).toList();
     }
 
+    @Transactional(readOnly = true)
     public Page<VideoInfo> getPlaceNullVideo(Pageable pageable) {
         Page<Video> videos = videoRepository.findAllByPlaceIsNull(pageable);
         return videos.map(this::videoToInfo);
+    }
+
+    @Transactional
+    public void createVideos(List<Create> videoCommands, List<Long> placeIds) {
+        var videos = new ArrayList<Video>();
+        for (int videoCommandIndex = 0; videoCommandIndex < videoCommands.size();
+             videoCommandIndex++) {
+            Create videoCommand = videoCommands.get(videoCommandIndex);
+            Long placeId = placeIds.get(videoCommandIndex);
+            var influencer = influencerRepository.getReferenceById(videoCommand.influencerId());
+
+            if (hasNoPlace(placeId)) {
+                videos.add(videoCommand.toEntityFrom(influencer, null));
+                continue;
+            }
+            Place place = placeRepository.getReferenceById(placeId);
+            videos.add(videoCommand.toEntityFrom(influencer, place));
+        }
+
+        videoRepository.saveAll(videos);
+    }
+
+    @Transactional
+    public void updateVideoViews(List<VideoCommand.UpdateViewCount> videoCommands) {
+        for (VideoCommand.UpdateViewCount videoCommand : videoCommands) {
+            Video video = videoRepository.findById(videoCommand.videoId())
+                    .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
+            video.updateViewCount(videoCommand.viewCount());
+        }
+    }
+
+    @Transactional
+    public void addPlaceInfo(Long videoId, Long placeId) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+        video.addPlace(place);
+    }
+
+    @Transactional
+    public void deleteVideo(Long videoId) {
+        videoRepository.deleteById(videoId);
     }
 
     private VideoInfo videoToInfo(Video savedVideo) {
@@ -105,46 +162,7 @@ public class VideoService {
         );
     }
 
-    public void createVideos(List<Create> videoCommands, List<Long> placeIds) {
-        var videos = new ArrayList<Video>();
-        for (int videoCommandIndex = 0; videoCommandIndex < videoCommands.size();
-             videoCommandIndex++) {
-            Create videoCommand = videoCommands.get(videoCommandIndex);
-            Long placeId = placeIds.get(videoCommandIndex);
-            var influencer = influencerRepository.getReferenceById(videoCommand.influencerId());
-
-            if (hasNoPlace(placeId)) {
-                videos.add(videoCommand.toEntityFrom(influencer, null));
-                continue;
-            }
-            Place place = placeRepository.getReferenceById(placeId);
-            videos.add(videoCommand.toEntityFrom(influencer, place));
-        }
-
-        videoRepository.saveAll(videos);
-    }
-
-    public void updateVideoViews(List<VideoCommand.UpdateViewCount> videoCommands) {
-        for (VideoCommand.UpdateViewCount videoCommand : videoCommands) {
-            Video video = videoRepository.findById(videoCommand.videoId())
-                    .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
-            video.updateViewCount(videoCommand.viewCount());
-        }
-    }
-
     private boolean hasNoPlace(Long placeId) {
         return placeId == -1;
-    }
-
-    public void addPlaceInfo(Long videoId, Long placeId) {
-        Video video = videoRepository.findById(videoId)
-                .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
-        Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
-        video.addPlace(place);
-    }
-
-    public void deleteVideo(Long videoId) {
-        videoRepository.deleteById(videoId);
     }
 }

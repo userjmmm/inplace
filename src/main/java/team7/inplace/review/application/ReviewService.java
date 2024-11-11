@@ -1,5 +1,6 @@
 package team7.inplace.review.application;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +57,7 @@ public class ReviewService {
         Long userId = AuthorizationUtil.getUserId();
 
         return reviewPage.map(review -> {
-            boolean isMine = review.getUser().getId().equals(userId);
+            boolean isMine = Objects.nonNull(userId) && review.getUser().getId().equals(userId);
             return ReviewInfo.from(review, isMine);
         });
     }
