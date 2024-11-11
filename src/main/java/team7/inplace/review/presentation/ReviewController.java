@@ -12,7 +12,7 @@ import team7.inplace.review.application.ReviewService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/reviews")
-public class ReviewController {
+public class ReviewController implements ReviewControllerApiSpec {
 
     private final ReviewService reviewService;
 
