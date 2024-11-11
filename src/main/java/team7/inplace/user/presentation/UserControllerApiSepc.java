@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.user.presentation.dto.LikedInfluencerResponse;
 import team7.inplace.user.presentation.dto.LikedPlaceResponse;
 import team7.inplace.user.presentation.dto.MyReviewResponse;
+import team7.inplace.user.presentation.dto.UserInfoResponse;
 
 public interface UserControllerApiSepc {
 
@@ -31,4 +32,7 @@ public interface UserControllerApiSepc {
     ResponseEntity<Page<MyReviewResponse>> getMyReviews(
         @PageableDefault(page = 0, size = 10) Pageable pageable
     );
+
+    @Operation(summary = "유저 정보 반환", description = "유저 정보를 반환합니다.")
+    ResponseEntity<UserInfoResponse> getUserInfo();
 }

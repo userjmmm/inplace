@@ -16,6 +16,7 @@ import team7.inplace.user.application.UserService;
 import team7.inplace.user.presentation.dto.LikedInfluencerResponse;
 import team7.inplace.user.presentation.dto.LikedPlaceResponse;
 import team7.inplace.user.presentation.dto.MyReviewResponse;
+import team7.inplace.user.presentation.dto.UserInfoResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,5 +59,12 @@ public class UserController implements UserControllerApiSepc {
         Page<MyReviewResponse> reviews = userFacade.getMyReviews(pageable)
             .map(MyReviewResponse::from);
         return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<UserInfoResponse> getUserInfo() {
+        UserInfoResponse response = UserInfoResponse.from(userService.getUserInfo());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
