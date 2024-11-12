@@ -37,11 +37,6 @@ public class VideoService {
 
     @Transactional(readOnly = true)
     public List<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams) {
-        // 토큰 정보에 대한 검증
-        if (AuthorizationUtil.isNotLoginUser()) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
-
         // Place 엔티티 조회
         Page<Place> places = placeRepository.findPlacesByDistanceAndFilters(
                 videoSearchParams.topLeftLongitude(),
