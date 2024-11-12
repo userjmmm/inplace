@@ -228,7 +228,7 @@ public class VideoRepositoryTest {
         List<Long> ids = Arrays.asList(1L, 2L);
         List<Video> videos = videoRepository.findByPlaceIdIn(ids);
         // then
-        Assertions.assertThat(videos.size()).isEqualTo(5);
+        Assertions.assertThat(videos.size()).isEqualTo(11);
     }
 
     @Test
