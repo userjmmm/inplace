@@ -1,4 +1,4 @@
-package team7.inplace.search.persistence;
+package team7.inplace.search.config;
 
 import static org.hibernate.type.StandardBasicTypes.DOUBLE;
 
