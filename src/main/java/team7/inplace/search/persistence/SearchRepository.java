@@ -1,10 +1,10 @@
 package team7.inplace.search.persistence;
 
 import java.util.List;
-import team7.inplace.search.application.dto.AutoCompletionInfo;
+import team7.inplace.search.persistence.dto.SearchResult;
 
-public interface SearchRepository {
+public interface SearchRepository<T> {
     Integer AUTO_COMPLETION_LIMIT = 5;
 
-    List<AutoCompletionInfo> searchSimilarKeywords(String keyword);
+    List<SearchResult<T>> searchSimilarKeywords(String keyword);
 }
