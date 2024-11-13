@@ -24,11 +24,11 @@ public class VideoSearchRepository implements SearchRepository<Video> {
     public List<SearchResult<Video>> searchEntityByKeywords(String keyword) {
         var placeKeywordSearchResults = searchSimilarKeywordWithPlace(keyword);
         var influencerKeywordSearchResults = searchSimilarKeywordWithInfluencer(keyword);
-        
+
         return Stream.concat(placeKeywordSearchResults.stream(), influencerKeywordSearchResults.stream())
                 .distinct()
                 .sorted((a, b) -> Double.compare(b.score(), a.score()))
-                .limit(AUTO_COMPLETION_LIMIT)
+                .limit(SEARCH_LIMIT)
                 .toList();
     }
 
@@ -49,7 +49,7 @@ public class VideoSearchRepository implements SearchRepository<Video> {
                 .join(QVideo.video.influencer, QInfluencer.influencer).fetchJoin()
                 .where(matchScore.gt(0))
                 .orderBy(matchScore.desc())
-                .limit(AUTO_COMPLETION_LIMIT)
+                .limit(SEARCH_LIMIT)
                 .fetch()
                 .stream()
                 .map(tuple -> new SearchResult<>(
@@ -75,7 +75,7 @@ public class VideoSearchRepository implements SearchRepository<Video> {
                 .join(QVideo.video.influencer, QInfluencer.influencer).fetchJoin()
                 .where(matchScore.gt(0))
                 .orderBy(matchScore.desc())
-                .limit(AUTO_COMPLETION_LIMIT)
+                .limit(SEARCH_LIMIT)
                 .fetch()
                 .stream()
                 .map(tuple -> new SearchResult<>(

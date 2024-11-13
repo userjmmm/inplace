@@ -31,7 +31,7 @@ public class PlaceSearchRepository implements SearchRepository<Place> {
                 .from(QPlace.place)
                 .where(matchScore.gt(0))
                 .orderBy(matchScore.desc())
-                .limit(AUTO_COMPLETION_LIMIT)
+                .limit(SEARCH_LIMIT)
                 .fetch()
                 .stream()
                 .map(tuple -> new SearchResult<>(

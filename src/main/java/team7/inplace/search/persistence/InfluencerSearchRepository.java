@@ -15,6 +15,7 @@ import team7.inplace.search.persistence.dto.SearchResult;
 public class InfluencerSearchRepository implements SearchRepository<Influencer> {
     private final JPAQueryFactory queryFactory;
 
+    @Override
     public List<SearchResult<Influencer>> searchEntityByKeywords(String keyword) {
         NumberTemplate<Double> matchScore = Expressions.numberTemplate(
                 Double.class,
@@ -31,7 +32,7 @@ public class InfluencerSearchRepository implements SearchRepository<Influencer> 
                 .from(QInfluencer.influencer)
                 .where(matchScore.gt(0))
                 .orderBy(matchScore.desc())
-                .limit(AUTO_COMPLETION_LIMIT)
+                .limit(SEARCH_LIMIT)
                 .fetch()
                 .stream()
                 .map(tuple -> new SearchResult<>(
