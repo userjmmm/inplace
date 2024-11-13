@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 import team7.inplace.search.application.SearchService;
@@ -20,7 +21,7 @@ public class SearchController implements SearchControllerApiSpec {
 
     @Override
     @GetMapping("/complete")
-    public ResponseEntity<List<AutoCompletionInfo>> searchKeywords(String value) {
+    public ResponseEntity<List<AutoCompletionInfo>> searchKeywords(@RequestParam String value) {
         var response = searchService.searchAutoCompletions(value);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -28,7 +29,7 @@ public class SearchController implements SearchControllerApiSpec {
 
     @Override
     @GetMapping("/video")
-    public ResponseEntity<List<VideoResponse>> searchVideo(String value) {
+    public ResponseEntity<List<VideoResponse>> searchVideo(@RequestParam String value) {
         var videos = searchService.searchVideo(value);
 
         var response = videos.stream()
@@ -39,7 +40,7 @@ public class SearchController implements SearchControllerApiSpec {
 
     @Override
     @GetMapping("/influencer")
-    public ResponseEntity<List<InfluencerResponse>> searchInfluencer(String value) {
+    public ResponseEntity<List<InfluencerResponse>> searchInfluencer(@RequestParam String value) {
         var influencers = searchService.searchInfluencer(value);
 
         var response = influencers.stream()
