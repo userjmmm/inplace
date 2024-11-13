@@ -79,7 +79,7 @@ public class PlaceCustomRepositoryImpl implements PlaceCustomRepository {
             .fetch();
 
         // 2. countQuery를 따로 선언하여 필요할 때만 실행
-        JPAQuery<Long> countQuery = jpaQueryFactory.select(place.count())
+        JPAQuery<Long> countQuery = jpaQueryFactory.select(place.id.count()) // 중복 제거
             .from(place)
             .leftJoin(video).on(video.place.eq(place))
             .leftJoin(influencer).on(video.influencer.eq(influencer))
