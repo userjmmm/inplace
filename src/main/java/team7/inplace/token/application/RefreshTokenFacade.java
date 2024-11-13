@@ -33,6 +33,6 @@ public class RefreshTokenFacade {
             .createAccessToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
         refreshTokenService.saveRefreshToken(username, reIssuedRefreshToken);
 
-        return TokenCommand.ReIssued.of(reIssuedRefreshToken, reIssuedAccessToken);
+        return TokenCommand.ReIssued.of(reIssuedAccessToken, reIssuedRefreshToken);
     }
 }
