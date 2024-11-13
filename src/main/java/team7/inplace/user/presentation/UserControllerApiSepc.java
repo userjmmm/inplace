@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface UserControllerApiSepc {
     @Operation(
-            summary = "내 주변 그곳 ",
-            description = "Parameter로 입력받은 위치의 주변 장소 Video를 조회합니다."
+            summary = "유저 닉네임 변경",
+            description = "RequestParameter로 받은 유저 닉네임으로 닉네임 변경"
     )
     ResponseEntity<Void> updateNickname(
             @RequestParam String nickname
