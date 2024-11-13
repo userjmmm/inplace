@@ -6,7 +6,7 @@ create table influencer
     name    varchar(30) not null,
     img_url text        not null
 
-        FULLTEXT INDEX ft_name_ngram (name) WITH PARSER ngram
+    FULLTEXT INDEX ft_name_ngram (name) WITH PARSER ngram
 );
 
 create table places
@@ -24,7 +24,7 @@ create table places
     menu_img_url    text                                                                 null,
     category        enum ('CAFE', 'JAPANESE', 'KOREAN', 'NONE', 'RESTAURANT', 'WESTERN') not null
 
-   FULLTEXT INDEX ft_name_ngram (name) WITH PARSER ngram
+    FULLTEXT INDEX ft_name_ngram (name) WITH PARSER ngram
 );
 
 create table places_menuboardphotourl_list
