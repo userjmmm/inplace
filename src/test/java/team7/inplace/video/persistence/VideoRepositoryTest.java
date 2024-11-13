@@ -84,10 +84,16 @@ public class VideoRepositoryTest {
         Video video1 = Video.from(influencer1, place1, "url1");
         Video video2 = Video.from(influencer1, place1, "url2");
         Video video3 = Video.from(influencer1, place1, "url3");
-        Video video4 = Video.from(influencer2, place2, "url4");
-        Video video5 = Video.from(influencer2, place2, "url5");
-        Video video6 = Video.from(influencer1, null, "url6");
-        Video video7 = Video.from(influencer2, null, "url7");
+        Video video4 = Video.from(influencer1, place1, "url4");
+        Video video5 = Video.from(influencer1, place1, "url5");
+        Video video6 = Video.from(influencer2, place2, "url6");
+        Video video7 = Video.from(influencer2, place2, "url7");
+        Video video8 = Video.from(influencer2, place2, "url8");
+        Video video9 = Video.from(influencer2, place2, "url9");
+        Video video10 = Video.from(influencer2, place2, "url10");
+        Video outBoundaryVideo = Video.from(influencer2, place2, "url");
+        Video video12 = Video.from(influencer1, null, "url12");
+        Video video13 = Video.from(influencer2, null, "url13");
         entityManager.persist(video1);
         entityManager.persist(video2);
         entityManager.persist(video3);
@@ -95,6 +101,12 @@ public class VideoRepositoryTest {
         entityManager.persist(video5);
         entityManager.persist(video6);
         entityManager.persist(video7);
+        entityManager.persist(video8);
+        entityManager.persist(video9);
+        entityManager.persist(video10);
+        entityManager.persist(outBoundaryVideo);
+        entityManager.persist(video12);
+        entityManager.persist(video13);
     }
 
     @Test
@@ -112,7 +124,51 @@ public class VideoRepositoryTest {
             pageable
         );
         // then
-        Assertions.assertThat(savedVideos.size()).isEqualTo(3);
+        Assertions.assertThat(savedVideos.size()).isEqualTo(5);
+        Long count = 1L;
+        for (Video savedVideo : savedVideos) {
+            Assertions.assertThat(savedVideo.getId()).isEqualTo(count);
+            count = count + 1L;
+        }
+    }
+
+    @Test
+    @DisplayName("findVideosByInfluencerIdIn Top Boundary Test")
+    void test1_1() {
+        // given
+        /* Before Each */
+
+        // when
+        List<Long> influencerIds = Arrays.asList(1L, 2L);
+
+        List<Video> savedVideos = videoRepository.findTop10ByInfluencerIdIn(
+                influencerIds,
+                pageable
+        );
+        // then
+        Assertions.assertThat(savedVideos.size()).isEqualTo(10);
+        Long count = 1L;
+        for (Video savedVideo : savedVideos) {
+            Assertions.assertThat(savedVideo.getId()).isEqualTo(count);
+            count = count + 1L;
+        }
+    }
+
+    @Test
+    @DisplayName("findVideosByInfluencerIdIn Bottom Boundary Test")
+    void test1_2() {
+        // given
+        /* Before Each */
+
+        // when
+        List<Long> influencerIds = List.of();
+
+        List<Video> savedVideos = videoRepository.findTop10ByInfluencerIdIn(
+                influencerIds,
+                pageable
+        );
+        // then
+        Assertions.assertThat(savedVideos.size()).isEqualTo(0);
     }
 
     @Test
@@ -125,7 +181,8 @@ public class VideoRepositoryTest {
         List<Video> videos = videoRepository.findTop10ByOrderByIdDesc(pageable);
 
         // then
-        Long number = 5L;
+        Assertions.assertThat(videos.size()).isEqualTo(10);
+        Long number = 11L;
         for (Video video : videos) {
             Assertions.assertThat(video.getId()).isEqualTo(number);
             number -= 1L;
@@ -141,6 +198,9 @@ public class VideoRepositoryTest {
         Page<Video> videos = videoRepository.findAllByPlaceIsNull(pageable);
         // then
         Assertions.assertThat(videos.getContent().size()).isEqualTo(2);
+        for (Video video : videos) {
+            Assertions.assertThat(video.getPlace()).isNull();
+        }
     }
 
     @Test
@@ -152,11 +212,11 @@ public class VideoRepositoryTest {
         Place place = placeRepository.findById(1L)
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
         Video video = videoRepository.findTopByPlaceOrderByIdDesc(place)
-            .orElseThrow(NoSuchFieldError::new);
+            .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
 
         // then
         Assertions.assertThat(video).isNotNull();
-        Assertions.assertThat(video.getId()).isEqualTo(3L);
+        Assertions.assertThat(video.getId()).isEqualTo(5L);
     }
 
     @Test
@@ -168,7 +228,36 @@ public class VideoRepositoryTest {
         List<Long> ids = Arrays.asList(1L, 2L);
         List<Video> videos = videoRepository.findByPlaceIdIn(ids);
         // then
-        Assertions.assertThat(videos.size()).isEqualTo(5);
+        Assertions.assertThat(videos.size()).isEqualTo(11);
+    }
+
+    @Test
+    @DisplayName("findByPlaceIdIn Top Boundary Test")
+    void test5_1() {
+        // given
+
+        // when
+        List<Long> ids = Arrays.asList(1L, 2L);
+        List<Video> videos = videoRepository.findByPlaceIdIn(ids);
+        // then
+        Assertions.assertThat(videos.size()).isEqualTo(11);
+        Long count = 1L;
+        for (Video video : videos) {
+            Assertions.assertThat(video.getId()).isEqualTo(count);
+            count += 1L;
+        }
+    }
+
+    @Test
+    @DisplayName("findByPlaceIdIn Bottom Boundary Test")
+    void test5_2() {
+        // given
+
+        // when
+        List<Long> ids = List.of();
+        List<Video> videos = videoRepository.findByPlaceIdIn(ids);
+        // then
+        Assertions.assertThat(videos.size()).isEqualTo(0);
     }
 
     @Test
@@ -179,7 +268,12 @@ public class VideoRepositoryTest {
         // when
         List<Video> videos = videoRepository.findByPlaceId(1L);
         // then
-        Assertions.assertThat(videos.size()).isEqualTo(3);
+        Assertions.assertThat(videos.size()).isEqualTo(5);
+        Long count = 1L;
+        for (Video video : videos) {
+            Assertions.assertThat(video.getId()).isEqualTo(count);
+            count += 1L;
+        }
     }
 
     @Test
@@ -188,21 +282,19 @@ public class VideoRepositoryTest {
         // given
 
         // when
-        Video video1 = videoRepository.findById(1L)
-            .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
-        Video video2 = videoRepository.findById(2L)
-            .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
-        video1.updateViewCount(10L);
-        video2.updateViewCount(100L);
-
-        List<Video> videos = videoRepository.findTop10ByOrderByViewCountIncreaseDesc(
-            PageRequest.of(0, 10));
-        // then
-        for (Video video : videos) {
-            System.out.println("video = " + video.getId() + " " + video.getVideoUrl() + " "
-                + video.getViewCountIncrease());
+        for(int i = 1; i <= 11; i++){
+            Video video = videoRepository.findById((long)i)
+                    .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
+            video.updateViewCount((long)i);
         }
-        Assertions.assertThat(videos.size()).isEqualTo(5);
-        Assertions.assertThat(videos.get(0)).isEqualTo(video2);
+
+        List<Video> videos = videoRepository.findTop10ByOrderByViewCountIncreaseDesc(pageable);
+        // then
+        Assertions.assertThat(videos.size()).isEqualTo(10);
+        Long count = 11L;
+        for (Video video : videos) {
+            Assertions.assertThat(video.getId()).isEqualTo(count);
+            count -= 1L;
+        }
     }
 }
