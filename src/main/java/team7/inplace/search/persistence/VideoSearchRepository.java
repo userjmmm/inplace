@@ -22,14 +22,9 @@ public class VideoSearchRepository implements SearchRepository<Video> {
 
     @Override
     public List<SearchResult<Video>> searchEntityByKeywords(String keyword) {
-        return List.of();
-    }
-
-    @Override
-    public List<SearchResult<Video>> searchDetailsByKeyword(String keyword) {
         var placeKeywordSearchResults = searchSimilarKeywordWithPlace(keyword);
         var influencerKeywordSearchResults = searchSimilarKeywordWithInfluencer(keyword);
-        log.info("COMPLETED");
+        
         return Stream.concat(placeKeywordSearchResults.stream(), influencerKeywordSearchResults.stream())
                 .distinct()
                 .sorted((a, b) -> Double.compare(b.score(), a.score()))
