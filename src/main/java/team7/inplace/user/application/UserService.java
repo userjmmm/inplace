@@ -10,9 +10,11 @@ import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.security.application.CurrentUserProvider;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.application.dto.UserCommand;
 import team7.inplace.user.application.dto.UserCommand.Info;
+import team7.inplace.user.application.dto.UserInfo;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
 
@@ -22,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final FavoriteInfluencerRepository favoriteInfluencerRepository;
+    private final CurrentUserProvider currentUserProvider;
 
     @Transactional
     public UserCommand.Info registerUser(UserCommand.Create userCreate) {
@@ -50,11 +53,17 @@ public class UserService {
     }
 
     @Transactional
-    public void updateNickname(String nickname){
+    public void updateNickname(String nickname) {
         User user = userRepository.findByUsername(AuthorizationUtil.getUsername()).orElseThrow(
-                ()-> InplaceException.of(UserErrorCode.NOT_FOUND)
+            () -> InplaceException.of(UserErrorCode.NOT_FOUND)
         );
 
         user.updateInfo(nickname);
+    }
+
+    @Transactional(readOnly = true)
+    public UserInfo getUserInfo() {
+        User user = currentUserProvider.getCurrentUser();
+        return UserInfo.from(user);
     }
 }
