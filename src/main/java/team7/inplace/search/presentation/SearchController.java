@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 import team7.inplace.search.application.SearchService;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
+import team7.inplace.search.application.dto.PlaceSearchInfo;
 import team7.inplace.video.presentation.dto.VideoResponse;
 
 @RestController
@@ -47,5 +48,13 @@ public class SearchController implements SearchControllerApiSpec {
                 .map(InfluencerResponse::from)
                 .toList();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/place")
+    public ResponseEntity<List<PlaceSearchInfo>> searchPlace(@RequestParam String value) {
+        var places = searchService.searchPlace(value);
+        
+        return new ResponseEntity<>(places, HttpStatus.OK);
     }
 }
