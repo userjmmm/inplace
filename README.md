@@ -15,11 +15,6 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/kakao-tech-campus-2nd-step3/Team7_BE)
 ![GitHub last commit](https://img.shields.io/github/last-commit/kakao-tech-campus-2nd-step3/Team7_BE)
 
-## 기획 의도
->  **데이트 코스의 단조로움** 이라는 생각에서 시작한 저희의 아이디어는 인스타, 유튜브 등의 SNS 플랫폼의 성장과 함께 등장한 '인플루언서' 라는 개념에 집중하여, **인플루언서가 방문한 주변 장소에 대한 정보를 서비스 해보자!** 라는 생각으로 이어졌고, 이를 개인별 맞춤 장소 추천, 방문시 정보 발송 및 알림, 리뷰와 같은 기능으로 풀어내어 **Inplace** 라는 저희만의 웹 어플리케이션으로 구현해보았습니다.
-
-## 주요 기능
-
 ## 참여자
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
@@ -37,6 +32,11 @@
   </tr>
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+## 기획 의도
+>  **데이트 코스의 단조로움** 이라는 생각에서 시작한 저희의 아이디어는 인스타, 유튜브 등의 SNS 플랫폼의 성장과 함께 등장한 '인플루언서' 라는 개념에 집중하여, **인플루언서가 방문한 주변 장소에 대한 정보를 서비스 해보자!** 라는 생각으로 이어졌고, 이를 개인별 맞춤 장소 추천, 방문시 정보 발송 및 알림, 리뷰와 같은 기능으로 풀어내어 **Inplace** 라는 저희만의 웹 어플리케이션으로 구현해보았습니다.
+
+## 주요 기능
 
 ## 프로그램 구조
 - **ERD**
