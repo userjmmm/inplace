@@ -15,7 +15,7 @@ import team7.inplace.search.persistence.dto.SearchResult;
 public class InfluencerSearchRepository implements SearchRepository<Influencer> {
     private final JPAQueryFactory queryFactory;
 
-    public List<SearchResult<Influencer>> searchSimilarKeywords(String keyword) {
+    public List<SearchResult<Influencer>> searchEntityByKeywords(String keyword) {
         NumberTemplate<Double> matchScore = Expressions.numberTemplate(
                 Double.class,
                 "function('match_against', {0}, {1})",

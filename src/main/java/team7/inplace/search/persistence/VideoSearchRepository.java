@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import team7.inplace.influencer.domain.QInfluencer;
 import team7.inplace.place.domain.QPlace;
@@ -14,15 +15,21 @@ import team7.inplace.video.domain.QVideo;
 import team7.inplace.video.domain.Video;
 
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class VideoSearchRepository implements SearchRepository<Video> {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<SearchResult<Video>> searchSimilarKeywords(String keyword) {
+    public List<SearchResult<Video>> searchEntityByKeywords(String keyword) {
+        return List.of();
+    }
+
+    @Override
+    public List<SearchResult<Video>> searchDetailsByKeyword(String keyword) {
         var placeKeywordSearchResults = searchSimilarKeywordWithPlace(keyword);
         var influencerKeywordSearchResults = searchSimilarKeywordWithInfluencer(keyword);
-
+        log.info("COMPLETED");
         return Stream.concat(placeKeywordSearchResults.stream(), influencerKeywordSearchResults.stream())
                 .distinct()
                 .sorted((a, b) -> Double.compare(b.score(), a.score()))

@@ -5,6 +5,9 @@ import team7.inplace.search.persistence.dto.SearchResult;
 
 public interface SearchRepository<T> {
     Integer AUTO_COMPLETION_LIMIT = 5;
+    Integer SEARCH_LIMIT = 10;
 
-    List<SearchResult<T>> searchSimilarKeywords(String keyword);
+    default List<SearchResult<T>> searchEntityByKeywords(String keyword) {
+        return List.of();
+    }
 }
