@@ -20,7 +20,8 @@ create table places
     latitude        text                                                                 not null,
     longitude       text                                                                 not null,
     menu_img_url    text                                                                 null,
-    category        enum ('CAFE', 'JAPANESE', 'KOREAN', 'NONE', 'RESTAURANT', 'WESTERN') not null
+    category        enum ('CAFE', 'JAPANESE', 'KOREAN', 'NONE', 'RESTAURANT', 'WESTERN') not null,
+    index idx_long_lat (longitude(15), latitude(15))
 );
 
 create table places_menuboardphotourl_list
