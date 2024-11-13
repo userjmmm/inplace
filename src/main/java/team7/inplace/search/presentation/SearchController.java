@@ -9,18 +9,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.search.application.SearchService;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
+import team7.inplace.video.presentation.dto.VideoResponse;
 
 @RestController
-@RequestMapping("/complete")
+@RequestMapping("/search")
 @RequiredArgsConstructor
 public class SearchController implements SearchControllerApiSpec {
     private final SearchService searchService;
 
     @Override
-    @GetMapping("/search")
+    @GetMapping("/complete")
     public ResponseEntity<List<AutoCompletionInfo>> searchKeywords(String value) {
         var response = searchService.searchAutoCompletions(value);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @Override
+    @GetMapping("/video")
+    public ResponseEntity<List<VideoResponse>> searchVideo(String value) {
+        var videos = searchService.searchVideo(value);
+
+        var response = videos.stream()
+                .map(VideoResponse::from)
+                .toList();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
