@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 import team7.inplace.search.application.SearchService;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
 import team7.inplace.video.presentation.dto.VideoResponse;
@@ -36,4 +37,14 @@ public class SearchController implements SearchControllerApiSpec {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Override
+    @GetMapping("/influencer")
+    public ResponseEntity<List<InfluencerResponse>> searchInfluencer(String value) {
+        var influencers = searchService.searchInfluencer(value);
+
+        var response = influencers.stream()
+                .map(InfluencerResponse::from)
+                .toList();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
