@@ -6,11 +6,11 @@ public class CookieUtil {
 
     public static ResponseCookie createCookie(String key, String value) {
         return ResponseCookie.from(key, value)
-            .sameSite("Lax")
-            .secure(true)
-            .path("/")
-            .httpOnly(true)
-            .maxAge(60 * 60)
-            .build();
+                .sameSite("Lax")
+                .secure(true)
+                .path("/")
+                .httpOnly(true)
+                .maxAge(60 * 60)
+                .build();
     }
 }

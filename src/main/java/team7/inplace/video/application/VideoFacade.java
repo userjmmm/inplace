@@ -1,11 +1,7 @@
 package team7.inplace.video.application;
 
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.crawling.application.YoutubeCrawlingService;
 import team7.inplace.global.annotation.Facade;
@@ -17,6 +13,8 @@ import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.application.UserService;
 import team7.inplace.video.application.command.VideoCommand;
 import team7.inplace.video.application.dto.VideoInfo;
+
+import java.util.List;
 
 @Facade
 @Slf4j

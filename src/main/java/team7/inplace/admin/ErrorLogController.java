@@ -20,7 +20,7 @@ public class ErrorLogController {
             errorLog.resolve();
             errorLogRepository.save(errorLog);
         });
-        
+
         return ResponseEntity.ok().build();
     }
 }
