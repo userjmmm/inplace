@@ -1,8 +1,25 @@
 # Project : Inplace ( Team7_BE )
 
+## 배포 링크
+> [**BackEnd**](https://api.inplace.my) : _api.inplace.my_
+> 
+> [**FrontEnd**](https://inplace.my) : _inplace.my_
+
+## 개발 Repository 정보
+![GitHub language count](https://img.shields.io/github/languages/count/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub top language](https://img.shields.io/github/languages/top/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub repo size](https://img.shields.io/github/repo-size/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub open issues](https://img.shields.io/github/issues/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub last commit](https://img.shields.io/github/last-commit/kakao-tech-campus-2nd-step3/Team7_BE)
+
 ## 기획 의도
 >  **데이트 코스의 단조로움** 이라는 생각에서 시작한 저희의 아이디어는 인스타, 유튜브 등의 SNS 플랫폼의 성장과 함께 등장한 '인플루언서' 라는 개념에 집중하여, **인플루언서가 방문한 주변 장소에 대한 정보를 서비스 해보자!** 라는 생각으로 이어졌고, 이를 개인별 맞춤 장소 추천, 방문시 정보 발송 및 알림, 리뷰와 같은 기능으로 풀어내어 **Inplace** 라는 저희만의 웹 어플리케이션으로 구현해보았습니다.
-> 
+
+## 주요 기능
+
 ## 참여자
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
@@ -20,6 +37,13 @@
   </tr>
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+## 프로그램 구조
+- **ERD**
+  
+  <img src="https://file.notion.so/f/f/3ef8dbd9-414c-4cf5-813d-32ecb943cc67/125d6695-92d4-438c-8bc8-bee423d36257/image.png?table=block&id=8410a24e-b147-4649-9b77-304c9fd6599a&spaceId=3ef8dbd9-414c-4cf5-813d-32ecb943cc67&expirationTimestamp=1731585600000&signature=nfFPKXrEnsF9lTp65eWkTl9Gjhs_r8Yqf2qG4nAAmTw&downloadName=image.png" alt="ERD" width="600"/>
+
+- 
 
 ## 주요 종속성 버전
 - Spring Boots 3.3.3
@@ -46,15 +70,9 @@
 ![JMeter](https://img.shields.io/badge/JMeter-D22128?style=flat-square&logo=apachejmeter&logoColor=white)
 ![JUnit](https://img.shields.io/badge/JUnit-25A162?style=flat-square&logo=junit5&logoColor=white)
 
-## Repo 정보
-![GitHub language count](https://img.shields.io/github/languages/count/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub top language](https://img.shields.io/github/languages/top/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub repo size](https://img.shields.io/github/repo-size/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub open issues](https://img.shields.io/github/issues/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub closed issues](https://img.shields.io/github/issues-closed/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub last commit](https://img.shields.io/github/last-commit/kakao-tech-campus-2nd-step3/Team7_BE)
+![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
 
 ## 사용 예시
 > 나중에 시연 영상 첨부하기
