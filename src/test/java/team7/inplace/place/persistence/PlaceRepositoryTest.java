@@ -134,6 +134,8 @@ class PlaceRepositoryTest {
 
         entityManager.persist(video1);
         entityManager.persist(video2);
+
+        pageable = PageRequest.of(0, 10);
     }
 
     @Test
@@ -178,6 +180,7 @@ class PlaceRepositoryTest {
             influencers,
             pageable
         );
+        assertThat(foundPlaces.getTotalElements()).isEqualTo(3);
         // Then
         assertThat(foundPlaces).hasSize(3);
         assertThat(foundPlaces.getContent().get(0).getName()).isEqualTo("Place 2");
@@ -316,5 +319,39 @@ class PlaceRepositoryTest {
         //then
         assertThat(foundPlaces).hasSize(1);
         assertThat(foundPlaces.getContent().get(0).getName()).isEqualTo("Place 4");
+    }
+
+    // Pagenation
+    @Test
+    @DisplayName("page=1&size=2, 필터링 NULL, boundary[(10, 60), (50, 10)]")
+    public void test8() {
+
+//        * Place 3(10.0, 100.0) 제외
+//        * Place 2, Place 4는 page=0이라 제외, totalPages, totalElements에는 포함됨
+        // given
+        List<String> categories = null;
+        List<String> influencers = null;
+        pageable = PageRequest.of(1, 2);
+
+        // when
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
+            topLeftLongitude,
+            topLeftLatitude,
+            bottomRightLongitude,
+            bottomRightLatitude,
+            longitude,
+            latitude,
+            categories,
+            influencers,
+            pageable
+        );
+        // Then
+//        pagenation
+        assertThat(foundPlaces.getTotalElements()).isEqualTo(3);
+        assertThat(foundPlaces.getTotalPages()).isEqualTo(2);
+        assertThat(foundPlaces).hasSize(1);
+//        places
+        assertThat(foundPlaces.getContent().get(0).getName()).isEqualTo("Place 1");
+
     }
 }
