@@ -44,18 +44,10 @@ public class VideoServiceTest {
     @InjectMocks
     private VideoService videoService;
 
-
-    @AfterEach
-    void tearDown() {
-        SecurityContextHolder.clearContext();
-    }
-
     @Test
     @DisplayName("getVideosBySurround Test")
     void test1(){
         // given
-        // 유저 정보 설정
-        setUser();
         // 매개변수
         VideoSearchParams videoSearchParams = new VideoSearchParams(
                 "10.0",
@@ -268,10 +260,46 @@ public class VideoServiceTest {
         Assertions.assertThat(videoInfos.getContent().size()).isEqualTo(2);
     }
 
-    private void setUser() {
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User("test", 1L, Role.USER.getRoles());
-        Authentication authentication = new UsernamePasswordAuthenticationToken(customOAuth2User,
-                null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    @Test
+    @DisplayName("getPlaceNullVideo Test")
+    void test5(){
+        // Place 객체
+        Place place1 = new Place("Place 1",
+                "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+                "menuImg.url", "카페",
+                "Address 1|Address 2|Address 3",
+                "10.0", "10.0",
+                Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+                Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+                Arrays.asList("삼겹살|5000|false|menu.url|description",
+                        "돼지찌개|7000|true|menu.url|description"),
+                LocalDateTime.of(2024, 3, 28, 5, 30),
+                Arrays.asList(
+                        "menuBoard1.url",
+                        "menuBoard2.url"
+                )
+        );
+
+        // Video 객체
+        Video video1 = Video.from(new Influencer("성시경", "url", "가수"), place1, "url1");
+        TestUtil.setId(video1, 1L);
+        video1.updateViewCount(100L);
+
+        Video video2 = Video.from(new Influencer("성시경", "url", "가수"), place1, "url2");
+        TestUtil.setId(video2, 2L);
+        video2.updateViewCount(1000L);
+
+        // method 1 실행 결과 값 설정
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Video> videoList = Arrays.asList(video2, video1);
+
+        given(videoRepository.findTop10ByOrderByViewCountIncreaseDesc(pageable)).willAnswer(
+                invocation -> videoList
+        );
+        // when
+        List<VideoInfo> videoInfos = videoService.getCoolVideo();
+        // then
+        Assertions.assertThat(videoInfos.get(0).videoId()).isEqualTo(2L);
+        Assertions.assertThat(videoInfos.get(1).videoId()).isEqualTo(1L);
     }
 }

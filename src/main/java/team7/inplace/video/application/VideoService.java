@@ -7,14 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.exception.code.VideoErrorCode;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.application.dto.PlaceForVideo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
-import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.command.VideoCommand;
 import team7.inplace.video.application.command.VideoCommand.Create;
 import team7.inplace.video.application.dto.VideoInfo;
@@ -37,11 +35,6 @@ public class VideoService {
 
     @Transactional(readOnly = true)
     public List<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams) {
-        // 토큰 정보에 대한 검증
-        if (AuthorizationUtil.isNotLoginUser()) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
-
         // Place 엔티티 조회
         Page<Place> places = placeRepository.findPlacesByDistanceAndFilters(
                 videoSearchParams.topLeftLongitude(),

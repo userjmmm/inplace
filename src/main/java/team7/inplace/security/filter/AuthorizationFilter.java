@@ -1,5 +1,6 @@
 package team7.inplace.security.filter;
 
+import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,26 +36,52 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String token = getTokenCookie(request).getValue();
-        if (jwtUtil.isNotExpired(token)) {
-            addUserToAuthentication(token);
+        String accessToken = getAccessToken(request);
+        if (StringUtils.isNotEmpty(accessToken) && jwtUtil.isNotExpired(accessToken)) {
+            addUserToAuthentication(accessToken);
         }
+
+        String refreshToken = getRefreshToken(request);
+        if (StringUtils.isNotEmpty(refreshToken) && jwtUtil.isNotExpired(refreshToken)) {
+            addUserToAuthentication(refreshToken);
+        }
+
         filterChain.doFilter(request, response);
     }
 
     private boolean hasNoTokenCookie(HttpServletRequest request) {
         return Optional.ofNullable(request.getCookies())
             .flatMap(cookies -> Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue()))
+                .filter(
+                    cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue())
+                        || cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue())
+                )
                 .findAny())
             .isEmpty();
     }
 
-    private Cookie getTokenCookie(HttpServletRequest request) throws InplaceException {
-        return Arrays.stream(request.getCookies())
-            .filter(cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue()))
+    private String getAccessToken(HttpServletRequest request) throws InplaceException {
+        Cookie accessTokenCookie = Arrays.stream(request.getCookies())
+            .filter(
+                cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue()))
             .findAny()
             .orElse(null);
+        if (Objects.isNull(accessTokenCookie)) {
+            return null;
+        }
+        return accessTokenCookie.getValue();
+    }
+
+    private String getRefreshToken(HttpServletRequest request) throws InplaceException {
+        Cookie refreshTokenCookie = Arrays.stream(request.getCookies())
+            .filter(
+                cookie -> cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue()))
+            .findAny()
+            .orElse(null);
+        if (Objects.isNull(refreshTokenCookie)) {
+            return null;
+        }
+        return refreshTokenCookie.getValue();
     }
 
     private void addUserToAuthentication(String token) throws InplaceException {
