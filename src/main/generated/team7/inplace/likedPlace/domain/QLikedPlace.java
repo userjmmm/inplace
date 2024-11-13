@@ -11,12 +11,12 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QLikedPlace is a Querydsl query type for likedPlace
+ * QLikedPlace is a Querydsl query type for LikedPlace
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QLikedPlace extends EntityPathBase<LikedPlace> {
 
-    private static final long serialVersionUID = 1786130640L;
+    private static final long serialVersionUID = -2070471504L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
@@ -48,11 +48,8 @@ public class QLikedPlace extends EntityPathBase<LikedPlace> {
 
     public QLikedPlace(Class<? extends LikedPlace> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.place = inits.isInitialized("place") ? new team7.inplace.place.domain.QPlace(
-            forProperty("place"), inits.get("place")) : null;
-        this.user =
-            inits.isInitialized("user") ? new team7.inplace.user.domain.QUser(forProperty("user"))
-                : null;
+        this.place = inits.isInitialized("place") ? new team7.inplace.place.domain.QPlace(forProperty("place"), inits.get("place")) : null;
+        this.user = inits.isInitialized("user") ? new team7.inplace.user.domain.QUser(forProperty("user")) : null;
     }
 
 }
