@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
@@ -21,6 +22,7 @@ import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
+import team7.inplace.place.application.dto.LikedPlaceInfo;
 import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Place;
@@ -213,5 +215,23 @@ public class PlaceService {
         Influencer influencer = (video != null) ? video.getInfluencer() : null;
 
         return PlaceMessageCommand.of(place, influencer, video);
+    }
+
+    public Page<LikedPlaceInfo> getLikedPlaceInfo(Long userId, Pageable pageable) {
+        Page<LikedPlace> placePage = likedPlaceRepository.findByUserIdAndIsLikedTrue(userId,
+            pageable);
+        List<Long> placeIds = placePage.map(likedPlace -> likedPlace.getPlace().getId()).toList();
+        List<Video> videos = videoRepository.findByPlaceIdIn(placeIds);
+        Map<Long, String> placeIdToInfluencerName = getMapPlaceIdToInfluencerName(videos);
+
+        List<LikedPlaceInfo> likedPlaceInfos = placePage.getContent().stream()
+            .map(likedPlace -> {
+                String influencerName = placeIdToInfluencerName.getOrDefault(
+                    likedPlace.getPlace().getId(), null);
+                return LikedPlaceInfo.of(likedPlace, influencerName);
+            })
+            .toList();
+
+        return new PageImpl<>(likedPlaceInfos, pageable, placePage.getTotalElements());
     }
 }
