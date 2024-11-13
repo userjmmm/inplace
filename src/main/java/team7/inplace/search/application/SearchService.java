@@ -46,7 +46,6 @@ public class SearchService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     public List<VideoInfo> searchVideo(String keyword) {
         var videoInfos = videoSearchRepository.searchEntityByKeywords(keyword);
 
@@ -57,7 +56,6 @@ public class SearchService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     public List<InfluencerInfo> searchInfluencer(String keyword) {
         var influencerInfos = influencerSearchRepository.searchEntityByKeywords(keyword);
         Long userId = AuthorizationUtil.getUserId();
