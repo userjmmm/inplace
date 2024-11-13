@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
+import team7.inplace.search.application.dto.SearchType;
 import team7.inplace.search.persistence.InfluencerSearchRepository;
 import team7.inplace.search.persistence.PlaceSearchRepository;
 
@@ -20,11 +21,18 @@ public class SearchService {
     private final PlaceSearchRepository placeSearchRepository;
 
     public List<AutoCompletionInfo> searchAutoCompletions(String keyword) {
-        log.info("Searching auto completions for keyword: {}", keyword);
-        var influencerAutoCompletions = influencerSearchRepository.searchSimilarKeywords(keyword);
-        var placeAutoCompletions = placeSearchRepository.searchSimilarKeywords(keyword);
+        var influencerSearchInfo = influencerSearchRepository.searchSimilarKeywords(keyword);
+        var placeSearchInfo = placeSearchRepository.searchSimilarKeywords(keyword);
 
-        return Stream.concat(influencerAutoCompletions.stream(), placeAutoCompletions.stream())
+        var influencerAutoComplete = influencerSearchInfo.stream()
+                .map(info -> new AutoCompletionInfo(info.searchResult().getName(), info.score(), SearchType.INFLUENCER))
+                .toList();
+        System.out.println("influencerAutoComplete: " + influencerAutoComplete);
+        var placeAutoComplete = placeSearchInfo.stream()
+                .map(info -> new AutoCompletionInfo(info.searchResult().getName(), info.score(), SearchType.PLACE))
+                .toList();
+
+        return Stream.concat(influencerAutoComplete.stream(), placeAutoComplete.stream())
                 .sorted(Comparator.comparing(AutoCompletionInfo::score).reversed())
                 .limit(MAX_COMPLETION_RESULTS)
                 .toList();
