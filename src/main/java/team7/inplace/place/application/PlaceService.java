@@ -73,7 +73,7 @@ public class PlaceService {
         List<PlaceInfo> placeInfos = convertToPlaceInfos(placesPage, placeIdToInfluencerName);
 
         // PlaceInfo 리스트를 Page로 변환하여 반환
-        return new PageImpl<>(placeInfos, placesPage.getPageable(), placeInfos.size());
+        return new PageImpl<>(placeInfos, placesPage.getPageable(), placesPage.getTotalElements());
     }
 
     private List<PlaceInfo> convertToPlaceInfos(Page<Place> placesPage,
