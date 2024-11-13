@@ -46,5 +46,15 @@
 ![JMeter](https://img.shields.io/badge/JMeter-D22128?style=flat-square&logo=apachejmeter&logoColor=white)
 ![JUnit](https://img.shields.io/badge/JUnit-25A162?style=flat-square&logo=junit5&logoColor=white)
 
+## Repo 정보
+![GitHub language count](https://img.shields.io/github/languages/count/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub top language](https://img.shields.io/github/languages/top/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub repo size](https://img.shields.io/github/repo-size/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub open issues](https://img.shields.io/github/issues/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub last commit](https://img.shields.io/github/last-commit/kakao-tech-campus-2nd-step3/Team7_BE)
+
 ## 사용 예시
 > 나중에 시연 영상 첨부하기
