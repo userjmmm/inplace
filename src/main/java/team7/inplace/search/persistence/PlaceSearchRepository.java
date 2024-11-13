@@ -35,8 +35,8 @@ public class PlaceSearchRepository implements SearchRepository<Place> {
                 .fetch()
                 .stream()
                 .map(tuple -> new SearchResult<>(
-                        tuple.get(QPlace.place),
-                        tuple.get(matchScore)
+                        tuple.get(0, Place.class),
+                        tuple.get(1, Double.class)
                 )).toList();
     }
 }

@@ -35,8 +35,8 @@ public class InfluencerSearchRepository implements SearchRepository<Influencer> 
                 .fetch()
                 .stream()
                 .map(tuple -> new SearchResult<>(
-                        tuple.get(QInfluencer.influencer),
-                        tuple.get(matchScore)
+                        tuple.get(0, Influencer.class),
+                        tuple.get(1, Double.class)
                 )).toList();
     }
 }
