@@ -16,7 +16,7 @@ public class PlaceSearchRepository implements SearchRepository<Place> {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<SearchResult<Place>> searchSimilarKeywords(String keyword) {
+    public List<SearchResult<Place>> searchEntityByKeywords(String keyword) {
         NumberTemplate<Double> matchScore = Expressions.numberTemplate(
                 Double.class,
                 "function('match_against', {0}, {1})",
