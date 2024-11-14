@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import team7.inplace.admin.persistence.BannerRepository;
 import team7.inplace.global.exception.ErrorLog;
 import team7.inplace.global.exception.ErrorLogRepository;
 import team7.inplace.global.kakao.config.KakaoApiProperties;
@@ -23,6 +24,7 @@ public class AdminPageController {
     private final KakaoApiProperties kakaoApiProperties;
     private final VideoRepository videoRepository;
     private final ErrorLogRepository errorLogRepository;
+    private final BannerRepository bannerRepository;
 
     @GetMapping("/video")
     public String getVideos(@PageableDefault Pageable pageable, Model model) {
@@ -41,5 +43,13 @@ public class AdminPageController {
         List<ErrorLog> errorLogs = errorLogRepository.findByIsResolvedFalse();
         model.addAttribute("errorLogs", errorLogs);
         return "admin/error-logs.html";
+    }
+
+    @GetMapping("/banner")
+    public String getBanners(Model model) {
+        var banners = bannerRepository.findAll();
+
+        model.addAttribute("banners", banners);
+        return "admin/banner.html";
     }
 }
