@@ -9,14 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import team7.inplace.likedPlace.domain.LikedPlace;
 
-import java.util.Optional;
-
 public interface LikedPlaceRepository extends JpaRepository<LikedPlace, Long> {
 
     Optional<LikedPlace> findByUserIdAndPlaceId(Long userId, Long placeId);
 
-    Page<LikedPlace> findByUserIdAndIsLikedTrue(Long userId, Pageable pageable);
-
     @Query("SELECT l.place.id FROM LikedPlace l WHERE l.user.id = :userId AND l.isLiked = true")
     Set<Long> findPlaceIdsByUserIdAndIsLikedTrue(@Param("userId") Long userId);
+
+    @Query("SELECT lp FROM LikedPlace lp JOIN FETCH lp.place WHERE lp.user.id = :userId AND lp.isLiked = true")
+    Page<LikedPlace> findByUserIdAndIsLikedTrueWithPlace(@Param("userId") Long userId,
+        Pageable pageable);
+
 }
