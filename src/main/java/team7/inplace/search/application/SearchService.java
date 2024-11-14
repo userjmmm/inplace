@@ -5,10 +5,14 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
+import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
 import team7.inplace.search.application.dto.PlaceSearchInfo;
@@ -16,6 +20,7 @@ import team7.inplace.search.application.dto.SearchType;
 import team7.inplace.search.persistence.InfluencerSearchRepository;
 import team7.inplace.search.persistence.PlaceSearchRepository;
 import team7.inplace.search.persistence.VideoSearchRepository;
+import team7.inplace.search.persistence.dto.SearchResult;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.dto.VideoInfo;
 
@@ -78,6 +83,38 @@ public class SearchService {
                 })
                 .sorted((a, b) -> Boolean.compare(b.likes(), a.likes()))
                 .toList();
+    }
+
+    public Page<InfluencerInfo> searchInfluencer(String keyword, Pageable pageable) {
+        Page<SearchResult<Influencer>> influencerInfos = influencerSearchRepository.searchEntityByKeywords(keyword,
+                pageable);
+        Long userId = AuthorizationUtil.getUserId();
+
+        if (userId == null) {
+            return new PageImpl<>(
+                    influencerInfos.getContent().stream()
+                            .map(influencer -> InfluencerInfo.from(influencer.searchResult(), false))
+                            .toList(),
+                    pageable,
+                    influencerInfos.getTotalElements()
+            );
+        }
+
+        var likedInfluencerIds = favoriteInfluencerRepository.findLikedInfluencerIdsByUserId(userId);
+
+        List<InfluencerInfo> sortedContent = influencerInfos.getContent().stream()
+                .map(influencerInfo -> {
+                    boolean isLiked = likedInfluencerIds.contains(influencerInfo.searchResult().getId());
+                    return InfluencerInfo.from(influencerInfo.searchResult(), isLiked);
+                })
+                .sorted((a, b) -> Boolean.compare(b.likes(), a.likes()))
+                .toList();
+
+        return new PageImpl<>(
+                sortedContent,
+                pageable,
+                influencerInfos.getTotalElements()
+        );
     }
 
     public List<PlaceSearchInfo> searchPlace(String keyword) {
