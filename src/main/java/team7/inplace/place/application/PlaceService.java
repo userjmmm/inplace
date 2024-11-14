@@ -25,6 +25,7 @@ import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsC
 import team7.inplace.place.application.dto.LikedPlaceInfo;
 import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
+import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.placeMessage.application.command.PlaceMessageCommand;
@@ -55,7 +56,10 @@ public class PlaceService {
 
         // categories와 influencers 필터 처리
         List<String> categoryFilters = placesFilterParamsCommand.isCategoryFilterExists()
-            ? Arrays.stream(placesFilterParamsCommand.categories().split(",")).toList()
+            ? Arrays.stream(placesFilterParamsCommand.categories().split(","))
+            .map(Category::of)
+            .map(Category::name)
+            .toList()
             : null;
 
         List<String> influencerFilters = placesFilterParamsCommand.isInfluencerFilterExists()
