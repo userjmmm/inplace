@@ -17,8 +17,9 @@
 > 9. [**_개발 기간_**](#개발-기간)
 > 10. [**_Dependency 버전_**](#Dependency-버전)
 > 11. [**_Tech Stack_**](#Tech-stack)
-> 12. [**_기능 흐름_**](#기능-흐름)
-> 13. [**_사용 예시_**](#사용-예시)
+> 12. [**_테스트_**](#테스트)
+> 13. [**_기능 흐름_**](#기능-흐름)
+> 14. [**_사용 예시_**](#사용-예시)
 
 ## 프로젝트 목적
 
@@ -248,12 +249,23 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white)
 
+## 테스트
+
+> **테스트 시나리오** : https://www.notion.so/9ed68b292c004fc69f7eaad513054d96
+>
+> **테스트 결과보고서** : https://www.notion.so/08a520d3b8c44154a19425b0bcc16f6f
+
 ## 기능 흐름
 
 - ### Spring Security
-    - 로그인 시, jwt로 accessToken과 refreshToken을 Cookie에 담아줍니다.
-        - refreshToken은 redis에 저장되어 RTR (Refresh Token Rotation)을 구현하였습니다.
-    - 모든 요청 AuthorizationFilter에서 Cookie에 있는 토큰이 유효한지 확인하고, 유효하면 Authenticate합니다.
+    - oauth 로그인 시, jwt로 accessToken과 refreshToken을 Cookie에 담아줍니다.
+        - oauthToken은 aes알고리즘으로 암호화 되어 db에 저장됩니다.
+    - 모든 요청은 AuthorizationFilter에서 Cookie에 있는 토큰이 유효한지 확인하고, 유효하면 Authenticate합니다.
+- ### PlaceMessage
+    - 요청이 오면 webClient(비동기)로 나에게보내기 kakao api를 통해 장소 정보를 보냅니다.
+    - 3일 뒤 나에게 보내기 kakao api를 통해 리뷰 요청 메세지를 보냅니다.
+- ### TokenRefresh
+    - Redis DB에 username(key)로 refreshToken을 확인하고, RTR (Refresh Token Rotation)을 합니다.
 
 ## 사용 예시
 
