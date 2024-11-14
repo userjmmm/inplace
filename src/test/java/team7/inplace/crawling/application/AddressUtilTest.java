@@ -2,6 +2,7 @@ package team7.inplace.crawling.application;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import team7.inplace.admin.crawling.application.AddressUtil;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

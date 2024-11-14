@@ -90,3 +90,29 @@ document.getElementById('imageUploadForm').addEventListener('submit', function (
             console.error('Error:', error);
         });
 });
+
+// 이미지 삭제 요청
+function deleteImage(element) {
+    const imageId = element.getAttribute('data-id');
+    if (confirm('이미지를 삭제하시겠습니까?')) {
+        fetch(`/banner/${imageId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || '삭제 실패');
+                    });
+                }
+                return response.text();
+            })
+            .then(message => {
+                alert(message || '이미지가 성공적으로 삭제되었습니다.');
+                location.reload();
+            })
+            .catch(error => {
+                alert(error.message || '삭제 중 오류가 발생했습니다.');
+                console.error('Error:', error);
+            });
+    }
+}

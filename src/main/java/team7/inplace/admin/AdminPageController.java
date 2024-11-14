@@ -8,9 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import team7.inplace.admin.persistence.BannerRepository;
-import team7.inplace.global.exception.ErrorLog;
-import team7.inplace.global.exception.ErrorLogRepository;
+import team7.inplace.admin.banner.persistence.BannerRepository;
+import team7.inplace.admin.error.ErrorLog;
+import team7.inplace.admin.error.ErrorLogRepository;
 import team7.inplace.global.kakao.config.KakaoApiProperties;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
@@ -51,5 +51,10 @@ public class AdminPageController {
 
         model.addAttribute("banners", banners);
         return "admin/banner.html";
+    }
+
+    @GetMapping("/main")
+    public String getMainPage() {
+        return "admin/main.html";
     }
 }
