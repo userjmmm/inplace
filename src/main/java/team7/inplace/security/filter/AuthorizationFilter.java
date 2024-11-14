@@ -45,6 +45,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             if (accessToken != null) {
                 log.info("Access token: {}", accessToken.getValue());
             }
+        } else {
+            log.info("cookie is null");
         }
         if (hasNoTokenCookie(request)) {
             filterChain.doFilter(request, response);
