@@ -1,13 +1,13 @@
 package team7.inplace.crawling.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import team7.inplace.admin.crawling.client.YoutubeClient;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -22,9 +22,9 @@ class YoutubeClientTest {
         final String videoId = null;
         var response = youtubeClient.getVideos(playlistId, videoId);
 
-        // 2024. 10. 2기준 154개
+        // 2024. 11. 15일기준 157개
         // regex로 판별되는 기준 138개
-        final int expectedSize = 154;
+        final int expectedSize = 157;
         assertThat(response.size())
                 .isEqualTo(expectedSize);
     }
