@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.config.annotation.CustomRepositoryTest;
 import team7.inplace.place.domain.Place;
 import team7.inplace.review.domain.Review;
@@ -19,6 +21,8 @@ import team7.inplace.user.domain.User;
 import team7.inplace.user.domain.UserType;
 
 @CustomRepositoryTest
+@Transactional
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ReviewRepositoryTest {
 
     @PersistenceContext
