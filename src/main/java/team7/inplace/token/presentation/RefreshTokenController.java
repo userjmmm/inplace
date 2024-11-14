@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.security.filter.TokenType;
@@ -45,6 +46,25 @@ public class RefreshTokenController implements RefreshTokenControllerApiSpec {
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+    }
+
+    @DeleteMapping("/refresh-token")
+    public ResponseEntity<Void> deleteRefreshToken(@CookieValue(value = "refresh_token") Cookie cookie,
+                                                   HttpServletResponse response
+    ) {
+        String refreshToken = cookie.getValue();
+        refreshTokenFacade.deleteRefreshToken(refreshToken);
+        
+        ResponseCookie accessTokenCookie = CookieUtil.createCookie(
+                TokenType.ACCESS_TOKEN.getValue(),
+                "");
+        ResponseCookie refreshTokenCookie = CookieUtil.createCookie(
+                TokenType.REFRESH_TOKEN.getValue(),
+                "");
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
