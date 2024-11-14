@@ -6,7 +6,6 @@
     <link href="/css/style.css" rel="stylesheet">
     <link href="/css/logo.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="/js/logo.js"></script>
 </head>
 <body>
 <div class="header">
@@ -16,54 +15,55 @@
 
 <h1>이미지 관리</h1>
 
-<div style="width: 80%; max-width: 1000px;">
-    <div style="background-color: white; padding: 20px; border-radius: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
-        <h2 style="color: #2e8b57;">이미지 업로드</h2>
-        <form enctype="multipart/form-data" id="imageUploadForm" method="post" th:action="@{/admin/images/upload}">
-            <div class="form-inline">
-                <label for="imageFile">이미지 선택:</label>
-                <input accept="image/*" id="imageFile" name="imageFile" onchange="previewImage(this)" type="file">
+<div class="container">
+    <div class="upload-form">
+        <h2>이미지 업로드</h2>
+        <form enctype="multipart/form-data" id="imageUploadForm" method="post">
+            <div class="form-group">
+                <div class="preview-area">
+                    <img alt="미리보기" id="imagePreview" onclick="openPreviewModal(this.src)" src="">
+                </div>
+
+                <div class="upload-btn-wrapper">
+                    <button class="btn-upload">이미지 선택</button>
+                    <input accept="image/*" id="imageFile" name="imageFile" onchange="previewImage(this)" type="file">
+                </div>
             </div>
 
             <div class="form-inline">
-                <label for="imageName">이미지 이름:</label>
+                <label for="imageName">이미지 이름</label>
                 <input id="imageName" name="imageName" required type="text">
             </div>
 
-            <div class="form-inline">
-                <label for="startDate">시작 날짜:</label>
-                <input id="startDate" name="startDate" type="date" required>
+            <div class="form-row">
+                <div class="form-inline">
+                    <label for="startDate">시작 날짜</label>
+                    <input id="startDate" name="startDate" required type="date">
+                </div>
+
+                <div class="form-inline">
+                    <label for="endDate">종료 날짜</label>
+                    <input id="endDate" name="endDate" required type="date">
+                </div>
             </div>
 
-            <div class="form-inline">
-                <label for="endDate">종료 날짜:</label>
-                <input id="endDate" name="endDate" type="date" required>
-            </div>
-
-            <div class="form-inline">
-                <label>
+            <div class="form-row">
+                <div class="form-check">
                     <input id="isRequired" name="isRequired" type="checkbox">
-                    필수 로고 (반드시 표시되어야 함)
-                </label>
-            </div>
+                    <label for="isRequired">필수 로고 (반드시 표시)</label>
+                </div>
 
-            <div class="form-inline">
-                <label>
+                <div class="form-check">
                     <input id="isFixed" name="isFixed" type="checkbox">
-                    고정 표시 (위치 고정)
-                </label>
+                    <label for="isFixed">고정 표시 (위치 고정)</label>
+                </div>
             </div>
 
-            <div style="margin: 20px 0; text-align: center;">
-                <img alt="미리보기" id="imagePreview" onclick="openPreviewModal(this.src)" src=""
-                     style="max-width: 300px; display: none; cursor: pointer;">
-            </div>
-
-            <input style="width: 100%;" type="submit" value="업로드">
+            <button class="btn-submit" type="submit">업로드하기</button>
         </form>
     </div>
 
-    <h2 style="color: #2e8b57;">업로드된 이미지 목록</h2>
+    <h2>업로드된 이미지 목록</h2>
     <table>
         <thead>
         <tr>
@@ -99,7 +99,8 @@
             <td th:text="${#temporals.format(image.endDate, 'yyyy-MM-dd')}"></td>
             <td th:text="${#temporals.format(image.uploadDate, 'yyyy-MM-dd HH:mm')}"></td>
             <td>
-                <input onclick="deleteImage(this)"
+                <input class="btn-delete"
+                       onclick="deleteImage(this)"
                        th:attr="data-id=${image.id}"
                        type="button"
                        value="삭제">
@@ -109,12 +110,13 @@
     </table>
 </div>
 
-<!-- 이미지 미리보기 모달 -->
 <div class="modal" id="previewModal">
-    <div class="modal-content" style="text-align: center;">
+    <div class="modal-content">
         <span class="close" onclick="closePreviewModal()">&times;</span>
-        <img alt="이미지 미리보기" id="modalImage" src="" style="max-width: 90%; max-height: 80vh; margin: 20px auto;">
+        <img alt="이미지 미리보기" id="modalImage" src="">
     </div>
 </div>
+
+<script src="/js/logo.js"></script>
 </body>
 </html>

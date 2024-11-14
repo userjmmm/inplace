@@ -1,3 +1,4 @@
+// 이미지 미리보기 기능
 function previewImage(input) {
     const preview = document.getElementById('imagePreview');
     if (input.files && input.files[0]) {
@@ -5,59 +6,88 @@ function previewImage(input) {
         reader.onload = function (e) {
             preview.src = e.target.result;
             preview.style.display = 'block';
-        }
+        };
         reader.readAsDataURL(input.files[0]);
     }
 }
 
-function openPreviewModal(imageSrc) {
+// 이미지 미리보기 모달
+function openPreviewModal(src) {
     const modal = document.getElementById('previewModal');
-    const modalImage = document.getElementById('modalImage');
-    modalImage.src = imageSrc;
-    modal.style.display = 'block';
+    const modalImg = document.getElementById('modalImage');
+    modal.style.display = "block";
+    modalImg.src = src;
 }
 
 function closePreviewModal() {
-    const modal = document.getElementById('previewModal');
-    modal.style.display = 'none';
+    document.getElementById('previewModal').style.display = "none";
 }
 
-// 모달 외부 클릭 시 닫기
+// 모달 외부 클릭시 닫기
 window.onclick = function (event) {
     const modal = document.getElementById('previewModal');
-    if (event.target == modal) {
-        modal.style.display = 'none';
+    if (event.target === modal) {
+        closePreviewModal();
     }
 }
 
-function updateRequiredStatus(imageId, isRequired) {
-    $.ajax({
-        url: '/admin/images/' + imageId + '/required',
-        type: 'PUT',
-        data: JSON.stringify({isRequired: isRequired}),
-        contentType: 'application/json',
-        success: function (response) {
-            alert('상태가 성공적으로 업데이트되었습니다.');
-        },
-        error: function (xhr, status, error) {
-            alert('상태 업데이트 중 오류가 발생했습니다: ' + error);
-            $(event.target).prop('checked', !isRequired);
-        }
-    });
-}
+// form submit 이벤트 처리
+document.getElementById('imageUploadForm').addEventListener('submit', function (e) {
+    e.preventDefault();
 
-function deleteImage(button) {
-    const imageId = button.getAttribute('data-id');
-    if (confirm('이 이미지를 삭제하시겠습니까?')) {
-        $.ajax({
-            url: '/admin/images/' + imageId,
-            type: 'DELETE',
-            success: function (response) {
-                location.reload();
-            },
-            error: function (xhr, status, error) {
-                alert('이미지 삭제 중 오류가 발생했습니다: ' + error);
+    // 필수 입력값 확인
+    const imageFile = document.getElementById('imageFile').files[0];
+    const imageName = document.getElementById('imageName').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    if (!imageFile) {
+        alert('이미지를 선택해주세요.');
+        return;
+    }
+
+    if (!imageName.trim()) {
+        alert('이미지 이름을 입력해주세요.');
+        return;
+    }
+
+    if (!startDate || !endDate) {
+        alert('날짜를 선택해주세요.');
+        return;
+    }
+
+    // 날짜 유효성 검사
+    if (new Date(endDate) < new Date(startDate)) {
+        alert('종료 날짜는 시작 날짜 이후여야 합니다.');
+        return;
+    }
+
+    // FormData 생성 및 전송
+    const formData = new FormData(this);
+
+    // 체크박스 값을 명시적으로 설정
+    formData.set('isRequired', document.getElementById('isRequired').checked);
+    formData.set('isFixed', document.getElementById('isFixed').checked);
+
+    fetch('/logo', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                // 서버에서 전달된 에러 메시지를 사용
+                return response.text().then(text => {
+                    throw new Error(text || '업로드 실패');
+                });
             }
+            return response.text();
+        })
+        .then(message => {
+            alert(message || '이미지가 성공적으로 업로드되었습니다.');
+            location.reload();
+        })
+        .catch(error => {
+            alert(error.message || '업로드 중 오류가 발생했습니다.');
+            console.error('Error:', error);
         });
-    }
-}
+});
