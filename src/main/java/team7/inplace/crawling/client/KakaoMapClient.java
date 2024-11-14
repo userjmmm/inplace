@@ -1,7 +1,6 @@
 package team7.inplace.crawling.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -14,6 +13,8 @@ import team7.inplace.crawling.client.dto.PlaceNode;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.kakao.config.KakaoApiProperties;
+
+import java.util.Objects;
 
 @Slf4j
 @Component

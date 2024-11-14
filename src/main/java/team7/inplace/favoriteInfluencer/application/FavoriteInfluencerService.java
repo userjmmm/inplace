@@ -1,6 +1,5 @@
 package team7.inplace.favoriteInfluencer.application;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +17,8 @@ import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.security.application.CurrentUserProvider;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.User;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -55,8 +56,8 @@ public class FavoriteInfluencerService {
 
     private void processFavoriteInfluencer(User user, Influencer influencer, Boolean likes) {
         FavoriteInfluencer favorite = favoriteRepository
-            .findByUserIdAndInfluencerId(user.getId(), influencer.getId())
-            .orElseGet(() -> new FavoriteInfluencer(user, influencer)); // 존재하지 않으면 새로 생성
+                .findByUserIdAndInfluencerId(user.getId(), influencer.getId())
+                .orElseGet(() -> new FavoriteInfluencer(user, influencer)); // 존재하지 않으면 새로 생성
 
         favorite.updateLike(likes);
         if (favorite.getId() == null) {
@@ -67,10 +68,10 @@ public class FavoriteInfluencerService {
     @Transactional(readOnly = true)
     public Page<InfluencerInfo> getFavoriteInfluencers(Long userId, Pageable pageable) {
         Page<FavoriteInfluencer> influencerPage = favoriteRepository.findByUserIdAndIsLikedTrue(
-            userId, pageable);
+                userId, pageable);
 
         return influencerPage.map(
-            favorite -> InfluencerInfo.from(favorite.getInfluencer(), favorite.isLiked()));
+                favorite -> InfluencerInfo.from(favorite.getInfluencer(), favorite.isLiked()));
     }
 }
 

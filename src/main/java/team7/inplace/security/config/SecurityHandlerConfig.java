@@ -14,8 +14,8 @@ public class SecurityHandlerConfig {
 
     @Bean
     public CustomSuccessHandler customSuccessHandler(
-        JwtUtil jwtUtil,
-        RefreshTokenService refreshTokenService
+            JwtUtil jwtUtil,
+            RefreshTokenService refreshTokenService
     ) {
         return new CustomSuccessHandler(jwtUtil, refreshTokenService);
     }

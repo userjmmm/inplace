@@ -2,10 +2,11 @@ package team7.inplace.security.entryPoint;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+
+import java.io.IOException;
 
 public class LoginAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
@@ -14,7 +15,7 @@ public class LoginAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-        AuthenticationException authException) throws IOException {
+                         AuthenticationException authException) throws IOException {
         response.sendRedirect(frontEndUrl);
     }
 }
