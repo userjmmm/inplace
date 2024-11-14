@@ -51,4 +51,9 @@ public class AdminPageController {
         model.addAttribute("banners", banners);
         return "admin/banner.html";
     }
+
+    @GetMapping("/main")
+    public String getMainPage() {
+        return "admin/main.html";
+    }
 }
