@@ -15,12 +15,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.config.annotation.CustomRepositoryTest;
 import team7.inplace.place.domain.Place;
-import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.review.domain.Review;
 import team7.inplace.user.domain.Role;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.domain.UserType;
-import team7.inplace.user.persistence.UserRepository;
 
 @CustomRepositoryTest
 @Transactional
@@ -32,11 +30,6 @@ class ReviewRepositoryTest {
     @Autowired
     private ReviewRepository reviewRepository;
 
-    @Autowired
-    private PlaceRepository placeRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @BeforeEach
     void init() {
@@ -82,15 +75,15 @@ class ReviewRepositoryTest {
     @Test
     @DirtiesContext
     @DisplayName("like true false test")
-    void checkLikedDisliked() {
+    public void checkLikedDisliked() {
         //given
 //            init()
         //when
         int likes = reviewRepository.countByPlaceIdAndIsLikedTrue(
-            placeRepository.findById(1L).get().getId());
+            1L);
 
         int dislikes = reviewRepository.countByPlaceIdAndIsLikedFalse(
-            placeRepository.findById(1L).get().getId());
+            1L);
 
         //then
         assertThat(likes).isEqualTo(3);
