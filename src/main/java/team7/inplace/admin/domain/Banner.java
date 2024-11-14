@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Logo {
+public class Banner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,7 +23,7 @@ public class Logo {
     private LocalDateTime endDate;
     private Boolean isFixed;
 
-    private Logo(String imgName, String imgPath, LocalDateTime startDate, LocalDateTime endDate, Boolean isFixed) {
+    private Banner(String imgName, String imgPath, LocalDateTime startDate, LocalDateTime endDate, Boolean isFixed) {
         this.imgName = imgName;
         this.imgPath = imgPath;
         this.startDate = startDate;
@@ -31,8 +31,8 @@ public class Logo {
         this.isFixed = isFixed;
     }
 
-    public static Logo of(String imgName, String imgPath, LocalDateTime startDate, LocalDateTime endDate,
-                          Boolean isFixed) {
-        return new Logo(imgName, imgPath, startDate, endDate, isFixed);
+    public static Banner of(String imgName, String imgPath, LocalDateTime startDate, LocalDateTime endDate,
+                            Boolean isFixed) {
+        return new Banner(imgName, imgPath, startDate, endDate, isFixed);
     }
 }

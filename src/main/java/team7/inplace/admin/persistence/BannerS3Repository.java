@@ -9,13 +9,13 @@ import team7.inplace.infra.s3.AwsProperties;
 
 @Repository
 @RequiredArgsConstructor
-public class LogoS3Repository {
+public class BannerS3Repository {
     private final AmazonS3Client amazonS3Client;
     private final AwsProperties awsProperties;
 
     public String uploadLogo(String logoName, MultipartFile logo) {
         var bucketName = awsProperties.bucketName();
-        var key = "logo/" + logoName;
+        var key = "banner/" + logoName;
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(logo.getSize());

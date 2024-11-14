@@ -2,9 +2,9 @@ package team7.inplace.admin.presentation;
 
 import java.time.LocalDate;
 import org.springframework.web.multipart.MultipartFile;
-import team7.inplace.admin.application.command.LogoCommand;
+import team7.inplace.admin.application.command.BannerCommand;
 
-public class LogoRequest {
+public class BannerRequest {
     public record Create(
             String imageName,
             MultipartFile imageFile,
@@ -12,8 +12,8 @@ public class LogoRequest {
             LocalDate endDate,
             Boolean isFixed
     ) {
-        public LogoCommand.Create toCommand() {
-            return new LogoCommand.Create(
+        public BannerCommand.Create toCommand() {
+            return new BannerCommand.Create(
                     imageName,
                     imageFile,
                     startDate.atStartOfDay(),

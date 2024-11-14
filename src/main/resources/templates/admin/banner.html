@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>이미지 관리</title>
     <link href="/css/style.css" rel="stylesheet">
-    <link href="/css/logo.css" rel="stylesheet">
+    <link href="/css/banner.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -72,22 +72,22 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="logo : ${logos}">
+            <tr th:each="banner : ${banners}">
                 <td>
                     <img alt="이미지 미리보기"
                          onclick="openPreviewModal(this.src)"
-                         th:src="${logo.imgPath.replace('https://', 'http://')}">
+                         th:src="${banner.imgPath.replace('https://', 'http://')}">
                 </td>
-                <td th:text="${logo.imgName}"></td>
+                <td th:text="${banner.imgName}"></td>
                 <td>
-                    <input disabled="disabled" th:checked="${logo.isFixed}" type="checkbox">
+                    <input disabled="disabled" th:checked="${banner.isFixed}" type="checkbox">
                 </td>
-                <td th:text="${#temporals.format(logo.startDate, 'yyyy-MM-dd')}"></td>
-                <td th:text="${#temporals.format(logo.endDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${#temporals.format(banner.startDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${#temporals.format(banner.endDate, 'yyyy-MM-dd')}"></td>
                 <td>
                     <input class="btn-delete"
                            onclick="deleteImage(this)"
-                           th:attr="data-id=${logo.id}"
+                           th:attr="data-id=${banner.id}"
                            type="button"
                            value="삭제">
                 </td>
@@ -104,6 +104,6 @@
     </div>
 </div>
 
-<script src="/js/logo.js"></script>
+<script src="/js/banner.js"></script>
 </body>
 </html>

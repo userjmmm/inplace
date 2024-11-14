@@ -9,27 +9,27 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import team7.inplace.admin.application.LogoService;
+import team7.inplace.admin.application.BannerService;
 
 @RestController
 @Slf4j
-@RequestMapping("/logo")
+@RequestMapping("/banner")
 @RequiredArgsConstructor
-public class LogoController {
-    private final LogoService logoService;
+public class BannerController {
+    private final BannerService bannerService;
 
     @PostMapping()
-    public void saveLogo(LogoRequest.Create request) {
+    public void saveLogo(BannerRequest.Create request) {
         log.info("saveLogo: {}", request);
-        logoService.uploadLogo(request.toCommand());
+        bannerService.uploadLogo(request.toCommand());
     }
 
     @GetMapping()
-    public ResponseEntity<List<LogoResponse.Info>> getLogos() {
-        var activeLogos = logoService.getLogos();
+    public ResponseEntity<List<BannerResponse.Info>> getLogos() {
+        var activeLogos = bannerService.getLogos();
 
         var response = activeLogos.stream()
-                .map(LogoResponse.Info::from)
+                .map(BannerResponse.Info::from)
                 .toList();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
