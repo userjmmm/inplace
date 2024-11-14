@@ -15,7 +15,7 @@ import team7.inplace.admin.banner.application.BannerService;
 
 @RestController
 @Slf4j
-@RequestMapping("/banner")
+@RequestMapping("/banners")
 @RequiredArgsConstructor
 public class BannerController {
     private final BannerService bannerService;

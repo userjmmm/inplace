@@ -68,7 +68,7 @@ document.getElementById('imageUploadForm').addEventListener('submit', function (
     // 체크박스 값을 명시적으로 설정
     formData.set('isFixed', document.getElementById('isFixed').checked);
 
-    fetch('/banner', {
+    fetch('/banners', {
         method: 'POST',
         body: formData
     })
@@ -95,7 +95,7 @@ document.getElementById('imageUploadForm').addEventListener('submit', function (
 function deleteImage(element) {
     const imageId = element.getAttribute('data-id');
     if (confirm('이미지를 삭제하시겠습니까?')) {
-        fetch(`/banner/${imageId}`, {
+        fetch(`/banners/${imageId}`, {
             method: 'DELETE'
         })
             .then(response => {
