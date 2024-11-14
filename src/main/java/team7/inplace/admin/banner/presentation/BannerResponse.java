@@ -8,7 +8,7 @@ public class BannerResponse {
             String imageUrl
     ) {
         public static Info from(BannerInfo.Detail banner) {
-            return new Info(banner.id(), banner.imageUrl().replace("https://", "http://"));
+            return new Info(banner.id(), banner.imageUrl());
         }
     }
 }
