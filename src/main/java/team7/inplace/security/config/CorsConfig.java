@@ -1,5 +1,6 @@
 package team7.inplace.security.config;
 
+import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -30,6 +31,8 @@ public class CorsConfig {
         config.addAllowedMethod("OPTIONS");
         config.addAllowedHeader("PATCH");
         config.addAllowedMethod("HEAD");
+        config.setMaxAge(3600L);
+        config.setExposedHeaders(Arrays.asList("Location"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
