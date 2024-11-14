@@ -32,7 +32,7 @@ public class CorsConfig {
         config.addAllowedHeader("PATCH");
         config.addAllowedMethod("HEAD");
         config.setMaxAge(3600L);
-        config.setExposedHeaders(Arrays.asList("Location"));
+        config.setExposedHeaders(Arrays.asList("Location", "Set-Cookie"));
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
