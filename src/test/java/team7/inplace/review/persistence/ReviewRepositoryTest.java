@@ -74,7 +74,6 @@ class ReviewRepositoryTest {
     @DisplayName("like true false test")
     public void checkLikedDisliked() {
         //given
-//            init()
         //when
         int likes = reviewRepository.countByPlaceIdAndIsLikedTrue(
             1L);
