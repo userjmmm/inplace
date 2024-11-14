@@ -49,11 +49,6 @@
 
             <div class="form-row">
                 <div class="form-check">
-                    <input id="isRequired" name="isRequired" type="checkbox">
-                    <label for="isRequired">필수 로고 (반드시 표시)</label>
-                </div>
-
-                <div class="form-check">
                     <input id="isFixed" name="isFixed" type="checkbox">
                     <label for="isFixed">고정 표시 (위치 고정)</label>
                 </div>
@@ -63,51 +58,43 @@
         </form>
     </div>
 
-    <h2>업로드된 이미지 목록</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>미리보기</th>
-            <th>이름</th>
-            <th>필수 로고</th>
-            <th>고정 표시</th>
-            <th>시작 날짜</th>
-            <th>종료 날짜</th>
-            <th>업로드 날짜</th>
-            <th>작업</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="image : ${images}">
-            <td>
-                <img alt="이미지 미리보기"
-                     onclick="openPreviewModal(this.src)"
-                     th:src="@{'/images/' + ${image.filename}}">
-            </td>
-            <td th:text="${image.name}"></td>
-            <td>
-                <input th:checked="${image.isRequired}"
-                       th:onclick="'updateRequiredStatus(' + ${image.id} + ', this.checked)'"
-                       type="checkbox">
-            </td>
-            <td>
-                <input th:checked="${image.isFixed}"
-                       th:onclick="'updateFixedStatus(' + ${image.id} + ', this.checked)'"
-                       type="checkbox">
-            </td>
-            <td th:text="${#temporals.format(image.startDate, 'yyyy-MM-dd')}"></td>
-            <td th:text="${#temporals.format(image.endDate, 'yyyy-MM-dd')}"></td>
-            <td th:text="${#temporals.format(image.uploadDate, 'yyyy-MM-dd HH:mm')}"></td>
-            <td>
-                <input class="btn-delete"
-                       onclick="deleteImage(this)"
-                       th:attr="data-id=${image.id}"
-                       type="button"
-                       value="삭제">
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="table-container">
+        <h2>업로드된 이미지 목록</h2>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 15%;">미리보기</th>
+                <th style="width: 20%;">이름</th>
+                <th style="width: 10%;">고정 표시</th>
+                <th style="width: 20%;">시작 날짜</th>
+                <th style="width: 20%;">종료 날짜</th>
+                <th style="width: 15%;">작업</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="logo : ${logos}">
+                <td>
+                    <img alt="이미지 미리보기"
+                         onclick="openPreviewModal(this.src)"
+                         th:src="${logo.imgPath.replace('https://', 'http://')}">
+                </td>
+                <td th:text="${logo.imgName}"></td>
+                <td>
+                    <input disabled="disabled" th:checked="${logo.isFixed}" type="checkbox">
+                </td>
+                <td th:text="${#temporals.format(logo.startDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${#temporals.format(logo.endDate, 'yyyy-MM-dd')}"></td>
+                <td>
+                    <input class="btn-delete"
+                           onclick="deleteImage(this)"
+                           th:attr="data-id=${logo.id}"
+                           type="button"
+                           value="삭제">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div class="modal" id="previewModal">

@@ -66,7 +66,6 @@ document.getElementById('imageUploadForm').addEventListener('submit', function (
     const formData = new FormData(this);
 
     // 체크박스 값을 명시적으로 설정
-    formData.set('isRequired', document.getElementById('isRequired').checked);
     formData.set('isFixed', document.getElementById('isFixed').checked);
 
     fetch('/logo', {
