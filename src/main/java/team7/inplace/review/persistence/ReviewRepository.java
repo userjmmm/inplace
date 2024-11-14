@@ -12,4 +12,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findByPlaceId(Long placeId, Pageable pageable);
 
     Page<Review> findByUserId(Long userId, Pageable pageable);
+
+    Integer countByPlaceIdAndIsLikedTrue(Long placeId);
+
+    Integer countByPlaceIdAndIsLikedFalse(Long placeId);
 }
