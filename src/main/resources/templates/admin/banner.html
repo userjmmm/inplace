@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>이미지 관리</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/banner.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="header">
+    <a class="header-link" href="/">홈</a>
+    <a class="header-link" href="/admin">관리자</a>
+</div>
+
+<h1>이미지 관리</h1>
+
+<div class="container">
+    <div class="upload-form">
+        <h2>이미지 업로드</h2>
+        <form enctype="multipart/form-data" id="imageUploadForm" method="post">
+            <div class="form-group">
+                <div class="preview-area">
+                    <img alt="미리보기" id="imagePreview" onclick="openPreviewModal(this.src)" src="">
+                </div>
+
+                <div class="upload-btn-wrapper">
+                    <button class="btn-upload">이미지 선택</button>
+                    <input accept="image/*" id="imageFile" name="imageFile" onchange="previewImage(this)" type="file">
+                </div>
+            </div>
+
+            <div class="form-inline">
+                <label for="imageName">이미지 이름</label>
+                <input id="imageName" name="imageName" required type="text">
+            </div>
+
+            <div class="form-row">
+                <div class="form-inline">
+                    <label for="startDate">시작 날짜</label>
+                    <input id="startDate" name="startDate" required type="date">
+                </div>
+
+                <div class="form-inline">
+                    <label for="endDate">종료 날짜</label>
+                    <input id="endDate" name="endDate" required type="date">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-check">
+                    <input id="isFixed" name="isFixed" type="checkbox">
+                    <label for="isFixed">고정 표시 (위치 고정)</label>
+                </div>
+            </div>
+
+            <button class="btn-submit" type="submit">업로드하기</button>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <h2>업로드된 이미지 목록</h2>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 15%;">미리보기</th>
+                <th style="width: 20%;">이름</th>
+                <th style="width: 10%;">고정 표시</th>
+                <th style="width: 20%;">시작 날짜</th>
+                <th style="width: 20%;">종료 날짜</th>
+                <th style="width: 15%;">작업</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="banner : ${banners}">
+                <td>
+                    <img alt="이미지 미리보기"
+                         onclick="openPreviewModal(this.src)"
+                         th:src="${banner.imgPath.replace('https://', 'http://')}">
+                </td>
+                <td th:text="${banner.imgName}"></td>
+                <td>
+                    <input disabled="disabled" th:checked="${banner.isFixed}" type="checkbox">
+                </td>
+                <td th:text="${#temporals.format(banner.startDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${#temporals.format(banner.endDate, 'yyyy-MM-dd')}"></td>
+                <td>
+                    <input class="btn-delete"
+                           onclick="deleteImage(this)"
+                           th:attr="data-id=${banner.id}"
+                           type="button"
+                           value="삭제">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal" id="previewModal">
+    <div class="modal-content">
+        <span class="close" onclick="closePreviewModal()">&times;</span>
+        <img alt="이미지 미리보기" id="modalImage" src="">
+    </div>
+</div>
+
+<script src="/js/banner.js"></script>
+</body>
+</html>

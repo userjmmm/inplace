@@ -28,6 +28,7 @@ import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.placeMessage.application.command.PlaceMessageCommand;
+import team7.inplace.review.persistence.ReviewRepository;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
@@ -45,6 +46,8 @@ public class PlaceService {
     private final UserRepository userRepository;
 
     private final LikedPlaceRepository likedPlaceRepository;
+
+    private final ReviewRepository reviewRepository;
 
     public Page<PlaceInfo> getPlacesWithinRadius(
         PlacesCoordinateCommand placesCoordinateCommand,
@@ -133,7 +136,11 @@ public class PlaceService {
             video = videos.get(0);
         }
         Influencer influencer = (video != null) ? video.getInfluencer() : null;
-        return PlaceDetailInfo.from(place, influencer, video, isLikedPlace(place.getId()));
+
+        Integer numOfLikes = reviewRepository.countByPlaceIdAndIsLikedTrue(placeId);
+        Integer numOfDislikes = reviewRepository.countByPlaceIdAndIsLikedFalse(placeId);
+        return PlaceDetailInfo.from(place, influencer, video, isLikedPlace(place.getId()),
+            numOfLikes, numOfDislikes);
     }
 
     public List<Long> createPlaces(List<Create> placeCommands) {

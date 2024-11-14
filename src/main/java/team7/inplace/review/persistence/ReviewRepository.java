@@ -12,6 +12,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Page<Review> findByPlaceId(Long placeId, Pageable pageable);
 
+    Integer countByPlaceIdAndIsLikedTrue(Long placeId);
+
+    Integer countByPlaceIdAndIsLikedFalse(Long placeId);
+
     @Query("SELECT r FROM Review r JOIN FETCH r.place WHERE r.user.id = :userId")
     Page<Review> findByUserIdWithPlace(Long userId, Pageable pageable);
 }
