@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
+import team7.inplace.search.application.dto.PlaceSearchInfo;
 import team7.inplace.video.presentation.dto.VideoResponse;
 
 @Tag(name = "검색 API입니다.")
@@ -23,4 +24,8 @@ public interface SearchControllerApiSpec {
     @Operation(summary = "인플루언서를 검색합니다.")
     @ApiResponse(responseCode = "200", description = "인플루언서 검색 성공")
     ResponseEntity<List<InfluencerResponse>> searchInfluencer(String value);
+
+    @Operation(summary = "장소를 검색합니다.")
+    @ApiResponse(responseCode = "200", description = "장소 검색 성공")
+    ResponseEntity<List<PlaceSearchInfo>> searchPlace(String value);
 }

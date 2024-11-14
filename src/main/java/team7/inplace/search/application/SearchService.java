@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
+import team7.inplace.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
+import team7.inplace.search.application.dto.PlaceSearchInfo;
 import team7.inplace.search.application.dto.SearchType;
 import team7.inplace.search.persistence.InfluencerSearchRepository;
 import team7.inplace.search.persistence.PlaceSearchRepository;
@@ -28,6 +30,7 @@ public class SearchService {
     private final InfluencerSearchRepository influencerSearchRepository;
     private final PlaceSearchRepository placeSearchRepository;
     private final FavoriteInfluencerRepository favoriteInfluencerRepository;
+    private final LikedPlaceRepository likedPlaceRepository;
 
     public List<AutoCompletionInfo> searchAutoCompletions(String keyword) {
         var influencerSearchInfo = influencerSearchRepository.searchEntityByKeywords(keyword);
@@ -46,7 +49,6 @@ public class SearchService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     public List<VideoInfo> searchVideo(String keyword) {
         var videoInfos = videoSearchRepository.searchEntityByKeywords(keyword);
 
@@ -57,7 +59,6 @@ public class SearchService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     public List<InfluencerInfo> searchInfluencer(String keyword) {
         var influencerInfos = influencerSearchRepository.searchEntityByKeywords(keyword);
         Long userId = AuthorizationUtil.getUserId();
@@ -74,6 +75,26 @@ public class SearchService {
                 .map(influencerInfo -> {
                     boolean isLiked = likedInfluencerIds.contains(influencerInfo.searchResult().getId());
                     return InfluencerInfo.from(influencerInfo.searchResult(), isLiked);
+                })
+                .sorted((a, b) -> Boolean.compare(b.likes(), a.likes()))
+                .toList();
+    }
+
+    public List<PlaceSearchInfo> searchPlace(String keyword) {
+        var placeInfos = placeSearchRepository.searchEntityByKeywords(keyword);
+        Long userId = AuthorizationUtil.getUserId();
+
+        if (userId == null) {
+            return placeInfos.stream()
+                    .map(placeInfo -> PlaceSearchInfo.from(placeInfo.searchResult(), false))
+                    .toList();
+        }
+
+        var likedPlaceIds = likedPlaceRepository.findPlaceIdsByUserIdAndIsLikedTrue(userId);
+        return placeInfos.stream()
+                .map(placeInfo -> {
+                    boolean isLiked = likedPlaceIds.contains(placeInfo.searchResult().getId());
+                    return PlaceSearchInfo.from(placeInfo.searchResult(), isLiked);
                 })
                 .sorted((a, b) -> Boolean.compare(b.likes(), a.likes()))
                 .toList();
