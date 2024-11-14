@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -14,7 +13,6 @@ import org.springframework.util.StringUtils;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 
-@Slf4j
 public class CustomFailureHandler implements AuthenticationFailureHandler {
 
     @Value("${spring.redirect.front-end-url}")
@@ -31,7 +29,6 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
         HttpServletResponse response,
         AuthenticationException exception
     ) throws IOException {
-        log.info("Authentication failure");
         String accept = request.getHeader("Accept");
         if (StringUtils.hasText(accept) && accept.contains("text/html")) {
             response.sendRedirect(frontEndUrl);
