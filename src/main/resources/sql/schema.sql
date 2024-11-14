@@ -166,3 +166,14 @@ create table liked_places
     constraint FK7x24ubd2axm81hx0ggiy4l4ao
         foreign key (place_id) references places (id)
 );
+
+create table banner
+(
+    is_fixed   bit          null,
+    end_date   datetime(6)  null,
+    id         bigint auto_increment
+        primary key,
+    start_date datetime(6)  null,
+    img_name   varchar(255) null,
+    img_path   varchar(255) null
+);
