@@ -4,31 +4,38 @@
   <img src="https://i.ibb.co/CVBQHPg/image-2.png" alt="메인 이미지" style="border: 2px solid black;">
 </p>
 
-## Table of Contents
-> 1. [**_Project Purpose_**](#project-purpose)  
-> 2. [**_Service Info_**](#service-info)  
-> 3. [**_Main Function_**](#main-function)  
-> 4. [**_Development Focus Points_**](#development-focus-points)  
-> 5. [**_Repository Info_**](#repository-info)  
-> 6. [**_Development Term_**](#development-term)  
-> 7. [**_Deployment Link_**](#deployment-link)  
-> 8. [**_Contributor_**](#contributor)  
-> 9. [**_Program Architecture_**](#program-architecture)  
-> 10. [**_Main Dependency Version_**](#main-dependency-version)  
-> 11. [**_Tech Stack_**](#tech-stack)  
-> 12. [**_Example Usage_**](#example-usage)
+## 목차
+
+> 1. [**_프로젝트 목적_**](#project-purpose)
+> 2. [**_서비스 정보_**](#service-info)
+> 3. [**_주요 기능_**](#main-function)
+> 4. [**_프로그램 구조_**](#program-architecture)
+> 5. [**_배포 주소_**](#deployment-link)
+> 6. [**_API and ERD_**](#api-and-erd)
+> 7. [**_Contributor_**](#contributor)
+> 8. [**_Repository Info_**](#repository-info)
+> 9. [**_개발 기간_**](#development-term)
+> 10. [**_Main Dependency Version_**](#main-dependency-version)
+> 11. [**_Tech Stack_**](#tech-stack)
+> 12. [**_기능 흐름_**](#function-flow)
+> 13. [**_Example Usage_**](#example-usage)
 
 ## Project Purpose
+
 > 저희의 아이디어는 **데이트 코스의 단조로움**을 어떻게 하면 해소할 수 있을까? 라는 생각에서 시작했습니다.
 >
-> 아이디어를 구체화하는 과정에서 저희는 **장소**에 관련된 소재로 인스타, 유튜브 등의 SNS 및 동영상 플랫폼의 성장과 함께 등장한 **인플루언서** 라는 개념에 집중하게 되었습니다.
-> 
+> 아이디어를 구체화하는 과정에서 저희는 **장소**에 관련된 소재로 인스타, 유튜브 등의 SNS 및 동영상 플랫폼의 성장과 함께 등장한 **인플루언서** 라는 개념에 집중하게
+> 되었습니다.
+>
 > 이는 **인플루언서가 방문한 장소에 대한 정보를 서비스 해보자!** 라는 생각으로 이어졌습니다.
-> 
-> 이를 관심있는 **인플루언서를 등록하고, 이에 따른 장소 추천 및, 장소에 대한 리뷰 기능**을 통해 풀어내어 **Inplace** 라는 저희만의 웹 애플리케이션으로 구현해보았습니다.
+>
+> 이를 관심있는 **인플루언서를 등록하고, 이에 따른 장소 추천 및, 장소에 대한 리뷰 기능**을 통해 풀어내어 **Inplace** 라는 저희만의 웹 애플리케이션으로
+> 구현해보았습니다.
 
 ## Service Info
+
 > 긴 영상은 필요 없어요 인플루언서가 다녀간 쿨플, 한눈에 쏙!
+
 1. **회원 가입 및 로그인** 기능
     - 카카오를 이용한 회원 가입 및 로그인
     - 회원 닉네임 변경 가능
@@ -39,77 +46,64 @@
 3. **장소 검색 및 좋아요** 기능
     - 지도를 통한 장소 검색 가능
         - 지역, 인플루언서, 장소 태그를 통한 검색 가능
-     - 장소 세부 정보 열람 및 장소 좋아요 가능
-4. **리뷰** 기능
+    - 장소 세부 정보 열람 및 장소 좋아요 가능
     - 장소에 대한 정보를 모바일로 받기 가능 ( 카카오톡 나에게 메세지 보내기 )
+4. **리뷰** 기능
     - 정보 받은 후 3일 뒤 리뷰 페이지 전송 ( 카카오톡 나에게 메세지 보내기 )
+    - 리뷰 확인 및 수정 가능
 
 ## Main Function
+
 > Inplace의 주요 기능
+
 1. **회원가입 및 로그인**
-     - Spring Security를 이용한 OAuth 2.0 카카오 로그인 기능을 사용합니다
-     - 쿠키에 Access, Refresh Token을 담아 사용하며, Refresh 동작을 수행할 수 있습니다
+    - Spring Security를 이용한 OAuth 2.0 카카오 로그인 기능을 사용합니다
+    - 쿠키에 Access, Refresh Token을 담아 사용하며, Refresh 동작을 수행할 수 있습니다
 2. **현재 위치 기반 서비스**
-     - 웹 페이지의 위치 정보 사용에 동의시, 카카오 API와 내 위치 정보를 사용하여 주변의 장소 정보와, 자동 지도 위치 설정을 사용할 수 있습니다
+    - 웹 페이지의 위치 정보 사용에 동의시, 카카오 API와 내 위치 정보를 사용하여 주변의 장소 정보와, 자동 지도 위치 설정을 사용할 수 있습니다
 3. **통합 검색 서비스**
-     - Elastic Search를 사용한 인플루언서, 장소, 비디오 이름에 대한 통합 검색 기능을 사용할 수 있습니다
+    - Elastic Search를 사용한 인플루언서, 장소, 비디오 이름에 대한 통합 검색 기능을 사용할 수 있습니다
 4. **관심 인플루언서 등록 및 이를 토대로 한 서비스**
-     - 최초 로그인 시 & 인플루언서 페이지에서 관심 인플루언서를 등록할 수 있습니다
-     - 이를 토대로 메인 페이지에서 관심 인플루언서의 최신 방문 장소를 확인할 수 있습니다
+    - 최초 로그인 시 & 인플루언서 페이지에서 관심 인플루언서를 등록할 수 있습니다
+    - 이를 토대로 메인 페이지에서 관심 인플루언서의 최신 방문 장소를 확인할 수 있습니다
 5. **지도 기반 검색 서비스**
-     - 지도 API를 이용하여 장소를 검색할 수 있습니다
-       - 관심 등록하지 않은 인플루언서 및 주소, 장소 태그를 이용하여 세부 검색이 가능합니다
+    - 지도 API를 이용하여 장소를 검색할 수 있습니다
+        - 관심 등록하지 않은 인플루언서 및 주소, 장소 태그를 이용하여 세부 검색이 가능합니다
 6. **장소 세부 정보 서비스**
-     - 장소의 세부 정보를 열람할 수 있습니다
-     - 장소에 달린 다른 유저들의 리뷰를 확인할 수 있습니다
-     - 장소에 대한 좋아요 기능을 사용할 수 있습니다
-     - 장소 세부 페이지에서 장소에 대한 정보를 카카오톡 메세지로 받아 볼 수 있습니다
+    - 장소의 세부 정보를 열람할 수 있습니다
+    - 장소에 달린 다른 유저들의 리뷰를 확인할 수 있습니다
+    - 장소에 대한 좋아요 기능을 사용할 수 있습니다
+    - 장소 세부 페이지에서 장소에 대한 정보를 카카오톡 메세지로 받아 볼 수 있습니다
 7. **리뷰 기능**
-     - 장소 정보를 받은 후 3일 뒤, 해당 장소에 대한 리뷰 링크를 받아 리뷰를 작성할 수 있습니다
-     - 위 기능들은 카카오톡 메세지 보내기 API를 이용하며, 카카오톡으로 전송되는 링크는 모바일 뷰를 지원합니다
+    - 장소 정보를 받은 후 3일 뒤, 해당 장소에 대한 리뷰 링크를 받아 리뷰를 작성할 수 있습니다
+    - 위 기능들은 카카오톡 메세지 보내기 API를 이용하며, 카카오톡으로 전송되는 링크는 모바일 뷰를 지원합니다
 8. **마이 페이지 기능**
-     - 좋아요 표시한 장소, 인플루언서를 관리할 수 있습니다
-     - 내가 작성한 리뷰를 관리할 수 있습니다
-     - 사용자 닉네임을 변경할 수 있습니다
-       
-## Development Focus Points
+    - 좋아요 표시한 장소, 인플루언서를 관리할 수 있습니다
+    - 내가 작성한 리뷰를 관리할 수 있습니다
+    - 사용자 닉네임을 변경할 수 있습니다
 
-## Repository Info
-> **Using Language**
-> 
-![GitHub language count](https://img.shields.io/github/languages/count/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub top language](https://img.shields.io/github/languages/top/kakao-tech-campus-2nd-step3/Team7_BE)
-
-> **Repo, Code Volume**
-> 
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub repo size](https://img.shields.io/github/repo-size/kakao-tech-campus-2nd-step3/Team7_BE)
-
-> **Commit Avg**
->
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/kakao-tech-campus-2nd-step3/Team7_BE)
-
-> **Issues**
-> 
-![GitHub open issues](https://img.shields.io/github/issues/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub closed issues](https://img.shields.io/github/issues-closed/kakao-tech-campus-2nd-step3/Team7_BE)
-
-> **PRs**
-> 
-![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
-![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
-
-## Development Term
-> 2024.08.22 ~ 2024.11.15
+## Program Architecture
 
 ## Deployment Link
+
 > [**BackEnd**](https://api.inplace.my) : _api.inplace.my_
 >
-> [**API Spec**](https://api.inplace.my/swagger-ui/index.html) : _api.inplace.my/swagger-ui/index.html_
-> 
 > [**FrontEnd**](https://inplace.my) : _inplace.my_
 
+## API AND ERD
+
+![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
+
+> [**API Spec**](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e) :
+_https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
+
+![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
+
+> [**ERD**](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55) :
+> https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55
+
 ## Contributor
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <table>
   <tr>
@@ -167,51 +161,78 @@
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-## Program Architecture
-- **ERD**
-  
-  <img src="https://file.notion.so/f/f/3ef8dbd9-414c-4cf5-813d-32ecb943cc67/125d6695-92d4-438c-8bc8-bee423d36257/image.png?table=block&id=8410a24e-b147-4649-9b77-304c9fd6599a&spaceId=3ef8dbd9-414c-4cf5-813d-32ecb943cc67&expirationTimestamp=1731585600000&signature=nfFPKXrEnsF9lTp65eWkTl9Gjhs_r8Yqf2qG4nAAmTw&downloadName=image.png" alt="ERD" width="600"/>
+## Repository Info
+
+> **Using Language**
+>
+![GitHub language count](https://img.shields.io/github/languages/count/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub top language](https://img.shields.io/github/languages/top/kakao-tech-campus-2nd-step3/Team7_BE)
+
+> **Repo, Code Volume**
+>
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub repo size](https://img.shields.io/github/repo-size/kakao-tech-campus-2nd-step3/Team7_BE)
+
+> **Commit Avg**
+>
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/kakao-tech-campus-2nd-step3/Team7_BE)
+
+> **Issues**
+>
+![GitHub open issues](https://img.shields.io/github/issues/kakao-tech-campus-2nd-step3/Team7_BE)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/kakao-tech-campus-2nd-step3/Team7_BE)
+
+> **PRs**
+>
+![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
+
+## Development Term
+
+> 2024.08.22 ~ 2024.11.15
 
 ## Main Dependency Version
+
 > **Spring Boots 3.3.3**
-> 
+>
 > **Java 17 LTS**
 
 ## Tech Stack
+
 > **Backend**
-> 
+>
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white)
 ![Lombok](https://img.shields.io/badge/Lombok-DC382D?style=flat-square&logo=lombok&logoColor=white)
 
 > **Security**
-> 
+>
 ![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=flat-square&logo=springsecurity&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-000000?style=flat-square&logo=jsonwebtokens&logoColor=white)
 
 > **DB**
-> 
+>
 ![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=flat-square&logo=spring&logoColor=white)
 ![QueryDSL](https://img.shields.io/badge/QueryDSL-0055a2?style=flat-square&logo=appveyor&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
 
 > **Web**
-> 
+>
 ![Spring WebFlux](https://img.shields.io/badge/Spring%20WebFlux-6DB33F?style=flat-square&logo=spring&logoColor=white)
 
 > **Deployment**
-> 
+>
 ![AWS EC2](https://img.shields.io/badge/AWS%20EC2-FF9900?style=flat-square&logo=amazonaws&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 
 > **Admin Page**
-> 
+>
 ![jQuery](https://img.shields.io/badge/jQuery-0769AD?style=flat-square&logo=jquery&logoColor=white)
 ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?style=flat-square&logo=thymeleaf&logoColor=white)
 ![AJAX](https://img.shields.io/badge/AJAX-005571?style=flat-square&logo=ajax&logoColor=white)
 
 > **Test**
-> 
+>
 ![JMeter](https://img.shields.io/badge/JMeter-D22128?style=flat-square&logo=apachejmeter&logoColor=white)
 ![JUnit](https://img.shields.io/badge/JUnit-25A162?style=flat-square&logo=junit5&logoColor=white)
 ![Mockito](https://img.shields.io/badge/Mockito-FFCA28?style=flat-square&logo=mockito&logoColor=white)
@@ -227,5 +248,8 @@
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white)
 
+## Function Flow
+
 ## Example Usage
+
 > 나중에 시연 영상 첨부하기
