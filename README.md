@@ -128,12 +128,16 @@
 ![JUnit](https://img.shields.io/badge/JUnit-25A162?style=flat-square&logo=junit5&logoColor=white)
 ![Mockito](https://img.shields.io/badge/Mockito-FFCA28?style=flat-square&logo=mockito&logoColor=white)
 
-> **Code** **Maintenance**
+> **Code Maintenance**
 >
 ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
 
+> **Collaboration Tool**
+>
+![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
+![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white)
 
 ## 기획 의도
 >  **데이트 코스의 단조로움** 이라는 생각에서 시작한 저희의 아이디어는 데이트 코스 선정의 단조로움에서 벗어나기 위하여 인스타, 유튜브 등의 SNS 및 동영상 플랫폼의 성장과 함께 등장한 '인플루언서' 라는 개념에 집중하여, **인플루언서가 방문한 주변 장소에 대한 정보를 서비스 해보자!** 라는 생각으로 이어졌고, 이를 개인별 인플루언서 좋아요, 맞춤 장소 추천, 방문시 정보 발송 및 알림, 리뷰와 같은 기능으로 풀어내어 **Inplace** 라는 저희만의 웹 어플리케이션으로 구현해보았습니다.
