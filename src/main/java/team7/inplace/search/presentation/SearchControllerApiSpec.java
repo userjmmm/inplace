@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
@@ -28,4 +31,8 @@ public interface SearchControllerApiSpec {
     @Operation(summary = "장소를 검색합니다.")
     @ApiResponse(responseCode = "200", description = "장소 검색 성공")
     ResponseEntity<List<PlaceSearchInfo>> searchPlace(String value);
+
+    @Operation(summary = "인플루언서를 페이지로 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "인플루언서 페이지 조회 성공")
+    ResponseEntity<Page<InfluencerResponse>> searchInfluencer(String value, @PageableDefault Pageable pageable);
 }

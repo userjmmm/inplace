@@ -2,12 +2,16 @@ package team7.inplace.search.presentation;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 import team7.inplace.search.application.SearchService;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
@@ -51,10 +55,23 @@ public class SearchController implements SearchControllerApiSpec {
     }
 
     @Override
+    @GetMapping("/page/influencer")
+    public ResponseEntity<Page<InfluencerResponse>> searchInfluencer(
+            @RequestParam String value,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Page<InfluencerInfo> influencers = searchService.searchInfluencer(value, pageable);
+
+        Page<InfluencerResponse> response = influencers.map(InfluencerResponse::from);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
     @GetMapping("/place")
     public ResponseEntity<List<PlaceSearchInfo>> searchPlace(@RequestParam String value) {
         var places = searchService.searchPlace(value);
-        
+
         return new ResponseEntity<>(places, HttpStatus.OK);
     }
 }
