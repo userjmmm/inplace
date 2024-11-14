@@ -9,6 +9,8 @@ import team7.inplace.admin.banner.application.dto.BannerInfo;
 import team7.inplace.admin.banner.application.dto.BannerInfo.Detail;
 import team7.inplace.admin.banner.persistence.BannerRepository;
 import team7.inplace.admin.banner.persistence.BannerS3Repository;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.BannerErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,7 @@ public class BannerService {
 
     public void deleteBanner(Long id) {
         var banner = bannerRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 배너입니다."));
+                .orElseThrow(() -> InplaceException.of(BannerErrorCode.NOT_FOUND));
         bannerS3Repository.deleteBanner(banner.getImgPath());
         bannerRepository.delete(banner);
     }
