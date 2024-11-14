@@ -5,16 +5,18 @@
 </p>
 
 ## Table of Contents
-1. [Project Purpose](#project-purpose)
-2. [Service Info](#service-info)
-3. [Repository Info](#repository-info)
-4. [Development Term](#development-term)
-5. [Deploy Link](#deploy-link)
-6. [Contributor](#contributor)
-7. [Program Architecture](#program-architecture)
-8. [Main Dependency Version](#main-dependency-version)
-9. [Tech Stack](#tech-stack)
-10. [Example Usage](#example-usage)
+> 1. [**_Project Purpose_**](#project-purpose)  
+> 2. [**_Service Info_**](#service-info)  
+> 3. [**_Main Function_**](#main-function)  
+> 4. [**_Development Focus Points_**](#development-focus-points)  
+> 5. [**_Repository Info_**](#repository-info)  
+> 6. [**_Development Term_**](#development-term)  
+> 7. [**_Deployment Link_**](#deployment-link)  
+> 8. [**_Contributor_**](#contributor)  
+> 9. [**_Program Architecture_**](#program-architecture)  
+> 10. [**_Main Dependency Version_**](#main-dependency-version)  
+> 11. [**_Tech Stack_**](#tech-stack)  
+> 12. [**_Example Usage_**](#example-usage)
 
 ## Project Purpose
 > 저희의 아이디어는 **데이트 코스의 단조로움**을 어떻게 하면 해소할 수 있을까? 라는 생각에서 시작했습니다.
@@ -42,21 +44,65 @@
     - 장소에 대한 정보를 모바일로 받기 가능 ( 카카오톡 나에게 메세지 보내기 )
     - 정보 받은 후 3일 뒤 리뷰 페이지 전송 ( 카카오톡 나에게 메세지 보내기 )
 
-
+## Main Function
+> Inplace의 주요 기능
+1. **회원가입 및 로그인**
+     - Spring Security를 이용한 OAuth 2.0 카카오 로그인 기능을 사용합니다
+     - 쿠키에 Access, Refresh Token을 담아 사용하며, Refresh 동작을 수행할 수 있습니다
+2. **현재 위치 기반 서비스**
+     - 웹 페이지의 위치 정보 사용에 동의시, 카카오 API와 내 위치 정보를 사용하여 주변의 장소 정보와, 자동 지도 위치 설정을 사용할 수 있습니다
+3. **통합 검색 서비스**
+     - Elastic Search를 사용한 인플루언서, 장소, 비디오 이름에 대한 통합 검색 기능을 사용할 수 있습니다
+4. **관심 인플루언서 등록 및 이를 토대로 한 서비스**
+     - 최초 로그인 시 & 인플루언서 페이지에서 관심 인플루언서를 등록할 수 있습니다
+     - 이를 토대로 메인 페이지에서 관심 인플루언서의 최신 방문 장소를 확인할 수 있습니다
+5. **지도 기반 검색 서비스**
+     - 지도 API를 이용하여 장소를 검색할 수 있습니다
+       - 관심 등록하지 않은 인플루언서 및 주소, 장소 태그를 이용하여 세부 검색이 가능합니다
+6. **장소 세부 정보 서비스**
+     - 장소의 세부 정보를 열람할 수 있습니다
+     - 장소에 달린 다른 유저들의 리뷰를 확인할 수 있습니다
+     - 장소에 대한 좋아요 기능을 사용할 수 있습니다
+7. **리뷰 기능**
+     - 장소 세부 페이지에서 장소에 대한 정보를 카카오톡 메세지로 받아 볼 수 있습니다
+     - 장소 정보를 받은 후 3일 뒤, 해당 장소에 대한 리뷰 링크를 받아 리뷰를 작성할 수 있습니다
+     - 위 기능들은 카카오톡 메세지 보내기 API를 이용하며, 카카오톡으로 전송되는 링크는 모바일 뷰를 지원합니다
+8. **마이 페이지 기능**
+     - 좋아요 표시한 장소, 인플루언서를 관리할 수 있습니다
+     - 내가 작성한 리뷰를 관리할 수 있습니다
+     - 사용자 닉네임을 변경할 수 있습니다
+       
+## Development Focus Points
 
 ## Repository Info
+> **Using Language**
+> 
 ![GitHub language count](https://img.shields.io/github/languages/count/kakao-tech-campus-2nd-step3/Team7_BE)
 ![GitHub top language](https://img.shields.io/github/languages/top/kakao-tech-campus-2nd-step3/Team7_BE)
+
+> **Repo, Code Volume**
+> 
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/kakao-tech-campus-2nd-step3/Team7_BE)
 ![GitHub repo size](https://img.shields.io/github/repo-size/kakao-tech-campus-2nd-step3/Team7_BE)
+
+> **Commit Avg**
+>
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/kakao-tech-campus-2nd-step3/Team7_BE)
+
+> **Issues**
+> 
 ![GitHub open issues](https://img.shields.io/github/issues/kakao-tech-campus-2nd-step3/Team7_BE)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/kakao-tech-campus-2nd-step3/Team7_BE)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/w/kakao-tech-campus-2nd-step3/Team7_BE)
+
+> **PRs**
+> 
+![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
 
 ## Development Term
 > 2024.08.22 ~ 2024.11.15
 
-## Deploy Link
+## Deployment Link
 > [**BackEnd**](https://api.inplace.my) : _api.inplace.my_
 >
 > [**API Spec**](https://api.inplace.my/swagger-ui/index.html) : _api.inplace.my/swagger-ui/index.html_
