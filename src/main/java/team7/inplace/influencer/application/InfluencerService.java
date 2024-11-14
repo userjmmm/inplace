@@ -1,7 +1,5 @@
 package team7.inplace.influencer.application;
 
-import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,6 +14,9 @@ import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.persistence.UserRepository;
+
+import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -39,12 +40,12 @@ public class InfluencerService {
         Set<Long> likedInfluencerIds = favoriteRepository.findLikedInfluencerIdsByUserId(userId);
 
         List<InfluencerInfo> influencerInfos = influencersPage.stream()
-            .map(influencer -> {
-                boolean isLiked = likedInfluencerIds.contains(influencer.getId());
-                return InfluencerInfo.from(influencer, isLiked);
-            })
-            .sorted((a, b) -> Boolean.compare(b.likes(), a.likes()))
-            .toList();
+                .map(influencer -> {
+                    boolean isLiked = likedInfluencerIds.contains(influencer.getId());
+                    return InfluencerInfo.from(influencer, isLiked);
+                })
+                .sorted((a, b) -> Boolean.compare(b.likes(), a.likes()))
+                .toList();
 
         return new PageImpl<>(influencerInfos, pageable, influencersPage.getTotalElements());
     }
@@ -53,8 +54,8 @@ public class InfluencerService {
     public List<InfluencerNameInfo> getAllInfluencerNames() {
         List<String> names = influencerRepository.findAllInfluencerNames();
         return names.stream()
-            .map(InfluencerNameInfo::new)
-            .toList();
+                .map(InfluencerNameInfo::new)
+                .toList();
     }
 
     @Transactional
@@ -67,7 +68,7 @@ public class InfluencerService {
     public Long updateInfluencer(Long id, InfluencerCommand command) {
         Influencer influencer = influencerRepository.findById(id).orElseThrow();
         influencer.update(command.influencerName(), command.influencerImgUrl(),
-            command.influencerJob());
+                command.influencerJob());
 
         return influencer.getId();
     }

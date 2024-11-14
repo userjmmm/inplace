@@ -1,7 +1,5 @@
 package team7.inplace.user.application;
 
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +15,9 @@ import team7.inplace.user.application.dto.UserCommand.Info;
 import team7.inplace.user.application.dto.UserInfo;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +37,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserCommand.Info getUserByUsername(String username) {
         return UserCommand.Info.of(userRepository.findByUsername(username)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND)));
+                .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND)));
     }
 
     @Transactional
@@ -49,13 +50,13 @@ public class UserService {
     public List<Long> getInfluencerIdsByUsername(Long userId) {
         List<FavoriteInfluencer> likes = favoriteInfluencerRepository.findByUserId(userId);
         return likes.stream().map(FavoriteInfluencer::getInfluencer).map(Influencer::getId)
-            .toList();
+                .toList();
     }
 
     @Transactional
     public void updateNickname(String nickname) {
         User user = userRepository.findByUsername(AuthorizationUtil.getUsername()).orElseThrow(
-            () -> InplaceException.of(UserErrorCode.NOT_FOUND)
+                () -> InplaceException.of(UserErrorCode.NOT_FOUND)
         );
 
         user.updateInfo(nickname);

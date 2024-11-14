@@ -1,7 +1,5 @@
 package team7.inplace.crawling.application;
 
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,6 +10,9 @@ import team7.inplace.crawling.client.YoutubeClient;
 import team7.inplace.crawling.persistence.YoutubeChannelRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.ChannelErrorCode;
+
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service

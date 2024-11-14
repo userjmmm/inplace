@@ -1,6 +1,5 @@
 package team7.inplace.review.application;
 
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +20,8 @@ import team7.inplace.security.application.CurrentUserProvider;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.User;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @Service
 public class ReviewService {
@@ -37,7 +38,7 @@ public class ReviewService {
 
         User user = currentUserProvider.getCurrentUser();
         Place place = placeRepository.findById(placeId)
-            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+                .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
 
         if (reviewRepository.existsByUserIdAndPlaceId(user.getId(), placeId)) {
             throw InplaceException.of(ReviewErrorCode.REVIEW_ALREADY_EXISTS);
@@ -70,7 +71,7 @@ public class ReviewService {
 
         Long userId = AuthorizationUtil.getUserId();
         Review review = reviewRepository.findById(reviewId)
-            .orElseThrow(() -> InplaceException.of(ReviewErrorCode.NOT_FOUND));
+                .orElseThrow(() -> InplaceException.of(ReviewErrorCode.NOT_FOUND));
 
         if (!review.getUser().getId().equals(userId)) {
             throw InplaceException.of(ReviewErrorCode.NOT_OWNER);

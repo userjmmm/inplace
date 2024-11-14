@@ -18,8 +18,8 @@ public class RefreshTokenService {
     public boolean isInvalidRefreshToken(String refreshToken) throws InplaceException {
         String username = jwtUtil.getUsername(refreshToken);
         return !refreshTokenRepository.findById(username)
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN))
-            .getRefreshToken().equals(refreshToken);
+                .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN))
+                .getRefreshToken().equals(refreshToken);
     }
 
     public void saveRefreshToken(String username, String token) {
