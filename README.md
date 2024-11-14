@@ -6,21 +6,21 @@
 
 ## 목차
 
-> 1. [**_프로젝트 목적_**](#project-purpose)
-> 2. [**_서비스 정보_**](#service-info)
-> 3. [**_주요 기능_**](#main-function)
-> 4. [**_프로그램 구조_**](#program-architecture)
-> 5. [**_배포 주소_**](#deployment-link)
-> 6. [**_API and ERD_**](#api-and-erd)
-> 7. [**_Contributor_**](#contributor)
-> 8. [**_Repository Info_**](#repository-info)
-> 9. [**_개발 기간_**](#development-term)
-> 10. [**_Dependency 버전_**](#main-dependency-version)
-> 11. [**_Tech Stack_**](#tech-stack)
-> 12. [**_기능 흐름_**](#function-flow)
-> 13. [**_Example Usage_**](#example-usage)
+> 1. [**_프로젝트 목적_**](#프로젝트-목적)
+> 2. [**_서비스 정보_**](#서비스-정보)
+> 3. [**_주요 기능_**](#주요-기능)
+> 4. [**_프로그램 구조_**](#프로그램-구조)
+> 5. [**_배포 주소_**](#배포-주소)
+> 6. [**_API and ERD_**](#API-and-ERD)
+> 7. [**_기여_**](#기여)
+> 8. [**_저장소 주소_**](#저장소-주소)
+> 9. [**_개발 기간_**](#개발-기간)
+> 10. [**_Dependency 버전_**](#Dependency-버전)
+> 11. [**_Tech Stack_**](#Tech-stack)
+> 12. [**_기능 흐름_**](#기능-흐름)
+> 13. [**_사용 예시_**](#사용-예시)
 
-## Project Purpose
+## 프로젝트 목적
 
 > 저희의 아이디어는 **데이트 코스의 단조로움**을 어떻게 하면 해소할 수 있을까? 라는 생각에서 시작했습니다.
 >
@@ -32,7 +32,7 @@
 > 이를 관심있는 **인플루언서를 등록하고, 이에 따른 장소 추천 및, 장소에 대한 리뷰 기능**을 통해 풀어내어 **Inplace** 라는 저희만의 웹 애플리케이션으로
 > 구현해보았습니다.
 
-## Service Info
+## 서비스 정보
 
 > 긴 영상은 필요 없어요 인플루언서가 다녀간 쿨플, 한눈에 쏙!
 
@@ -52,7 +52,7 @@
     - 정보 받은 후 3일 뒤 리뷰 페이지 전송 ( 카카오톡 나에게 메세지 보내기 )
     - 리뷰 확인 및 수정 가능
 
-## Main Function
+## 주요 기능
 
 > Inplace의 주요 기능
 
@@ -82,9 +82,9 @@
     - 내가 작성한 리뷰를 관리할 수 있습니다
     - 사용자 닉네임을 변경할 수 있습니다
 
-## Program Architecture
+## 프로그램 구조
 
-## Deployment Link
+## 배포 주소
 
 > [**BackEnd**](https://api.inplace.my) : _api.inplace.my_
 >
@@ -102,7 +102,7 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 > [**ERD**](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55) :
 > https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55
 
-## Contributor
+## 기여
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <table>
@@ -161,7 +161,7 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-## Repository Info
+## 저장소 주소
 
 > **Using Language**
 >
@@ -187,17 +187,17 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
 
-## Development Term
+## 개발 기간
 
 > 2024.08.22 ~ 2024.11.15
 
-## Main Dependency Version
+## Dependency 버전
 
 > **Spring Boots 3.3.3**
 >
 > **Java 17 LTS**
 
-## Tech Stack
+## Tech stack
 
 > **Backend**
 >
@@ -248,13 +248,13 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white)
 
-## Function Flow
+## 기능 흐름
 
 - ### Spring Security
     - 로그인 시, jwt로 accessToken과 refreshToken을 Cookie에 담아줍니다.
         - refreshToken은 redis에 저장되어 RTR (Refresh Token Rotation)을 구현하였습니다.
     - 모든 요청 AuthorizationFilter에서 Cookie에 있는 토큰이 유효한지 확인하고, 유효하면 Authenticate합니다.
 
-## Example Usage
+## 사용 예시
 
 > 나중에 시연 영상 첨부하기
