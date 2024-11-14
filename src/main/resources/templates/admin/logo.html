@@ -31,9 +31,26 @@
             </div>
 
             <div class="form-inline">
+                <label for="startDate">시작 날짜:</label>
+                <input id="startDate" name="startDate" type="date" required>
+            </div>
+
+            <div class="form-inline">
+                <label for="endDate">종료 날짜:</label>
+                <input id="endDate" name="endDate" type="date" required>
+            </div>
+
+            <div class="form-inline">
                 <label>
                     <input id="isRequired" name="isRequired" type="checkbox">
                     필수 로고 (반드시 표시되어야 함)
+                </label>
+            </div>
+
+            <div class="form-inline">
+                <label>
+                    <input id="isFixed" name="isFixed" type="checkbox">
+                    고정 표시 (위치 고정)
                 </label>
             </div>
 
@@ -53,6 +70,9 @@
             <th>미리보기</th>
             <th>이름</th>
             <th>필수 로고</th>
+            <th>고정 표시</th>
+            <th>시작 날짜</th>
+            <th>종료 날짜</th>
             <th>업로드 날짜</th>
             <th>작업</th>
         </tr>
@@ -62,7 +82,6 @@
             <td>
                 <img alt="이미지 미리보기"
                      onclick="openPreviewModal(this.src)"
-                     style="cursor: pointer;"
                      th:src="@{'/images/' + ${image.filename}}">
             </td>
             <td th:text="${image.name}"></td>
@@ -71,9 +90,16 @@
                        th:onclick="'updateRequiredStatus(' + ${image.id} + ', this.checked)'"
                        type="checkbox">
             </td>
+            <td>
+                <input th:checked="${image.isFixed}"
+                       th:onclick="'updateFixedStatus(' + ${image.id} + ', this.checked)'"
+                       type="checkbox">
+            </td>
+            <td th:text="${#temporals.format(image.startDate, 'yyyy-MM-dd')}"></td>
+            <td th:text="${#temporals.format(image.endDate, 'yyyy-MM-dd')}"></td>
             <td th:text="${#temporals.format(image.uploadDate, 'yyyy-MM-dd HH:mm')}"></td>
             <td>
-                <input onclick="deleteImage(this)" style="background-color: #dc3545;"
+                <input onclick="deleteImage(this)"
                        th:attr="data-id=${image.id}"
                        type="button"
                        value="삭제">
