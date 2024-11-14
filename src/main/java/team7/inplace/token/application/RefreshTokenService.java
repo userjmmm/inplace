@@ -27,4 +27,7 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
+    public void deleteRefreshToken(String username) {
+        refreshTokenRepository.deleteById(username);
+    }
 }
