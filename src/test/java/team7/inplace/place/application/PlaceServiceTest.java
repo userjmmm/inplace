@@ -38,6 +38,8 @@ import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.review.domain.Review;
+import team7.inplace.review.persistence.ReviewRepository;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.Role;
 import team7.inplace.user.domain.User;
@@ -57,13 +59,16 @@ class PlaceServiceTest {
     private UserRepository userRepository;
     @Mock
     private LikedPlaceRepository likedPlaceRepository;
+    @Mock
+    private ReviewRepository reviewRepository;
     @InjectMocks
     private PlaceService placeService;
 
     private Place place1, place2, place3, place4;
     private Video video1, video2, video3;
     private Influencer influencer1, influencer2;
-    private User user1, user2;
+    private User user1, user2, user3;
+    private Review review1, review2, review3;
 
 //     * 테스트 Place 좌표 (longitude, latitude)
 //     * (10.0, 10.0) -> video1 -> 성시경
@@ -191,6 +196,17 @@ class PlaceServiceTest {
         userIdField.set(user1, 1L);
         user2 = new User("user2", "pass2", "nick2", UserType.KAKAO, Role.USER);
         userIdField.set(user2, 2L);
+        user3 = new User("user3", "pass3", "nick3", UserType.KAKAO, Role.USER);
+        userIdField.set(user3, 3L);
+
+        Field reviewIdField = Review.class.getDeclaredField("id");
+        reviewIdField.setAccessible(true);
+        review1 = new Review(user1, place4, true, "comment1");
+        reviewIdField.set(review1, 1L);
+        review2 = new Review(user2, place4, false, "comment1");
+        reviewIdField.set(review2, 2L);
+        review3 = new Review(user3, place4, true, "comment1");
+        reviewIdField.set(review3, 3L);
 
         authorizationUtil = mockStatic(AuthorizationUtil.class);
     }
@@ -389,13 +405,16 @@ class PlaceServiceTest {
         given(AuthorizationUtil.getUsername()).willReturn(null);
 
         PlaceDetailInfo expected = PlaceDetailInfo.from(place4,
-            influencer2, video2, false);
+            influencer2, video2, false, 2, 1);
 
         when(placeRepository.findById(place4.getId()))
             .thenReturn(Optional.of(place4));
         when(videoRepository.findByPlaceId(place4.getId()))
             .thenReturn(Arrays.asList(video2, video3));
-
+        when(reviewRepository.countByPlaceIdAndIsLikedTrue(place4.getId()))
+            .thenReturn(2);
+        when(reviewRepository.countByPlaceIdAndIsLikedFalse(place4.getId()))
+            .thenReturn(1);
         // when
         PlaceDetailInfo result = placeService.getPlaceDetailInfo(4L);
 
@@ -408,6 +427,11 @@ class PlaceServiceTest {
             expected.placeInfo().influencerName());
         assertThat(result.placeInfo().likes()).isEqualTo(
             expected.placeInfo().likes());
+        assertThat(result.placeLikes().like())
+            .isEqualTo(expected.placeLikes().like());
+        assertThat(result.placeLikes().dislike())
+            .isEqualTo(expected.placeLikes().dislike());
+
         assertThat(result.facilityInfo()).isEqualTo(
             objectMapper.createObjectNode().put("message", "NO DATA"));
     }
@@ -499,12 +523,16 @@ class PlaceServiceTest {
         given(AuthorizationUtil.getUserId()).willReturn(1L);
 
         PlaceDetailInfo expected = PlaceDetailInfo.from(place4,
-            influencer2, video2, false);
+            influencer2, video2, false, 2, 1);
 
         when(placeRepository.findById(place4.getId()))
             .thenReturn(Optional.of(place4));
         when(videoRepository.findByPlaceId(place4.getId()))
             .thenReturn(Arrays.asList(video2, video3));
+        when(reviewRepository.countByPlaceIdAndIsLikedTrue(place4.getId()))
+            .thenReturn(2);
+        when(reviewRepository.countByPlaceIdAndIsLikedFalse(place4.getId()))
+            .thenReturn(1);
 
         // when
         PlaceDetailInfo result = placeService.getPlaceDetailInfo(4L);
@@ -527,7 +555,7 @@ class PlaceServiceTest {
         given(AuthorizationUtil.getUserId()).willReturn(user1.getId());
 
         PlaceDetailInfo expected = PlaceDetailInfo.from(place4,
-            influencer2, video2, true);
+            influencer2, video2, true, 2, 1);
 
         when(placeRepository.findById(place4.getId()))
             .thenReturn(Optional.of(place4));
@@ -543,6 +571,10 @@ class PlaceServiceTest {
                 .thenReturn(Optional.of(saved));
             return saved;
         }).when(likedPlaceRepository).save(any(LikedPlace.class));
+        when(reviewRepository.countByPlaceIdAndIsLikedTrue(place4.getId()))
+            .thenReturn(2);
+        when(reviewRepository.countByPlaceIdAndIsLikedFalse(place4.getId()))
+            .thenReturn(1);
 
         // when
         PlaceLikeCommand placeLikeCommand = new PlaceLikeCommand(place4.getId(), true);
@@ -560,6 +592,10 @@ class PlaceServiceTest {
             expected.placeInfo().influencerName());
         assertThat(result.placeInfo().likes()).isEqualTo(
             expected.placeInfo().likes());
+        assertThat(result.placeLikes().like())
+            .isEqualTo(expected.placeLikes().like());
+        assertThat(result.placeLikes().dislike())
+            .isEqualTo(expected.placeLikes().dislike());
     }
 
     // LikedPlace 테스트

@@ -1,6 +1,5 @@
 package team7.inplace.admin;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +14,8 @@ import team7.inplace.admin.error.ErrorLogRepository;
 import team7.inplace.global.kakao.config.KakaoApiProperties;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor

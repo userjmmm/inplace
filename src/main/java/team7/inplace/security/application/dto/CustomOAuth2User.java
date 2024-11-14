@@ -1,8 +1,5 @@
 package team7.inplace.security.application.dto;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -10,11 +7,15 @@ import org.springframework.util.StringUtils;
 import team7.inplace.user.application.dto.UserCommand;
 import team7.inplace.user.domain.Role;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
 public record CustomOAuth2User(
-    String username,
-    Long id,
-    String roles,
-    Collection<GrantedAuthority> authorities
+        String username,
+        Long id,
+        String roles,
+        Collection<GrantedAuthority> authorities
 ) implements OAuth2User {
 
     public CustomOAuth2User(String username, Long id, String roles) {
@@ -58,11 +59,11 @@ public record CustomOAuth2User(
 
     public static CustomOAuth2User makeNewUser(UserCommand.Info user) {
         return new CustomOAuth2User(user.username(), user.id(),
-            Role.addRole(Role.USER, Role.FIRST_USER));
+                Role.addRole(Role.USER, Role.FIRST_USER));
     }
 
     public boolean isFirstUser() {
         return this.authorities.stream()
-            .anyMatch(authority -> authority.getAuthority().equals(Role.FIRST_USER.getRoles()));
+                .anyMatch(authority -> authority.getAuthority().equals(Role.FIRST_USER.getRoles()));
     }
 }

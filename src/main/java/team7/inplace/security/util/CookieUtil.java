@@ -10,6 +10,7 @@ public class CookieUtil {
             .secure(true)
             .path("/")
             .httpOnly(true)
+            .domain("inplace.my")
             .maxAge(60 * 60)
             .build();
     }

@@ -1,6 +1,5 @@
 package team7.inplace.admin.crawling.application;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +7,8 @@ import team7.inplace.admin.crawling.application.dto.CrawlingInfo;
 import team7.inplace.admin.crawling.application.dto.CrawlingInfo.ViewInfo;
 import team7.inplace.admin.crawling.client.YoutubeClient;
 import team7.inplace.video.persistence.VideoRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

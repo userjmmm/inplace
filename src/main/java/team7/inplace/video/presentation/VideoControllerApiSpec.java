@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.video.presentation.dto.VideoResponse;
 
-
 import java.util.List;
 
 public interface VideoControllerApiSpec {

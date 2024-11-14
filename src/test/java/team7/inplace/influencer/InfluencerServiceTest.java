@@ -1,16 +1,6 @@
 package team7.inplace.influencer;
 
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +22,15 @@ import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.Role;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.domain.UserType;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class InfluencerServiceTest {
@@ -61,11 +60,11 @@ public class InfluencerServiceTest {
 
         assertThat(influencerInfoPage).hasSize(2);
         assertThat(influencerInfoPage.getContent().get(0))
-            .extracting("influencerName", "likes")
-            .containsExactly(influencer1.getName(), false);
+                .extracting("influencerName", "likes")
+                .containsExactly(influencer1.getName(), false);
         assertThat(influencerInfoPage.getContent().get(1))
-            .extracting("influencerName", "likes")
-            .containsExactly(influencer2.getName(), false);
+                .extracting("influencerName", "likes")
+                .containsExactly(influencer2.getName(), false);
 
         authorizationUtil.close();
     }
@@ -79,7 +78,7 @@ public class InfluencerServiceTest {
         Influencer influencer2 = new Influencer(2L, "influencer2", "imgUrl2", "job2");
         Influencer influencer3 = new Influencer(3L, "influencer3", "imgUrl3", "job3");
         Page<Influencer> influencersPage = new PageImpl<>(
-            List.of(influencer1, influencer2, influencer3));
+                List.of(influencer1, influencer2, influencer3));
 
         Long userId = 1L;
         User user = new User("name", "password", "nickname", UserType.KAKAO, Role.USER);
@@ -93,20 +92,20 @@ public class InfluencerServiceTest {
         FavoriteInfluencer favoriteInfluencer2 = new FavoriteInfluencer(user, influencer3);
         favoriteInfluencer2.updateLike(true);
         given(favoriteInfluencerRepository.findLikedInfluencerIdsByUserId(userId)).willReturn(
-            Set.of(2L, 3L));
+                Set.of(2L, 3L));
 
         Page<InfluencerInfo> influencerInfoPage = influencerService.getAllInfluencers(pageable);
 
         assertThat(influencerInfoPage).hasSize(3);
         assertThat(influencerInfoPage.getContent().get(0))
-            .extracting("influencerName", "likes")
-            .containsExactly(influencer2.getName(), true);
+                .extracting("influencerName", "likes")
+                .containsExactly(influencer2.getName(), true);
         assertThat(influencerInfoPage.getContent().get(1))
-            .extracting("influencerName", "likes")
-            .containsExactly(influencer3.getName(), true);
+                .extracting("influencerName", "likes")
+                .containsExactly(influencer3.getName(), true);
         assertThat(influencerInfoPage.getContent().get(2))
-            .extracting("influencerName", "likes")
-            .containsExactly(influencer1.getName(), false);
+                .extracting("influencerName", "likes")
+                .containsExactly(influencer1.getName(), false);
 
         authorizationUtil.close();
     }
@@ -126,7 +125,7 @@ public class InfluencerServiceTest {
     @Test
     public void updateInfluencerTest() {
         InfluencerCommand command = new InfluencerCommand("updatedName", "updatedImgUrl",
-            "updatedJob");
+                "updatedJob");
         Influencer influencer = new Influencer(1L, "name", "imgUrl", "job");
         given(influencerRepository.findById(any(Long.class))).willReturn(Optional.of(influencer));
 

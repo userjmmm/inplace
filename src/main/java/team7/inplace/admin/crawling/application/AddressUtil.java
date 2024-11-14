@@ -1,11 +1,12 @@
 package team7.inplace.admin.crawling.application;
 
-import static lombok.AccessLevel.PRIVATE;
-
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.NoArgsConstructor;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.NoArgsConstructor;
+
+import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class AddressUtil {
