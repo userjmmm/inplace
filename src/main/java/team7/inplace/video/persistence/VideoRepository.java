@@ -14,7 +14,7 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     @Query("SELECT v FROM Video v JOIN FETCH v.place JOIN FETCH v.influencer ORDER BY v.viewCountIncrease DESC")
     List<Video> findTop10ByOrderByViewCountIncreaseDesc(Pageable pageable);
 
-    @Query("SELECT v FROM Video v JOIN FETCH v.place JOIN FETCH v.influencer WHERE v.influencer.id IN :influencerIds")
+    @Query("SELECT v FROM Video v JOIN FETCH v.place JOIN FETCH v.influencer WHERE v.influencer.id IN :influencerIds ORDER BY v.id DESC")
     List<Video> findTop10ByInfluencerIdIn(List<Long> influencerIds, Pageable pageable);
 
     @Query("SELECT v FROM Video v JOIN FETCH v.place JOIN FETCH v.influencer ORDER BY v.id DESC")
