@@ -1,15 +1,6 @@
 package team7.inplace.video.application;
 
-import static org.mockito.BDDMockito.given;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,19 +12,22 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import team7.inplace.influencer.domain.Influencer;
-import team7.inplace.place.domain.*;
+import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
-import team7.inplace.security.application.dto.CustomOAuth2User;
-import team7.inplace.user.domain.Role;
 import team7.inplace.util.TestUtil;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class VideoServiceTest {
@@ -46,7 +40,7 @@ public class VideoServiceTest {
 
     @Test
     @DisplayName("getVideosBySurround Test")
-    void test1(){
+    void test1() {
         // given
         // 매개변수
         VideoSearchParams videoSearchParams = new VideoSearchParams(
@@ -113,7 +107,7 @@ public class VideoServiceTest {
         ArgumentCaptor<Place> captor_pla = ArgumentCaptor.forClass(Place.class);
         given(videoRepository.findTopByPlaceOrderByIdDesc(captor_pla.capture())).willAnswer(
                 invocation -> {
-                    if(captor_pla.getValue() == place1)
+                    if (captor_pla.getValue() == place1)
                         return Optional.of(video1);
                     return Optional.of(video2);
                 }
@@ -127,7 +121,7 @@ public class VideoServiceTest {
 
     @Test
     @DisplayName("getAllVideosDesc Test")
-    void test2(){
+    void test2() {
         // Place 객체
         Place place1 = new Place("Place 1",
                 "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
@@ -217,7 +211,7 @@ public class VideoServiceTest {
 
     @Test
     @DisplayName("getPlaceNullVideo Test")
-    void test4(){
+    void test4() {
         // Place 객체
         Place place1 = new Place("Place 1",
                 "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
@@ -262,7 +256,7 @@ public class VideoServiceTest {
 
     @Test
     @DisplayName("getPlaceNullVideo Test")
-    void test5(){
+    void test5() {
         // Place 객체
         Place place1 = new Place("Place 1",
                 "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",

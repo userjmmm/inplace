@@ -29,7 +29,7 @@ public class FavoriteInfluencerController implements FavoriteInfluencerControlle
 
     @PostMapping("/multiple/likes")
     public ResponseEntity<Void> likeToManyInfluencer(
-        @RequestBody InfluencerListLikeRequest request) {
+            @RequestBody InfluencerListLikeRequest request) {
         FavoriteInfluencerListCommand command = request.toCommand();
         favoriteInfluencerService.likeToManyInfluencer(command);
         return new ResponseEntity<>(HttpStatus.OK);

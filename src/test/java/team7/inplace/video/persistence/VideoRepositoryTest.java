@@ -2,10 +2,6 @@ package team7.inplace.video.persistence;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +23,11 @@ import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.video.domain.Video;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @CustomRepositoryTest
 @Transactional
 @Import(QueryDslConfig.class)
@@ -44,34 +45,34 @@ public class VideoRepositoryTest {
     @BeforeEach
     void init() {
         Place place1 = new Place("Place 1",
-            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", "카페",
-            "Address 1|Address 2|Address 3",
-            "10.0", "10.0",
-            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
-            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false|menu.url|description",
-                "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30),
-            Arrays.asList(
-                "menuBoard1.url",
-                "menuBoard2.url"
-            )
+                "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+                "menuImg.url", "카페",
+                "Address 1|Address 2|Address 3",
+                "10.0", "10.0",
+                Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+                Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+                Arrays.asList("삼겹살|5000|false|menu.url|description",
+                        "돼지찌개|7000|true|menu.url|description"),
+                LocalDateTime.of(2024, 3, 28, 5, 30),
+                Arrays.asList(
+                        "menuBoard1.url",
+                        "menuBoard2.url"
+                )
         );
         Place place2 = new Place("Place 2",
-            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", "일식",
-            "Address 1|Address 2|Address 3",
-            "10.0", "50.0",
-            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
-            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false|menu.url|description",
-                "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30),
-            Arrays.asList(
-                "menuBoard1.url",
-                "menuBoard2.url"
-            )
+                "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+                "menuImg.url", "일식",
+                "Address 1|Address 2|Address 3",
+                "10.0", "50.0",
+                Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+                Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+                Arrays.asList("삼겹살|5000|false|menu.url|description",
+                        "돼지찌개|7000|true|menu.url|description"),
+                LocalDateTime.of(2024, 3, 28, 5, 30),
+                Arrays.asList(
+                        "menuBoard1.url",
+                        "menuBoard2.url"
+                )
         );
         entityManager.persist(place1);
         entityManager.persist(place2);
@@ -120,8 +121,8 @@ public class VideoRepositoryTest {
         influencerIds.add(1L);
 
         List<Video> savedVideos = videoRepository.findTop10ByInfluencerIdIn(
-            influencerIds,
-            pageable
+                influencerIds,
+                pageable
         );
         // then
         Assertions.assertThat(savedVideos.size()).isEqualTo(5);
@@ -210,9 +211,9 @@ public class VideoRepositoryTest {
 
         // when
         Place place = placeRepository.findById(1L)
-            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+                .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
         Video video = videoRepository.findTopByPlaceOrderByIdDesc(place)
-            .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
+                .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
 
         // then
         Assertions.assertThat(video).isNotNull();
@@ -282,10 +283,10 @@ public class VideoRepositoryTest {
         // given
 
         // when
-        for(int i = 1; i <= 11; i++){
-            Video video = videoRepository.findById((long)i)
+        for (int i = 1; i <= 11; i++) {
+            Video video = videoRepository.findById((long) i)
                     .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
-            video.updateViewCount((long)i);
+            video.updateViewCount((long) i);
         }
 
         List<Video> videos = videoRepository.findTop10ByOrderByViewCountIncreaseDesc(pageable);

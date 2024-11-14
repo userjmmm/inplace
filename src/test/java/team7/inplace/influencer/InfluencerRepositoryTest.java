@@ -1,13 +1,14 @@
 package team7.inplace.influencer;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import team7.inplace.config.annotation.CustomRepositoryTest;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @CustomRepositoryTest
 public class InfluencerRepositoryTest {

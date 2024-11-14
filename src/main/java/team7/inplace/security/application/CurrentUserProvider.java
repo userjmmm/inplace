@@ -21,6 +21,6 @@ public class CurrentUserProvider {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
         return userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+                .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
     }
 }

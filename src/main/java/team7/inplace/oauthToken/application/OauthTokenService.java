@@ -23,17 +23,17 @@ public class OauthTokenService {
     @Transactional(readOnly = true)
     public String findOAuthTokenByUserId(Long userId) throws InplaceException {
         return tokenEncryptionUtil.decrypt(oauthTokenRepository.findByUserId(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.OAUTH_TOKEN_NOT_FOUND))
-            .getOauthToken());
+                .orElseThrow(() -> InplaceException.of(UserErrorCode.OAUTH_TOKEN_NOT_FOUND))
+                .getOauthToken());
     }
 
     @Transactional
     public void insertOauthToken(OauthTokenCommand oauthTokenCommand) throws InplaceException {
         User userProxy = entityManager.getReference(User.class, oauthTokenCommand.userId());
         OauthToken oauthToken = OauthToken.of(
-            tokenEncryptionUtil.encrypt(oauthTokenCommand.oauthToken()),
-            oauthTokenCommand.expiresAt(),
-            userProxy
+                tokenEncryptionUtil.encrypt(oauthTokenCommand.oauthToken()),
+                oauthTokenCommand.expiresAt(),
+                userProxy
         );
 
         oauthTokenRepository.save(oauthToken);
@@ -42,11 +42,11 @@ public class OauthTokenService {
     @Transactional
     public void updateOauthToken(OauthTokenCommand oauthTokenCommand) throws InplaceException {
         OauthToken oauthToken = oauthTokenRepository.findByUserId(oauthTokenCommand.userId())
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.OAUTH_TOKEN_NOT_FOUND));
+                .orElseThrow(() -> InplaceException.of(UserErrorCode.OAUTH_TOKEN_NOT_FOUND));
 
         oauthToken.updateInfo(
-            tokenEncryptionUtil.encrypt(oauthTokenCommand.oauthToken()),
-            oauthTokenCommand.expiresAt()
+                tokenEncryptionUtil.encrypt(oauthTokenCommand.oauthToken()),
+                oauthTokenCommand.expiresAt()
         );
     }
 

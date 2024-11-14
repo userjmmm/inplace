@@ -1,15 +1,11 @@
 package team7.inplace.crawling.domain;
 
-import static jakarta.persistence.EnumType.STRING;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static jakarta.persistence.EnumType.STRING;
 
 @Getter
 @Entity(name = "youtube_channel")

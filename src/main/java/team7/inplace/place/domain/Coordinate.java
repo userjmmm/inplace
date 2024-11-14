@@ -1,12 +1,12 @@
 package team7.inplace.place.domain;
 
-import static lombok.AccessLevel.PROTECTED;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static lombok.AccessLevel.PROTECTED;
 
 @Embeddable
 @NoArgsConstructor(access = PROTECTED)

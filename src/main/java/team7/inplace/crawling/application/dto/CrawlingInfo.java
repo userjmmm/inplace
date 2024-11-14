@@ -1,11 +1,12 @@
 package team7.inplace.crawling.application.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.List;
-import java.util.Objects;
 import team7.inplace.crawling.client.dto.PlaceNode;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.video.application.command.VideoCommand;
+
+import java.util.List;
+import java.util.Objects;
 
 public class CrawlingInfo {
     public record VideoPlaceInfo(

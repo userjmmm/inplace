@@ -5,13 +5,14 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.security.config.JwtProperties;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 public class JwtUtil {
 
@@ -22,7 +23,7 @@ public class JwtUtil {
 
     public JwtUtil(JwtProperties jwtProperties) {
         this.secretKey = new SecretKeySpec(jwtProperties.secret().getBytes(StandardCharsets.UTF_8),
-            SIG.HS256.key().build().getAlgorithm());
+                SIG.HS256.key().build().getAlgorithm());
         this.jwtParser = Jwts.parser().verifyWith(this.secretKey).build();
         this.accessTokenExpiredTime = jwtProperties.accessTokenExpiredTime();
         this.refreshTokenExpiredTime = jwtProperties.refreshTokenExpiredTime();
@@ -37,16 +38,16 @@ public class JwtUtil {
     }
 
     private String createToken(String username, Long userId, String roles, String tokenType,
-        Long expiredTime) {
+                               Long expiredTime) {
         return Jwts.builder()
-            .claim("username", username)
-            .claim("id", userId)
-            .claim("roles", roles)
-            .claim("tokenType", tokenType)
-            .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + expiredTime))
-            .signWith(secretKey)
-            .compact();
+                .claim("username", username)
+                .claim("id", userId)
+                .claim("roles", roles)
+                .claim("tokenType", tokenType)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expiredTime))
+                .signWith(secretKey)
+                .compact();
     }
 
     public String getUsername(String token) throws InplaceException {
@@ -60,7 +61,7 @@ public class JwtUtil {
     public boolean isRefreshToken(String token) throws InplaceException {
         try {
             return jwtParser.parseSignedClaims(token).getPayload().get("tokenType", String.class)
-                .equals("refreshToken");
+                    .equals("refreshToken");
         } catch (JwtException | IllegalArgumentException e) {
             throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }
