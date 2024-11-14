@@ -225,10 +225,10 @@ public class PlaceService {
     }
 
     public Page<LikedPlaceInfo> getLikedPlaceInfo(Long userId, Pageable pageable) {
-        Page<LikedPlace> placePage = likedPlaceRepository.findByUserIdAndIsLikedTrue(userId,
-            pageable);
+        Page<LikedPlace> placePage = likedPlaceRepository.findByUserIdAndIsLikedTrueWithPlace(
+            userId, pageable);
         List<Long> placeIds = placePage.map(likedPlace -> likedPlace.getPlace().getId()).toList();
-        List<Video> videos = videoRepository.findByPlaceIdIn(placeIds);
+        List<Video> videos = videoRepository.findByPlaceIdInWithInfluencer(placeIds);
         Map<Long, String> placeIdToInfluencerName = getMapPlaceIdToInfluencerName(videos);
 
         List<LikedPlaceInfo> likedPlaceInfos = placePage.getContent().stream()

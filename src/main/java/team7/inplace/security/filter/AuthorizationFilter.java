@@ -6,6 +6,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -14,11 +19,7 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.security.util.JwtUtil;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-
+@Slf4j
 public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -29,10 +30,24 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
     ) throws ServletException, IOException {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            log.info("cookie exists");
+            Cookie accessToken = Arrays.stream(cookies)
+                .filter(
+                    cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue()))
+                .findAny()
+                .orElse(null);
+            if (accessToken != null) {
+                log.info("Access token: {}", accessToken.getValue());
+            }
+        } else {
+            log.info("cookie is null");
+        }
         if (hasNoTokenCookie(request)) {
             filterChain.doFilter(request, response);
             return;
@@ -52,21 +67,21 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private boolean hasNoTokenCookie(HttpServletRequest request) {
         return Optional.ofNullable(request.getCookies())
-                .flatMap(cookies -> Arrays.stream(cookies)
-                        .filter(
-                                cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue())
-                                        || cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue())
-                        )
-                        .findAny())
-                .isEmpty();
+            .flatMap(cookies -> Arrays.stream(cookies)
+                .filter(
+                    cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue())
+                        || cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue())
+                )
+                .findAny())
+            .isEmpty();
     }
 
     private String getAccessToken(HttpServletRequest request) throws InplaceException {
         Cookie accessTokenCookie = Arrays.stream(request.getCookies())
-                .filter(
-                        cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue()))
-                .findAny()
-                .orElse(null);
+            .filter(
+                cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue()))
+            .findAny()
+            .orElse(null);
         if (Objects.isNull(accessTokenCookie)) {
             return null;
         }
@@ -75,10 +90,10 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private String getRefreshToken(HttpServletRequest request) throws InplaceException {
         Cookie refreshTokenCookie = Arrays.stream(request.getCookies())
-                .filter(
-                        cookie -> cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue()))
-                .findAny()
-                .orElse(null);
+            .filter(
+                cookie -> cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue()))
+            .findAny()
+            .orElse(null);
         if (Objects.isNull(refreshTokenCookie)) {
             return null;
         }
@@ -91,7 +106,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         String roles = jwtUtil.getRoles(token);
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, id, roles);
         Authentication authToken = new OAuth2AuthenticationToken(customOAuth2User,
-                customOAuth2User.getAuthorities(), customOAuth2User.getRegistrationId());
+            customOAuth2User.getAuthorities(), customOAuth2User.getRegistrationId());
         SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 
