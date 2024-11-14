@@ -68,6 +68,9 @@ class ReviewRepositoryTest {
         entityManager.persist(review2);
         entityManager.persist(review3);
         entityManager.persist(review4);
+
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Test
