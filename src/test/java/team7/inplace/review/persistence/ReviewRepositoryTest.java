@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.config.annotation.CustomRepositoryTest;
 import team7.inplace.place.domain.Place;
@@ -29,7 +28,6 @@ class ReviewRepositoryTest {
 
     @Autowired
     private ReviewRepository reviewRepository;
-
 
     @BeforeEach
     void init() {
@@ -73,7 +71,6 @@ class ReviewRepositoryTest {
     }
 
     @Test
-    @DirtiesContext
     @DisplayName("like true false test")
     public void checkLikedDisliked() {
         //given
