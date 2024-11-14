@@ -1,25 +1,26 @@
 # Inplace ( Team7_BE )
 
 <p align="center">
-  <img src="https://i.ibb.co/CVBQHPg/image-2.png" alt="메인 이미지" style="border: 2px solid black;">
+  <img src="https://i.ibb.co/CVBQHPg/image-2.png" alt="메인 이미지">
 </p>
 
 ## 목차
 
-> 1. [**_프로젝트 목적_**](#프로젝트-목적)
-> 2. [**_서비스 정보_**](#서비스-정보)
-> 3. [**_주요 기능_**](#주요-기능)
-> 4. [**_프로그램 구조_**](#프로그램-구조)
-> 5. [**_배포 주소_**](#배포-주소)
-> 6. [**_API and ERD_**](#API-and-ERD)
-> 7. [**_기여_**](#기여)
-> 8. [**_저장소 주소_**](#저장소-주소)
-> 9. [**_개발 기간_**](#개발-기간)
-> 10. [**_Dependency 버전_**](#Dependency-버전)
-> 11. [**_Tech Stack_**](#Tech-stack)
-> 12. [**_테스트_**](#테스트)
-> 13. [**_기능 흐름_**](#기능-흐름)
-> 14. [**_사용 예시_**](#사용-예시)
+> 1. [**_프로젝트 목적_**](#프로젝트-목적)  
+> 2. [**_서비스 정보_**](#서비스-정보)  
+> 3. [**_주요 기능_**](#주요-기능)  
+> 4. [**_프로그램 구조_**](#프로그램-구조)  
+> 5. [**_배포 주소_**](#배포-주소)  
+> 6. [**_API & ERD_**](#API-&-ERD)  
+> 7. [**_팀원_**](#팀원)  
+> 8. [**_저장소 주소_**](#저장소-정보)  
+> 9. [**_개발 기간_**](#개발-기간)  
+> 10. [**_주요 종속성 버전_**](#주요-종속성-버전)  
+> 11. [**_기술 스택_**](#기술-스택)  
+> 12. [**_테스트_**](#테스트)  
+> 13. [**_기능 흐름_**](#기능-흐름)  
+> 14. [**_사용 예시_**](#사용-예시)  
+
 
 ## 프로젝트 목적
 
@@ -83,7 +84,9 @@
     - 내가 작성한 리뷰를 관리할 수 있습니다
     - 사용자 닉네임을 변경할 수 있습니다
 
-## 프로그램 구조
+## 개발 기간
+
+> 2024.08.22 ~ 2024.11.15
 
 ## 배포 주소
 
@@ -91,19 +94,7 @@
 >
 > [**FrontEnd**](https://inplace.my) : _inplace.my_
 
-## API AND ERD
-
-![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
-
-> [**API Spec**](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e) :
-_https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
-
-![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
-
-> [**ERD**](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55) :
-> https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55
-
-## 기여
+## 팀원
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <table>
@@ -162,7 +153,21 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-## 저장소 주소
+## 프로그램 구조
+
+## API & ERD
+
+![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
+
+> [**API Spec**](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e) :
+_https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
+
+![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
+
+> [**ERD**](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55) :
+> https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55
+
+## 저장소 정보
 
 > **Using Language**
 >
@@ -188,17 +193,13 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
 
-## 개발 기간
-
-> 2024.08.22 ~ 2024.11.15
-
-## Dependency 버전
+## 주요 종속성 버전
 
 > **Spring Boots 3.3.3**
 >
 > **Java 17 LTS**
 
-## Tech stack
+## 기술 스택
 
 > **Backend**
 >
@@ -269,4 +270,4 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 
 ## 사용 예시
 
-> 나중에 시연 영상 첨부하기
+> 실제 유저 사용 페이지 흐름 보여주기 ( 영상 x )
