@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -19,7 +18,6 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.security.util.JwtUtil;
 
-@Slf4j
 public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -34,20 +32,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws ServletException, IOException {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            log.info("cookie exists");
-            Cookie accessToken = Arrays.stream(cookies)
-                .filter(
-                    cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue()))
-                .findAny()
-                .orElse(null);
-            if (accessToken != null) {
-                log.info("Access token: {}", accessToken.getValue());
-            }
-        } else {
-            log.info("cookie is null");
-        }
         if (hasNoTokenCookie(request)) {
             filterChain.doFilter(request, response);
             return;
