@@ -7,7 +7,6 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
@@ -41,7 +40,10 @@ public class PlaceCustomRepositoryImpl implements PlaceCustomRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(places, pageable, places.size());
+        JPAQuery<Long> countQuery = jpaQueryFactory.select(place.id.count()) // 중복 제거
+            .from(place);
+
+        return PageableExecutionUtils.getPage(places, pageable, countQuery::fetchOne);
     }
 
     @Override

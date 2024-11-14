@@ -22,7 +22,7 @@ create table places
     latitude        text                                                                 not null,
     longitude       text                                                                 not null,
     menu_img_url    text                                                                 null,
-    category        enum ('CAFE', 'JAPANESE', 'KOREAN', 'NONE', 'RESTAURANT', 'WESTERN') not null
+    category        enum ('CAFE', 'JAPANESE', 'KOREAN', 'NONE', 'RESTAURANT', 'WESTERN') not null,
 
     FULLTEXT INDEX ft_name_ngram (name) WITH PARSER ngram,
     INDEX idx_long_lat (longitude(15), latitude(15))
