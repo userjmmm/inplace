@@ -251,9 +251,14 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 ## Function Flow
 
 - ### Spring Security
-    - 로그인 시, jwt로 accessToken과 refreshToken을 Cookie에 담아줍니다.
-        - refreshToken은 redis에 저장되어 RTR (Refresh Token Rotation)을 구현하였습니다.
-    - 모든 요청 AuthorizationFilter에서 Cookie에 있는 토큰이 유효한지 확인하고, 유효하면 Authenticate합니다.
+    - oauth 로그인 시, jwt로 accessToken과 refreshToken을 Cookie에 담아줍니다.
+        - oauthToken은 aes알고리즘으로 암호화 되어 db에 저장됩니다.
+    - 모든 요청은 AuthorizationFilter에서 Cookie에 있는 토큰이 유효한지 확인하고, 유효하면 Authenticate합니다.
+- ### PlaceMessage
+    - 요청이 오면 webClient(비동기)로 나에게보내기 kakao api를 통해 장소 정보를 보냅니다.
+    - 3일 뒤 나에게 보내기 kakao api를 통해 리뷰 요청 메세지를 보냅니다.
+- ### TokenRefresh
+    - Redis DB에 username(key)로 refreshToken을 확인하고, RTR (Refresh Token Rotation)을 합니다.
 
 ## Example Usage
 
