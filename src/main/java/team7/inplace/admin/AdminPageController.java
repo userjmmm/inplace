@@ -41,4 +41,9 @@ public class AdminPageController {
         model.addAttribute("errorLogs", errorLogs);
         return "admin/error-logs.html";
     }
+
+    @GetMapping("/logo")
+    public String getLogo() {
+        return "admin/logo.html";
+    }
 }
