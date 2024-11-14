@@ -11,5 +11,5 @@ import team7.inplace.admin.domain.Banner;
 @Repository
 public interface BannerRepository extends JpaRepository<Banner, Long> {
     @Query("SELECT l FROM Banner l WHERE l.startDate <= :now AND l.endDate >= :now or l.isFixed = true")
-    List<Banner> findActiveLogos(@Param("now") LocalDateTime now);
+    List<Banner> findActiveBanner(@Param("now") LocalDateTime now);
 }

@@ -13,19 +13,19 @@ public class BannerS3Repository {
     private final AmazonS3Client amazonS3Client;
     private final AwsProperties awsProperties;
 
-    public String uploadLogo(String logoName, MultipartFile logo) {
+    public String uploadBanner(String bannerName, MultipartFile banner) {
         var bucketName = awsProperties.bucketName();
-        var key = "banner/" + logoName;
+        var key = "banner/" + bannerName;
 
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(logo.getSize());
-        metadata.setContentType(logo.getContentType());
+        metadata.setContentLength(banner.getSize());
+        metadata.setContentType(banner.getContentType());
 
         try {
-            amazonS3Client.putObject(bucketName, key, logo.getInputStream(), metadata);
+            amazonS3Client.putObject(bucketName, key, banner.getInputStream(), metadata);
             return amazonS3Client.getUrl(bucketName, key).toString();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to upload logo", e);
+            throw new RuntimeException("Failed to upload banner", e);
         }
     }
 }

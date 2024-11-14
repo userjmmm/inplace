@@ -16,17 +16,17 @@ public class BannerService {
     private final BannerS3Repository bannerS3Repository;
     private final BannerRepository bannerRepository;
 
-    public void uploadLogo(BannerCommand.Create command) {
-        var imgPath = bannerS3Repository.uploadLogo(command.imgName(), command.imageFile());
-        var logo = command.toEntity(imgPath);
-        bannerRepository.save(logo);
+    public void uploadBanner(BannerCommand.Create command) {
+        var imgPath = bannerS3Repository.uploadBanner(command.imgName(), command.imageFile());
+        var banner = command.toEntity(imgPath);
+        bannerRepository.save(banner);
     }
 
-    public List<Detail> getLogos() {
+    public List<Detail> getBanners() {
         var now = LocalDateTime.now();
-        var logos = bannerRepository.findActiveLogos(now);
+        var banners = bannerRepository.findActiveBanner(now);
 
-        return logos.stream()
+        return banners.stream()
                 .sorted((a, b) -> Boolean.compare(b.getIsFixed(), a.getIsFixed()))
                 .map(BannerInfo.Detail::from)
                 .toList();

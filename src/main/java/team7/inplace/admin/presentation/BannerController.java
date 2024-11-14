@@ -19,16 +19,16 @@ public class BannerController {
     private final BannerService bannerService;
 
     @PostMapping()
-    public void saveLogo(BannerRequest.Create request) {
-        log.info("saveLogo: {}", request);
-        bannerService.uploadLogo(request.toCommand());
+    public void saveBanner(BannerRequest.Create request) {
+
+        bannerService.uploadBanner(request.toCommand());
     }
 
     @GetMapping()
-    public ResponseEntity<List<BannerResponse.Info>> getLogos() {
-        var activeLogos = bannerService.getLogos();
+    public ResponseEntity<List<BannerResponse.Info>> getBanners() {
+        var banners = bannerService.getBanners();
 
-        var response = activeLogos.stream()
+        var response = banners.stream()
                 .map(BannerResponse.Info::from)
                 .toList();
         return new ResponseEntity<>(response, HttpStatus.OK);
