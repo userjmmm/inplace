@@ -2,4 +2,4 @@ aws:
   accessKey: ${AWS_ACCESS_KEY}
   secretKey: ${AWS_SECRET_KEY}
   region: ${AWS_REGION}
-  buket_name: ${AWS_BUCKET_NAME}
+  bucket_name: ${AWS_BUCKET_NAME}
