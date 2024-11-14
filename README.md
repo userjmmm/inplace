@@ -17,8 +17,9 @@
 > 9. [**_개발 기간_**](#개발-기간)
 > 10. [**_Dependency 버전_**](#Dependency-버전)
 > 11. [**_Tech Stack_**](#Tech-stack)
-> 12. [**_기능 흐름_**](#기능-흐름)
-> 13. [**_사용 예시_**](#사용-예시)
+> 12. [**_테스트_**](#테스트)
+> 13. [**_기능 흐름_**](#기능-흐름)
+> 14. [**_사용 예시_**](#사용-예시)
 
 ## 프로젝트 목적
 
@@ -247,6 +248,12 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 >
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white)
+
+## 테스트
+
+> **테스트 시나리오** : https://www.notion.so/9ed68b292c004fc69f7eaad513054d96
+>
+> **테스트 결과보고서** : https://www.notion.so/08a520d3b8c44154a19425b0bcc16f6f
 
 ## 기능 흐름
 
