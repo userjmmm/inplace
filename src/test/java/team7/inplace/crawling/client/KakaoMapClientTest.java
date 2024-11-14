@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 class KakaoMapClientTest {
 
     @Autowired
-    public KakaoMapClient KakaoMapClient;
+    public team7.inplace.admin.crawling.client.KakaoMapClient KakaoMapClient;
 
     @Test
     @DisplayName("카카오 맵 주소 검색 테스트")
