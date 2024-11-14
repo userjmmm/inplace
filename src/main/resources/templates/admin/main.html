@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>관리자 페이지</title>
     <link href="/css/style.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-3.6.0.min.js" type="text/javascript"></script>
+    <script src="/js/main.js"></script>
+    <link href="/css/main.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -13,46 +16,82 @@
 
 <h1>관리자 페이지</h1>
 
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; width: 80%; max-width: 1200px; margin-top: 40px;">
-    <!-- 배너 관리 카드 -->
-    <a href="/admin/banner"
-       style="text-decoration: none; width: 300px; background-color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
-        <div style="padding: 30px 20px; text-align: center;"
-             onmouseover="this.parentElement.style.transform='translateY(-5px)'; this.parentElement.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'"
-             onmouseout="this.parentElement.style.transform='none'; this.parentElement.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'">
-            <i class="fas fa-images" style="font-size: 3em; color: #3cb371; margin-bottom: 20px;"></i>
-            <h2 style="color: #2e8b57; margin: 0 0 10px 0;">배너 관리</h2>
-            <p style="color: #666; margin: 0;">배너 이미지 업로드 및 관리</p>
-        </div>
-    </a>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 30px; width: 80%; max-width: 960px; margin-top: 40px;">
+    <!-- 상단 컨테이너 -->
+    <div style="display: flex; gap: 30px; width: 630px;">
+        <!-- 배너 관리 카드 -->
+        <a href="/admin/banner"
+           style="text-decoration: none; width: 300px; height: 280px; background-color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+            <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;"
+                 onmouseover="this.parentElement.style.transform='translateY(-5px)'; this.parentElement.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'"
+                 onmouseout="this.parentElement.style.transform='none'; this.parentElement.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'">
+                <i class="fas fa-images" style="font-size: 3em; color: #3cb371; margin-bottom: 20px;"></i>
+                <h2 style="color: #2e8b57; margin: 0 0 10px 0;">배너 관리</h2>
+                <p style="color: #666; margin: 0;">배너 이미지 업로드 및 관리</p>
+            </div>
+        </a>
 
-    <!-- 동영상 관리 카드 -->
-    <a href="/admin/video"
-       style="text-decoration: none; width: 300px; background-color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
-        <div style="padding: 30px 20px; text-align: center;"
-             onmouseover="this.parentElement.style.transform='translateY(-5px)'; this.parentElement.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'"
-             onmouseout="this.parentElement.style.transform='none'; this.parentElement.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'">
-            <i class="fas fa-video" style="font-size: 3em; color: #3cb371; margin-bottom: 20px;"></i>
-            <h2 style="color: #2e8b57; margin: 0 0 10px 0;">동영상 관리</h2>
-            <p style="color: #666; margin: 0;">동영상 콘텐츠 업로드 및 관리</p>
-        </div>
-    </a>
+        <!-- 동영상 관리 카드 -->
+        <a href="/admin/video"
+           style="text-decoration: none; width: 300px; height: 280px; background-color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+            <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;"
+                 onmouseover="this.parentElement.style.transform='translateY(-5px)'; this.parentElement.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'"
+                 onmouseout="this.parentElement.style.transform='none'; this.parentElement.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'">
+                <i class="fas fa-video" style="font-size: 3em; color: #3cb371; margin-bottom: 20px;"></i>
+                <h2 style="color: #2e8b57; margin: 0 0 10px 0;">동영상 관리</h2>
+                <p style="color: #666; margin: 0;">동영상 콘텐츠 업로드 및 관리</p>
+            </div>
+        </a>
+    </div>
 
-    <!-- 에러 로그 관리 카드 -->
-    <a href="/admin/error-logs"
-       style="text-decoration: none; width: 300px; background-color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
-        <div style="padding: 30px 20px; text-align: center;"
-             onmouseover="this.parentElement.style.transform='translateY(-5px)'; this.parentElement.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'"
-             onmouseout="this.parentElement.style.transform='none'; this.parentElement.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'">
-            <i class="fas fa-bug" style="font-size: 3em; color: #3cb371; margin-bottom: 20px;"></i>
-            <h2 style="color: #2e8b57; margin: 0 0 10px 0;">에러 로그</h2>
-            <p style="color: #666; margin: 0;">시스템 에러 로그 조회 및 관리</p>
+    <!-- 하단 컨테이너 -->
+    <div style="display: flex; gap: 30px; width: 630px;">
+        <!-- 에러 로그 카드 -->
+        <a href="/admin/error-logs"
+           style="text-decoration: none; width: 260px; height: 280px; background-color: white; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+            <div style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;"
+                 onmouseover="this.parentElement.style.transform='translateY(-5px)'; this.parentElement.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'"
+                 onmouseout="this.parentElement.style.transform='none'; this.parentElement.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'">
+                <i class="fas fa-bug" style="font-size: 3em; color: #3cb371; margin-bottom: 20px;"></i>
+                <h2 style="color: #2e8b57; margin: 0 0 10px 0;">에러 로그</h2>
+                <p style="color: #666; margin: 0;">시스템 에러 로그 조회 및 관리</p>
+            </div>
+        </a>
+
+        <!-- 오른쪽 버튼 컨테이너 -->
+        <div style="width: 300px; display: flex; flex-direction: column; justify-content: center; gap: 30px;">
+            <button onclick="forceCrawling()"
+                    style="height: 135px; background-color: white; border: none; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;"
+                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'"
+                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i class="fas fa-sync" style="font-size: 2em; color: #3cb371;"></i>
+                    <span style="color: #2e8b57; font-weight: bold;">강제 크롤링</span>
+                </div>
+            </button>
+
+            <button onclick="forceViewUpdate()"
+                    style="height: 135px; background-color: white; border: none; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;"
+                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'"
+                    onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i class="fas fa-eye" style="font-size: 2em; color: #3cb371;"></i>
+                    <span style="color: #2e8b57; font-weight: bold;">조회수 업데이트</span>
+                </div>
+            </button>
         </div>
-    </a>
+    </div>
 </div>
+
 
 <div style="margin-top: 50px; text-align: center; color: #666; font-size: 0.9em;">
     <p>© 2024 관리자 시스템. All rights reserved.</p>
+</div>
+<div class="loading-modal" id="loader">
+    <div class="loading-modal-content">
+        <div class="spinner"></div>
+        <div id="loaderText">처리 중입니다...</div>
+    </div>
 </div>
 </body>
 </html>

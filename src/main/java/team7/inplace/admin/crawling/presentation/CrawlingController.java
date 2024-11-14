@@ -21,4 +21,18 @@ public class CrawlingController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/video")
+    public ResponseEntity<Void> crawlingVideo() {
+        crawlingFacade.updateVideos();
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/video/view")
+    public ResponseEntity<Void> crawlingVideoView() {
+        crawlingFacade.updateVideoView();
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }
