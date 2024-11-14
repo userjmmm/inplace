@@ -81,7 +81,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<MyReviewInfo> getMyReviews(Long userId, Pageable pageable) {
-        Page<Review> reviewPage = reviewRepository.findByUserId(userId, pageable);
+        Page<Review> reviewPage = reviewRepository.findByUserIdWithPlace(userId, pageable);
 
         return reviewPage.map(MyReviewInfo::from);
     }
