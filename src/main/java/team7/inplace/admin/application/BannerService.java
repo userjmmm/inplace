@@ -17,7 +17,7 @@ public class BannerService {
     private final BannerRepository bannerRepository;
 
     public void uploadBanner(BannerCommand.Create command) {
-        var imgPath = bannerS3Repository.uploadBanner(command.imgName(), command.imageFile());
+        var imgPath = bannerS3Repository.uploadBanner(command.imageFile());
         var banner = command.toEntity(imgPath);
         bannerRepository.save(banner);
     }
