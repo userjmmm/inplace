@@ -2,6 +2,7 @@ package team7.inplace.admin.crawling.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import team7.inplace.admin.crawling.application.dto.CrawlingInfo;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.place.application.command.PlacesCommand;
@@ -16,7 +17,7 @@ public class CrawlingFacade {
     private final KakaoCrawlingService kakaoCrawlingService;
     private final VideoFacade videoFacade;
 
-    //TODO: 스케쥴링 추가 예정
+    @Scheduled(cron = "0 0 2 * * *", zone = "Asia/Seoul")
     public void updateVideos() {
         var crawlingInfos = youtubeCrawlingService.crawlAllVideos();
         for (var crawlingInfo : crawlingInfos) {
@@ -29,7 +30,7 @@ public class CrawlingFacade {
         }
     }
 
-    //TODO: 스케쥴링 추가 예정
+    @Scheduled(cron = "0 30 2 * * *", zone = "Asia/Seoul")
     public void updateVideoView() {
         var crawlingInfos = videoCrawlingService.crawlingVideoView();
         var videoCommands = crawlingInfos.stream()

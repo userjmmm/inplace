@@ -102,9 +102,11 @@
 ## 🖼️ 프로그램 구조도
 
 ### CI CD
+
 ![Backend_CICD](https://github.com/user-attachments/assets/f7db576e-5150-443c-8d2f-ab232294c296)
 
 ### System Architecture
+
 ![Architecture](https://github.com/user-attachments/assets/b21a697a-003e-4371-bdde-e12db6dbc1d9)
 
 ## 📊 API & ERD
@@ -615,17 +617,23 @@
 
 ## 컨벤션
 
-> [**Commit Convention**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/Commit-%EC%BB%A8%EB%B2%A4%EC%85%98)
+> [**Commit Convention
+**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/Commit-%EC%BB%A8%EB%B2%A4%EC%85%98)
 >
 > [**PR Convention**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/PR-%EC%BB%A8%EB%B2%A4%EC%85%98)
 >
-> [**Issue Convention**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EC%9D%B4%EC%8A%88-%EC%BB%A8%EB%B2%A4%EC%85%98)
+> [**Issue Convention
+**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EC%9D%B4%EC%8A%88-%EC%BB%A8%EB%B2%A4%EC%85%98)
 >
-> [**Coding Convention**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EC%BD%94%EB%94%A9-%EC%BB%A8%EB%B2%A4%EC%85%98)
-> 
-> [**브랜치 전략**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EB%B8%8C%EB%9E%9C%EC%B9%98-%EC%A0%84%EB%9E%B5)
-> 
-💡 *컨벤션과 브랜치전략은 <span style="color: red;">[Notiion](https://quickest-asterisk-75d.notion.site/7-7-05d799c3f023443f8fb66abf97ca5965)</span>에서도 확인이 가능합니다!*
+> [**Coding Convention
+**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EC%BD%94%EB%94%A9-%EC%BB%A8%EB%B2%A4%EC%85%98)
+>
+> [**브랜치 전략
+**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EB%B8%8C%EB%9E%9C%EC%B9%98-%EC%A0%84%EB%9E%B5)
+>
+💡 *컨벤션과
+브랜치전략은 <span style="color: red;">[Notiion](https://quickest-asterisk-75d.notion.site/7-7-05d799c3f023443f8fb66abf97ca5965)</span>
+에서도 확인이 가능합니다!*
 
 ## 📂 저장소 정보
 
@@ -667,11 +675,11 @@
 > Spring-Cloud-Starter-AWS:2.2.6.RELEASE
 >
 > **JWT**
-> 
+>
 > JJWT-API:0.12.3
-> 
+>
 > JJWT-IMPL:0.12.3
-> 
+>
 > JJWT-JACKSON:0.12.3
 >
 > **SpringDoc(Swagger)**
@@ -693,6 +701,7 @@
 > spring-boot-starter-data-redis
 >
 > spring-boot-starter-thymeleaf
+
 ## 🚀 기술 스택
 
 > **Backend**
@@ -793,6 +802,13 @@
     - DB에서 인플루언서 유튜브 채널을 가져와 새로 업데이트 된 정보 크롤링해서 정규표현식으로 주소정보를 추출합니다.
     - Video에서 장소정보가 추출되면 kakaoApi를 통해 매장 정보를 가져와 인플루언서별로 트랜잭션을 분리해 장소정보를 저장합니다.
     - Video에서 장소정보가 추출되지 않으면 Admin페이지를 통해 수동으로 장소 정보를 입력합니다.
+- ### AdminPage
+    - 배너, 에러로그, 강제크롤링 기능을 제공합니다.
+    - 홈페이지에 배너를 등록하거나 삭제할 수 있습니다.
+    - 서버 내에서 발생한 500번대 에러로그와 StackTrace를 확인할 수 있습니다.
+    - 스케쥴링 되어있는 비디오 크롤링을 강제로 실행할 수 있습니다.
+    - 스케쥴링 되어있는 조회수 크롤링을 강제로 실행할 수 있습니다.
+
 ## 📱 사용 예시
 
 > 실제 유저 사용 페이지 흐름 보여주기 ( 영상 x )
