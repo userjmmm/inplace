@@ -6,23 +6,31 @@
 
 ## 목차
 
-> 1. [**_프로젝트 목적_**](#프로젝트-목적)  
-> 2. [**_서비스 정보_**](#서비스-정보)
-> 3. [**_개발 기간_**](#개발-기간)
-> 4. [**_배포 주소_**](#배포-주소)
-> 5. [**_팀원_**](#팀원)
-> 6. [**_프로그램 구조_**](#프로그램-구조)  
-> 7. [**_API & ERD_**](#api--erd)  
-> 8. [**_저장소 정보_**](#저장소-정보)  
-> 9. [**_프로그램 구조_**](#프로그램-구조)  
-> 10. [**_주요 종속성 버전_**](#주요-종속성-버전)  
-> 11. [**_기술 스택_**](#기술-스택)
-> 12. [**_테스트_**](#테스트) 
-> 13. [**_세부 기능 흐름_**](#세부-기능-흐름)   
-> 14. [**_사용 예시_**](#사용-예시)  
+1. [**프로젝트 개요**](#프로젝트-개요)
+    - 1.1 [**프로젝트 목적**](#프로젝트-목적)
+    - 1.2 [**서비스 정보**](#서비스-정보)
+    - 1.3 [**배포 주소**](#배포-주소)
 
+2. [**프로그램 구조**](#프로그램-구조)
+    - 2.1 [**프로그램 구조도**](#프로그램-구조도)
+    - 2.2 [**API & ERD**](#api--erd)
 
-## 프로젝트 목적
+3. [**개발 정보**](#개발-정보)
+    - 3.1 [**개발 기간**](#개발-기간)
+    - 3.2 [**팀원**](#팀원)
+    - 3.3 [**저장소 정보**](#저장소-정보)
+
+4. [**기술 정보**](#기술-정보)
+    - 4.1 [**주요 종속성 버전**](#주요-종속성-버전)
+    - 4.2 [**기술 스택**](#기술-스택)
+
+5. [**테스트**](#테스트)
+
+6. [**기능 및 사용 예시**](#기능-및-사용-예시)
+    - 6.1 [**세부 기능 흐름**](#세부-기능-흐름)
+    - 6.2 [**사용 예시**](#사용-예시)
+
+## 🙌프로젝트 목적
 
 > 저희의 아이디어는 **데이트 코스의 단조로움**을 어떻게 하면 해소할 수 있을까? 라는 생각에서 시작했습니다.
 >
@@ -64,15 +72,35 @@
     - 내가 작성한 리뷰를 관리할 수 있습니다
     - 사용자 닉네임을 변경할 수 있습니다
 
+## 배포 주소
+
+> **BackEnd** : [**_api.inplace.my_**](https://api.inplace.my)
+>
+> **FrontEnd**: [**_inplace.my_**](https://inplace.my)
+
+## 프로그램 구조
+
+---
+
+## 프로그램 구조도
+
+## API & ERD
+
+![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
+
+- [🚗 Visit Team7 API](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e)
+
+![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
+
+- [🙋‍♂️ Visit Team7 ERD](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55)
+
+## 개발 정보
+
+---
+
 ## 개발 기간
 
 > **_2024.08.22 ~ 2024.11.15_**
-
-## 배포 주소
-
-> [**BackEnd**](https://api.inplace.my) : **_api.inplace.my_**
->
-> [**FrontEnd**](https://inplace.my) : **_inplace.my_**
 
 ## 팀원
 
@@ -133,20 +161,6 @@
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-## 프로그램 구조
-
-## API & ERD
-
-![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
-
-> [**API Spec**](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e) :
-_https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
-
-![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
-
-> [**ERD**](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55) :
-> https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55
-
 ## 저장소 정보
 
 > **Using Language**
@@ -172,6 +186,10 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 >
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
+
+## 기술 정보
+
+---
 
 ## 주요 종속성 버전
 
@@ -232,9 +250,15 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 
 ## 테스트
 
+---
+
 > **테스트 시나리오** : https://www.notion.so/9ed68b292c004fc69f7eaad513054d96
 >
 > **테스트 결과보고서** : https://www.notion.so/08a520d3b8c44154a19425b0bcc16f6f
+
+## 기능 및 사용 예시
+
+---
 
 ## 세부 기능 흐름
 
@@ -259,7 +283,6 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
     - 내가 작성한 리뷰 조회 시 장소 정보 일부를 함께 반환합니다.
 - ### Place
     - 내가 좋아요한 장소 조회 시 인플루언서 정보 일부를 함께 반환합니다.
-
 
 ## 사용 예시
 
