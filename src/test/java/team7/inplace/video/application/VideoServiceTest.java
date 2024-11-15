@@ -1,6 +1,7 @@
 package team7.inplace.video.application;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,9 +13,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.security.application.dto.CustomOAuth2User;
+import team7.inplace.user.domain.Role;
 import team7.inplace.util.TestUtil;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
@@ -38,10 +44,16 @@ public class VideoServiceTest {
     @InjectMocks
     private VideoService videoService;
 
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
     @Test
     @DisplayName("getVideosBySurround Test")
     void test1() {
         // given
+        setUser();
         // 매개변수
         VideoSearchParams videoSearchParams = new VideoSearchParams(
                 "10.0",
@@ -295,5 +307,12 @@ public class VideoServiceTest {
         // then
         Assertions.assertThat(videoInfos.get(0).videoId()).isEqualTo(2L);
         Assertions.assertThat(videoInfos.get(1).videoId()).isEqualTo(1L);
+    }
+
+    private void setUser() {
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User("test", 1L, Role.USER.getRoles());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(customOAuth2User,
+                null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

@@ -126,10 +126,10 @@ public class VideoRepositoryTest {
         );
         // then
         Assertions.assertThat(savedVideos.size()).isEqualTo(5);
-        Long count = 1L;
+        Long count = 5L;
         for (Video savedVideo : savedVideos) {
             Assertions.assertThat(savedVideo.getId()).isEqualTo(count);
-            count = count + 1L;
+            count = count - 1L;
         }
     }
 
@@ -148,10 +148,10 @@ public class VideoRepositoryTest {
         );
         // then
         Assertions.assertThat(savedVideos.size()).isEqualTo(10);
-        Long count = 1L;
+        Long count = 11L;
         for (Video savedVideo : savedVideos) {
             Assertions.assertThat(savedVideo.getId()).isEqualTo(count);
-            count = count + 1L;
+            count = count - 1L;
         }
     }
 
@@ -283,6 +283,12 @@ public class VideoRepositoryTest {
         // given
 
         // when
+        for (int i = 1; i <= 11; i++) {
+            Video video = videoRepository.findById((long) i)
+                    .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
+            video.updateViewCount(1L);
+        }
+
         for (int i = 1; i <= 11; i++) {
             Video video = videoRepository.findById((long) i)
                     .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
