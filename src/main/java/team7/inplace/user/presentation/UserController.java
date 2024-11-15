@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.user.application.UserFacade;
 import team7.inplace.user.application.UserService;
@@ -20,13 +19,12 @@ import team7.inplace.user.presentation.dto.UserInfoResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
 public class UserController implements UserControllerApiSepc {
 
     public final UserService userService;
     public final UserFacade userFacade;
 
-    @PatchMapping("/nickname")
+    @PatchMapping("/user/nickname")
     public ResponseEntity<Void> updateNickname(
         @PathVariable("nickname") String nickname
     ) {
@@ -34,7 +32,7 @@ public class UserController implements UserControllerApiSepc {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/influencers")
+    @GetMapping("/users/influencers")
     public ResponseEntity<Page<LikedInfluencerResponse>> getMyFavoriteInfluencers(
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
@@ -43,7 +41,7 @@ public class UserController implements UserControllerApiSepc {
         return new ResponseEntity<>(influencers, HttpStatus.OK);
     }
 
-    @GetMapping("/places")
+    @GetMapping("/users/places")
     public ResponseEntity<Page<LikedPlaceResponse>> getMyFavoritePlaces(
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
@@ -52,7 +50,7 @@ public class UserController implements UserControllerApiSepc {
         return new ResponseEntity<>(places, HttpStatus.OK);
     }
 
-    @GetMapping("/reviews")
+    @GetMapping("/users/reviews")
     public ResponseEntity<Page<MyReviewResponse>> getMyReviews(
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
@@ -61,7 +59,7 @@ public class UserController implements UserControllerApiSepc {
         return new ResponseEntity<>(reviews, HttpStatus.OK);
     }
 
-    @GetMapping("/info")
+    @GetMapping("/users/info")
     public ResponseEntity<UserInfoResponse> getUserInfo() {
         UserInfoResponse response = UserInfoResponse.from(userService.getUserInfo());
 
