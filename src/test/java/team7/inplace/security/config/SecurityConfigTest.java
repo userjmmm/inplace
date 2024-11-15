@@ -22,6 +22,7 @@ class SecurityConfigTest {
     private MockMvc mockMvc;
 
     @Test
+    @DisplayName("모두 허용으로 인해 실패하는 테스트 입니다.")
     @WithMockUser(roles = "USER")
     void testAdminEndpoints() throws Exception {
         mockMvc.perform(get("/admin/video"))
@@ -37,6 +38,7 @@ class SecurityConfigTest {
     }
 
     @Test
+    @DisplayName("모두 허용으로 인해 실패하는 테스트 입니다.")
     @WithAnonymousUser
     void testAnonymousEndpoints() throws Exception {
         mockMvc.perform(get("/admin/video"))
