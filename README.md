@@ -708,25 +708,33 @@
     - oauth 로그인 시, jwt로 accessToken과 refreshToken을 Cookie에 담아줍니다.
         - oauthToken은 aes알고리즘으로 암호화 되어 db에 저장됩니다.
     - 모든 요청은 AuthorizationFilter에서 Cookie에 있는 토큰이 유효한지 확인하고, 유효하면 Authenticate합니다.
-- ### PlaceMessage
-    - 요청이 오면 webClient(비동기)로 나에게보내기 kakao api를 통해 장소 정보를 보냅니다.
-    - 3일 뒤 나에게 보내기 kakao api를 통해 리뷰 요청 메세지를 보냅니다.
-- ### TokenRefresh
-    - Redis DB에 username(key)로 refreshToken을 확인하고, RTR (Refresh Token Rotation)을 합니다.
 - ### Influencer
     - 로그인 상태인 경우 사용자가 좋아요한 인플루언서를 먼저 반환합니다.
 - ### FavoriteInfluencer
     - 로그인 상태를 확인한 후 좋아요/ 싫어요 요청을 처리합니다.
     - 내가 좋아요한 인플루언서 정보를 반환합니다.
+- ### Place
+    - places에 videos, influecers 테이블을 Left join하고 지도 범위 내에있는 장소를 추려냅니다.
+    - 카테고리와 인플루언서 이름으로 필터링하고, 사용자와 가까운순으로 정렬 후 반환합니다.
+        - 특정 장소에 대한 요청이 들어오면 세부 정보와 함께 관련된 인플루언서, 비디오와 사용자 리뷰 정보를 추가하여 반환합니다.
+    - 내가 좋아요한 장소 조회 시 인플루언서 정보 일부를 함께 반환합니다.
+    - PlaceMessage
+        - 요청이 오면 webClient(비동기)로 나에게보내기 kakao api를 통해 장소 정보를 보냅니다.
+        - 3일 뒤 나에게 보내기 kakao api를 통해 리뷰 요청 메세지를 보냅니다.
+- ### LikedPlace
+    - 사용자가 장소에 좋아요를 누르거나 취소하면 상태를 업데이트합니다.
+        - 기존 정보가 존재하지 않으면 새로 생성후 저장합니다.
+- ### Video
+    - 로그인 상태인 경우 사용자가 좋아요한 인플루언서의 동영상, 사용자 주변 장소의 동영상을 반환합니다.
+    - 로그인 상태가 아닌 경우 조회수 증가량이 높은 동영상, 새로운 동영상을 반환합니다.
 - ### Review
     - 로그인 상태를 확인한 후 리뷰 추가, 리뷰 삭제 요청을 처리합니다.
     - 장소별 리뷰 조회 시 본인이 작성한 리뷰인지 여부를 포함하여 반환합니다.
     - 내가 작성한 리뷰 조회 시 장소 정보 일부를 함께 반환합니다.
-- ### Place
-    - 내가 좋아요한 장소 조회 시 인플루언서 정보 일부를 함께 반환합니다.
-- ### Video
-    - 로그인 상태인 경우 사용자가 좋아요한 인플루언서의 동영상, 사용자 주변 장소의 동영상을 반환합니다.
-    - 로그인 상태가 아닌 경우 조회수 증가량이 높은 동영상, 새로운 동영상을 반환합니다.
+- ### User
+    - User nickname을 더티 체킹을 통해 변경한다.
+- ### TokenRefresh
+    - Redis DB에 username(key)로 refreshToken을 확인하고, RTR (Refresh Token Rotation)을 합니다.
 
 ## 📱 사용 예시
 
