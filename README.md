@@ -4,7 +4,7 @@
   <img src="https://i.ibb.co/CVBQHPg/image-2.png" alt="메인 이미지">
 </p>
 
-## 목차
+# 목차
 
 1. [**프로젝트 개요**](#-프로젝트-개요)
    > 1.1 [**프로젝트 목적**](#-프로젝트-목적)
@@ -37,19 +37,21 @@
    > 
    > 6.2 [**사용 예시**](#-사용-예시)
   
-## 📝 프로젝트 개요
+# 📝 프로젝트 개요
+
+---
 
 ## 🙌 프로젝트 목적
 
-> 저희의 아이디어는 **데이트 코스의 단조로움**을 어떻게 하면 해소할 수 있을까? 라는 생각에서 시작했습니다.
+> 저희의 아이디어는 **데이트 코스의 단조로움**을 어떻게 하면 해소할 수 있을까? 💡 라는 생각에서 시작했습니다.
 >
-> 아이디어를 구체화하는 과정에서 저희는 **장소**에 관련된 소재로 인스타, 유튜브 등의 SNS 및 동영상 플랫폼의 성장과 함께 등장한 **인플루언서** 라는 개념에 집중하게
+> 아이디어를 구체화하는 과정에서 저희는 **장소**에 관련된 소재로 인스타, 유튜브 등의 SNS 및 동영상 플랫폼 📱의 성장과 함께 등장한 **인플루언서** 라는 개념에 집중하게
 > 되었습니다.
 >
-> 이는 **인플루언서가 방문한 장소에 대한 정보를 서비스 해보자!** 라는 생각으로 이어졌습니다.
+> 이는 **인플루언서가 방문한 장소에 대한 정보를 서비스 해보자!** 📍 라는 생각으로 이어졌습니다.
 >
-> 이를 관심있는 **인플루언서를 등록하고, 이에 따른 장소 추천 및, 장소에 대한 리뷰 기능**을 통해 풀어내어 **Inplace** 라는 저희만의 웹 애플리케이션으로
-> 구현해보았습니다.
+> 이를 통해 사용자가 관심있는 **인플루언서를 등록하고, 이에 따른 장소 추천 및, 장소에 대한 리뷰 기능** 📋을 제공하여, **Inplace** 라는 저희만의 웹
+> 애플리케이션으로 구현해보았습니다.
 
 ## 📋 서비스 정보
 
@@ -87,7 +89,7 @@
 >
 > **FrontEnd**: [**_inplace.my_**](https://inplace.my)
 
-## 🏗️ 프로그램 구조
+# 🏗️ 프로그램 구조
 
 ---
 
@@ -103,7 +105,7 @@
 
 - [🙋‍♂️ Visit Team7 ERD](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55)
 
-## 👨‍💻 개발 정보
+# 👨‍💻 개발 정보
 
 ---
 
@@ -196,7 +198,7 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
 
-## 🛠️ 기술 정보
+# 🛠️ 기술 정보
 
 ---
 
@@ -257,7 +259,8 @@
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white)
 
-## ✅ 테스트
+
+# ✅ 테스트
 
 ---
 
@@ -265,7 +268,7 @@
 >
 > **테스트 결과보고서** : https://www.notion.so/08a520d3b8c44154a19425b0bcc16f6f
 
-## 🎬 기능 및 사용 예시
+# 🎬 기능 및 사용 예시
 
 ---
 
