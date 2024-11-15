@@ -13,19 +13,25 @@
    >
    > 1.3 [**배포 주소**](#-배포-주소)
 
-2. [**프로그램 구조**](#%EF%B8%8F-프로그램-구조)
-   > 2.1 [**프로그램 구조도**](#%EF%B8%8F-프로그램-구조도)
+2. [**프로젝트 구조**](#-프로젝트-구조)
+   > 2.1 [**프로그램 구조도**](#-프로그램-구조도)
    >
    > 2.2 [**API & ERD**](#-api--erd)
+   >
+   > 2.3 [**패키지 구조**](#패키지-구조)
 
 3. [**개발 정보**](#-개발-정보)
    > 3.1 [**개발 기간**](#-개발-기간)
    >
    > 3.2 [**팀원**](#-팀원)
    >
-   > 3.3 [**저장소 정보**](#-저장소-정보)
+   > 3.3 [**컨벤션**](#컨벤션)
+   >
+   > 3.4 [**브랜치 전략**](#브랜치-전략)
+   >
+   > 3.5 [**저장소 정보**](#-저장소-정보)
 
-4. [**기술 정보**](#%EF%B8%8F-기술-정보)
+4. [**기술 정보**](#-기술-정보)
    > 4.1 [**주요 종속성 버전**](#-주요-종속성-버전)
    >
    > 4.2 [**기술 스택**](#-기술-스택)
@@ -91,7 +97,7 @@
 
 ---
 
-# 🏗️ 프로그램 구조
+# 🏗️ 프로젝트 구조
 
 ## 🖼️ 프로그램 구조도
 
@@ -104,6 +110,435 @@
 ![image](https://github.com/user-attachments/assets/333c9f3b-6678-48a6-b32d-b9b36d8cb182)
 
 - [🙋‍♂️ Visit Team7 ERD](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55)
+
+## 🗂️패키지 구조
+
+<details><summary> 패키지 구조
+</summary>
+
+```
+📦src
+ ┣ 📂main
+ ┃ ┣ 📂generated
+ ┃ ┃ ┗ 📂team7
+ ┃ ┃ ┃ ┗ 📂inplace
+ ┃ ┃ ┃ ┃ ┣ 📂crawling
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QYoutubeChannel.java
+ ┃ ┃ ┃ ┃ ┣ 📂favoriteInfluencer
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QFavoriteInfluencer.java
+ ┃ ┃ ┃ ┃ ┣ 📂global
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂exception
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QErrorLog.java
+ ┃ ┃ ┃ ┃ ┣ 📂influencer
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QInfluencer.java
+ ┃ ┃ ┃ ┃ ┣ 📂likedPlace
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QLikedPlace.java
+ ┃ ┃ ┃ ┃ ┣ 📂oauthToken
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QOauthToken.java
+ ┃ ┃ ┃ ┃ ┣ 📂place
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜QAddress.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜QCoordinate.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜QMenu.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜QOffDay.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜QOpenTime.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QPlace.java
+ ┃ ┃ ┃ ┃ ┣ 📂review
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QReview.java
+ ┃ ┃ ┃ ┃ ┣ 📂user
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QUser.java
+ ┃ ┃ ┃ ┃ ┗ 📂video
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QVideo.java
+ ┃ ┣ 📂java
+ ┃ ┃ ┗ 📂team7
+ ┃ ┃ ┃ ┗ 📂inplace
+ ┃ ┃ ┃ ┃ ┣ 📂admin
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂banner
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂command
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜BannerCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜BannerInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜BannerService.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜Banner.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜BannerRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜BannerS3Repository.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜BannerController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜BannerRequest.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜BannerResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂cicd
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜TestController.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂crawling
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜CrawlingInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AddressUtil.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CrawlingFacade.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜KakaoCrawlingService.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜VideoCrawlingService.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜YoutubeCrawlingService.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂client
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceNode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜KakaoMapClient.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜YoutubeClient.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ChannelType.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜YoutubeChannel.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜YoutubeChannelRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜CrawlingController.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂error
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ErrorLog.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ErrorLogController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ErrorLogRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜AdminPageController.java
+ ┃ ┃ ┃ ┃ ┣ 📂favoriteInfluencer
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜FavoriteInfluencerCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜FavoriteInfluencerListCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜FavoriteInfluencerService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜FavoriteInfluencer.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistent
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜FavoriteInfluencerRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerLikeRequest.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜InfluencerListLikeRequest.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜FavoriteInfluencerController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜FavoriteInfluencerControllerApiSpec.java
+ ┃ ┃ ┃ ┃ ┣ 📂global
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂annotation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜Facade.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂exception
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂code
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthorizationErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜BannerErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ChannelErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜LikedPlaceErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ReviewErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UserErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoErrorCode.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InplaceException.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜InplaceExceptionHandler.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂kakao
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📂config
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜KakaoApiProperties.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂queryDsl
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜QueryDslConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂rest
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜RestTemplateConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜WebClientConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂scheduler
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ScheduledExecutorConfig.java
+ ┃ ┃ ┃ ┃ ┣ 📂influencer
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜InfluencerNameInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜InfluencerService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜Influencer.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜InfluencerRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerNameResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerRequest.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜InfluencerResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜InfluencerControllerApiSpec.java
+ ┃ ┃ ┃ ┃ ┣ 📂infra
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂s3
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AwsProperties.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜S3Config.java
+ ┃ ┃ ┃ ┃ ┣ 📂likedPlace
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜LikedPlace.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜LikedPlaceRepository.java
+ ┃ ┃ ┃ ┃ ┣ 📂oauthToken
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂command
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜OauthTokenCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜OauthTokenService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜OauthToken.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜OauthTokenRepository.java
+ ┃ ┃ ┃ ┃ ┣ 📂place
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂command
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceLikeCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlacesCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CategoryInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜LikedPlaceInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceDetailInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceForVideo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CategoryService.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Address.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Category.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Coordinate.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Menu.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜OffDay.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜OpenTime.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜Place.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceCustomRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceCustomRepositoryImpl.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CategoriesResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceDetailResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceLikeRequest.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlacesResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ReviewRequest.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ReviewResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceControllerApiSpec.java
+ ┃ ┃ ┃ ┃ ┣ 📂placeMessage
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂command
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceMessageCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜KakaoMessageService.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceMessageFacade.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceMessageController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceMessageControllerApiSpec.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂util
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Button.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Content.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜FeedTemplate.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜KakaoMessageMaker.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Link.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜LocationTemplate.java
+ ┃ ┃ ┃ ┃ ┣ 📂review
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜MyReviewInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ReviewCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ReviewInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ReviewService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜Review.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ReviewRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ReviewController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ReviewControllerApiSpec.java
+ ┃ ┃ ┃ ┃ ┣ 📂search
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AutoCompletionInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceSearchInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜SearchType.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜SearchService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜MatchAgainstFunctionContributor.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜SearchResult.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerSearchRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜PlaceSearchRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜SearchRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoSearchRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜SearchController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜SearchControllerApiSpec.java
+ ┃ ┃ ┃ ┃ ┣ 📂security
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CustomOAuth2User.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜KakaoOAuthResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CurrentUserProvider.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜CustomOAuth2UserService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CorsConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜JwtProperties.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜RedisConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜SecurityConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜SecurityEntryPointConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜SecurityFilterConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜SecurityHandlerConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜SecurityServiceConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜SecurityUtilConfig.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂entryPoint
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜LoginAuthenticationEntryPoint.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂filter
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthorizationFilter.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜ExceptionHandlingFilter.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜TokenType.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂handler
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CustomAccessDeniedHandler.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CustomFailureHandler.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜CustomSuccessHandler.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂util
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthorizationUtil.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CookieUtil.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜JwtUtil.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜TokenEncryptionUtil.java
+ ┃ ┃ ┃ ┃ ┣ 📂token
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜TokenCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜RefreshTokenFacade.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜RefreshTokenService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜RefreshToken.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜RefreshTokenRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜RefreshTokenController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜RefreshTokenControllerApiSpec.java
+ ┃ ┃ ┃ ┃ ┣ 📂user
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UserCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UserFacade.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Role.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜User.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserType.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜LikedInfluencerResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜LikedPlaceResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜MyReviewResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserInfoResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜TempController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜UserController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜UserControllerApiSepc.java
+ ┃ ┃ ┃ ┃ ┣ 📂video
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂command
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoCommand.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoInfo.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AliasUtil.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜Template.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜VideoFacade.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoService.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜Video.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoRepository.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂presentation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📂dto
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜VideoResponse.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoSearchParams.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜VideoController.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoControllerApiSpec.java
+ ┃ ┃ ┃ ┃ ┗ 📜InplaceApplication.java
+ ┃ ┗ 📂resources
+ ┃ ┃ ┣ 📂META-INF
+ ┃ ┃ ┃ ┗ 📂services
+ ┃ ┃ ┃ ┃ ┗ 📜org.hibernate.boot.model.FunctionContributor
+ ┃ ┃ ┣ 📂sql
+ ┃ ┃ ┃ ┣ 📜data.sql
+ ┃ ┃ ┃ ┗ 📜schema.sql
+ ┃ ┃ ┣ 📂static
+ ┃ ┃ ┃ ┣ 📂css
+ ┃ ┃ ┃ ┃ ┣ 📜banner.css
+ ┃ ┃ ┃ ┃ ┣ 📜error_logs_style.css
+ ┃ ┃ ┃ ┃ ┣ 📜main.css
+ ┃ ┃ ┃ ┃ ┗ 📜style.css
+ ┃ ┃ ┃ ┣ 📂js
+ ┃ ┃ ┃ ┃ ┣ 📜banner.js
+ ┃ ┃ ┃ ┃ ┣ 📜error-logs.js
+ ┃ ┃ ┃ ┃ ┣ 📜main.js
+ ┃ ┃ ┃ ┃ ┗ 📜video.js
+ ┃ ┃ ┃ ┗ 📜favicon.ico
+ ┃ ┃ ┣ 📂templates
+ ┃ ┃ ┃ ┣ 📂admin
+ ┃ ┃ ┃ ┃ ┣ 📜banner.html
+ ┃ ┃ ┃ ┃ ┣ 📜error-logs.html
+ ┃ ┃ ┃ ┃ ┣ 📜main.html
+ ┃ ┃ ┃ ┃ ┗ 📜video.html
+ ┃ ┃ ┃ ┗ 📂introduce
+ ┃ ┃ ┃ ┃ ┗ 📜main.html
+ ┃ ┃ ┣ 📜application-db.yaml
+ ┃ ┃ ┣ 📜application-kakao.yaml
+ ┃ ┃ ┣ 📜application-redis.yaml
+ ┃ ┃ ┣ 📜application-s3.yaml
+ ┃ ┃ ┣ 📜application-security.yaml
+ ┃ ┃ ┣ 📜application-youtube.yaml
+ ┃ ┃ ┗ 📜application.yaml
+ ┗ 📂test
+ ┃ ┗ 📂java
+ ┃ ┃ ┗ 📂team7
+ ┃ ┃ ┃ ┗ 📂inplace
+ ┃ ┃ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂annotation
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜CustomRepositoryTest.java
+ ┃ ┃ ┃ ┃ ┣ 📂crawling
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜AddressUtilTest.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂client
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜KakaoMapClientTest.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜YoutubeClientTest.java
+ ┃ ┃ ┃ ┃ ┣ 📂influencer
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerControllerTest.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📜InfluencerRepositoryTest.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜InfluencerServiceTest.java
+ ┃ ┃ ┃ ┃ ┣ 📂likedPlace
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜LikedPlaceRepositoryTest.java
+ ┃ ┃ ┃ ┃ ┣ 📂place
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceServiceTest.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜PlaceRepositoryTest.java
+ ┃ ┃ ┃ ┃ ┣ 📂review
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜ReviewRepositoryTest.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜ReviewServiceTest.java
+ ┃ ┃ ┃ ┃ ┣ 📂security
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂config
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜CorsTest.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜SecurityConfigTest.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂util
+ ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜AuthorizationUtilTest.java
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜JwtUtilTest.java
+ ┃ ┃ ┃ ┃ ┣ 📂util
+ ┃ ┃ ┃ ┃ ┃ ┗ 📜TestUtil.java
+ ┃ ┃ ┃ ┃ ┣ 📂video
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂application
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoServiceTest.java
+ ┃ ┃ ┃ ┃ ┃ ┣ 📂domain
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoTest.java
+ ┃ ┃ ┃ ┃ ┃ ┗ 📂persistence
+ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoRepositoryTest.java
+ ┃ ┃ ┃ ┃ ┗ 📜InplaceApplicationTests.java
+```
+
+</details>
 
 ---
 
@@ -171,6 +606,22 @@
   </tr>
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+## 컨벤션
+
+> [**Commit Convention**](https://quickest-asterisk-75d.notion.site/4eb1332c29ea4da187d54f8ca6d50c16)
+>
+> [**PR Convention**](https://quickest-asterisk-75d.notion.site/PR-a61601765e33442898d8bb3deb8d6a21)
+>
+> [**Issue Convention**](https://quickest-asterisk-75d.notion.site/Issue-2436b5e170094d46b125485379ac5721)
+>
+> [**Coding Convention**](https://quickest-asterisk-75d.notion.site/acec76a4e0b54d46856a46a81c80f303)
+
+## 브랜치 전략
+
+> [**브랜치 전략**](https://quickest-asterisk-75d.notion.site/Git-19a7dd8263074c16867b5c607bd8365c)
+
+💡 *컨벤션과 브랜치전략은 <span style="color: red;">Github Wiki</span>에서도 확인이 가능합니다!*
 
 ## 📂 저장소 정보
 
@@ -277,31 +728,37 @@
     - oauth 로그인 시, jwt로 accessToken과 refreshToken을 Cookie에 담아줍니다.
         - oauthToken은 aes알고리즘으로 암호화 되어 db에 저장됩니다.
     - 모든 요청은 AuthorizationFilter에서 Cookie에 있는 토큰이 유효한지 확인하고, 유효하면 Authenticate합니다.
-- ### PlaceMessage
-    - 요청이 오면 webClient(비동기)로 나에게보내기 kakao api를 통해 장소 정보를 보냅니다.
-    - 3일 뒤 나에게 보내기 kakao api를 통해 리뷰 요청 메세지를 보냅니다.
-- ### TokenRefresh
-    - Redis DB에 username(key)로 refreshToken을 확인하고, RTR (Refresh Token Rotation)을 합니다.
 - ### Influencer
     - 로그인 상태인 경우 사용자가 좋아요한 인플루언서를 먼저 반환합니다.
 - ### FavoriteInfluencer
     - 로그인 상태를 확인한 후 좋아요/ 싫어요 요청을 처리합니다.
     - 내가 좋아요한 인플루언서 정보를 반환합니다.
-- ### Review
-    - 로그인 상태를 확인한 후 리뷰 추가, 리뷰 삭제 요청을 처리합니다.
-    - 장소별 리뷰 조회 시 본인이 작성한 리뷰인지 여부를 포함하여 반환합니다.
-    - 내가 작성한 리뷰 조회 시 장소 정보 일부를 함께 반환합니다.
 - ### Place
     - places에 videos, influecers 테이블을 Left join하고 지도 범위 내에있는 장소를 추려냅니다.
     - 카테고리와 인플루언서 이름으로 필터링하고, 사용자와 가까운순으로 정렬 후 반환합니다.
         - 특정 장소에 대한 요청이 들어오면 세부 정보와 함께 관련된 인플루언서, 비디오와 사용자 리뷰 정보를 추가하여 반환합니다.
     - 내가 좋아요한 장소 조회 시 인플루언서 정보 일부를 함께 반환합니다.
+    - PlaceMessage
+        - 요청이 오면 webClient(비동기)로 나에게보내기 kakao api를 통해 장소 정보를 보냅니다.
+        - 3일 뒤 나에게 보내기 kakao api를 통해 리뷰 요청 메세지를 보냅니다.
 - ### LikedPlace
     - 사용자가 장소에 좋아요를 누르거나 취소하면 상태를 업데이트합니다.
         - 기존 정보가 존재하지 않으면 새로 생성후 저장합니다.
 - ### Video
     - 로그인 상태인 경우 사용자가 좋아요한 인플루언서의 동영상, 사용자 주변 장소의 동영상을 반환합니다.
     - 로그인 상태가 아닌 경우 조회수 증가량이 높은 동영상, 새로운 동영상을 반환합니다.
+- ### Review
+    - 로그인 상태를 확인한 후 리뷰 추가, 리뷰 삭제 요청을 처리합니다.
+    - 장소별 리뷰 조회 시 본인이 작성한 리뷰인지 여부를 포함하여 반환합니다.
+    - 내가 작성한 리뷰 조회 시 장소 정보 일부를 함께 반환합니다.
+- ### User
+    - User nickname을 더티 체킹을 통해 변경한다.
+- ### TokenRefresh
+    - Redis DB에 username(key)로 refreshToken을 확인하고, RTR (Refresh Token Rotation)을 합니다.
+- ### videoCrawling
+    - DB에서 인플루언서 유튜브 채널을 가져와 새로 업데이트 된 정보 크롤링해서 정규표현식으로 주소정보를 추출합니다.
+    - Video에서 장소정보가 추출되면 kakaoApi를 통해 매장 정보를 가져와 인플루언서별로 트랜잭션을 분리해 장소정보를 저장합니다.
+    - Video에서 장소정보가 추출되지 않으면 Admin페이지를 통해 수동으로 장소 정보를 입력합니다.
 
 ## 📱 사용 예시
 
