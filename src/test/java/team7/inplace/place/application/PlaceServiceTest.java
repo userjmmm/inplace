@@ -433,7 +433,7 @@ class PlaceServiceTest {
             .isEqualTo(expected.placeLikes().dislike());
 
         assertThat(result.facilityInfo()).isEqualTo(
-            objectMapper.createObjectNode().put("message", "NO DATA"));
+            objectMapper.createObjectNode().put("message", ""));
     }
 
     @Test
