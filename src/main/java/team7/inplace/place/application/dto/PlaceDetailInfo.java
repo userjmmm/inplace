@@ -67,7 +67,9 @@ public record PlaceDetailInfo(
                 List<String> menuImgUrls,
                 List<Menu> menus,
                 LocalDateTime menuUpdatedAt) {
-
+            menuImgUrls = menuImgUrls.stream()
+                    .filter(url -> url != null && url.isBlank())
+                    .toList();
             List<MenuInfo> menuList = menus.stream()
                     .map(menu -> new MenuInfo(menu.getPrice(), menu.isRecommend(),
                             menu.getMenuName(), menu.getMenuImgUrl().trim(), menu.getDescription()))
