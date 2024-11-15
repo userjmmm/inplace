@@ -1,15 +1,16 @@
 package team7.inplace.influencer;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import team7.inplace.config.annotation.CustomRepositoryTest;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 
-@SpringBootTest
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@CustomRepositoryTest
 public class InfluencerRepositoryTest {
 
     @Autowired
@@ -25,8 +26,8 @@ public class InfluencerRepositoryTest {
 
         List<Influencer> savedInfluencers = influencerRepository.findAll();
 
-        assertThat(savedInfluencers.get(3)).usingRecursiveComparison().isEqualTo(influencer4);
-        assertThat(savedInfluencers.get(4)).usingRecursiveComparison().isEqualTo(influencer5);
+        assertThat(savedInfluencers.get(0)).usingRecursiveComparison().isEqualTo(influencer4);
+        assertThat(savedInfluencers.get(1)).usingRecursiveComparison().isEqualTo(influencer5);
     }
 
 }

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
@@ -21,11 +22,14 @@ import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
+import team7.inplace.place.application.dto.LikedPlaceInfo;
 import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
+import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.placeMessage.application.command.PlaceMessageCommand;
+import team7.inplace.review.persistence.ReviewRepository;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
@@ -44,13 +48,18 @@ public class PlaceService {
 
     private final LikedPlaceRepository likedPlaceRepository;
 
+    private final ReviewRepository reviewRepository;
+
     public Page<PlaceInfo> getPlacesWithinRadius(
         PlacesCoordinateCommand placesCoordinateCommand,
         PlacesFilterParamsCommand placesFilterParamsCommand) {
 
         // categories와 influencers 필터 처리
         List<String> categoryFilters = placesFilterParamsCommand.isCategoryFilterExists()
-            ? Arrays.stream(placesFilterParamsCommand.categories().split(",")).toList()
+            ? Arrays.stream(placesFilterParamsCommand.categories().split(","))
+            .map(Category::of)
+            .map(Category::name)
+            .toList()
             : null;
 
         List<String> influencerFilters = placesFilterParamsCommand.isInfluencerFilterExists()
@@ -73,7 +82,7 @@ public class PlaceService {
         List<PlaceInfo> placeInfos = convertToPlaceInfos(placesPage, placeIdToInfluencerName);
 
         // PlaceInfo 리스트를 Page로 변환하여 반환
-        return new PageImpl<>(placeInfos, placesPage.getPageable(), placeInfos.size());
+        return new PageImpl<>(placeInfos, placesPage.getPageable(), placesPage.getTotalElements());
     }
 
     private List<PlaceInfo> convertToPlaceInfos(Page<Place> placesPage,
@@ -131,7 +140,11 @@ public class PlaceService {
             video = videos.get(0);
         }
         Influencer influencer = (video != null) ? video.getInfluencer() : null;
-        return PlaceDetailInfo.from(place, influencer, video, isLikedPlace(place.getId()));
+
+        Integer numOfLikes = reviewRepository.countByPlaceIdAndIsLikedTrue(placeId);
+        Integer numOfDislikes = reviewRepository.countByPlaceIdAndIsLikedFalse(placeId);
+        return PlaceDetailInfo.from(place, influencer, video, isLikedPlace(place.getId()),
+            numOfLikes, numOfDislikes);
     }
 
     public List<Long> createPlaces(List<Create> placeCommands) {
@@ -213,5 +226,23 @@ public class PlaceService {
         Influencer influencer = (video != null) ? video.getInfluencer() : null;
 
         return PlaceMessageCommand.of(place, influencer, video);
+    }
+
+    public Page<LikedPlaceInfo> getLikedPlaceInfo(Long userId, Pageable pageable) {
+        Page<LikedPlace> placePage = likedPlaceRepository.findByUserIdAndIsLikedTrueWithPlace(
+            userId, pageable);
+        List<Long> placeIds = placePage.map(likedPlace -> likedPlace.getPlace().getId()).toList();
+        List<Video> videos = videoRepository.findByPlaceIdInWithInfluencer(placeIds);
+        Map<Long, String> placeIdToInfluencerName = getMapPlaceIdToInfluencerName(videos);
+
+        List<LikedPlaceInfo> likedPlaceInfos = placePage.getContent().stream()
+            .map(likedPlace -> {
+                String influencerName = placeIdToInfluencerName.getOrDefault(
+                    likedPlace.getPlace().getId(), null);
+                return LikedPlaceInfo.of(likedPlace, influencerName);
+            })
+            .toList();
+
+        return new PageImpl<>(likedPlaceInfos, pageable, placePage.getTotalElements());
     }
 }

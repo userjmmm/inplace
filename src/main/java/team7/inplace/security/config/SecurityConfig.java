@@ -1,7 +1,9 @@
 package team7.inplace.security.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,6 +21,7 @@ import team7.inplace.security.handler.CustomSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOauth2UserService;
@@ -29,26 +32,6 @@ public class SecurityConfig {
     private final CorsFilter corsFilter;
     private final LoginAuthenticationEntryPoint loginAuthenticationEntryPoint;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
-
-    public SecurityConfig(
-        CustomOAuth2UserService customOAuth2UserService,
-        CustomSuccessHandler customSuccessHandler,
-        ExceptionHandlingFilter exceptionHandlingFilter,
-        AuthorizationFilter authorizationFilter,
-        CustomFailureHandler customFailureHandler,
-        CorsFilter corsFilter,
-        LoginAuthenticationEntryPoint loginAuthenticationEntryPoint,
-        CustomAccessDeniedHandler customAccessDeniedHandler
-    ) {
-        this.customOauth2UserService = customOAuth2UserService;
-        this.customSuccessHandler = customSuccessHandler;
-        this.exceptionHandlingFilter = exceptionHandlingFilter;
-        this.authorizationFilter = authorizationFilter;
-        this.customFailureHandler = customFailureHandler;
-        this.corsFilter = corsFilter;
-        this.loginAuthenticationEntryPoint = loginAuthenticationEntryPoint;
-        this.customAccessDeniedHandler = customAccessDeniedHandler;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
@@ -75,13 +58,25 @@ public class SecurityConfig {
                 .accessDeniedHandler(customAccessDeniedHandler))
             //authentication 경로 설정
             .authorizeHttpRequests((auth) -> auth
-                    .anyRequest().permitAll()
-//                        .requestMatchers("/oauth2/**").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/error").permitAll()
-//                        .requestMatchers("swagger-ui/**").permitAll()
-//                        .requestMatchers("/v3/api-docs/**").permitAll()
-//                        .anyRequest().permitAll())
+                .requestMatchers("/api/error-logs/**", "/cicd", "crawling/**")
+                .hasRole("ADMIN")
+                .requestMatchers("/admin/**").permitAll()
+                .requestMatchers("/users/**").authenticated()
+                .requestMatchers("/influencers/likes").authenticated()
+                .requestMatchers("/influencers/multiple/likes").authenticated()
+                .requestMatchers(HttpMethod.POST, "/influencers/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/influencers/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/influencers/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/influencers/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/places/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/places/**").permitAll()
+                .requestMatchers("/place-message/**").authenticated()
+                .requestMatchers("/reviews/**").authenticated()
+                .requestMatchers("/refresh-token").authenticated()
+                .requestMatchers("/videos", "videos/my").authenticated()
+                .requestMatchers("/videos/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/videos/{videoId}").authenticated()
+                .anyRequest().permitAll()
             )
             //cors 설정
             .addFilter(corsFilter)

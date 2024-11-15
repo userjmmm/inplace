@@ -17,7 +17,7 @@ public enum Category {
 
     public static Category of(String name) {
         for (Category category : values()) {
-            if (category.name.equals(name)) {
+            if (category.name.equalsIgnoreCase(name) || category.name().equalsIgnoreCase(name)) {
                 return category;
             }
         }

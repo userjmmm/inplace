@@ -19,7 +19,7 @@ public record VideoSearchParams(
         );
     }
 
-    public static VideoSearchParams from(String longitude, String latitude){
+    public static VideoSearchParams from(String longitude, String latitude) {
         return new VideoSearchParams(longitude, latitude);
     }
 

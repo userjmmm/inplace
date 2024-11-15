@@ -1,27 +1,29 @@
 package team7.inplace.place.persistence;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import team7.inplace.config.annotation.CustomRepositoryTest;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.domain.Video;
 
-@SpringBootTest
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+
+@CustomRepositoryTest
 @Transactional
 class PlaceRepositoryTest {
 
@@ -55,67 +57,67 @@ class PlaceRepositoryTest {
     @BeforeEach
     public void init() {
         Place place1 = new Place("Place 1",
-            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", "카페",
-            "Address 1|Address 2|Address 3",
-            "10.0", "10.0",
-            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
-            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false|menu.url|description",
-                "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30),
-            Arrays.asList(
-                "menuBoard1.url",
-                "menuBoard2.url"
-            )
+                "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+                "menuImg.url", "카페",
+                "Address 1|Address 2|Address 3",
+                "10.0", "10.0",
+                Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+                Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+                Arrays.asList("삼겹살|5000|false|menu.url|description",
+                        "돼지찌개|7000|true|menu.url|description"),
+                LocalDateTime.of(2024, 3, 28, 5, 30),
+                Arrays.asList(
+                        "menuBoard1.url",
+                        "menuBoard2.url"
+                )
         );
 
         Place place2 = new Place("Place 2",
-            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", "일식",
-            "Address 1|Address 2|Address 3",
-            "10.0", "50.0",
-            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
-            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false|menu.url|description",
-                "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30),
-            Arrays.asList(
-                "menuBoard1.url",
-                "menuBoard2.url"
-            )
+                "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+                "menuImg.url", "일식",
+                "Address 1|Address 2|Address 3",
+                "10.0", "50.0",
+                Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+                Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+                Arrays.asList("삼겹살|5000|false|menu.url|description",
+                        "돼지찌개|7000|true|menu.url|description"),
+                LocalDateTime.of(2024, 3, 28, 5, 30),
+                Arrays.asList(
+                        "menuBoard1.url",
+                        "menuBoard2.url"
+                )
         );
 
         Place place3 = new Place("Place 3",
-            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", "카페",
-            "Address 1|Address 2|Address 3",
-            "10.0", "100.0",
-            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
-            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false|menu.url|description",
-                "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30),
-            Arrays.asList(
-                "menuBoard1.url",
-                "menuBoard2.url"
-            )
+                "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+                "menuImg.url", "카페",
+                "Address 1|Address 2|Address 3",
+                "10.0", "100.0",
+                Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+                Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+                Arrays.asList("삼겹살|5000|false|menu.url|description",
+                        "돼지찌개|7000|true|menu.url|description"),
+                LocalDateTime.of(2024, 3, 28, 5, 30),
+                Arrays.asList(
+                        "menuBoard1.url",
+                        "menuBoard2.url"
+                )
         );
 
         Place place4 = new Place("Place 4",
-            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", "일식",
-            "Address 1|Address 2|Address 3",
-            "50.0", "50.0",
-            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
-            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false|menu.url|description",
-                "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30),
-            Arrays.asList(
-                "menuBoard1.url",
-                "menuBoard2.url"
-            )
+                "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+                "menuImg.url", "일식",
+                "Address 1|Address 2|Address 3",
+                "50.0", "50.0",
+                Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+                Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+                Arrays.asList("삼겹살|5000|false|menu.url|description",
+                        "돼지찌개|7000|true|menu.url|description"),
+                LocalDateTime.of(2024, 3, 28, 5, 30),
+                Arrays.asList(
+                        "menuBoard1.url",
+                        "menuBoard2.url"
+                )
         );
 
         entityManager.persist(place1);
@@ -133,6 +135,8 @@ class PlaceRepositoryTest {
 
         entityManager.persist(video1);
         entityManager.persist(video2);
+
+        pageable = PageRequest.of(0, 10);
     }
 
     @Test
@@ -142,9 +146,9 @@ class PlaceRepositoryTest {
 
         // when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistance(
-            longitude,
-            latitude,
-            pageable
+                longitude,
+                latitude,
+                pageable
         );
         System.out.println(foundPlaces);
 
@@ -167,16 +171,17 @@ class PlaceRepositoryTest {
 
         // when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            categories,
-            influencers,
-            pageable
+                topLeftLongitude,
+                topLeftLatitude,
+                bottomRightLongitude,
+                bottomRightLatitude,
+                longitude,
+                latitude,
+                categories,
+                influencers,
+                pageable
         );
+        assertThat(foundPlaces.getTotalElements()).isEqualTo(3);
         // Then
         assertThat(foundPlaces).hasSize(3);
         assertThat(foundPlaces.getContent().get(0).getName()).isEqualTo("Place 2");
@@ -190,20 +195,20 @@ class PlaceRepositoryTest {
     public void test3() {
         // given
         List<String> categories = Arrays.asList(Category.CAFE.getName(),
-            Category.JAPANESE.getName());
+                Category.JAPANESE.getName());
 
         List<String> influencers = null;
         // when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            categories,
-            influencers,
-            pageable
+                topLeftLongitude,
+                topLeftLatitude,
+                bottomRightLongitude,
+                bottomRightLatitude,
+                longitude,
+                latitude,
+                categories,
+                influencers,
+                pageable
         );
         // Then
         assertThat(foundPlaces).hasSize(3);
@@ -223,15 +228,15 @@ class PlaceRepositoryTest {
         List<String> influencers = null;
         // when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            categories,
-            influencers,
-            pageable
+                topLeftLongitude,
+                topLeftLatitude,
+                bottomRightLongitude,
+                bottomRightLatitude,
+                longitude,
+                latitude,
+                categories,
+                influencers,
+                pageable
         );
         // Then
         assertThat(foundPlaces).hasSize(2);
@@ -250,15 +255,15 @@ class PlaceRepositoryTest {
 
         //when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            categories,
-            influencers,
-            pageable
+                topLeftLongitude,
+                topLeftLatitude,
+                bottomRightLongitude,
+                bottomRightLatitude,
+                longitude,
+                latitude,
+                categories,
+                influencers,
+                pageable
         );
 
         //then
@@ -276,15 +281,15 @@ class PlaceRepositoryTest {
 
         //when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            categories,
-            influencers,
-            pageable
+                topLeftLongitude,
+                topLeftLatitude,
+                bottomRightLongitude,
+                bottomRightLatitude,
+                longitude,
+                latitude,
+                categories,
+                influencers,
+                pageable
         );
 
         //then
@@ -301,19 +306,53 @@ class PlaceRepositoryTest {
 
         //when
         Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
-            topLeftLongitude,
-            topLeftLatitude,
-            bottomRightLongitude,
-            bottomRightLatitude,
-            longitude,
-            latitude,
-            categories,
-            influencers,
-            pageable
+                topLeftLongitude,
+                topLeftLatitude,
+                bottomRightLongitude,
+                bottomRightLatitude,
+                longitude,
+                latitude,
+                categories,
+                influencers,
+                pageable
         );
 
         //then
         assertThat(foundPlaces).hasSize(1);
         assertThat(foundPlaces.getContent().get(0).getName()).isEqualTo("Place 4");
+    }
+
+    // Pagenation
+    @Test
+    @DisplayName("page=1&size=2, 필터링 NULL, boundary[(10, 60), (50, 10)]")
+    public void test8() {
+
+//        * Place 3(10.0, 100.0) 제외
+//        * Place 2, Place 4는 page=0이라 제외, totalPages, totalElements에는 포함됨
+        // given
+        List<String> categories = null;
+        List<String> influencers = null;
+        pageable = PageRequest.of(1, 2);
+
+        // when
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
+                topLeftLongitude,
+                topLeftLatitude,
+                bottomRightLongitude,
+                bottomRightLatitude,
+                longitude,
+                latitude,
+                categories,
+                influencers,
+                pageable
+        );
+        // Then
+//        pagenation
+        assertThat(foundPlaces.getTotalElements()).isEqualTo(3);
+        assertThat(foundPlaces.getTotalPages()).isEqualTo(2);
+        assertThat(foundPlaces).hasSize(1);
+//        places
+        assertThat(foundPlaces.getContent().get(0).getName()).isEqualTo("Place 1");
+
     }
 }

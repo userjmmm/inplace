@@ -11,11 +11,11 @@ import team7.inplace.token.persistence.RefreshTokenRepository;
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @EnableJpaRepositories(
-    basePackages = "team7.inplace",
-    excludeFilters = @ComponentScan.Filter(
-        type = FilterType.ASSIGNABLE_TYPE,
-        classes = {RefreshTokenRepository.class}
-    )
+        basePackages = "team7.inplace",
+        excludeFilters = @ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = {RefreshTokenRepository.class}
+        )
 )
 public class InplaceApplication {
 

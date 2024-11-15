@@ -4,17 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.util.StringUtils;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 
-@Slf4j
 public class CustomFailureHandler implements AuthenticationFailureHandler {
 
+    @Value("${spring.redirect.front-end-url}")
+    private String frontEndUrl;
     private final ObjectMapper objectMapper;
 
     public CustomFailureHandler(ObjectMapper objectMapper) {
@@ -27,8 +29,11 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
         HttpServletResponse response,
         AuthenticationException exception
     ) throws IOException {
-        log.info("CustomFailureHandler.onAuthenticationFailure");
-        setErrorResponse(response, InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EXPIRED));
+        String accept = request.getHeader("Accept");
+        if (StringUtils.hasText(accept) && accept.contains("text/html")) {
+            response.sendRedirect(frontEndUrl);
+        }
+        setErrorResponse(response, InplaceException.of(AuthorizationErrorCode.NOT_AUTHENTICATION));
     }
 
     private void setErrorResponse(

@@ -59,10 +59,7 @@ jobs:
     runs-on: self-hosted
 
     # weekly/* 브랜치에서는 실행되지 않도록 조건 추가
-    #    if: startsWith(github.ref, 'refs/heads/Master') || startsWith(github.ref, 'refs/heads/develop')
-
-    # weekly/* 브랜치에서만 실행되도록
-    if: startsWith(github.ref, 'refs/heads/weekly/')
+    if: startsWith(github.ref, 'refs/heads/Master') || startsWith(github.ref, 'refs/heads/develop')
 
     steps:
       # 최신 이미지를 pull 
@@ -97,13 +94,6 @@ jobs:
           echo "next_version=${NEXT_VERSION}" >> $GITHUB_ENV
           echo "port=${PORT}" >> $GITHUB_ENV
 
-      # 기존의 동일한 컨테이너를 중지 (블루/그린 중 다음 배포 타겟에 해당하는 컨테이너)
-      - name: Stop current docker container
-        run: |
-          echo "Stopping container inplace-${{ env.next_version }}"
-          sudo docker stop inplace-${{ env.next_version }} || true
-          sudo docker rm inplace-${{ env.next_version }} || true
-
       # .env 파일 생성
       - name: Create .env file
         run: |
@@ -116,8 +106,27 @@ jobs:
           echo "Running new container inplace-${{ env.next_version }}"
           sudo docker run --name "inplace-${{ env.next_version }}" --rm -d -p ${{ env.port }}:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
 
-      # 로드 밸런서 타겟 그룹을 업데이트하여 트래픽을 새 컨테이너로 전환합니다.
+      # 스프링부트 시작을 기다리기 위해 헬스 체크로 대기
+      - name: Wait for Spring Boot Application to Start
+        run: |
+          echo "Waiting for the application to be healthy on PORT: ${{ env.port }}..."
+          for i in {1..40}; do
+            if curl -s http://localhost:${{ env.port }}/actuator/health | grep '"status":"UP"' > /dev/null; then
+              echo "Application is healthy"
+              break
+            fi
+            echo "Waiting for new application to start...($i)"
+            sleep 5
+          done
+          
+          if [ $i -eq 40 ]; then
+            echo "Application failed to start after 40 attempts."
+            exit 1
+          fi
+
+      # 로드 밸런서 타겟 그룹을 업데이트하여 트래픽을 새 컨테이너로 전환
       - name: Update Load Balancer Target Group
+        if: success()
         run: |
           TARGET_GROUP_ARN_BLUE="${{ secrets.TARGET_GROUP_ARN_8080 }}"
           TARGET_GROUP_ARN_GREEN="${{ secrets.TARGET_GROUP_ARN_8081 }}"
@@ -125,6 +134,14 @@ jobs:
             aws elbv2 modify-listener --listener-arn ${{ secrets.LISTENER_ARN_443 }} --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN_BLUE
           else
             aws elbv2 modify-listener --listener-arn ${{ secrets.LISTENER_ARN_443 }} --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN_GREEN
+          fi
+
+      # 이전 컨테이너 정리 전 드레이닝 시간 부여
+      - name: Wait for connection draining
+        run: |
+          if [[ "${{ env.current_version }}" != "none" ]]; then
+            echo "Waiting 30 seconds for connection draining..."
+            sleep 30
           fi
 
       # 이전 컨테이너 정리

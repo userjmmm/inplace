@@ -1,14 +1,17 @@
 package team7.inplace.security.util;
 
-import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 
 public class CookieUtil {
 
-    public static Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        return cookie;
+    public static ResponseCookie createCookie(String key, String value) {
+        return ResponseCookie.from(key, value)
+            .sameSite("None")
+            .secure(true)
+            .path("/")
+            .httpOnly(true)
+            .domain("inplace.my")
+            .maxAge(60 * 60)
+            .build();
     }
 }

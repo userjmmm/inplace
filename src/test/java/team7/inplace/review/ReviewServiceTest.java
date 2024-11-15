@@ -30,10 +30,12 @@ import team7.inplace.global.exception.code.ReviewErrorCode;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.review.application.ReviewService;
+import team7.inplace.review.application.dto.MyReviewInfo;
 import team7.inplace.review.application.dto.ReviewCommand;
 import team7.inplace.review.application.dto.ReviewInfo;
 import team7.inplace.review.domain.Review;
 import team7.inplace.review.persistence.ReviewRepository;
+import team7.inplace.security.application.CurrentUserProvider;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.Role;
 import team7.inplace.user.domain.User;
@@ -51,6 +53,9 @@ public class ReviewServiceTest {
 
     @Mock
     private PlaceRepository placeRepository;
+
+    @Mock
+    private CurrentUserProvider currentUserProvider;
 
     @InjectMocks
     private ReviewService reviewService;
@@ -87,9 +92,11 @@ public class ReviewServiceTest {
     @Test
     void createReviewTest() {
         MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        User userMock = mock(User.class);
+        given(userMock.getId()).willReturn(1L);
 
         given(AuthorizationUtil.getUserId()).willReturn(userId);
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(currentUserProvider.getCurrentUser()).willReturn(userMock);
         given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
         given(reviewRepository.existsByUserIdAndPlaceId(userId, placeId)).willReturn(false);
 
@@ -104,9 +111,11 @@ public class ReviewServiceTest {
     @DisplayName("장소에 대해 사용자의 리뷰가 이미 존재하면 예외 발생")
     void createReviewTest_ReviewAlreadyExists() {
         MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
+        User userMock = mock(User.class);
+        given(userMock.getId()).willReturn(1L);
 
         given(AuthorizationUtil.getUserId()).willReturn(userId);
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(currentUserProvider.getCurrentUser()).willReturn(userMock);
         given(placeRepository.findById(placeId)).willReturn(Optional.of(place));
         given(reviewRepository.existsByUserIdAndPlaceId(userId, placeId)).willReturn(true);
 
@@ -147,7 +156,7 @@ public class ReviewServiceTest {
 
         MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
 
-        given(AuthorizationUtil.getUserId()).willReturn(null);
+        given(AuthorizationUtil.isNotLoginUser()).willReturn(true);
         given(reviewRepository.findByPlaceId(placeId, pageable)).willReturn(reviewPage);
 
         Page<ReviewInfo> result = reviewService.getReviews(placeId, pageable);
@@ -178,5 +187,22 @@ public class ReviewServiceTest {
             .hasMessage(ReviewErrorCode.NOT_OWNER.getMessage());
 
         authorizationUtil.close();
+    }
+
+    @Test
+    void getMyReviewsTest() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Review myReview = new Review(user, place, isLiked, comment);
+        Page<Review> reviewPage = new PageImpl<>(List.of(myReview));
+
+        given(reviewRepository.findByUserIdWithPlace(userId, pageable)).willReturn(
+            reviewPage);
+
+        Page<MyReviewInfo> result = reviewService.getMyReviews(userId, pageable);
+
+        verify(reviewRepository).findByUserIdWithPlace(userId, pageable);
+        assertThat(result.getContent().get(0)).isInstanceOf(MyReviewInfo.class);
+        assertThat(result.getContent().get(0).comment()).isEqualTo(myReview.getComment());
+        assertThat(result.getContent().get(0).placeInfo().placeName()).isEqualTo(place.getName());
     }
 }

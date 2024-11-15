@@ -1,7 +1,6 @@
 package team7.inplace.influencer.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import team7.inplace.influencer.presentation.dto.InfluencerNameResponse;
 import team7.inplace.influencer.presentation.dto.InfluencerRequest;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
+
+import java.util.List;
 
 public interface InfluencerControllerApiSpec {
 
@@ -24,7 +25,7 @@ public interface InfluencerControllerApiSpec {
 
     @Operation(summary = "인플루언서 수정", description = "인플루언서를 수정합니다.")
     ResponseEntity<Long> updateInfluencer(@PathVariable Long id,
-        @RequestBody InfluencerRequest request);
+                                          @RequestBody InfluencerRequest request);
 
     @Operation(summary = "인플루언서 삭제", description = "인플루언서를 삭제합니다.")
     ResponseEntity<Long> deleteInfluencer(@PathVariable Long id);
