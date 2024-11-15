@@ -26,7 +26,7 @@ public class BannerS3Repository {
 
         try {
             amazonS3Client.putObject(bucketName, key, banner.getInputStream(), metadata);
-            return amazonS3Client.getUrl(bucketName, key).toString();
+            return "https://d4oqudml6s9ih.cloudfront.net/" + key;
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload banner", e);
         }
