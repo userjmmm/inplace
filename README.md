@@ -1,25 +1,26 @@
 # Inplace ( Team7_BE )
 
 <p align="center">
-  <img src="https://i.ibb.co/CVBQHPg/image-2.png" alt="메인 이미지" style="border: 2px solid black;">
+  <img src="https://i.ibb.co/CVBQHPg/image-2.png" alt="메인 이미지">
 </p>
 
 ## 목차
 
-> 1. [**_프로젝트 목적_**](#프로젝트-목적)
+> 1. [**_프로젝트 목적_**](#프로젝트-목적)  
 > 2. [**_서비스 정보_**](#서비스-정보)
-> 3. [**_주요 기능_**](#주요-기능)
-> 4. [**_프로그램 구조_**](#프로그램-구조)
-> 5. [**_배포 주소_**](#배포-주소)
-> 6. [**_API and ERD_**](#API-and-ERD)
-> 7. [**_기여_**](#기여)
-> 8. [**_저장소 주소_**](#저장소-주소)
-> 9. [**_개발 기간_**](#개발-기간)
-> 10. [**_Dependency 버전_**](#Dependency-버전)
-> 11. [**_Tech Stack_**](#Tech-stack)
-> 12. [**_테스트_**](#테스트)
-> 13. [**_기능 흐름_**](#기능-흐름)
-> 14. [**_사용 예시_**](#사용-예시)
+> 3. [**_개발 기간_**](#개발-기간)
+> 4. [**_배포 주소_**](#배포-주소)
+> 5. [**_팀원_**](#팀원)
+> 6. [**_프로그램 구조_**](#프로그램-구조)  
+> 7. [**_API & ERD_**](#api--erd)  
+> 8. [**_저장소 정보_**](#저장소-정보)  
+> 9. [**_프로그램 구조_**](#프로그램-구조)  
+> 10. [**_주요 종속성 버전_**](#주요-종속성-버전)  
+> 11. [**_기술 스택_**](#기술-스택)
+> 12. [**_테스트_**](#테스트) 
+> 13. [**_세부 기능 흐름_**](#세부-기능-흐름)   
+> 14. [**_사용 예시_**](#사용-예시)  
+
 
 ## 프로젝트 목적
 
@@ -36,26 +37,6 @@
 ## 서비스 정보
 
 > 긴 영상은 필요 없어요 인플루언서가 다녀간 쿨플, 한눈에 쏙!
-
-1. **회원 가입 및 로그인** 기능
-    - 카카오를 이용한 회원 가입 및 로그인
-    - 회원 닉네임 변경 가능
-2. **관심있는 인플루언서 설정** 기능
-    - 최초 로그인 시, 관심 인플루언서를 설정 가능
-    - 이후, 인플루언서 페이지에서 좋아요 버튼을 통해 설정 가능
-    - 마이 페이지에서 관심있는 인플루언서 삭제 가능
-3. **장소 검색 및 좋아요** 기능
-    - 지도를 통한 장소 검색 가능
-        - 지역, 인플루언서, 장소 태그를 통한 검색 가능
-    - 장소 세부 정보 열람 및 장소 좋아요 가능
-    - 장소에 대한 정보를 모바일로 받기 가능 ( 카카오톡 나에게 메세지 보내기 )
-4. **리뷰** 기능
-    - 정보 받은 후 3일 뒤 리뷰 페이지 전송 ( 카카오톡 나에게 메세지 보내기 )
-    - 리뷰 확인 및 수정 가능
-
-## 주요 기능
-
-> Inplace의 주요 기능
 
 1. **회원가입 및 로그인**
     - Spring Security를 이용한 OAuth 2.0 카카오 로그인 기능을 사용합니다
@@ -83,27 +64,17 @@
     - 내가 작성한 리뷰를 관리할 수 있습니다
     - 사용자 닉네임을 변경할 수 있습니다
 
-## 프로그램 구조
+## 개발 기간
+
+> **_2024.08.22 ~ 2024.11.15_**
 
 ## 배포 주소
 
-> [**BackEnd**](https://api.inplace.my) : _api.inplace.my_
+> [**BackEnd**](https://api.inplace.my) : **_api.inplace.my_**
 >
-> [**FrontEnd**](https://inplace.my) : _inplace.my_
+> [**FrontEnd**](https://inplace.my) : **_inplace.my_**
 
-## API AND ERD
-
-![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
-
-> [**API Spec**](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e) :
-_https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
-
-![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
-
-> [**ERD**](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55) :
-> https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55
-
-## 기여
+## 팀원
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <table>
@@ -162,7 +133,21 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-## 저장소 주소
+## 프로그램 구조
+
+## API & ERD
+
+![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
+
+> [**API Spec**](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e) :
+_https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
+
+![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
+
+> [**ERD**](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55) :
+> https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55
+
+## 저장소 정보
 
 > **Using Language**
 >
@@ -188,17 +173,13 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
 
-## 개발 기간
-
-> 2024.08.22 ~ 2024.11.15
-
-## Dependency 버전
+## 주요 종속성 버전
 
 > **Spring Boots 3.3.3**
 >
 > **Java 17 LTS**
 
-## Tech stack
+## 기술 스택
 
 > **Backend**
 >
@@ -255,7 +236,7 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 >
 > **테스트 결과보고서** : https://www.notion.so/08a520d3b8c44154a19425b0bcc16f6f
 
-## 기능 흐름
+## 세부 기능 흐름
 
 - ### Spring Security
     - oauth 로그인 시, jwt로 accessToken과 refreshToken을 Cookie에 담아줍니다.
@@ -279,6 +260,7 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 - ### Place
     - 내가 좋아요한 장소 조회 시 인플루언서 정보 일부를 함께 반환합니다.
 
+
 ## 사용 예시
 
-> 나중에 시연 영상 첨부하기
+> 실제 유저 사용 페이지 흐름 보여주기 ( 영상 x )
