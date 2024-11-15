@@ -116,8 +116,6 @@ jobs:
           for i in {1..40}; do
             if curl -s http://localhost:${{ env.port }}/actuator/health | grep '"status":"UP"' > /dev/null; then
               echo "Application is healthy"
-              echo "Waiting additional 30 seconds for full initialization..."
-              sleep 30
               break
             fi
             echo "Waiting for new application to start...($i)"
@@ -139,6 +137,14 @@ jobs:
             aws elbv2 modify-listener --listener-arn ${{ secrets.LISTENER_ARN_443 }} --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN_BLUE
           else
             aws elbv2 modify-listener --listener-arn ${{ secrets.LISTENER_ARN_443 }} --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN_GREEN
+          fi
+
+      # 이전 컨테이너 정리 전 드레이닝 시간 부여
+      - name: Wait for connection draining
+        run: |
+          if [[ "${{ env.current_version }}" != "none" ]]; then
+            echo "Waiting 30 seconds for connection draining..."
+            sleep 30
           fi
 
       # 이전 컨테이너 정리
