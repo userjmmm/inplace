@@ -267,6 +267,18 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 - ### TokenRefresh
     - Redis DB에 username(key)로 refreshToken을 확인하고, RTR (Refresh Token Rotation)을 합니다.
 
+- ### Influencer
+    - 로그인 상태인 경우 사용자가 좋아요한 인플루언서를 먼저 반환합니다.
+- ### FavoriteInfluencer
+    - 로그인 상태를 확인한 후 좋아요/ 싫어요 요청을 처리합니다.
+    - 내가 좋아요한 인플루언서 정보를 반환합니다.
+- ### Review
+    - 로그인 상태를 확인한 후 리뷰 추가, 리뷰 삭제 요청을 처리합니다.
+    - 장소별 리뷰 조회 시 본인이 작성한 리뷰인지 여부를 포함하여 반환합니다.
+    - 내가 작성한 리뷰 조회 시 장소 정보 일부를 함께 반환합니다.
+- ### Place
+    - 내가 좋아요한 장소 조회 시 인플루언서 정보 일부를 함께 반환합니다.
+
 ## 사용 예시
 
 > 나중에 시연 영상 첨부하기
