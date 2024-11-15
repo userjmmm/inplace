@@ -36,10 +36,10 @@
    > 6.1 [**세부 기능 흐름**](#-세부-기능-흐름)
    > 
    > 6.2 [**사용 예시**](#-사용-예시)
-  
-# 📝 프로젝트 개요
 
 ---
+  
+# 📝 프로젝트 개요
 
 ## 🙌 프로젝트 목적
 
@@ -89,9 +89,9 @@
 >
 > **FrontEnd**: [**_inplace.my_**](https://inplace.my)
 
-# 🏗️ 프로그램 구조
-
 ---
+
+# 🏗️ 프로그램 구조
 
 ## 🖼️ 프로그램 구조도
 
@@ -101,13 +101,13 @@
 
 - [🚗 Visit Team7 API](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e)
 
-![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
+![image](https://github.com/user-attachments/assets/333c9f3b-6678-48a6-b32d-b9b36d8cb182)
 
 - [🙋‍♂️ Visit Team7 ERD](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55)
 
-# 👨‍💻 개발 정보
-
 ---
+
+# 👨‍💻 개발 정보
 
 ## 📅 개발 기간
 
@@ -198,9 +198,9 @@
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
 
-# 🛠️ 기술 정보
-
 ---
+
+# 🛠️ 기술 정보
 
 ## 🧩 주요 종속성 버전
 
@@ -259,18 +259,17 @@
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white)
 
+---
 
 # ✅ 테스트
-
----
 
 > **테스트 시나리오** : https://www.notion.so/9ed68b292c004fc69f7eaad513054d96
 >
 > **테스트 결과보고서** : https://www.notion.so/08a520d3b8c44154a19425b0bcc16f6f
 
-# 🎬 기능 및 사용 예시
-
 ---
+
+# 🎬 기능 및 사용 예시
 
 ## 🔍 세부 기능 흐름
 
