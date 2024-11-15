@@ -101,6 +101,12 @@
 
 ## 🖼️ 프로그램 구조도
 
+### CI CD
+![Backend_CICD](https://github.com/user-attachments/assets/f7db576e-5150-443c-8d2f-ab232294c296)
+
+### System Architecture
+![Architecture](https://github.com/user-attachments/assets/b21a697a-003e-4371-bdde-e12db6dbc1d9)
+
 ## 📊 API & ERD
 
 ![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
@@ -609,19 +615,17 @@
 
 ## 컨벤션
 
-> [**Commit Convention**](https://quickest-asterisk-75d.notion.site/4eb1332c29ea4da187d54f8ca6d50c16)
+> [**Commit Convention**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/Commit-%EC%BB%A8%EB%B2%A4%EC%85%98)
 >
-> [**PR Convention**](https://quickest-asterisk-75d.notion.site/PR-a61601765e33442898d8bb3deb8d6a21)
+> [**PR Convention**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/PR-%EC%BB%A8%EB%B2%A4%EC%85%98)
 >
-> [**Issue Convention**](https://quickest-asterisk-75d.notion.site/Issue-2436b5e170094d46b125485379ac5721)
+> [**Issue Convention**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EC%9D%B4%EC%8A%88-%EC%BB%A8%EB%B2%A4%EC%85%98)
 >
-> [**Coding Convention**](https://quickest-asterisk-75d.notion.site/acec76a4e0b54d46856a46a81c80f303)
-
-## 브랜치 전략
-
-> [**브랜치 전략**](https://quickest-asterisk-75d.notion.site/Git-19a7dd8263074c16867b5c607bd8365c)
-
-💡 *컨벤션과 브랜치전략은 <span style="color: red;">Github Wiki</span>에서도 확인이 가능합니다!*
+> [**Coding Convention**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EC%BD%94%EB%94%A9-%EC%BB%A8%EB%B2%A4%EC%85%98)
+> 
+> [**브랜치 전략**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EB%B8%8C%EB%9E%9C%EC%B9%98-%EC%A0%84%EB%9E%B5)
+> 
+💡 *컨벤션과 브랜치전략은 <span style="color: red;">[Notiion](https://quickest-asterisk-75d.notion.site/7-7-05d799c3f023443f8fb66abf97ca5965)</span>에서도 확인이 가능합니다!*
 
 ## 📂 저장소 정보
 
@@ -658,7 +662,37 @@
 > **Spring Boots 3.3.3**
 >
 > **Java 17 LTS**
-
+>
+> **AWS**
+> Spring-Cloud-Starter-AWS:2.2.6.RELEASE
+>
+> **JWT**
+> 
+> JJWT-API:0.12.3
+> 
+> JJWT-IMPL:0.12.3
+> 
+> JJWT-JACKSON:0.12.3
+>
+> **SpringDoc(Swagger)**
+>
+> SpringDoc-OpenApi-Starter-WebMvc-UI: 2.0.3
+>
+> **QueryDSL**
+>
+> QueryDsl-JPA: 5.0.0(Jakarata)
+>
+> **Spring Starter는 Spring버전을 따릅니다**
+>
+> spring-boot-starter-security
+>
+> spring-boot-starter-oauth2-client
+>
+> spring-boot-starter-data-jpa
+>
+> spring-boot-starter-data-redis
+>
+> spring-boot-starter-thymeleaf
 ## 🚀 기술 스택
 
 > **Backend**
@@ -759,7 +793,6 @@
     - DB에서 인플루언서 유튜브 채널을 가져와 새로 업데이트 된 정보 크롤링해서 정규표현식으로 주소정보를 추출합니다.
     - Video에서 장소정보가 추출되면 kakaoApi를 통해 매장 정보를 가져와 인플루언서별로 트랜잭션을 분리해 장소정보를 저장합니다.
     - Video에서 장소정보가 추출되지 않으면 Admin페이지를 통해 수동으로 장소 정보를 입력합니다.
-
 ## 📱 사용 예시
 
 > 실제 유저 사용 페이지 흐름 보여주기 ( 영상 x )
