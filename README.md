@@ -18,14 +18,18 @@
    >
    > 2.2 [**API & ERD**](#-api--erd)
    >
-   > 2.3 [**패키지 구조**](#-패키지-구조)
+   > 2.3 [**패키지 구조**](#패키지-구조)
 
 3. [**개발 정보**](#-개발-정보)
    > 3.1 [**개발 기간**](#-개발-기간)
    >
    > 3.2 [**팀원**](#-팀원)
    >
-   > 3.3 [**저장소 정보**](#-저장소-정보)
+   > 3.3 [**컨벤션**](#컨벤션)
+   >
+   > 3.4 [**브랜치 전략**](#브랜치-전략)
+   >
+   > 3.5 [**저장소 정보**](#-저장소-정보)
 
 4. [**기술 정보**](#-기술-정보)
    > 4.1 [**주요 종속성 버전**](#-주요-종속성-버전)
@@ -602,6 +606,22 @@
   </tr>
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
+
+## 컨벤션
+
+> [**Commit Convention**](https://quickest-asterisk-75d.notion.site/4eb1332c29ea4da187d54f8ca6d50c16)
+>
+> [**PR Convention**](https://quickest-asterisk-75d.notion.site/PR-a61601765e33442898d8bb3deb8d6a21)
+>
+> [**Issue Convention**](https://quickest-asterisk-75d.notion.site/Issue-2436b5e170094d46b125485379ac5721)
+>
+> [**Coding Convention**](https://quickest-asterisk-75d.notion.site/acec76a4e0b54d46856a46a81c80f303)
+
+## 브랜치 전략
+
+> [**브랜치 전략**](https://quickest-asterisk-75d.notion.site/Git-19a7dd8263074c16867b5c607bd8365c)
+
+💡 *컨벤션과 브랜치전략은 <span style="color: red;">Github Wiki</span>에서도 확인이 가능합니다!*
 
 ## 📂 저장소 정보
 
