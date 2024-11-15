@@ -15,6 +15,10 @@ public class LoginAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException authException) throws IOException {
+        if (request.getHeader("origin").equals(frontEndUrl)) {
+            response.sendRedirect("/");
+            return;
+        }
         response.sendRedirect(frontEndUrl);
     }
 }
