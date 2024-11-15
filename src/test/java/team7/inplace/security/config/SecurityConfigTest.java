@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,15 +27,15 @@ class SecurityConfigTest {
     @WithMockUser(roles = "USER")
     void testAdminEndpoints() throws Exception {
         mockMvc.perform(get("/admin/video"))
-            .andExpect(header().string("Location", containsString("inplace.my")));
+                .andExpect(header().string("Location", containsString("inplace.my")));
         mockMvc.perform(get("/admin/error-logs"))
-            .andExpect(header().string("Location", containsString("inplace.my")));
+                .andExpect(header().string("Location", containsString("inplace.my")));
         mockMvc.perform(post("/api/error-logs/1/video"))
-            .andExpect(header().string("Location", containsString("inplace.my")));
+                .andExpect(header().string("Location", containsString("inplace.my")));
         mockMvc.perform(get("/cicd"))
-            .andExpect(header().string("Location", containsString("inplace.my")));
+                .andExpect(header().string("Location", containsString("inplace.my")));
         mockMvc.perform(post("/crawling/video/1/place/1"))
-            .andExpect(header().string("Location", containsString("inplace.my")));
+                .andExpect(header().string("Location", containsString("inplace.my")));
     }
 
     @Test
@@ -42,14 +43,14 @@ class SecurityConfigTest {
     @WithAnonymousUser
     void testAnonymousEndpoints() throws Exception {
         mockMvc.perform(get("/admin/video"))
-            .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
         mockMvc.perform(get("/admin/error-logs"))
-            .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
         mockMvc.perform(post("/api/error-logs/1/video"))
-            .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
         mockMvc.perform(get("/cicd"))
-            .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
         mockMvc.perform(post("/influencers/likes"))
-            .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
     }
 }
