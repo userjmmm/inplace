@@ -735,6 +735,10 @@
     - User nickname을 더티 체킹을 통해 변경한다.
 - ### TokenRefresh
     - Redis DB에 username(key)로 refreshToken을 확인하고, RTR (Refresh Token Rotation)을 합니다.
+- ### videoCrawling
+    - DB에서 인플루언서 유튜브 채널을 가져와 새로 업데이트 된 정보 크롤링해서 정규표현식으로 주소정보를 추출합니다.
+    - Video에서 장소정보가 추출되면 kakaoApi를 통해 매장 정보를 가져와 인플루언서별로 트랜잭션을 분리해 장소정보를 저장합니다.
+    - Video에서 장소정보가 추출되지 않으면 Admin페이지를 통해 수동으로 장소 정보를 입력합니다.
 
 ## 📱 사용 예시
 
