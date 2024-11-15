@@ -30,7 +30,7 @@
     - 6.1 [**세부 기능 흐름**](#세부-기능-흐름)
     - 6.2 [**사용 예시**](#사용-예시)
 
-## 프로젝트 목적
+## 🙌프로젝트 목적
 
 > 저희의 아이디어는 **데이트 코스의 단조로움**을 어떻게 하면 해소할 수 있을까? 라는 생각에서 시작했습니다.
 >
@@ -74,9 +74,9 @@
 
 ## 배포 주소
 
-> [**BackEnd**](https://api.inplace.my) : **_api.inplace.my_**
+> **BackEnd** : [**_api.inplace.my_**](https://api.inplace.my)
 >
-> [**FrontEnd**](https://inplace.my) : **_inplace.my_**
+> **FrontEnd**: [**_inplace.my_**](https://inplace.my)
 
 ## 프로그램 구조
 
@@ -88,13 +88,11 @@
 
 ![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
 
-> [**API Spec**](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e) :
-_https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
+- [🚗 Visit Team7 API](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e)
 
 ![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
 
-> [**ERD**](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55) :
-> https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55
+- [🙋‍♂️ Visit Team7 ERD](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55)
 
 ## 개발 정보
 
