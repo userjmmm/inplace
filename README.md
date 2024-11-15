@@ -101,7 +101,7 @@
 
 - [🚗 Visit Team7 API](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e)
 
-![image](https://github.com/user-attachments/assets/17cedf5c-c554-4723-9b08-6635005ea0b2)
+![image](https://github.com/user-attachments/assets/333c9f3b-6678-48a6-b32d-b9b36d8cb182)
 
 - [🙋‍♂️ Visit Team7 ERD](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55)
 
