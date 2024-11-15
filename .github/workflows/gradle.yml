@@ -116,10 +116,12 @@ jobs:
           for i in {1..40}; do
             if curl -s http://localhost:${{ env.port }}/actuator/health | grep '"status":"UP"' > /dev/null; then
               echo "Application is healthy"
+              echo "Waiting additional 30 seconds for full initialization..."
+              sleep 30
               break
             fi
             echo "Waiting for new application to start...($i)"
-            sleep 10
+            sleep 5
           done
           
           if [ $i -eq 40 ]; then
