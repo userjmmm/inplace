@@ -1,4 +1,4 @@
-package team7.inplace.crawling.domain;
+package team7.inplace.admin.crawling.domain;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QYoutubeChannel extends EntityPathBase<YoutubeChannel> {
 
-    private static final long serialVersionUID = 2131098359L;
+    private static final long serialVersionUID = -73514634L;
 
     public static final QYoutubeChannel youtubeChannel = new QYoutubeChannel("youtubeChannel");
 
