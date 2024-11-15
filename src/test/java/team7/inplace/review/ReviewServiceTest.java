@@ -1,5 +1,18 @@
 package team7.inplace.review;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +30,7 @@ import team7.inplace.global.exception.code.ReviewErrorCode;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.review.application.ReviewService;
+import team7.inplace.review.application.dto.MyReviewInfo;
 import team7.inplace.review.application.dto.ReviewCommand;
 import team7.inplace.review.application.dto.ReviewInfo;
 import team7.inplace.review.domain.Review;
@@ -27,18 +41,6 @@ import team7.inplace.user.domain.Role;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.domain.UserType;
 import team7.inplace.user.persistence.UserRepository;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ReviewServiceTest {
@@ -75,13 +77,13 @@ public class ReviewServiceTest {
 
         user = new User("name", "password", "nickname", UserType.KAKAO, Role.USER);
         place = new Place("name", "facility", "menuImgUrl", "category",
-                "Address 1|Address 2|Address 3", "x", "y",
-                Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
-                Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-                Arrays.asList("삼겹살|5000|false|menu.url|description",
-                        "돼지찌개|7000|true|menu.url|description"),
-                LocalDateTime.of(2024, 3, 28, 5, 30),
-                Arrays.asList("menuBoard1.url", "menuBoard2.url")
+            "Address 1|Address 2|Address 3", "x", "y",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false|menu.url|description",
+                "돼지찌개|7000|true|menu.url|description"),
+            LocalDateTime.of(2024, 3, 28, 5, 30),
+            Arrays.asList("menuBoard1.url", "menuBoard2.url")
         );
         command = new ReviewCommand(isLiked, comment);
 
@@ -118,8 +120,8 @@ public class ReviewServiceTest {
         given(reviewRepository.existsByUserIdAndPlaceId(userId, placeId)).willReturn(true);
 
         assertThatThrownBy(() -> reviewService.createReview(placeId, command))
-                .isInstanceOf(InplaceException.class)
-                .hasMessage(ReviewErrorCode.REVIEW_ALREADY_EXISTS.getMessage());
+            .isInstanceOf(InplaceException.class)
+            .hasMessage(ReviewErrorCode.REVIEW_ALREADY_EXISTS.getMessage());
 
         authorizationUtil.close();
     }
@@ -140,8 +142,8 @@ public class ReviewServiceTest {
         Page<ReviewInfo> result = reviewService.getReviews(placeId, pageable);
 
         assertThat(result.getContent().get(0))
-                .extracting("comment", "mine")
-                .containsExactly(comment, true);
+            .extracting("comment", "mine")
+            .containsExactly(comment, true);
 
         authorizationUtil.close();
     }
@@ -160,8 +162,8 @@ public class ReviewServiceTest {
         Page<ReviewInfo> result = reviewService.getReviews(placeId, pageable);
 
         assertThat(result.getContent().get(0))
-                .extracting("comment", "mine")
-                .containsExactly(comment, false);
+            .extracting("comment", "mine")
+            .containsExactly(comment, false);
 
         authorizationUtil.close();
     }
@@ -181,9 +183,26 @@ public class ReviewServiceTest {
         given(userMock.getId()).willReturn(1L); // 리뷰의 userId가 1L
 
         assertThatThrownBy(() -> reviewService.deleteReview(reviewId))
-                .isInstanceOf(InplaceException.class)
-                .hasMessage(ReviewErrorCode.NOT_OWNER.getMessage());
+            .isInstanceOf(InplaceException.class)
+            .hasMessage(ReviewErrorCode.NOT_OWNER.getMessage());
 
         authorizationUtil.close();
+    }
+
+    @Test
+    void getMyReviewsTest() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Review myReview = new Review(user, place, isLiked, comment);
+        Page<Review> reviewPage = new PageImpl<>(List.of(myReview));
+
+        given(reviewRepository.findByUserIdWithPlace(userId, pageable)).willReturn(
+            reviewPage);
+
+        Page<MyReviewInfo> result = reviewService.getMyReviews(userId, pageable);
+
+        verify(reviewRepository).findByUserIdWithPlace(userId, pageable);
+        assertThat(result.getContent().get(0)).isInstanceOf(MyReviewInfo.class);
+        assertThat(result.getContent().get(0).comment()).isEqualTo(myReview.getComment());
+        assertThat(result.getContent().get(0).placeInfo().placeName()).isEqualTo(place.getName());
     }
 }
