@@ -44,14 +44,14 @@ public record PlaceDetailInfo(
         ObjectMapper objectMapper = new ObjectMapper();
         if (facility == null || facility.isBlank()) {
             ObjectNode noDataNode = JsonNodeFactory.instance.objectNode();
-            noDataNode.put("message", "NO DATA");
+            noDataNode.put("message", "");
             return noDataNode;
         }
         try {
             return objectMapper.readTree(facility);
         } catch (Exception e) {
             ObjectNode noDataNode = JsonNodeFactory.instance.objectNode();
-            noDataNode.put("message", "NO DATA");
+            noDataNode.put("message", "");
             return noDataNode;
         }
     }
@@ -70,7 +70,7 @@ public record PlaceDetailInfo(
             menuImgUrls = menuImgUrls.stream()
                     .filter(url -> url != null && url.isBlank())
                     .toList()
-                    .isEmpty() ? null : menuImgUrls;
+                    .stream().allMatch(String::isEmpty) ? null : menuImgUrls;
             List<MenuInfo> menuList = menus.stream()
                     .map(menu -> new MenuInfo(menu.getPrice(), menu.isRecommend(),
                             menu.getMenuName(), menu.getMenuImgUrl().trim(), menu.getDescription()))
