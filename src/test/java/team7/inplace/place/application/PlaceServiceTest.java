@@ -2,6 +2,7 @@ package team7.inplace.place.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mockStatic;
@@ -13,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +35,7 @@ import team7.inplace.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
+import team7.inplace.place.application.dto.LikedPlaceInfo;
 import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Category;
@@ -663,5 +666,25 @@ class PlaceServiceTest {
             .get()
             .isLiked())
             .isFalse();
+    }
+
+    @Test
+    void getLikedPlaceInfoTest() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Long userId = 1L;
+        LikedPlace likedPlace = new LikedPlace(user1, place1);
+
+        Page<LikedPlace> likedPlacePage = new PageImpl<>(List.of(likedPlace));
+
+        given(likedPlaceRepository.findByUserIdAndIsLikedTrueWithPlace(userId, pageable))
+            .willReturn(likedPlacePage);
+        given(videoRepository.findByPlaceIdInWithInfluencer(anyList()))
+            .willReturn(List.of(video1));
+
+        Page<LikedPlaceInfo> result = placeService.getLikedPlaceInfo(userId, pageable);
+
+        verify(likedPlaceRepository).findByUserIdAndIsLikedTrueWithPlace(userId, pageable);
+        assertThat(result.getContent().get(0)).isInstanceOf(LikedPlaceInfo.class);
+        assertThat(result.getContent().get(0).influencerName()).isEqualTo(influencer1.getName());
     }
 }
