@@ -1,4 +1,4 @@
-package team7.inplace.global.exception;
+package team7.inplace.admin.error;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QErrorLog extends EntityPathBase<ErrorLog> {
 
-    private static final long serialVersionUID = 50351046L;
+    private static final long serialVersionUID = -245768895L;
 
     public static final QErrorLog errorLog = new QErrorLog("errorLog");
 

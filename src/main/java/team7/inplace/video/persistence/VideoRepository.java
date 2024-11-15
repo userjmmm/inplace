@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.domain.Video;
 
@@ -15,7 +16,7 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     List<Video> findTop10ByOrderByViewCountIncreaseDesc(Pageable pageable);
 
     @Query("SELECT v FROM Video v JOIN FETCH v.place JOIN FETCH v.influencer WHERE v.influencer.id IN :influencerIds ORDER BY v.id DESC")
-    List<Video> findTop10ByInfluencerIdIn(List<Long> influencerIds, Pageable pageable);
+    List<Video> findTop10ByInfluencerIdIn(@Param("influencerIds") List<Long> influencerIds, Pageable pageable);
 
     @Query("SELECT v FROM Video v JOIN FETCH v.place JOIN FETCH v.influencer ORDER BY v.id DESC")
     List<Video> findTop10ByOrderByIdDesc(Pageable pageable);
