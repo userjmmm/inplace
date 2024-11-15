@@ -5,14 +5,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.time.LocalDateTime;
+import java.util.List;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.OpenTime;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.domain.Video;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 public record PlaceDetailInfo(
         PlaceInfo placeInfo,
@@ -24,7 +23,7 @@ public record PlaceDetailInfo(
 ) {
 
     public static PlaceDetailInfo from(Place place, Influencer influencer, Video video,
-                                       boolean isLiked) {
+                                       boolean isLiked, int numOfLikes, int numOfDislikes) {
         String influencerName = (influencer != null) ? influencer.getName() : "";
         String videoUrl = (video != null) ? video.getVideoUrl() : "";
 
@@ -36,7 +35,7 @@ public record PlaceDetailInfo(
                         place.getMenus(),
                         place.getMenuUpdatedAt()),
                 OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
-                PlaceLikes.of(isLiked),
+                PlaceLikes.of(numOfLikes, numOfDislikes),
                 videoUrl
         );
     }
@@ -45,14 +44,14 @@ public record PlaceDetailInfo(
         ObjectMapper objectMapper = new ObjectMapper();
         if (facility == null || facility.isBlank()) {
             ObjectNode noDataNode = JsonNodeFactory.instance.objectNode();
-            noDataNode.put("message", "NO DATA");
+            noDataNode.put("message", "");
             return noDataNode;
         }
         try {
             return objectMapper.readTree(facility);
         } catch (Exception e) {
             ObjectNode noDataNode = JsonNodeFactory.instance.objectNode();
-            noDataNode.put("message", "NO DATA");
+            noDataNode.put("message", "");
             return noDataNode;
         }
     }
@@ -68,10 +67,13 @@ public record PlaceDetailInfo(
                 List<String> menuImgUrls,
                 List<Menu> menus,
                 LocalDateTime menuUpdatedAt) {
-
+            menuImgUrls = menuImgUrls.stream()
+                    .filter(url -> url != null && url.isBlank())
+                    .toList()
+                    .stream().allMatch(String::isEmpty) ? null : menuImgUrls;
             List<MenuInfo> menuList = menus.stream()
                     .map(menu -> new MenuInfo(menu.getPrice(), menu.isRecommend(),
-                            menu.getMenuName(), menu.getMenuImgUrl(), menu.getDescription()))
+                            menu.getMenuName(), menu.getMenuImgUrl().trim(), menu.getDescription()))
                     .toList();
 
             return new MenuInfos(menuImgUrls, menuList, menuUpdatedAt);
@@ -130,14 +132,8 @@ public record PlaceDetailInfo(
             Integer dislike
     ) {
 
-        public static PlaceLikes of(Boolean likes) {
-            if (likes == null) {
-                return new PlaceLikes(0, 0);
-            }
-            if (likes) {
-                return new PlaceLikes(1, 0);
-            }
-            return new PlaceLikes(0, 1);
+        public static PlaceLikes of(Integer numOfLikes, Integer numOfDislikes) {
+            return new PlaceLikes(numOfLikes, numOfDislikes);
         }
     }
 }

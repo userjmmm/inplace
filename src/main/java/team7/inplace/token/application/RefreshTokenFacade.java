@@ -35,4 +35,10 @@ public class RefreshTokenFacade {
 
         return TokenCommand.ReIssued.of(reIssuedAccessToken, reIssuedRefreshToken);
     }
+
+    @Transactional
+    public void deleteRefreshToken(String refreshToken) {
+        String username = jwtUtil.getUsername(refreshToken);
+        refreshTokenService.deleteRefreshToken(username);
+    }
 }

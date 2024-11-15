@@ -3,7 +3,7 @@ package team7.inplace.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
@@ -13,9 +13,6 @@ import org.springframework.util.StringUtils;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 
-import java.io.IOException;
-
-@Slf4j
 public class CustomFailureHandler implements AuthenticationFailureHandler {
 
     @Value("${spring.redirect.front-end-url}")
@@ -28,9 +25,9 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException exception
+        HttpServletRequest request,
+        HttpServletResponse response,
+        AuthenticationException exception
     ) throws IOException {
         String accept = request.getHeader("Accept");
         if (StringUtils.hasText(accept) && accept.contains("text/html")) {
@@ -40,13 +37,13 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
     }
 
     private void setErrorResponse(
-            HttpServletResponse response,
-            InplaceException inplaceException
+        HttpServletResponse response,
+        InplaceException inplaceException
     ) throws IOException {
         response.setStatus(inplaceException.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                inplaceException.getHttpStatus(), inplaceException.getMessage());
+            inplaceException.getHttpStatus(), inplaceException.getMessage());
         response.getWriter().write(objectMapper.writeValueAsString(problemDetail));
     }
 }
