@@ -2,13 +2,14 @@ package team7.inplace.place.application.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.micrometer.common.util.StringUtils;
+import org.springframework.data.domain.Pageable;
+import team7.inplace.place.domain.Place;
+import team7.inplace.video.presentation.dto.VideoSearchParams;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.data.domain.Pageable;
-import team7.inplace.place.domain.Place;
-import team7.inplace.video.presentation.dto.VideoSearchParams;
 
 public class PlacesCommand {
 

@@ -1,27 +1,20 @@
 package team7.inplace.review.domain;
 
-import static lombok.AccessLevel.PROTECTED;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-import java.util.Date;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team7.inplace.place.domain.Place;
 import team7.inplace.user.domain.User;
 
+import java.util.Date;
+
+import static lombok.AccessLevel.PROTECTED;
+
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 @Table(name = "review", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "place_id"})
+        @UniqueConstraint(columnNames = {"user_id", "place_id"})
 })
 public class Review {
 

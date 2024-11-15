@@ -1,7 +1,6 @@
 package team7.inplace.global.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,6 +8,10 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import team7.inplace.admin.error.ErrorLog;
+import team7.inplace.admin.error.ErrorLogRepository;
+
+import java.net.URI;
 
 @Slf4j
 @RestControllerAdvice

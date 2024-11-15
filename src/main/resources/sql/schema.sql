@@ -4,7 +4,9 @@ create table influencer
         primary key,
     job     varchar(20) not null,
     name    varchar(30) not null,
-    img_url text        not null
+    img_url text        not null,
+
+    FULLTEXT INDEX ft_name_ngram (name) WITH PARSER ngram
 );
 
 create table places
@@ -20,7 +22,10 @@ create table places
     latitude        text                                                                 not null,
     longitude       text                                                                 not null,
     menu_img_url    text                                                                 null,
-    category        enum ('CAFE', 'JAPANESE', 'KOREAN', 'NONE', 'RESTAURANT', 'WESTERN') not null
+    category        enum ('CAFE', 'JAPANESE', 'KOREAN', 'NONE', 'RESTAURANT', 'WESTERN') not null,
+
+    FULLTEXT INDEX ft_name_ngram (name) WITH PARSER ngram,
+    INDEX idx_long_lat (longitude(15), latitude(15))
 );
 
 create table places_menuboardphotourl_list
@@ -164,4 +169,15 @@ create table liked_places
         foreign key (user_id) references user (id),
     constraint FK7x24ubd2axm81hx0ggiy4l4ao
         foreign key (place_id) references places (id)
+);
+
+create table banner
+(
+    is_fixed   bit          null,
+    end_date   datetime(6)  null,
+    id         bigint auto_increment
+        primary key,
+    start_date datetime(6)  null,
+    img_name   varchar(255) null,
+    img_path   varchar(255) null
 );

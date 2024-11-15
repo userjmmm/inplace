@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.security.filter.TokenType;
@@ -25,11 +26,11 @@ public class RefreshTokenController implements RefreshTokenControllerApiSpec {
 
     @GetMapping("/refresh-token")
     public ResponseEntity<Void> refreshToken(@CookieValue(value = "refresh_token") Cookie cookie,
-        HttpServletResponse response) {
+                                             HttpServletResponse response) {
 
         String refreshToken = cookie.getValue();
         ReIssued reIssuedToken = refreshTokenFacade.getReIssuedRefreshTokenCookie(
-            jwtUtil.getUsername(refreshToken), refreshToken);
+                jwtUtil.getUsername(refreshToken), refreshToken);
         addTokenToCookie(response, reIssuedToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -37,14 +38,33 @@ public class RefreshTokenController implements RefreshTokenControllerApiSpec {
 
     private void addTokenToCookie(HttpServletResponse response, ReIssued reIssuedToken) {
         ResponseCookie accessTokenCookie = CookieUtil.createCookie(
-            TokenType.ACCESS_TOKEN.getValue(),
-            reIssuedToken.accessToken());
+                TokenType.ACCESS_TOKEN.getValue(),
+                reIssuedToken.accessToken());
         ResponseCookie refreshTokenCookie = CookieUtil.createCookie(
-            TokenType.REFRESH_TOKEN.getValue(),
-            reIssuedToken.refreshToken());
+                TokenType.REFRESH_TOKEN.getValue(),
+                reIssuedToken.refreshToken());
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+    }
+
+    @DeleteMapping("/refresh-token")
+    public ResponseEntity<Void> deleteRefreshToken(@CookieValue(value = "refresh_token") Cookie cookie,
+                                                   HttpServletResponse response
+    ) {
+        String refreshToken = cookie.getValue();
+        refreshTokenFacade.deleteRefreshToken(refreshToken);
+        
+        ResponseCookie accessTokenCookie = CookieUtil.createCookie(
+                TokenType.ACCESS_TOKEN.getValue(),
+                "");
+        ResponseCookie refreshTokenCookie = CookieUtil.createCookie(
+                TokenType.REFRESH_TOKEN.getValue(),
+                "");
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

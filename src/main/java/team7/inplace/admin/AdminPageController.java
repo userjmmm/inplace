@@ -1,6 +1,5 @@
 package team7.inplace.admin;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,11 +8,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import team7.inplace.global.exception.ErrorLog;
-import team7.inplace.global.exception.ErrorLogRepository;
+import team7.inplace.admin.banner.persistence.BannerRepository;
+import team7.inplace.admin.error.ErrorLog;
+import team7.inplace.admin.error.ErrorLogRepository;
 import team7.inplace.global.kakao.config.KakaoApiProperties;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class AdminPageController {
     private final KakaoApiProperties kakaoApiProperties;
     private final VideoRepository videoRepository;
     private final ErrorLogRepository errorLogRepository;
+    private final BannerRepository bannerRepository;
 
     @GetMapping("/video")
     public String getVideos(@PageableDefault Pageable pageable, Model model) {
@@ -40,5 +43,18 @@ public class AdminPageController {
         List<ErrorLog> errorLogs = errorLogRepository.findByIsResolvedFalse();
         model.addAttribute("errorLogs", errorLogs);
         return "admin/error-logs.html";
+    }
+
+    @GetMapping("/banner")
+    public String getBanners(Model model) {
+        var banners = bannerRepository.findAll();
+
+        model.addAttribute("banners", banners);
+        return "admin/banner.html";
+    }
+
+    @GetMapping("/main")
+    public String getMainPage() {
+        return "admin/main.html";
     }
 }

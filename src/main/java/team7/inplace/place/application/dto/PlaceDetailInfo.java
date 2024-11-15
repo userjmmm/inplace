@@ -23,7 +23,7 @@ public record PlaceDetailInfo(
 ) {
 
     public static PlaceDetailInfo from(Place place, Influencer influencer, Video video,
-        boolean isLiked) {
+        boolean isLiked, int numOfLikes, int numOfDislikes) {
         String influencerName = (influencer != null) ? influencer.getName() : "";
         String videoUrl = (video != null) ? video.getVideoUrl() : "";
 
@@ -35,7 +35,7 @@ public record PlaceDetailInfo(
                 place.getMenus(),
                 place.getMenuUpdatedAt()),
             OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
-            PlaceLikes.of(isLiked),
+            PlaceLikes.of(numOfLikes, numOfDislikes),
             videoUrl
         );
     }
@@ -129,14 +129,8 @@ public record PlaceDetailInfo(
         Integer dislike
     ) {
 
-        public static PlaceLikes of(Boolean likes) {
-            if (likes == null) {
-                return new PlaceLikes(0, 0);
-            }
-            if (likes) {
-                return new PlaceLikes(1, 0);
-            }
-            return new PlaceLikes(0, 1);
+        public static PlaceLikes of(Integer numOfLikes, Integer numOfDislikes) {
+            return new PlaceLikes(numOfLikes, numOfDislikes);
         }
     }
 }

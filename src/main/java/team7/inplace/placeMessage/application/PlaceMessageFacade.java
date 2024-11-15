@@ -29,7 +29,7 @@ public class PlaceMessageFacade {
         PlaceMessageCommand placeMessageCommand = placeService.getPlaceMessageCommand(placeId);
         kakaoMessageService.sendLocationMessageToMe(oauthToken, placeMessageCommand);
         scheduledExecutorService.schedule(
-            () -> kakaoMessageService.sendFeedMessageToMe(oauthToken, placeMessageCommand), 3,
-            TimeUnit.DAYS);
+            () -> kakaoMessageService.sendFeedMessageToMe(oauthToken, placeMessageCommand), 1,
+            TimeUnit.MINUTES);
     }
 }

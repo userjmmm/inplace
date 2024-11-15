@@ -21,18 +21,24 @@ public class RefreshTokenFacade {
 
     @Transactional
     public ReIssued getReIssuedRefreshTokenCookie(String username, String refreshToken)
-        throws InplaceException {
+            throws InplaceException {
         if (refreshTokenService.isInvalidRefreshToken(refreshToken)) {
             throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }
 
         UserCommand.Info userInfo = userService.getUserByUsername(username);
         String reIssuedRefreshToken = jwtUtil
-            .createRefreshToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
+                .createRefreshToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
         String reIssuedAccessToken = jwtUtil
-            .createAccessToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
+                .createAccessToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
         refreshTokenService.saveRefreshToken(username, reIssuedRefreshToken);
 
         return TokenCommand.ReIssued.of(reIssuedAccessToken, reIssuedRefreshToken);
+    }
+
+    @Transactional
+    public void deleteRefreshToken(String refreshToken) {
+        String username = jwtUtil.getUsername(refreshToken);
+        refreshTokenService.deleteRefreshToken(username);
     }
 }

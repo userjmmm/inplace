@@ -3,7 +3,7 @@ package team7.inplace.security.application.dto;
 import java.util.Map;
 
 public record KakaoOAuthResponse(
-    Map<String, Object> attribute
+        Map<String, Object> attribute
 ) {
 
     public KakaoOAuthResponse(Map<String, Object> attribute) {
