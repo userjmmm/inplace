@@ -4,36 +4,56 @@
   <img src="https://i.ibb.co/CVBQHPg/image-2.png" alt="메인 이미지">
 </p>
 
-## 목차
+# 목차
 
-> 1. [**_프로젝트 목적_**](#프로젝트-목적)
-> 2. [**_서비스 정보_**](#서비스-정보)
-> 3. [**_개발 기간_**](#개발-기간)
-> 4. [**_배포 주소_**](#배포-주소)
-> 5. [**_팀원_**](#팀원)
-> 6. [**_프로그램 구조_**](#프로그램-구조)
-> 7. [**_API & ERD_**](#api--erd)
-> 8. [**_저장소 정보_**](#저장소-정보)
-> 9. [**_프로그램 구조_**](#프로그램-구조)
-> 10. [**_주요 종속성 버전_**](#주요-종속성-버전)
-> 11. [**_기술 스택_**](#기술-스택)
-> 12. [**_테스트_**](#테스트)
-> 13. [**_세부 기능 흐름_**](#세부-기능-흐름)
-> 14. [**_사용 예시_**](#사용-예시)
+1. [**프로젝트 개요**](#-프로젝트-개요)
+   > 1.1 [**프로젝트 목적**](#-프로젝트-목적)
+   >
+   > 1.2 [**서비스 정보**](#-서비스-정보)
+   >
+   > 1.3 [**배포 주소**](#-배포-주소)
 
-## 프로젝트 목적
+2. [**프로그램 구조**](#%EF%B8%8F-프로그램-구조)
+   > 2.1 [**프로그램 구조도**](#%EF%B8%8F-프로그램-구조도)
+   >
+   > 2.2 [**API & ERD**](#-api--erd)
 
-> 저희의 아이디어는 **데이트 코스의 단조로움**을 어떻게 하면 해소할 수 있을까? 라는 생각에서 시작했습니다.
+3. [**개발 정보**](#-개발-정보)
+   > 3.1 [**개발 기간**](#-개발-기간)
+   >
+   > 3.2 [**팀원**](#-팀원)
+   >
+   > 3.3 [**저장소 정보**](#-저장소-정보)
+
+4. [**기술 정보**](#%EF%B8%8F-기술-정보)
+   > 4.1 [**주요 종속성 버전**](#-주요-종속성-버전)
+   >
+   > 4.2 [**기술 스택**](#-기술-스택)
+
+5. [**테스트**](#-테스트)
+
+6. [**기능 및 사용 예시**](#-기능-및-사용-예시)
+   > 6.1 [**세부 기능 흐름**](#-세부-기능-흐름)
+   >
+   > 6.2 [**사용 예시**](#-사용-예시)
+
+---
+
+# 📝 프로젝트 개요
+
+## 🙌 프로젝트 목적
+
+> 저희의 아이디어는 **데이트 코스의 단조로움**을 어떻게 하면 해소할 수 있을까? 💡 라는 생각에서 시작했습니다.
 >
-> 아이디어를 구체화하는 과정에서 저희는 **장소**에 관련된 소재로 인스타, 유튜브 등의 SNS 및 동영상 플랫폼의 성장과 함께 등장한 **인플루언서** 라는 개념에 집중하게
+> 아이디어를 구체화하는 과정에서 저희는 **장소**에 관련된 소재로 인스타, 유튜브 등의 SNS 및 동영상 플랫폼 📱의 성장과 함께 등장한 **인플루언서** 라는 개념에 집중하게
 > 되었습니다.
 >
-> 이는 **인플루언서가 방문한 장소에 대한 정보를 서비스 해보자!** 라는 생각으로 이어졌습니다.
+> 이는 **인플루언서가 방문한 장소에 대한 정보를 서비스 해보자!** 📍 라는 생각으로 이어졌습니다.
 >
-> 이를 관심있는 **인플루언서를 등록하고, 이에 따른 장소 추천 및, 장소에 대한 리뷰 기능**을 통해 풀어내어 **Inplace** 라는 저희만의 웹 애플리케이션으로
-> 구현해보았습니다.
+> 이를 통해 사용자가 관심있는 **인플루언서를 등록하고, 이에 따른 장소 추천 및, 장소에 대한 리뷰 기능** 📋을 제공하여, **Inplace** 라는 저희만의 웹
+> 애플리케이션으로 구현해보았습니다.
 
-## 서비스 정보
+## 📋 서비스 정보
 
 > 긴 영상은 필요 없어요 인플루언서가 다녀간 쿨플, 한눈에 쏙!
 
@@ -63,17 +83,37 @@
     - 내가 작성한 리뷰를 관리할 수 있습니다
     - 사용자 닉네임을 변경할 수 있습니다
 
-## 개발 기간
+## 🌐 배포 주소
+
+> **BackEnd** : [**_api.inplace.my_**](https://api.inplace.my)
+>
+> **FrontEnd**: [**_inplace.my_**](https://inplace.my)
+
+---
+
+# 🏗️ 프로그램 구조
+
+## 🖼️ 프로그램 구조도
+
+## 📊 API & ERD
+
+![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
+
+- [🚗 Visit Team7 API](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e)
+
+![image](https://github.com/user-attachments/assets/333c9f3b-6678-48a6-b32d-b9b36d8cb182)
+
+- [🙋‍♂️ Visit Team7 ERD](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55)
+
+---
+
+# 👨‍💻 개발 정보
+
+## 📅 개발 기간
 
 > **_2024.08.22 ~ 2024.11.15_**
 
-## 배포 주소
-
-> [**BackEnd**](https://api.inplace.my) : **_api.inplace.my_**
->
-> [**FrontEnd**](https://inplace.my) : **_inplace.my_**
-
-## 팀원
+## 👥 팀원
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <table>
@@ -132,21 +172,7 @@
 </table>
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-## 프로그램 구조
-
-## API & ERD
-
-![image](https://github.com/user-attachments/assets/ce11ff39-8294-4eda-aa58-7b5bd0ac1620)
-
-> [**API Spec**](https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e) :
-_https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
-
-![image](https://github.com/user-attachments/assets/fa35ff5f-bd6f-4693-9866-f67a9ccac4ff)
-
-> [**ERD**](https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55) :
-> https://www.notion.so/ERD-36ec8e40cb264abe87588e97ae77ac55
-
-## 저장소 정보
+## 📂 저장소 정보
 
 > **Using Language**
 >
@@ -172,13 +198,17 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/kakao-tech-campus-2nd-step3/Team7_BE?label=open%20pull%20requests)
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/kakao-tech-campus-2nd-step3/Team7_BE?label=closed%20pull%20requests)
 
-## 주요 종속성 버전
+---
+
+# 🛠️ 기술 정보
+
+## 🧩 주요 종속성 버전
 
 > **Spring Boots 3.3.3**
 >
 > **Java 17 LTS**
 
-## 기술 스택
+## 🚀 기술 스택
 
 > **Backend**
 >
@@ -229,13 +259,19 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
 ![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white)
 
-## 테스트
+---
+
+# ✅ 테스트
 
 > **테스트 시나리오** : https://www.notion.so/9ed68b292c004fc69f7eaad513054d96
 >
 > **테스트 결과보고서** : https://www.notion.so/08a520d3b8c44154a19425b0bcc16f6f
 
-## 세부 기능 흐름
+---
+
+# 🎬 기능 및 사용 예시
+
+## 🔍 세부 기능 흐름
 
 - ### Spring Security
     - oauth 로그인 시, jwt로 accessToken과 refreshToken을 Cookie에 담아줍니다.
@@ -246,7 +282,6 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
     - 3일 뒤 나에게 보내기 kakao api를 통해 리뷰 요청 메세지를 보냅니다.
 - ### TokenRefresh
     - Redis DB에 username(key)로 refreshToken을 확인하고, RTR (Refresh Token Rotation)을 합니다.
-
 - ### Influencer
     - 로그인 상태인 경우 사용자가 좋아요한 인플루언서를 먼저 반환합니다.
 - ### FavoriteInfluencer
@@ -257,8 +292,17 @@ _https://www.notion.so/API-9e96d1ef1475414b861a50d0e4ca366e_
     - 장소별 리뷰 조회 시 본인이 작성한 리뷰인지 여부를 포함하여 반환합니다.
     - 내가 작성한 리뷰 조회 시 장소 정보 일부를 함께 반환합니다.
 - ### Place
+    - places에 videos, influecers 테이블을 Left join하고 지도 범위 내에있는 장소를 추려냅니다.
+    - 카테고리와 인플루언서 이름으로 필터링하고, 사용자와 가까운순으로 정렬 후 반환합니다.
+        - 특정 장소에 대한 요청이 들어오면 세부 정보와 함께 관련된 인플루언서, 비디오와 사용자 리뷰 정보를 추가하여 반환합니다.
     - 내가 좋아요한 장소 조회 시 인플루언서 정보 일부를 함께 반환합니다.
+- ### LikedPlace
+    - 사용자가 장소에 좋아요를 누르거나 취소하면 상태를 업데이트합니다.
+        - 기존 정보가 존재하지 않으면 새로 생성후 저장합니다.
+- ### Video
+    - 로그인 상태인 경우 사용자가 좋아요한 인플루언서의 동영상, 사용자 주변 장소의 동영상을 반환합니다.
+    - 로그인 상태가 아닌 경우 조회수 증가량이 높은 동영상, 새로운 동영상을 반환합니다.
 
-## 사용 예시
+## 📱 사용 예시
 
 > 실제 유저 사용 페이지 흐름 보여주기 ( 영상 x )
