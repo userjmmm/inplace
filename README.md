@@ -95,7 +95,7 @@
 >
 > **FrontEnd**: [**_inplace.my_**](https://inplace.my)
 >
-> **AdminPage** : [**_api.inplace.my/admin/main_**](https://api.inplace.my/admin/my)
+> **AdminPage** : [**_api.inplace.my/admin/main_**](https://api.inplace.my/admin/main)
 
 ---
 
