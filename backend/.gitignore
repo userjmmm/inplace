@@ -202,12 +202,8 @@ gradle-app.setting
 # Java heap dump
 *.hprof
 
-.env
+*.env
 /src/test/resources/application-test.yaml
-
-# Ignore specific application config files
-application.yaml
-application-security.yaml
-application-youtube.yaml
+**/generated/*
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,intellij,gradle
