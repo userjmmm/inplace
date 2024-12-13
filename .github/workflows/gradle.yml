@@ -1,9 +1,9 @@
 name: Java CI with Gradle
 
-# Master, develop, weekly/* 브랜치에 push가 발생할 경우 동작한다.
+# main 브랜치에 push가 발생할 경우 동작한다.
 on:
   push:
-    branches: [ "Master", "develop", "weekly/*" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -58,8 +58,8 @@ jobs:
     needs: build-docker-image
     runs-on: self-hosted
 
-    # weekly/* 브랜치에서는 실행되지 않도록 조건 추가
-    if: startsWith(github.ref, 'refs/heads/Master') || startsWith(github.ref, 'refs/heads/develop')
+    # main 브랜치에서는 실행되도록 조건 추가
+    if: startsWith(github.ref, 'refs/heads/main')
 
     steps:
       # 최신 이미지를 pull
