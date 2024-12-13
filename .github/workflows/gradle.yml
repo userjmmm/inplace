@@ -50,9 +50,9 @@ jobs:
       # Docker Hub 이미지 푸시
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/inplace
-  
-  
-  # 위 과정에서 푸시한 이미지를 ec2에서 풀받아서 실행시키는 과정 
+
+
+  # 위 과정에서 푸시한 이미지를 ec2에서 풀받아서 실행시키는 과정
   run-docker-image-on-ec2:
     # build-docker-image 과정이 완료되어야 실행된다.
     needs: build-docker-image
@@ -62,7 +62,7 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/Master') || startsWith(github.ref, 'refs/heads/develop')
 
     steps:
-      # 최신 이미지를 pull 
+      # 최신 이미지를 pull
       - name: docker pull
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/inplace
 
@@ -154,7 +154,7 @@ jobs:
           else 
             echo "No active container to remove" 
           fi
-      
+
       # 미사용 이미지를 정리
       - name: delete old docker image
         run: sudo docker system prune -f
