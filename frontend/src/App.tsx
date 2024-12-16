@@ -51,7 +51,14 @@ function App() {
               </PrivatedRoute>
             }
           />
-          <Route path="/places/:id/reviews" element={<ReviewPage />} />
+          <Route
+            path="/places/:id/reviews"
+            element={
+              <PrivatedRoute>
+                <ReviewPage />
+              </PrivatedRoute>
+            }
+          />
         </Routes>
       </AuthProvider>
     </>
