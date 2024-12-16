@@ -13,7 +13,9 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex === items.length - 1 ? 0 : prevIndex + 1));
+      if (items.length > 1) {
+        setCurrentIndex((prevIndex) => (prevIndex === items.length - 2 ? 0 : prevIndex + 1));
+      }
     }, 5000);
     return () => clearInterval(interval);
   }, [items.length]);
@@ -23,7 +25,9 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
   };
 
   const handleBtnNextClick = () => {
-    setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, items.length - 1));
+    if (items.length > 1) {
+      setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, items.length - 2));
+    }
   };
   return (
     <Container>
@@ -34,13 +38,13 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
           <PrevBtn onClick={handleBtnPrevClick} disabled={currentIndex === 0}>
             <GrPrevious size={40} />
           </PrevBtn>
-          <NextBtn onClick={handleBtnNextClick} disabled={currentIndex === items.length - 1}>
+          <NextBtn onClick={handleBtnNextClick} disabled={currentIndex === items.length - 2}>
             <GrNext size={40} />
           </NextBtn>
           <CarouselWrapper>
             <CarouselContainer $currentIndex={currentIndex}>
               {items.map((item) => (
-                <BannerItem key={item.id} id={item.id} imageUrl={item.imageUrl} />
+                <BannerItem key={item.id} id={item.id} imageUrl={item.imageUrl} isFirst={currentIndex === 0} />
               ))}
             </CarouselContainer>
           </CarouselWrapper>
@@ -86,6 +90,6 @@ const CarouselWrapper = styled.div`
 const CarouselContainer = styled.div<{ $currentIndex: number }>`
   display: flex;
   transition: transform 0.5s ease-in-out;
-  transform: ${({ $currentIndex }) => `translateX(-${$currentIndex * 100}%)`};
+  transform: ${({ $currentIndex }) => ($currentIndex === 0 ? null : `translateX(-${$currentIndex * 50}%)`)};
   width: 100%;
 `;
