@@ -22,13 +22,11 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
     isAuthenticated,
   });
 
-  useEffect(() => {
-    if (!isAuthenticated && !isProtectedPath) {
-      setShouldShowModal(true);
-    }
-  }, [isAuthenticated, isProtectedPath]);
-
-  const { data: userInfo, isLoading } = useGetUserInfo({
+  const {
+    data: userInfo,
+    isLoading,
+    error,
+  } = useGetUserInfo({
     retry: false,
     enabled: !isAuthenticated,
     onSuccess: (data) => {
@@ -36,37 +34,30 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
         handleLoginSuccess(data.nickname);
       }
     },
-    onError: (error: unknown) => {
-      console.log('Error occurred:', error);
-
-      if (isAuthorizationError(error)) {
-        console.log('[PrivateRoute] Unauthorized access:', {
-          message: error.response.data.message,
-          status: error.response.status,
-        });
-
-        if (isProtectedPath) {
-          navigate('/', { replace: true });
-        } else {
-          setShouldShowModal(true);
-        }
-        return;
-      }
-
-      console.error('사용자 정보 요청 실패:', error);
-      if (isProtectedPath) {
-        navigate('/', { replace: true });
-      } else {
-        setShouldShowModal(true);
-      }
-    },
   });
 
   useEffect(() => {
-    if (isProtectedPath && !isAuthenticated && !isLoading && !userInfo?.nickname) {
-      navigate('/', { replace: true });
+    if (isLoading) return;
+
+    if (error && isAuthorizationError(error)) {
+      console.log('[PrivateRoute] Handling auth error');
+      if (isProtectedPath) {
+        navigate('/', { replace: true });
+        return;
+      }
+      setShouldShowModal(true);
+      return;
     }
-  }, [isProtectedPath, isAuthenticated, userInfo, isLoading, navigate]);
+
+    if (isProtectedPath && !isAuthenticated && !userInfo?.nickname) {
+      navigate('/', { replace: true });
+      return;
+    }
+
+    if (!isAuthenticated && !isProtectedPath) {
+      setShouldShowModal(true);
+    }
+  }, [error, isProtectedPath, isAuthenticated, isLoading, userInfo, navigate]);
 
   const handleCloseModal = () => {
     if (window.history.length > 2) {
