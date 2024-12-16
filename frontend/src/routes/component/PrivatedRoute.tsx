@@ -22,15 +22,9 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
     isAuthenticated,
   });
 
-  useEffect(() => {
-    if (!isAuthenticated && !isProtectedPath) {
-      setShouldShowModal(true);
-    }
-  }, [isAuthenticated, isProtectedPath]);
-
   const { data: userInfo, isLoading } = useGetUserInfo({
     retry: false,
-    enabled: !isAuthenticated,
+    enabled: true,
     onSuccess: (data) => {
       if (data?.nickname && !isAuthenticated) {
         handleLoginSuccess(data.nickname);
@@ -82,6 +76,12 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
       await handleLoginSuccess(userInfo.nickname);
     }
   };
+
+  useEffect(() => {
+    if (userInfo?.nickname && !isAuthenticated) {
+      handleLoginSuccess(userInfo.nickname);
+    }
+  }, [userInfo, isAuthenticated, handleLoginSuccess]);
 
   if (isLoading) return null;
 
