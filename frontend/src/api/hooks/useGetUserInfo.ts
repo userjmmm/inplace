@@ -49,11 +49,6 @@ export const useGetUserInfo = (options: QueryOptions = {}) => {
     queryFn: () => getUserInfo(),
     retry: false,
     staleTime: 5 * 60 * 1000,
-    onError: (error: unknown) => {
-      if (isAuthorizationError(error)) {
-        console.log('[useGetUserInfo] Authorization error detected');
-      }
-    },
     ...options,
   });
 };
