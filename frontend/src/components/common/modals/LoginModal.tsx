@@ -47,14 +47,7 @@ export default function LoginModal({
 
   const handleKakaoLogin = () => {
     localStorage.setItem('redirectPath', currentPath);
-
-    const link = document.createElement('a');
-    link.href = `${BASE_URL}/oauth2/authorization/kakao`;
-    link.target = '_self';
-    link.setAttribute('crossorigin', 'use-credentials');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.location.href = `${BASE_URL}/oauth2/authorization/kakao`;
   };
 
   return (
