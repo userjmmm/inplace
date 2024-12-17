@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
 import Logo from '@/assets/images/Logo.svg';
-import { fetchInstance } from '@/api/instance';
+import { BASE_URL } from '@/api/instance';
 
 type LoginModalProps = {
   children?: (openModal: () => void) => React.ReactNode;
@@ -45,22 +45,16 @@ export default function LoginModal({
     }
   };
 
-  const handleKakaoLogin = async () => {
-    try {
-      localStorage.setItem('redirectPath', currentPath);
+  const handleKakaoLogin = () => {
+    localStorage.setItem('redirectPath', currentPath);
 
-      const response = await fetchInstance.get('/oauth2/authorization/kakao', {
-        maxRedirects: 0, // 자동 리다이렉트 방지
-        validateStatus: (status) => status === 302,
-      });
-
-      const redirectUrl = response.headers.location;
-      if (redirectUrl) {
-        window.location.href = redirectUrl;
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+    const link = document.createElement('a');
+    link.href = `${BASE_URL}/oauth2/authorization/kakao`;
+    link.target = '_self';
+    link.setAttribute('crossorigin', 'use-credentials');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
