@@ -39,8 +39,18 @@ jobs:
       # output의 내용을 루트로 이동
       - name: Move output contents
         run: |
-          mv output/* .
+          echo "Before move - root directory:"
+          ls -la
+          
+          echo "\nBefore move - output directory:"
+          ls -la output/
+          
+          # output의 내용을 덮어쓰기로 이동
+          cp -rf output/* .
           rm -rf output
+          
+          echo "\nAfter move - final structure:"
+          ls -la
       
       - name: Pushes to test branch
         id: push_directory
