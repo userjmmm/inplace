@@ -25,42 +25,39 @@ jobs:
         run: npm test
 
   sync-fork:
-    if: github.ref == 'refs/heads/test/build-workflow'  # 테스트용 브랜치에서 실행
+    if: github.ref == 'refs/heads/test/build-workflow'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
       
+      # build.sh 실행
       - name: creates output
         working-directory: frontend
         run: sh build.sh
+
+      # 디버깅을 위한 경로와 구조 확인
+      - name: Debug directory structure
+        run: |
+          echo "Before move - directory structure:"
+          ls -la
+          ls -la output/
       
       # output의 내용을 루트로 이동
       - name: Move output contents
         run: |
-          echo "Before move - root directory:"
-          ls -la
-          
-          echo "\nBefore move - output directory:"
-          ls -la output/
-          
-          # output의 내용을 덮어쓰기로 이동
           cp -rf output/* .
           rm -rf output
           
-          echo "\nAfter move - final structure:"
+          echo "After move - final structure:"
           ls -la
-      
-      - name: Pushes to test branch
-        id: push_directory
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.VERCEL_PAT }}
-        with:
-          source-directory: '.'
-          destination-github-username: 'userjmmm'  # 본인의 username 유지
-          destination-repository-name: 'inplace'   # 본인의 fork된 레포 유지
-          user-email: ${{ secrets.VERCEL_EMAIL }}
-          commit-message: ${{ github.event.commits[0].message }}
-          target-branch: test/result              # 결과를 확인할 새로운 브랜치
+
+      # test/result 브랜치에 직접 커밋
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "test: build.sh 결과물 테스트"
+          git push origin HEAD:test/result
