@@ -39,7 +39,7 @@ jobs:
       # output의 내용을 루트로 이동
       - name: Move output contents
         run: |
-          mv frontend/../output/* .
+          mv ../output/* .
           rm -rf frontend/../output
       
       - name: Pushes to test branch
