@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /review/
 Disallow: /my/
 Disallow: /choice/
 Disallow: /auth/
