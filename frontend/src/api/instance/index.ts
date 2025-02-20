@@ -14,7 +14,6 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
       ...config.headers,
     },
   });
-  axios.defaults.withCredentials = true;
   instance.interceptors.response.use(
     (response) => response,
     async (error) => {
