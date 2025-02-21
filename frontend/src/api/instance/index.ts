@@ -1,9 +1,9 @@
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
-import * as Sentry from '@sentry/react';
 
 import { QueryCache, QueryClient } from '@tanstack/react-query';
 import getCurrentConfig from '../config';
+import captureErrorWithRetry from '@/libs/Sentry/captureErrorWithRetry';
 
 const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
   const instance = axios.create({
@@ -20,10 +20,9 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
       if (!error.response) {
         if (import.meta.env.PROD) {
           const requestUrl = error.config?.url || 'URL 정보 없음';
-          Sentry.withScope((scope) => {
-            scope.setLevel('error');
-            scope.setTag('error type', 'Network Error');
-            Sentry.captureMessage(`[Network Error] ${requestUrl} \n${error.message ?? `네트워크 오류`}`);
+          await captureErrorWithRetry(`[Network Error] ${requestUrl} \n${error.message ?? '네트워크 오류'}`, {
+            tags: { 'error type': 'Network Error' },
+            level: 'error',
           });
         }
         return Promise.reject(error);
@@ -33,13 +32,11 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
       if (import.meta.env.PROD && error.response.status >= 400 && ![401, 403, 409].includes(error.response.status)) {
         const isServerError = error.response.status >= 500;
         const errorType = isServerError ? 'Server Error' : 'Api Error';
-        Sentry.withScope((scope) => {
-          scope.setLevel('error');
-          scope.setTag('error type', errorType);
-          Sentry.captureMessage(`[${errorType}] ${error.config.url} \n${error.message}`);
+        await captureErrorWithRetry(`[${errorType}] ${error.config.url} \n${error.message}`, {
+          tags: { 'error type': errorType },
+          level: 'error',
         });
       }
-
       return Promise.reject(error);
     },
   );
@@ -62,10 +59,8 @@ export const queryClient = new QueryClient({
     },
     mutations: {
       onError: (error) => {
-        Sentry.captureException(error, {
-          tags: {
-            type: 'mutation_error',
-          },
+        captureErrorWithRetry(error, {
+          tags: { type: 'mutation_error' },
         });
       },
       throwOnError: true,
@@ -73,7 +68,7 @@ export const queryClient = new QueryClient({
   },
   queryCache: new QueryCache({
     onError: (error) => {
-      Sentry.captureException(error);
+      captureErrorWithRetry(error);
     },
   }),
 });

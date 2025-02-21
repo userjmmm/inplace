@@ -3,11 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import { QueryClientProvider } from '@tanstack/react-query';
-
-import { browserTracingIntegration } from '@sentry/react';
 import { queryClient } from './api/instance/index.js';
 
 import App from './App';
+import { setSentryInitialized } from './libs/Sentry/sentry.js';
+import initSentryWithRetry from './libs/Sentry/initSentryWithRetry.js';
 
 async function startApp() {
   if (import.meta.env.DEV) {
@@ -16,18 +16,9 @@ async function startApp() {
   }
 
   if (import.meta.env.PROD) {
-    import('@sentry/react').then(async (Sentry) => {
-      Sentry.init({
-        dsn: import.meta.env.VITE_SENTRY_DSN,
-        integrations: [browserTracingIntegration()],
-        // Tracing 설정
-        tracesSampleRate: 1.0,
-        tracePropagationTargets: [/^https:\/\/api\.inplace\.my/, '!http://localhost', '!https://localhost'],
-      });
-    });
+    const initialized = await initSentryWithRetry();
+    setSentryInitialized(initialized);
   }
-}
-startApp().then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
@@ -37,4 +28,5 @@ startApp().then(() => {
       </QueryClientProvider>
     </StrictMode>,
   );
-});
+}
+startApp();
