@@ -180,6 +180,7 @@ export default function MapPage() {
             onChange={handleLocationChange}
             placeholder="위치"
             type="location"
+            selectedOptions={selectedLocations}
           />
           <DropdownMenu
             options={influencerOptions}
@@ -187,12 +188,14 @@ export default function MapPage() {
             placeholder="인플루언서"
             type="influencer"
             defaultValue={undefined}
+            selectedOptions={selectedInfluencers}
           />
           <DropdownMenu
             options={categoryOptions}
             onChange={handleCategoryChange}
             placeholder="카테고리"
             type="category"
+            selectedOptions={selectedCategories}
           />
         </DropdownContainer>
         <Chip
@@ -241,6 +244,8 @@ export default function MapPage() {
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
+          isListExpanded={isListExpanded}
+          onListExpand={handleListExpand}
         />
       </MobilePlaceSection>
     </PageContainer>
