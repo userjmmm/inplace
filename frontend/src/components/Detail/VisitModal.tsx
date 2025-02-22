@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+// import { useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/common/Button';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import LoginModal from '../common/modals/LoginModal';
@@ -10,7 +11,19 @@ import { useGetMobileMapQR } from '@/api/hooks/useGetMobileMapQR';
 export default function VisitModal({ id, onClose }: { id: number; onClose: () => void }) {
   const location = useLocation();
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const { data: qrSrc } = useGetMobileMapQR(id, 200, 200);
+  const { data: blobData } = useGetMobileMapQR(id, 200, 200);
+  const [qrSrc, setQrSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!blobData) return;
+
+    if (qrSrc) {
+      URL.revokeObjectURL(qrSrc);
+    }
+
+    const imageUrl = URL.createObjectURL(blobData);
+    setQrSrc(imageUrl);
+  }, [blobData]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -25,15 +38,6 @@ export default function VisitModal({ id, onClose }: { id: number; onClose: () =>
   const handleModalClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
   };
-
-  useEffect(() => {
-    return () => {
-      if (qrSrc) {
-        URL.revokeObjectURL(qrSrc);
-      }
-    };
-  }, [qrSrc]);
-
   // const buttonStyle = {
   //   fontWeight: 'bold',
   //   width: isMobile ? '46%' : '170px',
@@ -54,7 +58,7 @@ export default function VisitModal({ id, onClose }: { id: number; onClose: () =>
           </DescriptionSection>
           <ImageFrame>
             <span />
-            <Image src={qrSrc} alt="QR CODE" />
+            {qrSrc && <Image src={qrSrc} alt="QR CODE" />}
           </ImageFrame>
           <BtnContainer>
             <Button aria-label="complete_btn" variant="mint" size="small" onClick={() => onClose()}>
