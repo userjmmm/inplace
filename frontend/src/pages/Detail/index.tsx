@@ -11,7 +11,6 @@ import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import { Text } from '@/components/common/typography/Text';
 import InfoTap from '@/components/Detail/InfoTap';
 // import ReviewTap from '@/components/Detail/ReviewTap';
-import VisitModal from '@/components/Detail/VisitModal';
 import { useGetPlaceInfo } from '@/api/hooks/useGetPlaceInfo';
 // import Loading from '@/components/common/layouts/Loading';
 // import Error from '@/components/common/layouts/Error';
@@ -20,12 +19,12 @@ import BasicThumb from '@/assets/images/basic-thumb.png';
 import { usePostPlaceLike } from '@/api/hooks/usePostPlaceLike';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
+import Button from '@/components/common/Button';
 
 export default function DetailPage() {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   // const [activeTab, setActiveTab] = useState<'info' | 'review'>('info');
-  const [visitModal, setVisitModal] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const { id } = useParams() as { id: string };
   const { data: infoData } = useGetPlaceInfo(id);
@@ -155,9 +154,16 @@ export default function DetailPage() {
               <RiKakaoTalkFill size={20} color="yellow" />
               방문할래요
             </StyledButton> */}
-            <a href={currentVideoUrl}>
-              <FaYoutube size={46} color="red" style={{ marginTop: '4px' }} />
-            </a>
+            <StyledButton
+              aria-label="youtube_btn"
+              variant="outline"
+              onClick={() => {
+                window.location.href = currentVideoUrl;
+              }}
+            >
+              <FaYoutube size={24} color="red" />
+              영상 보기
+            </StyledButton>
           </ButtonWrapper>
         </TitleContainer>
       </ImageContainer>
@@ -179,6 +185,7 @@ export default function DetailPage() {
           longitude={infoData?.longitude}
           latitude={infoData?.latitude}
           rating={infoData?.rating}
+          placeId={Number(id)}
         />
         {/* ) : (
           <QueryErrorResetBoundary>
@@ -192,9 +199,6 @@ export default function DetailPage() {
           </QueryErrorResetBoundary>
         )} */}
       </InfoContainer>
-      {visitModal && (
-        <VisitModal id={infoData?.placeId} placeName={infoData?.placeName} onClose={() => setVisitModal(false)} />
-      )}
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
@@ -394,3 +398,20 @@ const LikeIcon = styled.div`
 //     gap: 4px;
 //   }
 // `;
+
+const StyledButton = styled(Button)`
+  padding: 4px 16px;
+  height: 32px;
+  font-size: 14px;
+  gap: 4px;
+
+  @media screen and (max-width: 768px) {
+    svg {
+      width: 18px;
+    }
+    padding: 2px 10px;
+    height: 28px;
+    font-size: 12px;
+    gap: 4px;
+  }
+`;
