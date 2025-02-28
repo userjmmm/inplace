@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import { TbCurrentLocation } from 'react-icons/tb';
 import { GrPowerCycle } from 'react-icons/gr';
 import Button from '@/components/common/Button';
-import { LocationData, MarkerData, MarkerInfo, PlaceData } from '@/types';
+import { LocationData, MarkerData, PlaceData } from '@/types';
 import InfoWindow from './InfoWindow';
 import BasicImage from '@/assets/images/basic-image.webp';
-import { useGetMarkerInfo } from '@/api/hooks/useGetMarkerInfo';
 import { Text } from '@/components/common/typography/Text';
 import useMapActions from '@/hooks/Map/useMapAction';
+import useMarkerData from '@/hooks/Map/useMarkerData';
 
 interface MapWindowProps {
   influencerImg: string;
@@ -42,10 +42,15 @@ export default function InfluencerMapWindow({
 }: MapWindowProps) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [markerInfo, setMarkerInfo] = useState<MarkerInfo | PlaceData>();
-  const [shouldFetchData, setShouldFetchData] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const { moveMapToMarker, handleResetCenter } = useMapActions({ mapRef, isMobile });
+  const { markerInfo, handleMarkerClick } = useMarkerData({
+    selectedPlaceId,
+    placeData,
+    onPlaceSelect,
+    moveMapToMarker,
+    mapRef,
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -59,7 +64,6 @@ export default function InfluencerMapWindow({
   const originSize = isMobile ? 26 : 34;
   const userLocationSize = isMobile ? 16 : 24;
   const selectedMarker = markers.find((m) => m.placeId === selectedPlaceId);
-  const MarkerInfoData = useGetMarkerInfo(selectedPlaceId?.toString() || '', shouldFetchData);
 
   useEffect(() => {
     if (selectedPlaceId && selectedMarker) {
@@ -112,37 +116,6 @@ export default function InfluencerMapWindow({
     }
   }, [shouldFetchPlaces, fetchLocation, onCompleteFetch]);
 
-  // 마커 정보를 새로 호출한 후 데이터 업데이트
-  useEffect(() => {
-    if (shouldFetchData && MarkerInfoData.data) {
-      setMarkerInfo(MarkerInfoData.data);
-      setShouldFetchData(false);
-    }
-  }, [MarkerInfoData.data, shouldFetchData]);
-
-  // 마커 정보가 있을 경우 전달, 없을 경우 새로 호출 함수
-  const getMarkerInfoWithPlaceInfo = useCallback(
-    (place: number) => {
-      if (!placeData) return;
-
-      const existData = placeData.find((m) => m.placeId === place);
-      if (existData) {
-        setMarkerInfo(existData);
-        setShouldFetchData(false);
-      } else {
-        setShouldFetchData(true);
-      }
-    },
-    [placeData],
-  );
-
-  // 마커나 장소가 선택되었을 경우
-  useEffect(() => {
-    if (selectedPlaceId) {
-      getMarkerInfoWithPlaceInfo(selectedPlaceId);
-    }
-  }, [selectedPlaceId, placeData, getMarkerInfoWithPlaceInfo]);
-
   const handleSearchNearby = useCallback(() => {
     fetchLocation();
   }, [fetchLocation]);
@@ -150,20 +123,6 @@ export default function InfluencerMapWindow({
   useEffect(() => {
     onSearchNearby?.(handleSearchNearby);
   }, [handleSearchNearby, onSearchNearby]);
-
-  // 마커 클릭 시, 장소와 마커를 선택 상태로
-  const handleMarkerClick = useCallback(
-    (placeId: number, marker: kakao.maps.Marker) => {
-      if (mapRef.current && marker) {
-        onPlaceSelect(selectedPlaceId === placeId ? null : placeId);
-        if (selectedPlaceId !== placeId) {
-          const pos = marker.getPosition();
-          moveMapToMarker(pos.getLat(), pos.getLng());
-        }
-      }
-    },
-    [selectedPlaceId, onPlaceSelect, moveMapToMarker],
-  );
 
   return (
     <>
