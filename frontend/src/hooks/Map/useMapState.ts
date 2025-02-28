@@ -41,7 +41,6 @@ export default function useMapState() {
     isListExpanded,
     selectedPlaceId,
     placeData,
-
     setIsListExpanded,
     handleBoundsChange,
     handleCenterChange,

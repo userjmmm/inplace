@@ -9,6 +9,7 @@ import InfoWindow from './InfoWindow';
 import BasicImage from '@/assets/images/basic-image.webp';
 import { useGetMarkerInfo } from '@/api/hooks/useGetMarkerInfo';
 import { Text } from '@/components/common/typography/Text';
+import useMapActions from '@/hooks/Map/useMapAction';
 
 interface MapWindowProps {
   influencerImg: string;
@@ -21,7 +22,7 @@ interface MapWindowProps {
   onCompleteFetch: (value: boolean) => void;
   onPlaceSelect: (placeId: number | null) => void;
   isListExpanded?: boolean;
-  onListExpand?: () => void;
+  onListExpand?: (value: boolean) => void;
   onSearchNearby?: (handleSearcNearby: () => void) => void;
 }
 
@@ -44,6 +45,7 @@ export default function InfluencerMapWindow({
   const [markerInfo, setMarkerInfo] = useState<MarkerInfo | PlaceData>();
   const [shouldFetchData, setShouldFetchData] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const { moveMapToMarker, handleResetCenter } = useMapActions({ mapRef, isMobile });
 
   useEffect(() => {
     const handleResize = () => {
@@ -58,41 +60,6 @@ export default function InfluencerMapWindow({
   const userLocationSize = isMobile ? 16 : 24;
   const selectedMarker = markers.find((m) => m.placeId === selectedPlaceId);
   const MarkerInfoData = useGetMarkerInfo(selectedPlaceId?.toString() || '', shouldFetchData);
-
-  // 마커나 장소 선택시 지도 중심으로 이동
-  const moveMapToMarker = useCallback(
-    (latitude: number, longitude: number) => {
-      if (mapRef.current) {
-        const currentLevel = mapRef.current.getLevel();
-        const baseOffset = -0.007;
-
-        let levelMultiplier;
-        if (currentLevel <= 5) {
-          levelMultiplier = 1;
-        } else if (currentLevel <= 8) {
-          levelMultiplier = currentLevel * 1.05;
-        } else {
-          levelMultiplier = currentLevel * 2;
-        }
-
-        const offsetY = isMobile ? (baseOffset * levelMultiplier) / 5 : 0;
-        const position = new kakao.maps.LatLng(latitude - offsetY, longitude);
-
-        if (mapRef.current.getLevel() > 10) {
-          mapRef.current.setLevel(9, {
-            anchor: position,
-            animate: true,
-          });
-        }
-        setTimeout(() => {
-          if (mapRef.current) {
-            mapRef.current.panTo(position);
-          }
-        }, 100);
-      }
-    },
-    [isMobile],
-  );
 
   useEffect(() => {
     if (selectedPlaceId && selectedMarker) {
@@ -184,13 +151,6 @@ export default function InfluencerMapWindow({
     onSearchNearby?.(handleSearchNearby);
   }, [handleSearchNearby, onSearchNearby]);
 
-  const handleResetCenter = useCallback(() => {
-    if (mapRef.current && userLocation) {
-      mapRef.current.setCenter(new kakao.maps.LatLng(userLocation.lat, userLocation.lng));
-      mapRef.current.setLevel(4);
-    }
-  }, [userLocation]);
-
   // 마커 클릭 시, 장소와 마커를 선택 상태로
   const handleMarkerClick = useCallback(
     (placeId: number, marker: kakao.maps.Marker) => {
@@ -218,7 +178,6 @@ export default function InfluencerMapWindow({
           onCreate={(map) => {
             mapRef.current = map;
           }}
-          ref={mapRef}
         >
           {userLocation && (
             <MapMarker
@@ -269,12 +228,17 @@ export default function InfluencerMapWindow({
           )}
         </Map>
         <ResetButtonContainer>
-          <StyledBtn aria-label="reset_btn" onClick={handleResetCenter} variant="white" size="small">
+          <StyledBtn
+            aria-label="reset_btn"
+            onClick={() => userLocation && handleResetCenter(userLocation)}
+            variant="white"
+            size="small"
+          >
             <TbCurrentLocation size={20} />
           </StyledBtn>
         </ResetButtonContainer>
         {!isListExpanded && (
-          <ListViewButton onClick={onListExpand}>
+          <ListViewButton onClick={() => onListExpand && onListExpand(true)}>
             <Text size="xs" variant="white" weight="normal">
               목록 보기
             </Text>
