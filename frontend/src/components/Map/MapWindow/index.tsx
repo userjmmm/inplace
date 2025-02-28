@@ -43,6 +43,7 @@ export default function MapWindow({
   onListExpand,
 }: MapWindowProps) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [mapCenter, setMapCenter] = useState({ lat: 37.5665, lng: 126.978 });
   const [mapBound, setMapBound] = useState<LocationData>({
@@ -99,6 +100,7 @@ export default function MapWindow({
   }, [mapRef.current]);
 
   useEffect(() => {
+    if (!isMapReady) return;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -106,23 +108,25 @@ export default function MapWindow({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
+          if (!mapRef.current) {
+            return;
+          }
           setUserLocation(userLoc);
           setIsLoading(false);
-          if (mapRef.current) {
-            mapRef.current.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
-            fetchMarkers();
-          }
+          mapRef.current.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
+          fetchMarkers();
         },
         (err) => {
+          setIsLoading(false);
           console.error('Geolocation error:', err);
         },
         { enableHighAccuracy: true },
       );
     } else {
-      setIsLoading(true);
+      setIsLoading(false);
       console.warn('Geolocation is not supported by this browser.');
     }
-  }, []);
+  }, [isMapReady]);
 
   useEffect(() => {
     if (mapRef.current && center) {
@@ -227,6 +231,7 @@ export default function MapWindow({
         level={4}
         onCreate={(mapInstance) => {
           mapRef.current = mapInstance;
+          setIsMapReady(true);
         }}
         onCenterChanged={() => {
           setShowSearchButton(true);

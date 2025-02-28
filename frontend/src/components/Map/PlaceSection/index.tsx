@@ -37,7 +37,6 @@ export default function PlaceSection({
   const previousPlacesRef = useRef<PlaceData[]>([]);
 
   const { ref: loadMoreRef, inView } = useInView({
-    // useInView = Intersection Oberser API를 react hook으로 구현한 것
     root: sectionRef.current,
     rootMargin: '0px',
     threshold: 0, // 요소가 조금이라도 보이면 감지
