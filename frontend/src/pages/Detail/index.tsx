@@ -176,10 +176,12 @@ export default function DetailPage() {
       <InfoContainer>
         {/* {activeTab === 'info' ? ( */}
         <InfoTap
+          address={infoData.address}
           category={infoData?.category}
           facility={infoData?.facility}
           openingHours={infoData?.openingHours}
           kakaoPlaceUrl={infoData?.kakaoPlaceUrl}
+          naverPlaceUrl={infoData?.naverPlaceUrl}
           googlePlaceUrl={infoData?.googlePlaceUrl}
           googleReviews={infoData?.googleReviews}
           longitude={infoData?.longitude}
