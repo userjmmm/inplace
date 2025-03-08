@@ -62,7 +62,12 @@ export type PlaceData = {
   placeName: string;
   address: AddressInfo;
   category: string;
-  influencerName: string;
+  videos: [
+    {
+      videoUrl: string;
+      influencerName: string;
+    },
+  ];
   menuImgUrl?: string | null;
   longitude: string;
   latitude: string;
@@ -203,7 +208,12 @@ export type MarkerInfo = {
   placeId: number;
   placeName: string;
   category: string;
-  influencerName: string;
+  videos: [
+    {
+      videoUrl: string;
+      influencerName: string;
+    },
+  ];
   address: AddressInfo;
   menuImgUrl?: string | null;
 };
