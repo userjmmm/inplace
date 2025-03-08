@@ -43,8 +43,8 @@ export default function InfluencerMapWindow({
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const { moveMapToMarker, handleResetCenter } = useMapActions({ mapRef, isMobile });
-  const { markerInfo, handleMarkerClick } = useMarkerData({
+  const { moveMapToMarker, handleResetCenter } = useMapActions(mapRef);
+  const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
     placeData,
     onPlaceSelect,
@@ -137,6 +137,7 @@ export default function InfluencerMapWindow({
           onCreate={(map) => {
             mapRef.current = map;
           }}
+          onClick={handleMapClick}
         >
           {userLocation && (
             <MapMarker
@@ -176,13 +177,9 @@ export default function InfluencerMapWindow({
                 lat: selectedMarker.latitude,
                 lng: selectedMarker.longitude,
               }}
+              clickable
             >
-              <InfoWindow
-                data={markerInfo}
-                onClose={() => {
-                  onPlaceSelect(null);
-                }}
-              />
+              <InfoWindow data={markerInfo} />
             </CustomOverlayMap>
           )}
         </Map>

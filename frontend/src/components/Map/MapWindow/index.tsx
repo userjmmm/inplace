@@ -45,7 +45,7 @@ export default function MapWindow({
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [mapCenter, setMapCenter] = useState({ lat: 37.5665, lng: 126.978 });
+  const [mapCenter, setMapCenter] = useState(center || { lat: 37.5665, lng: 126.978 });
   const [mapBound, setMapBound] = useState<LocationData>({
     topLeftLatitude: 0,
     topLeftLongitude: 0,
@@ -55,8 +55,8 @@ export default function MapWindow({
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const { moveMapToMarker, handleResetCenter } = useMapActions({ mapRef, isMobile });
-  const { markerInfo, handleMarkerClick } = useMarkerData({
+  const { moveMapToMarker, handleResetCenter } = useMapActions(mapRef);
+  const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
     placeData,
     onPlaceSelect,
@@ -108,23 +108,19 @@ export default function MapWindow({
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          setIsLoading(false);
           const userLoc = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          if (!mapRef.current) {
-            return;
-          }
           setUserLocation(userLoc);
-          setIsLoading(false);
-          mapRef.current.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
+          mapRef.current?.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
           fetchMarkers();
         },
         (err) => {
-          setIsLoading(false);
           console.error('Geolocation error:', err);
         },
-        { enableHighAccuracy: true },
+        { maximumAge: 30000, timeout: 5000 },
       );
     } else {
       setIsLoading(false);
@@ -198,6 +194,7 @@ export default function MapWindow({
         onZoomChanged={() => {
           setShowSearchButton(true);
         }}
+        onClick={handleMapClick}
       >
         {userLocation && (
           <MapMarker
@@ -237,13 +234,9 @@ export default function MapWindow({
               lat: selectedMarker.latitude,
               lng: selectedMarker.longitude,
             }}
+            clickable
           >
-            <InfoWindow
-              data={markerInfo}
-              onClose={() => {
-                onPlaceSelect(null);
-              }}
-            />
+            <InfoWindow data={markerInfo} />
           </CustomOverlayMap>
         )}
       </Map>

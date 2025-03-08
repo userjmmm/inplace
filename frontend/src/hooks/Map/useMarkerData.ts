@@ -68,5 +68,11 @@ export default function useMarkerData({
     [selectedPlaceId, onPlaceSelect, moveMapToMarker],
   );
 
-  return { markerInfo, handleMarkerClick };
+  const handleMapClick = useCallback(() => {
+    if (selectedPlaceId !== null) {
+      onPlaceSelect(null);
+    }
+  }, [selectedPlaceId, onPlaceSelect]);
+
+  return { markerInfo, handleMarkerClick, handleMapClick };
 }
