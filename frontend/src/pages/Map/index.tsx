@@ -229,6 +229,7 @@ const DropdownContainer = styled.div`
 `;
 
 const PlaceSectionDesktop = styled.div`
+  margin-top: 10px;
   @media screen and (max-width: 768px) {
     display: none;
   }

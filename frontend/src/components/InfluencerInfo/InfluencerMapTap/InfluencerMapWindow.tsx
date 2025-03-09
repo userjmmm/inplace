@@ -249,6 +249,7 @@ const Btn = styled.div`
   border-bottom: 0.5px solid #c3c3c3;
   width: fit-content;
   padding-bottom: 4px;
+  margin-bottom: 10px;
   gap: 6px;
   cursor: pointer;
 

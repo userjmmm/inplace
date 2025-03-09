@@ -60,13 +60,13 @@ const dummyPlaces: PlaceData[] = [
     address: {
       address1: '대구',
       address2: '북구',
-      address3: '칠성로 70-1 주소개길면어떻게되너ㅏㅏㄴㅁㄴㅁㅇㄴㄹㅁ렴ㅈ룜ㅈ로ㅑㅁ죠오랴ㅕㅁ조ㅑ려ㅗㅁ쟈ㅕ로ㅑㅕㅁ졸',
+      address3: '칠성로 70-1 주소개길면어떻게되너ㅏㅏㄴㅁㄴ',
     },
     category: '음식점',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
-        videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
+        influencerName: '카페랩 ',
+        videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t',
       },
     ],
     longitude: '128.59691803894955',
@@ -85,8 +85,8 @@ const dummyPlaces: PlaceData[] = [
     category: '한식',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
-        videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
+        influencerName: '카페ie',
+        videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t',
       },
     ],
     longitude: '126.9314925',
@@ -126,7 +126,7 @@ const dummyPlaces: PlaceData[] = [
     videos: [
       {
         influencerName: '아이유',
-        videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
+        videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t',
       },
     ],
     longitude: '128.65037738548736',
@@ -146,7 +146,7 @@ const dummyPlaces: PlaceData[] = [
     videos: [
       {
         influencerName: '아이유',
-        videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
+        videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t',
       },
     ],
     longitude: '127.33301043369335',
@@ -205,7 +205,7 @@ const dummyPlaces: PlaceData[] = [
     category: '치킨',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
+        influencerName: '카페ie',
         videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
       },
     ],
@@ -225,8 +225,8 @@ const dummyPlaces: PlaceData[] = [
     category: '태국식',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
-        videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
+        influencerName: 'die',
+        videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t',
       },
     ],
     longitude: '127.1436094525637',
@@ -245,8 +245,8 @@ const dummyPlaces: PlaceData[] = [
     category: '인도식',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
-        videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
+        influencerName: '카페랩die',
+        videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t',
       },
     ],
     longitude: '129.11483195198562',
@@ -265,8 +265,8 @@ const dummyPlaces: PlaceData[] = [
     category: '중식',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
-        videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
+        influencerName: '카페랩 ',
+        videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t',
       },
     ],
     longitude: '128.848643',
@@ -285,7 +285,7 @@ const dummyPlaces: PlaceData[] = [
     category: '양식',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
+        influencerName: '카ab. Maudie',
         videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
       },
     ],
@@ -305,7 +305,7 @@ const dummyPlaces: PlaceData[] = [
     category: '한식',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
+        influencerName: '카e',
         videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
       },
     ],
@@ -325,7 +325,7 @@ const dummyPlaces: PlaceData[] = [
     category: '음식점',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
+        influencerName: '. Maudie',
         videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
       },
     ],
@@ -345,7 +345,7 @@ const dummyPlaces: PlaceData[] = [
     category: '카페',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
+        influencerName: '카페랩 ie',
         videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
       },
     ],
@@ -365,7 +365,7 @@ const dummyPlaces: PlaceData[] = [
     category: '일식',
     videos: [
       {
-        influencerName: '카페랩 모디 Cafe Lab. Maudie',
+        influencerName: '카페랩',
         videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t=6s',
       },
     ],

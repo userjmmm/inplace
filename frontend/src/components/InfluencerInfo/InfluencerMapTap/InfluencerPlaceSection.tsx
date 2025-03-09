@@ -183,14 +183,10 @@ const ContentContainer = styled.div`
 const PlacesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 30px;
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  @media screen and (max-width: 430px) {
-    gap: 8px;
+    gap: 20px;
   }
 `;
 
