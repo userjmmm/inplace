@@ -98,7 +98,7 @@ export default function PlaceItem({
           {isLike ? (
             <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />
           ) : (
-            <PiHeartLight color="white" size={30} data-testid="PiHeartLight" />
+            <PiHeartLight size={30} data-testid="PiHeartLight" />
           )}
         </LikeIcon>
       </PlaceCard>
@@ -118,12 +118,15 @@ const PlaceCard = styled.div<{ $isSelected: boolean }>`
   height: 102px;
   border-radius: 6px;
   cursor: pointer;
-  background-color: ${({ $isSelected }) => ($isSelected ? '#1b1a1a' : 'none')};
+  background-color: ${({ $isSelected, theme }) => {
+    if ($isSelected) return theme.backgroundColor === '#292929' ? '#1b1a1a' : '#d5ecec';
+    return 'none';
+  }};
   transition: background-color 0.1s ease;
   box-sizing: border-box;
 
   &:hover {
-    background-color: #1b1a1a;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1b1a1a' : '#d5ecec')};
   }
 
   @media screen and (max-width: 768px) {

@@ -128,18 +128,30 @@ export const detailHandlers = [
         placeId: 1,
         placeName: '료코',
         address: {
-          address1: '대구',
-          address2: '북구',
-          address3: '대학로',
+          address1: '경북',
+          address2: '경주시',
+          address3: '첨성로99번길 24 료코',
         },
         likes: true,
         videos: [
           {
             influencerName: '성시경',
-            videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
+            videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME',
           },
           {
-            influencerName: '',
+            influencerName: '광마니',
+            videoUrl: 'https://www.youtube.com/watch?v=cgAPp2SRDiE',
+          },
+          {
+            influencerName: '쯔양',
+            videoUrl: 'https://www.youtube.com/watch?v=B_gGpdUVe8o',
+          },
+          {
+            influencerName: '떡볶퀸',
+            videoUrl: 'https://www.youtube.com/watch?v=YdrW34lver4',
+          },
+          {
+            influencerName: '기본',
             videoUrl: BasicImage,
           },
         ],
@@ -155,6 +167,7 @@ export const detailHandlers = [
         rating: 2.5,
         googlePlaceUrl: 'https://google.com',
         kakaoPlaceUrl: 'https://kakao.com',
+        naverPlaceUrl: 'https://naver.com',
         googleReviews: [
           {
             like: true,
