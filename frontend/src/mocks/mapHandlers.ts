@@ -65,8 +65,12 @@ const dummyPlaces: PlaceData[] = [
     category: '음식점',
     videos: [
       {
-        influencerName: '카페랩 ',
+        influencerName: '아이유',
         videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t',
+      },
+      {
+        influencerName: '성시경',
+        videoUrl: '',
       },
     ],
     longitude: '128.59691803894955',
