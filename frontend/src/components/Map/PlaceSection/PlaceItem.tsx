@@ -135,7 +135,6 @@ const PlaceCard = styled.div<{ $isSelected: boolean }>`
 const ImageContainer = styled.div`
   width: 40%;
   aspect-ratio: 16 / 9;
-  height: 102px;
   border-radius: 6px 0px 0px 6px;
   object-fit: cover;
 
@@ -153,19 +152,19 @@ const CardContent = styled.div`
   position: relative;
   width: 90%;
   display: flex;
+  height: 100%;
   gap: 16px;
 
   @media screen and (max-width: 768px) {
-    width: 90%;
     gap: 8px;
   }
 `;
 
 const TextContainer = styled.div`
+  width: 50%;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 8px 0px;
   justify-content: center;
   svg {
     margin-right: 2px;
