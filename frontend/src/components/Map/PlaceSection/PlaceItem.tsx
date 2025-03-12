@@ -132,7 +132,7 @@ const PlaceCard = styled.div<{ $isSelected: boolean }>`
 const ImageContainer = styled.div`
   width: 40%;
   aspect-ratio: 16 / 9;
-  border-radius: 6px 0px 0px 6px;
+  border-radius: 6px;
   object-fit: cover;
 
   @media screen and (max-width: 768px) {
