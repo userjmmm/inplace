@@ -117,8 +117,16 @@ export default function MapWindow({
           mapRef.current?.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
           fetchMarkers();
         },
-        (err) => {
-          console.error('Geolocation error:', err);
+        (error) => {
+          console.error('Geolocation error:', error);
+          setIsLoading(false);
+          if (error.code === error.PERMISSION_DENIED) {
+            alert('위치 권한이 차단되었습니다. 위치를 수동으로 설정하세요.');
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            alert('위치 정보를 가져올 수 없습니다.');
+          } else if (error.code === error.TIMEOUT) {
+            alert('위치 정보 요청이 시간 초과되었습니다.');
+          }
         },
         { maximumAge: 30000, timeout: 5000 },
       );
