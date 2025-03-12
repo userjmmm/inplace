@@ -125,7 +125,7 @@ export default function MapWindow({
           } else if (error.code === error.POSITION_UNAVAILABLE) {
             alert('위치 정보를 가져올 수 없습니다.');
           } else if (error.code === error.TIMEOUT) {
-            alert('위치 정보 요청이 시간 초과되었습니다.');
+            alert('위치 정보 요청이 시간 초과되었습니다. 다시 시도해주세요.');
           }
         },
         { maximumAge: 30000, timeout: 5000 },
