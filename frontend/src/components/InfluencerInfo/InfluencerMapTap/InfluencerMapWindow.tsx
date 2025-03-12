@@ -213,6 +213,7 @@ const MapContainer = styled.div`
   position: relative;
   width: 100%;
   padding-bottom: 20px;
+  color: black;
 `;
 
 const ResetButtonContainer = styled.div`
@@ -243,10 +244,10 @@ const StyledBtn = styled(Button)`
 `;
 const Btn = styled.div`
   display: flex;
-  color: #c3c3c3;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#c3c3c3' : '#6f6f6f')};
   border-radius: 0px;
   font-size: 16px;
-  border-bottom: 0.5px solid #c3c3c3;
+  border-bottom: 0.5px solid ${({ theme }) => (theme.textColor === '#ffffff' ? '#c3c3c3' : '#6f6f6f')};
   width: fit-content;
   padding-bottom: 4px;
   margin-bottom: 10px;
