@@ -10,6 +10,7 @@ import { usePostPlaceLike } from '@/api/hooks/usePostPlaceLike';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 import FallbackImage from '@/components/common/Items/FallbackImage';
+import useExtractYoutubeVideoId from '@/libs/youtube/useExtractYoutube';
 
 interface PlaceItemProps extends PlaceData {
   onClick: () => void;
@@ -17,12 +18,6 @@ interface PlaceItemProps extends PlaceData {
 }
 const getFullAddress = (addr: PlaceData['address']) => {
   return [addr.address1, addr.address2, addr.address3].filter(Boolean).join(' ');
-};
-
-const extractYoutubeId = (url: string) => {
-  const match = url?.match(/(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w-]*)(&(amp;)?[\w?=]*)?/);
-  const youtubeId = match && match[1] ? match[1] : null;
-  return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
 };
 
 export default function PlaceItem({
@@ -41,6 +36,8 @@ export default function PlaceItem({
   const { mutate: postLike } = usePostPlaceLike();
   const queryClient = useQueryClient();
   const isYoutubeUrl = videos[0].videoUrl?.includes('youtu');
+  const extractedVideoId = useExtractYoutubeVideoId(videos[0].videoUrl || '');
+  const imgSrc = isYoutubeUrl ? `https://img.youtube.com/vi/${extractedVideoId}/mqdefault.jpg` : '';
 
   const handleClickLike = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -73,7 +70,7 @@ export default function PlaceItem({
       <PlaceCard key={placeId} onClick={onClick} $isSelected={isSelected}>
         <CardContent>
           <ImageContainer>
-            <FallbackImage src={isYoutubeUrl ? extractYoutubeId(videos[0].videoUrl) : ''} alt={placeName} />
+            <FallbackImage src={imgSrc} alt={placeName} />
           </ImageContainer>
           <TextContainer>
             <Text size="s" weight="bold" variant="white">
