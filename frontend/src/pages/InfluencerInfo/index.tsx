@@ -114,30 +114,32 @@ export default function InfluencerInfoPage() {
         </Tap>
       </TapContainer>
       <InfoContainer>
-        {activeTab === 'video' && (
-          <SortSection>
-            <StyledButton
-              aria-label="sort_btn"
-              variant="white"
-              size="small"
-              onClick={() => setShowSortOptions(!showSortOptions)}
-            >
-              <span>{sortLabel[sortOption]}</span>
-              <IoIosArrowDown size={16} />
-            </StyledButton>
-            {showSortOptions && (
-              <SortDropdown>
-                <SortItem onClick={() => handleSortChange('publishTime')}>
-                  최신순 {sortOption === 'publishTime'}
-                </SortItem>
-                <SortItem onClick={() => handleSortChange('popularity')}>인기순 {sortOption === 'popularity'}</SortItem>
-                <SortItem onClick={() => handleSortChange('likes')}>좋아요순 {sortOption === 'likes'}</SortItem>
-              </SortDropdown>
-            )}
-          </SortSection>
-        )}
         {activeTab === 'video' ? (
-          <InfluencerVideoTap influencerId={id} sortOption={sortOption} />
+          <>
+            <SortSection>
+              <StyledButton
+                aria-label="sort_btn"
+                variant="white"
+                size="small"
+                onClick={() => setShowSortOptions(!showSortOptions)}
+              >
+                <span>{sortLabel[sortOption]}</span>
+                <IoIosArrowDown size={16} />
+              </StyledButton>
+              {showSortOptions && (
+                <SortDropdown>
+                  <SortItem onClick={() => handleSortChange('publishTime')}>
+                    최신순 {sortOption === 'publishTime'}
+                  </SortItem>
+                  <SortItem onClick={() => handleSortChange('popularity')}>
+                    인기순 {sortOption === 'popularity'}
+                  </SortItem>
+                  <SortItem onClick={() => handleSortChange('likes')}>좋아요순 {sortOption === 'likes'}</SortItem>
+                </SortDropdown>
+              )}
+            </SortSection>
+            <InfluencerVideoTap influencerId={id} sortOption={sortOption} />
+          </>
         ) : (
           <QueryErrorResetBoundary>
             {({ reset }) => (

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useGetAllInfluencers } from '@/api/hooks/useGetAllInfluencers';
-import { Text } from '@/components/common/typography/Text';
 import BaseLayout from '@/components/common/BaseLayout';
 import Pagination from '@/components/common/Pagination';
 import InfluencerSearchBar from '@/components/common/InfluencerSearchBar';
@@ -48,11 +47,6 @@ export default function InfluencerPage() {
 
   return (
     <PageContainer>
-      <Title>
-        <Text size="l" weight="bold">
-          인플루언서
-        </Text>
-      </Title>
       <InfluencerSearchBar inputValue={inputValue} setInputValue={setInputValue} />
       <LayoutWrapper>
         <BaseLayout
@@ -96,8 +90,4 @@ const LayoutWrapper = styled.div`
     display: flex;
     justify-content: center;
   }
-`;
-
-const Title = styled.div`
-  width: 90%;
 `;
