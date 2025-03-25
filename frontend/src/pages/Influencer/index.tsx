@@ -8,6 +8,10 @@ import { useGetSearchInfluencers } from '@/api/hooks/useGetSearchInfluencers';
 import useDebounce from '@/hooks/useDebounce';
 
 export default function InfluencerPage() {
+  const DEBOUNCE_DELAY_MS = 300;
+  const PAGE_SIZE_MOBILE = 9;
+  const PAGE_SIZE_DESKTOP = 10;
+
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState('');
   const [isMobile, setIsMobile] = useState(false);
@@ -22,11 +26,11 @@ export default function InfluencerPage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const debouncedInputValue = useDebounce(inputValue, 300);
+  const debouncedInputValue = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
 
   const { data: allInfluencersData } = useGetAllInfluencers({
     page: currentPage - 1,
-    size: isMobile ? 9 : 10,
+    size: isMobile ? PAGE_SIZE_MOBILE : PAGE_SIZE_DESKTOP,
   });
 
   const { data: filteredData } = useGetSearchInfluencers({

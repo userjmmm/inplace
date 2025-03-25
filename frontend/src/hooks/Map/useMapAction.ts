@@ -1,23 +1,24 @@
 import { useCallback } from 'react';
 
 export default function useMapActions(mapRef: React.MutableRefObject<kakao.maps.Map | null>) {
-  const moveMapToMarker = useCallback(
-    (latitude: number, longitude: number) => {
-      if (!mapRef.current) return;
+  const PAN_DELAY_MS = 100;
+  const MIN_ZOOM_LEVEL = 4;
+  const MAX_ZOOM_THRESHOLD = 10;
+  const BASE_OFFSET_Y = -0.007;
 
-      const baseOffset = -0.007;
-      const levelMultiplier = mapRef.current.getLevel() > 10 ? 2 : 1;
-      const offsetY = (baseOffset * levelMultiplier) / 3;
-      const position = new kakao.maps.LatLng(latitude - offsetY, longitude);
+  const moveMapToMarker = useCallback((latitude: number, longitude: number) => {
+    if (!mapRef.current) return;
 
-      if (mapRef.current.getLevel() > 4) {
-        mapRef.current.setLevel(4, { anchor: position, animate: true });
-      }
+    const levelMultiplier = mapRef.current.getLevel() > MAX_ZOOM_THRESHOLD ? 2 : 1;
+    const offsetY = (BASE_OFFSET_Y * levelMultiplier) / 3;
+    const position = new kakao.maps.LatLng(latitude - offsetY, longitude);
 
-      setTimeout(() => mapRef.current?.panTo(position), 100);
-    },
-    [mapRef.current],
-  );
+    if (mapRef.current.getLevel() > MIN_ZOOM_LEVEL) {
+      mapRef.current.setLevel(MIN_ZOOM_LEVEL, { anchor: position, animate: true });
+    }
+
+    setTimeout(() => mapRef.current?.panTo(position), PAN_DELAY_MS);
+  }, []);
 
   const handleResetCenter = useCallback((userLocation: { lat: number; lng: number }) => {
     if (mapRef.current && userLocation) {

@@ -22,6 +22,8 @@ import LoginModal from '@/components/common/modals/LoginModal';
 import Button from '@/components/common/Button';
 
 export default function DetailPage() {
+  const CAROUSEL_AUTO_SCROLL_MS = 5000;
+
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   // const [activeTab, setActiveTab] = useState<'info' | 'review'>('info');
@@ -70,7 +72,7 @@ export default function DetailPage() {
       if (infoData?.videos?.length > 1) {
         setCurrentVideoIndex((prevIndex) => (prevIndex === infoData.videos.length - 1 ? 0 : prevIndex + 1));
       }
-    }, 5000);
+    }, CAROUSEL_AUTO_SCROLL_MS);
 
     return () => clearInterval(interval);
   }, [infoData?.videos?.length]);

@@ -11,6 +11,7 @@ interface InfluencerListProps {
 }
 
 export default function InfluencerList({ items, useBackCard = true, useNav = true }: InfluencerListProps) {
+  const MOBILE_INFLUENCER_LIMIT = 9;
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export default function InfluencerList({ items, useBackCard = true, useNav = tru
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const displayItems = isMobile ? items.slice(0, 9) : items;
+  const displayItems = isMobile ? items.slice(0, MOBILE_INFLUENCER_LIMIT) : items;
 
   return displayItems.length === 0 ? (
     <NoItem message="인플루언서 정보가 없어요!" alignItems="center" />

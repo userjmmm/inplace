@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 
+const REVIEW_TRUNCATE_LENGTH = {
+  MOBILE: 65,
+  DESKTOP: 150,
+};
+
 export default function GoogleReviewComment({ text }: { text: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -15,7 +20,7 @@ export default function GoogleReviewComment({ text }: { text: string }) {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  const slice = isMobile ? 65 : 150;
+  const slice = isMobile ? REVIEW_TRUNCATE_LENGTH.MOBILE : REVIEW_TRUNCATE_LENGTH.DESKTOP;
   const truncatedText = text.length > slice ? `${text.slice(0, slice)}...` : text;
 
   return (
