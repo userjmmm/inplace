@@ -30,7 +30,7 @@ export default function DropdownFilterBar({ items }: DropdownFilterBarProps) {
             <DropdownMenu {...item.props} />
           </HoverWrapper>
         ) : (
-          <Separator key={item.id} isHidden={hoverIndex === idx - 1 || hoverIndex === idx + 1} />
+          <Separator key={item.id} $isHidden={hoverIndex === idx - 1 || hoverIndex === idx + 1} />
         ),
       )}
     </BarContainer>
@@ -49,10 +49,10 @@ const BarContainer = styled.div`
   }
 `;
 
-const Separator = styled.div<{ isHidden?: boolean }>`
+const Separator = styled.div<{ $isHidden?: boolean }>`
   width: 1px;
   height: 45%;
-  background-color: ${({ isHidden }) => (isHidden ? 'white' : '#c7c7c7')};
+  background-color: ${({ $isHidden }) => ($isHidden ? 'white' : '#c7c7c7')};
   margin: auto 0px;
 `;
 
