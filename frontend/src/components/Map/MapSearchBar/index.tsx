@@ -260,6 +260,7 @@ const SearchBarContainer = styled.div`
   align-items: center;
   justify-content: flex-end;
   position: relative;
+  z-index: 100;
 
   @media screen and (max-width: 768px) {
     width: 90%;
@@ -331,7 +332,7 @@ const SearchDropDownBox = styled.ul`
   box-shadow: 0 10px 10px rgb(0, 0, 0, 0.3);
   list-style-type: none;
   color: #333333;
-  z-index: 10;
+  z-index: 100;
   box-sizing: border-box;
   margin-top: -1.5px;
 `;

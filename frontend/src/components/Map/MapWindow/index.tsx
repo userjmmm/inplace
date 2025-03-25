@@ -45,8 +45,8 @@ export default function MapWindow({
   onListExpand,
 }: MapWindowProps) {
   const GEOLOCATION_CONFIG = {
-    maximumAge: 30_000,
-    timeout: 6_000,
+    maximumAge: 30000,
+    timeout: 5000,
   };
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
@@ -307,7 +307,7 @@ const MapContainer = styled.div`
 `;
 const LoadingWrapper = styled.div`
   position: absolute;
-  z-index: 100;
+  z-index: 99;
   width: 100%;
   height: 100%;
   display: flex;
