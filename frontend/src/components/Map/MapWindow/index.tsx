@@ -44,6 +44,10 @@ export default function MapWindow({
   isListExpanded,
   onListExpand,
 }: MapWindowProps) {
+  const GEOLOCATION_CONFIG = {
+    maximumAge: 30_000,
+    timeout: 6_000,
+  };
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -144,7 +148,7 @@ export default function MapWindow({
             alert('위치 정보 요청이 시간 초과되었습니다. 다시 시도해주세요.');
           }
         },
-        { maximumAge: 30000, timeout: 6000 },
+        GEOLOCATION_CONFIG,
       );
     } else {
       setIsLoading(false);
