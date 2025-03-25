@@ -25,7 +25,7 @@ export default function SearchBar({
   const debouncedInputValue = useDebounce(inputValue, 300);
   const location = useLocation();
 
-  const { data: searchResults } = useGetSearchComplete(debouncedInputValue);
+  const { data: searchResults } = useGetSearchComplete(debouncedInputValue, 'all', !!debouncedInputValue);
 
   const searchBarRef = useRef<HTMLDivElement>(null);
 
