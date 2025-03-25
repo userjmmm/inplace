@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, RefObject } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { MarkerInfo, PlaceData } from '@/types';
 import { useGetMarkerInfo } from '@/api/hooks/useGetMarkerInfo';
 
@@ -7,7 +7,7 @@ interface UseMarkerDataProps {
   placeData: PlaceData[];
   onPlaceSelect: (placeId: number | null) => void;
   moveMapToMarker: (lat: number, lng: number) => void;
-  mapRef: RefObject<kakao.maps.Map | null>;
+  mapRef: React.MutableRefObject<kakao.maps.Map | null>;
 }
 
 export default function useMarkerData({
