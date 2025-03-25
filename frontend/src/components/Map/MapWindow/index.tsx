@@ -48,6 +48,8 @@ export default function MapWindow({
     maximumAge: 30000,
     timeout: 5000,
   };
+  const DEFAULT_MAP_ZOOM_LEVEL = 4;
+
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -121,7 +123,7 @@ export default function MapWindow({
 
     onCenterChange({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     onBoundsChange(newBounds);
-  }, [mapRef.current]);
+  }, [mapRef]);
 
   useEffect(() => {
     if (!isMapReady) return;
@@ -168,11 +170,13 @@ export default function MapWindow({
         bottomRightLatitude: bounds.getSouthWest().getLat(),
         bottomRightLongitude: bounds.getNorthEast().getLng(),
       };
+      onPlaceSelect(null);
+      mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
       setMapCenter(center);
       setMapBound(newBounds);
       onBoundsChange(newBounds);
     }
-  }, [center, mapRef.current]);
+  }, [center, mapRef]);
 
   // 초기 선택 시에만 이동하도록
   useEffect(() => {
@@ -222,7 +226,7 @@ export default function MapWindow({
       <Map
         center={mapCenter}
         style={{ width: '100%', height: isMobile ? 'auto' : '570px', aspectRatio: isMobile ? '1' : 'auto' }}
-        level={4}
+        level={DEFAULT_MAP_ZOOM_LEVEL}
         onCreate={(mapInstance) => {
           mapRef.current = mapInstance;
           setIsMapReady(true);
