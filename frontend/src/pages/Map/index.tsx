@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
-import DropdownMenu from '@/components/Map/DropdownMenu';
 import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
 import Chip from '@/components/common/Chip';
@@ -10,6 +9,7 @@ import useGetDropdownName from '@/api/hooks/useGetDropdownName';
 import useTouchDrag from '@/hooks/Map/useTouchDrag';
 import useMapState from '@/hooks/Map/useMapState';
 import MapSearchBar from '@/components/Map/MapSearchBar';
+import DropdownFilterBar, { FilterBarItem } from '@/components/Map/\bDropdownFilterBar';
 
 type SelectedOption = {
   main: string;
@@ -111,42 +111,54 @@ export default function MapPage() {
     });
   }, []);
 
+  const dropdownItems: FilterBarItem[] = [
+    {
+      type: 'dropdown',
+      id: 'location',
+      props: {
+        options: locationOptions,
+        multiLevel: true,
+        onChange: handleLocationChange,
+        placeholder: '지역',
+        type: 'location',
+        width: '90px',
+        selectedOptions: selectedLocations,
+      },
+    },
+    { type: 'separator', id: 'sep1' },
+    {
+      type: 'dropdown',
+      id: 'influencer',
+      props: {
+        options: influencerOptions,
+        onChange: handleInfluencerChange,
+        placeholder: '인플루언서',
+        type: 'influencer',
+        width: '140px',
+        selectedOptions: selectedInfluencers,
+      },
+    },
+    { type: 'separator', id: 'sep2' },
+    {
+      type: 'dropdown',
+      id: 'category',
+      props: {
+        options: categoryOptions,
+        onChange: handleCategoryChange,
+        placeholder: '카테고리',
+        type: 'category',
+        width: '120px',
+        selectedOptions: selectedCategories,
+      },
+    },
+  ];
+
   return (
     <PageContainer>
       <Wrapper>
         <FilterContainer>
           <MapSearchBar setCenter={setCenter} setSelectedPlaceName={setSelectedPlaceName} />
-          <DropdownZip>
-            <DropdownMenu
-              options={locationOptions}
-              multiLevel
-              onChange={handleLocationChange}
-              placeholder="지역"
-              type="location"
-              width="90px"
-              selectedOptions={selectedLocations}
-              isSeparator
-            />
-            <DropdownMenu
-              options={influencerOptions}
-              onChange={handleInfluencerChange}
-              placeholder="인플루언서"
-              type="influencer"
-              width="140px"
-              defaultValue={undefined}
-              selectedOptions={selectedInfluencers}
-              isSeparator
-            />
-            <DropdownMenu
-              options={categoryOptions}
-              onChange={handleCategoryChange}
-              placeholder="카테고리"
-              type="category"
-              width="120px"
-              selectedOptions={selectedCategories}
-              isSeparator={false}
-            />
-          </DropdownZip>
+          <DropdownFilterBar items={dropdownItems} />
         </FilterContainer>
         <Chip
           selectedLocations={selectedLocations}
@@ -280,18 +292,5 @@ const DragHandle = styled.div`
     height: 4px;
     background-color: #666;
     border-radius: 2px;
-  }
-`;
-
-const DropdownZip = styled.div`
-  display: flex;
-  align-items: center;
-  border: 1px solid #a5a5a5;
-  border-radius: 16px;
-  background-color: white;
-  height: 38px;
-
-  svg {
-    margin-right: 4px;
   }
 `;
