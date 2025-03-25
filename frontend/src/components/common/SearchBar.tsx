@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import useDebounce from '@/hooks/useDebounce';
@@ -16,28 +16,26 @@ export default function SearchBar({
   isSearchPage = false,
   width = '260px',
 }: SearchBarProps) {
+  const DEBOUNCE_DELAY_MS = 300;
+
   const navigate = useNavigate();
+  const location = useLocation();
   const [inputValue, setInputValue] = useState('');
-  const [dropDownList, setDropDownList] = useState<SearchComplete[]>([]);
   const [itemIndex, setItemIndex] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(isSearchPage);
-  const debouncedInputValue = useDebounce(inputValue, 300);
-  const location = useLocation();
-
-  const { data: searchResults } = useGetSearchComplete(debouncedInputValue, 'all', !!debouncedInputValue);
+  const debouncedInputValue = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
 
   const searchBarRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (searchResults) {
-      setDropDownList(searchResults);
-      setItemIndex(-1);
-    } else {
-      setDropDownList([]);
-    }
+  const { data: searchResults } = useGetSearchComplete(debouncedInputValue, 'all', !!debouncedInputValue);
 
-    const handleClickOutside = (event: MouseEvent) => {
+  const dropDownList: SearchComplete[] = useMemo(() => {
+    return searchResults || [];
+  }, [searchResults]);
+
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
       if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
         setIsOpen(false);
         if (!isSearchPage) {
@@ -45,7 +43,10 @@ export default function SearchBar({
           setInputValue('');
         }
       }
-    };
+    },
+    [isSearchPage],
+  );
+  useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
 
     setIsOpen(inputValue !== '' && isExpanded);
@@ -53,12 +54,39 @@ export default function SearchBar({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [searchResults, inputValue, isExpanded, isSearchPage]);
+  }, [inputValue, isExpanded, handleClickOutside]);
 
   useEffect(() => {
     setIsOpen(false);
-    setDropDownList([]);
   }, [location]);
+
+  const handleDropDownKey = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!inputValue || event.nativeEvent.isComposing || !isOpen) return;
+
+      switch (event.key) {
+        case 'ArrowDown':
+          setItemIndex((prev) => (prev === dropDownList.length - 1 ? 0 : prev + 1));
+          break;
+        case 'ArrowUp':
+          setItemIndex((prev) => (prev <= 0 ? dropDownList.length - 1 : prev - 1));
+          break;
+        case 'Enter':
+          if (itemIndex >= 0) {
+            handleDropDownItem(dropDownList[itemIndex].result);
+          } else {
+            handleSearch(inputValue);
+          }
+          setIsOpen(false);
+          break;
+        case 'Escape':
+          setIsOpen(false);
+          break;
+        default:
+      }
+    },
+    [dropDownList, inputValue, isOpen, itemIndex],
+  );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newInputValue = event.target.value;
@@ -74,21 +102,24 @@ export default function SearchBar({
     handleSearch(item);
   };
 
-  const handleSearch = (searchValue: string) => {
-    if (searchValue.trim()) {
-      const query = encodeURIComponent(searchValue);
+  const handleSearch = useCallback(
+    (searchValue: string) => {
+      if (searchValue.trim()) {
+        const query = encodeURIComponent(searchValue);
 
-      setTimeout(() => {
-        setInputValue('');
-        if (!isSearchPage) {
-          setIsExpanded(false);
-        }
-      }, 0);
-      navigate(`/search?query=${query}`);
-    }
-  };
+        setTimeout(() => {
+          setInputValue('');
+          if (!isSearchPage) {
+            setIsExpanded(false);
+          }
+        }, 0);
+        navigate(`/search?query=${query}`);
+      }
+    },
+    [isSearchPage, navigate],
+  );
 
-  const toggleSearchBar = () => {
+  const toggleSearchBar = useCallback(() => {
     if (isSearchPage) {
       handleSearch(inputValue);
     } else {
@@ -98,29 +129,7 @@ export default function SearchBar({
         setIsOpen(false);
       }
     }
-  };
-
-  const handleDropDownKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!inputValue || event.nativeEvent.isComposing || !isOpen) return;
-
-    switch (event.key) {
-      case 'ArrowDown':
-        setItemIndex((prev) => (prev === dropDownList.length - 1 ? 0 : prev + 1));
-        break;
-      case 'ArrowUp':
-        setItemIndex((prev) => (prev <= 0 ? dropDownList.length - 1 : prev - 1));
-        break;
-      case 'Enter':
-        if (itemIndex >= 0) {
-          handleDropDownItem(dropDownList[itemIndex].result);
-        } else {
-          handleSearch(inputValue);
-        }
-        setIsOpen(false);
-        break;
-      default:
-    }
-  };
+  }, [isSearchPage, inputValue, isExpanded, handleSearch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

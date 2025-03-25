@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
 import { useGetSearchComplete } from '@/api/hooks/useGetSearchComplete';
@@ -7,15 +7,6 @@ import { useGetSearchKakaoKeyword } from '@/hooks/api/useGetSearchKakaoKeyword';
 
 interface KakaoKeywordDocuments {
   place_name: string;
-  distance: string;
-  place_url: string;
-  category_name: string;
-  address_name: string;
-  road_address_name: string;
-  id: string;
-  phone: string;
-  category_group_code: string;
-  category_group_name: string;
   x: string;
   y: string;
 }
@@ -29,16 +20,20 @@ interface DropdownItem {
 }
 
 export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSearchBarProps) {
+  const DEBOUNCE_DELAY_MS = 300;
+  const MAX_LOCATION_RESULTS = 5;
+
   const [inputValue, setInputValue] = useState('');
+  const [searchType, setSearchType] = useState<'location' | 'place'>('location');
   const [preventDropdownOpen, setPreventDropdownOpen] = useState(false);
-  const [dropDownList, setDropDownList] = useState<DropdownItem[]>([]);
   const [itemIndex, setItemIndex] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
   const [isTypeOpen, setIsTypeOpen] = useState(false);
-  const [searchType, setSearchType] = useState<'location' | 'place'>('location');
-  const debouncedInput = useDebounce(inputValue, 300);
-  const placeholder =
-    searchType === 'location' ? '랜드마크를 입력해주세요 ex) 경북대' : '장소 이름을 입력해주세요 ex) 유정분식';
+  const debouncedInput = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
+
+  const searchBarRef = useRef<HTMLDivElement>(null);
+  const searchTypeRef = useRef<HTMLDivElement>(null);
+
   const { data: searchPlaceResults } = useGetSearchComplete(
     debouncedInput,
     'place',
@@ -49,76 +44,78 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
     searchType === 'location' && !!debouncedInput,
   );
 
-  const searchBarRef = useRef<HTMLDivElement>(null);
-  const searchTypeRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
+  const dropDownList: DropdownItem[] = useMemo(() => {
     if (searchType === 'place' && searchPlaceResults) {
-      const placeResults = searchPlaceResults.map((item, index) => ({
+      return searchPlaceResults.map((item, index) => ({
         id: `place_${index}`,
         text: item.result,
       }));
-      setDropDownList(placeResults);
-    } else if (searchType === 'location' && searchLocationResults) {
-      const locationResults = searchLocationResults.documents
-        .slice(0, 5)
+    }
+
+    if (searchType === 'location' && searchLocationResults) {
+      return searchLocationResults.documents
+        .slice(0, MAX_LOCATION_RESULTS)
         .map((item: KakaoKeywordDocuments, index: number) => ({
           id: `location_${index}`,
           text: item.place_name,
         }));
-      setDropDownList(locationResults);
-    } else {
-      setDropDownList([]);
     }
 
+    return [];
+  }, [searchPlaceResults, searchLocationResults, searchType]);
+
+  // 외부 클릭 처리
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    if (searchTypeRef.current?.contains(event.target as Node)) {
+      setIsOpen(false);
+      return;
+    }
+
+    if (searchBarRef.current?.contains(event.target as Node)) {
+      setIsTypeOpen(false);
+      return;
+    }
+
+    setIsOpen(false);
+    setIsTypeOpen(false);
+  }, []);
+
+  useEffect(() => {
     if (inputValue === '') {
       setIsOpen(false);
-    }
-    if (inputValue !== '' && !preventDropdownOpen) {
+    } else if (!preventDropdownOpen) {
       setIsOpen(true);
     }
 
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchTypeRef.current && searchTypeRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-        return;
-      }
-
-      if (searchBarRef.current && searchBarRef.current.contains(event.target as Node)) {
-        setIsTypeOpen(false);
-        return;
-      }
-      setIsOpen(false);
-      setIsTypeOpen(false);
-    };
     document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [searchPlaceResults, searchLocationResults, searchType, inputValue, preventDropdownOpen]);
+  }, [inputValue, preventDropdownOpen, handleClickOutside]);
 
-  const handleSearch = (searchValue: string, IsindexChoice: boolean) => {
-    if (searchValue.trim()) {
-      if (searchType === 'location') {
-        // 키보드 조작을 통해 연관검색어을 선택한 경우
-        if (IsindexChoice) {
-          setCenter({
-            lat: searchLocationResults.documents[itemIndex].y,
-            lng: searchLocationResults.documents[itemIndex].x,
-          });
+  const handleSearch = useCallback(
+    (searchValue: string, isIndexChoice: boolean) => {
+      if (!searchValue.trim()) return;
+
+      // 위치 검색인 경우
+      if (searchType === 'location' && searchLocationResults?.documents?.length) {
+        const index = isIndexChoice ? itemIndex : 0;
+        const selected = searchLocationResults.documents[index];
+
+        if (isIndexChoice || selected.place_name === searchValue) {
+          setCenter({ lat: selected.y, lng: selected.x });
+          setItemIndex(-1);
+          setIsOpen(false);
         }
-        // 첫번째 연관검색어와 일치하는 경우
-        else if (searchLocationResults.documents[0].place_name === searchValue) {
-          setCenter({ lat: searchLocationResults.documents[0].y, lng: searchLocationResults.documents[0].x });
-        }
-        setItemIndex(-1);
-        setIsOpen(false);
-      } else {
+      }
+      // 장소 검색인 경우
+      if (searchType === 'place') {
         setSelectedPlaceName(searchValue);
       }
-    }
-  };
+    },
+    [searchType, searchLocationResults, itemIndex],
+  );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newInputValue = event.target.value;
@@ -133,37 +130,41 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
     handleSearch(item, true);
   };
 
-  const handleDropDownKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!inputValue || event.nativeEvent.isComposing || !isOpen) return;
+  const handleDropDownKey = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (!inputValue || event.nativeEvent.isComposing || !isOpen) return;
 
-    switch (event.key) {
-      case 'ArrowDown':
-        setItemIndex((prev) => (prev === dropDownList.length - 1 ? 0 : prev + 1));
-        break;
-      case 'ArrowUp':
-        setItemIndex((prev) => (prev <= 0 ? dropDownList.length - 1 : prev - 1));
-        break;
-      case 'Enter':
-        if (itemIndex >= 0) {
-          handleDropDownItem(dropDownList[itemIndex].text);
-        } else {
-          setPreventDropdownOpen(true);
-          handleSearch(inputValue, false);
-        }
-        setIsOpen(false);
-        break;
-      case 'Escape':
-        setIsOpen(false);
-        break;
-      default:
-        setPreventDropdownOpen(false);
-    }
-  };
+      switch (event.key) {
+        case 'ArrowDown':
+          setItemIndex((prev) => (prev === dropDownList.length - 1 ? 0 : prev + 1));
+          break;
+        case 'ArrowUp':
+          setItemIndex((prev) => (prev <= 0 ? dropDownList.length - 1 : prev - 1));
+          break;
+        case 'Enter':
+          if (itemIndex >= 0) {
+            handleDropDownItem(dropDownList[itemIndex].text);
+          } else {
+            handleSearch(inputValue, false);
+          }
+          setIsOpen(false);
+          break;
+        case 'Escape':
+          setIsOpen(false);
+          break;
+        default:
+      }
+    },
+    [inputValue, isOpen, dropDownList, handleDropDownItem, handleSearch],
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleSearch(inputValue, false);
   };
+
+  const placeholder =
+    searchType === 'location' ? '랜드마크를 입력해주세요 ex) 경북대' : '장소 이름을 입력해주세요 ex) 유정분식';
 
   return (
     <SearchBarContainer ref={searchBarRef}>
