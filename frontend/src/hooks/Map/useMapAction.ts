@@ -1,6 +1,11 @@
 import { useCallback } from 'react';
 
-export default function useMapActions(mapRef: React.MutableRefObject<kakao.maps.Map | null>) {
+interface UseMapActionsProps {
+  onPlaceSelect: (placeId: number | null) => void;
+  mapRef: React.MutableRefObject<kakao.maps.Map | null>;
+}
+
+export default function useMapActions({ mapRef, onPlaceSelect }: UseMapActionsProps) {
   const PAN_DELAY_MS = 100;
   const MIN_ZOOM_LEVEL = 4;
   const MAX_ZOOM_THRESHOLD = 10;
@@ -24,6 +29,7 @@ export default function useMapActions(mapRef: React.MutableRefObject<kakao.maps.
     if (mapRef.current && userLocation) {
       mapRef.current.setCenter(new kakao.maps.LatLng(userLocation.lat, userLocation.lng));
       mapRef.current.setLevel(4);
+      onPlaceSelect(null);
     }
   }, []);
 

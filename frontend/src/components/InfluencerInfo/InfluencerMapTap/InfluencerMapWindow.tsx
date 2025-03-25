@@ -43,7 +43,7 @@ export default function InfluencerMapWindow({
 }: MapWindowProps) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const { moveMapToMarker, handleResetCenter } = useMapActions(mapRef);
+  const { moveMapToMarker, handleResetCenter } = useMapActions({ mapRef, onPlaceSelect });
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
     placeData,

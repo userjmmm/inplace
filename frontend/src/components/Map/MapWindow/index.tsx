@@ -64,7 +64,7 @@ export default function MapWindow({
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
   const isMobile = useIsMobile();
-  const { moveMapToMarker, handleResetCenter } = useMapActions(mapRef);
+  const { moveMapToMarker, handleResetCenter } = useMapActions({ mapRef, onPlaceSelect });
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
     placeData,
