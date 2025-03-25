@@ -6,6 +6,7 @@ import Pagination from '@/components/common/Pagination';
 import InfluencerSearchBar from '@/components/common/InfluencerSearchBar';
 import { useGetSearchInfluencers } from '@/api/hooks/useGetSearchInfluencers';
 import useDebounce from '@/hooks/useDebounce';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function InfluencerPage() {
   const DEBOUNCE_DELAY_MS = 300;
@@ -14,17 +15,7 @@ export default function InfluencerPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState('');
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   const debouncedInputValue = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
 

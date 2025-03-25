@@ -6,6 +6,7 @@ import BannerItem from '@/components/Main/MainBanner/BannerItem';
 
 import { BannerData } from '@/types';
 import NoItem from '@/components/common/layouts/NoItem';
+import useIsMobile from '@/hooks/useIsMobile';
 
 const getTransformValue = ({
   $currentIndex,
@@ -50,10 +51,10 @@ const getTransformValue = ({
 
 export default function MainBanner({ items = [] }: { items: BannerData[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const [isReturning, setIsReturning] = useState(false);
   const [animationProgress, setAnimationProgress] = useState(0);
   const animationRef = useRef<number | null>(null);
+  const isMobile = useIsMobile();
 
   const filteredItems = items.filter((item) => {
     if (isMobile) {
@@ -90,17 +91,6 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
 
     animationRef.current = requestAnimationFrame(animate);
   };
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
     setCurrentIndex(0);

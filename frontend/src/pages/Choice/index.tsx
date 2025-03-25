@@ -11,6 +11,7 @@ import InfluencerSearchBar from '@/components/common/InfluencerSearchBar';
 import { useGetSearchInfluencers } from '@/api/hooks/useGetSearchInfluencers';
 import useDebounce from '@/hooks/useDebounce';
 import useTheme from '@/hooks/useTheme';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function ChoicePage() {
   const PAGE_SIZE_MOBILE = 9;
@@ -22,18 +23,9 @@ export default function ChoicePage() {
   const [selectedInfluencers, setSelectedInfluencers] = useState<Set<number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState('');
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
     const isFirstUser = document.cookie

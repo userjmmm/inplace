@@ -14,6 +14,7 @@ import nowLocation from '@/assets/images/now_location.webp';
 import Loading from '@/components/common/layouts/Loading';
 import useMapActions from '@/hooks/Map/useMapAction';
 import useMarkerData from '@/hooks/Map/useMarkerData';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface MapWindowProps {
   center: { lat: number; lng: number };
@@ -62,7 +63,7 @@ export default function MapWindow({
   });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const isMobile = useIsMobile();
   const { moveMapToMarker, handleResetCenter } = useMapActions(mapRef);
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
@@ -71,15 +72,6 @@ export default function MapWindow({
     moveMapToMarker,
     mapRef,
   });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const originSize = isMobile ? 26 : 34;
   const userLocationSize = isMobile ? 16 : 24;

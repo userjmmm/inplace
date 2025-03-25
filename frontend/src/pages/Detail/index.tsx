@@ -20,6 +20,7 @@ import { usePostPlaceLike } from '@/api/hooks/usePostPlaceLike';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 import Button from '@/components/common/Button';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function DetailPage() {
   const CAROUSEL_AUTO_SCROLL_MS = 5000;
@@ -30,21 +31,11 @@ export default function DetailPage() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const { id } = useParams() as { id: string };
   const { data: infoData } = useGetPlaceInfo(id);
-  const [isMobile, setIsMobile] = useState(false);
   const [isLike, setIsLike] = useState(infoData.likes);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const isMobile = useIsMobile();
   const { mutate: postLike } = usePostPlaceLike();
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const currentVideoUrl = infoData?.videos[currentVideoIndex]?.videoUrl || '';
 

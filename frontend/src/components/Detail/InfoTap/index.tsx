@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { IoMdStar } from 'react-icons/io';
 import { IoQrCode } from 'react-icons/io5';
-import { Suspense, useContext, useEffect, useState } from 'react';
+import { Suspense, useContext, useState } from 'react';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Paragraph } from '@/components/common/typography/Paragraph';
@@ -18,6 +18,7 @@ import Loading from '@/components/common/layouts/Loading';
 import ErrorComponent from '@/components/common/layouts/Error';
 import { ThemeContext } from '@/provider/Themes';
 import SpeedDialMap from './SpeedDialMap';
+import useIsMobile from '@/hooks/useIsMobile';
 
 type Props = {
   address: AddressInfo;
@@ -50,19 +51,9 @@ export default function InfoTap({
   const lat = Number(latitude);
   const lng = Number(longitude);
   const [visitModal, setVisitModal] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const { theme } = useContext(ThemeContext);
   const buttonVariant = theme === 'dark' ? 'outline' : 'blackOutline';
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   return (
     <Wrapper>

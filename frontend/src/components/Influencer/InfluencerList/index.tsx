@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import InfluencerItem from '@/components/common/Items/InfluencerItem';
 import { InfluencerData } from '@/types';
 import NoItem from '@/components/common/layouts/NoItem';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface InfluencerListProps {
   items: InfluencerData[];
@@ -12,17 +12,7 @@ interface InfluencerListProps {
 
 export default function InfluencerList({ items, useBackCard = true, useNav = true }: InfluencerListProps) {
   const MOBILE_INFLUENCER_LIMIT = 9;
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   const displayItems = isMobile ? items.slice(0, MOBILE_INFLUENCER_LIMIT) : items;
 
