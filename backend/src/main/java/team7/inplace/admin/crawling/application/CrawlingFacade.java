@@ -19,11 +19,19 @@ public class CrawlingFacade {
     public void updateVideos() {
         var crawlingInfos = youtubeCrawlingService.crawlAllVideos();
         for (var crawlingInfo : crawlingInfos) {
-            var videoCommands = crawlingInfo.toVideoCommands();
-            if (videoCommands.isEmpty()) {
+            var mediumVideoCommands = crawlingInfo.toMediumVideoCommands();
+            if (mediumVideoCommands.isEmpty()) {
                 continue;
             }
-            videoFacade.createVideos(videoCommands, crawlingInfo.influencerId());
+            mediumVideoCommands.sort((a, b) -> b.createdAt().compareTo(a.createdAt()));
+            videoFacade.createMediumVideos(mediumVideoCommands, crawlingInfo.influencerId());
+
+            var longVideoCommands = crawlingInfo.toLongVideoCommands();
+            if (longVideoCommands.isEmpty()) {
+                continue;
+            }
+            longVideoCommands.sort((a, b) -> b.createdAt().compareTo(a.createdAt()));
+            videoFacade.createLongVideos(longVideoCommands, crawlingInfo.influencerId());
         }
     }
 

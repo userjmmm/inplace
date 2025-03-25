@@ -21,7 +21,6 @@ public class GooglePlaceClient {
 
     public Mono<GooglePlaceClientResponse.Place> requestForPlaceDetail(String placeId) {
         var url = String.format(PLACE_DETAIL_URL, placeId);
-
         return webClient.get()
             .uri(url)
             .header(FIELD_HEADER, FIELD)
