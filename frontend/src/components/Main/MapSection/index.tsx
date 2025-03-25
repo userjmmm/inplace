@@ -30,28 +30,20 @@ export default function MapSection() {
             <span
               style={{
                 lineHeight: isMobile ? '1.4' : 'normal',
+                wordBreak: 'keep-all',
+                width: '100%',
               }}
             >
-              {isMobile ? (
-                <>
-                  <HighlightText>내 주변</HighlightText> 인플루언서가 방문한
-                  <br />
-                  장소는 어디일까요?
-                </>
-              ) : (
-                <>
-                  <HighlightText>내 주변</HighlightText> 인플루언서가 방문한 장소는 어디일까요?
-                </>
-              )}
+              <HighlightText>내 주변</HighlightText> 인플루언서가 방문한 장소는 어디일까요?
             </span>
           </Paragraph>
           <IconContainer>
-            <img src={VisitPlace} alt="방문 장소" width={isMobile ? '36px' : '44px'} />
+            <img src={VisitPlace} alt="방문 장소" width={isMobile ? '30px' : '44px'} />
           </IconContainer>
         </TextSection>
         <ConfirmButton onClick={handleConfirmClick}>
-          {isMobile ? '확인하기' : '확인하러 가기'}
-          <FaChevronRight />
+          {isMobile ? '보기' : '확인하러 가기'}
+          <FaChevronRight size={isMobile ? 10 : 12} />
         </ConfirmButton>
       </Wrapper>
     </Container>
@@ -68,7 +60,8 @@ const Container = styled.div`
   padding: 0 42px;
 
   @media screen and (max-width: 768px) {
-    padding: 0 32px;
+    padding: 0 16px;
+    box-sizing: border-box;
     width: 90%;
   }
 `;
@@ -81,8 +74,7 @@ const Wrapper = styled.div`
   padding: 20px;
 
   @media screen and (max-width: 768px) {
-    padding: 16px;
-    gap: 16px;
+    gap: 8px;
   }
 `;
 
@@ -92,8 +84,7 @@ const TextSection = styled.div`
   gap: 26px;
 
   @media screen and (max-width: 768px) {
-    width: 90%;
-    gap: 16px;
+    gap: 4px;
   }
 `;
 
@@ -129,8 +120,9 @@ const ConfirmButton = styled.button`
 
   @media screen and (max-width: 768px) {
     min-width: fit-content;
-    height: 36px;
+    height: 30px;
     font-size: 12px;
-    padding: 0px 14px;
+    gap: 2px;
+    padding: 0px 12px;
   }
 `;
