@@ -29,7 +29,7 @@ export default function InfluencerMapTap({
   const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
     useTouchDrag(setIsListExpanded);
   const fetchLocationRef = useRef<() => void>();
-  const filters = { categories: [], influencers: [influencerName] };
+  const filters = { categories: [], influencers: [influencerName], placeName: '', region: '' };
   const [shouldFetchPlaces, setShouldFetchPlaces] = useState(false);
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
