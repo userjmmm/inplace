@@ -20,11 +20,11 @@ export const fetchSearchKakaoKeyword = async (query: string) => {
   }
 };
 
-export const useGetSearchKakaoKeyword = (query: string) => {
+export const useGetSearchKakaoKeyword = (query: string, enabled: boolean) => {
   return useQuery({
     queryKey: ['kakaoKeyword', query],
     queryFn: () => fetchSearchKakaoKeyword(query),
-    enabled: !!query,
+    enabled,
     staleTime: 1000 * 60 * 5,
   });
 };
