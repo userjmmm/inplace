@@ -66,7 +66,7 @@ export default function Header() {
           <LogoLink to="/">
             <LogoContainer>
               <LogoImage src={Logo} alt="인플레이스 로고" />
-              <Text size="ll" weight="bold" variant="mint">
+              <Text size="l" weight="bold" variant="mint">
                 인플레이스
               </Text>
             </LogoContainer>
