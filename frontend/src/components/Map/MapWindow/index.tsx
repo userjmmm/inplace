@@ -168,6 +168,7 @@ export default function MapWindow({
         bottomRightLatitude: bounds.getSouthWest().getLat(),
         bottomRightLongitude: bounds.getNorthEast().getLng(),
       };
+      setMapCenter(center);
       setMapBound(newBounds);
       onBoundsChange(newBounds);
     }
