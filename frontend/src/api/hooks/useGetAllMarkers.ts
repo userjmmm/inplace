@@ -11,7 +11,7 @@ export const getAllMarkers = async (
   center: { lat: number; lng: number },
 ) => {
   const { topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude } = location;
-  const { categories, influencers } = filters;
+  const { categories, influencers, placeName, region } = filters;
 
   const params = new URLSearchParams({
     topLeftLongitude: topLeftLongitude.toString(),
@@ -22,6 +22,8 @@ export const getAllMarkers = async (
     latitude: center.lat.toString(),
     categories: categories.join(','),
     influencers: influencers.join(','),
+    placeName: placeName.toString(),
+    region: region.toString(),
   });
 
   const response = await fetchInstance.get<MarkerData[]>(`${getAllMarkersPath()}?${params}`);

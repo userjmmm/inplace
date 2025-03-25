@@ -10,7 +10,7 @@ export const getPlaceList = async (
   size: number,
 ): Promise<PageableData<PlaceData>> => {
   const { topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude } = location;
-  const { categories, influencers } = filters;
+  const { categories, influencers, placeName, region } = filters;
 
   const params = new URLSearchParams({
     topLeftLongitude: topLeftLongitude.toString(),
@@ -23,6 +23,8 @@ export const getPlaceList = async (
     size: size.toString(),
     categories: categories.join(','),
     influencers: influencers.join(','),
+    placeName: placeName.toString(),
+    region: region.toString(),
   });
 
   const response = await fetchInstance.get<PageableData<PlaceData>>(`/places?${params}`);
