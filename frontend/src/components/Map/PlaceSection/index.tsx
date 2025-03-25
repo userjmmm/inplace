@@ -13,6 +13,8 @@ interface PlaceSectionProps {
   filters: {
     categories: string[];
     influencers: string[];
+    placeName: string;
+    region: string;
     location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
   center: { lat: number; lng: number };

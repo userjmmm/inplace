@@ -4,12 +4,12 @@ import DropdownMenu from '@/components/Map/DropdownMenu';
 import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
 import Chip from '@/components/common/Chip';
-import { Text } from '@/components/common/typography/Text';
 import locationOptions from '@/utils/constants/LocationOptions';
 import categoryOptions from '@/utils/constants/CategoryOptions';
 import useGetDropdownName from '@/api/hooks/useGetDropdownName';
 import useTouchDrag from '@/hooks/Map/useTouchDrag';
 import useMapState from '@/hooks/Map/useMapState';
+import MapSearchBar from '@/components/Map/MapSearchBar';
 
 type SelectedOption = {
   main: string;
@@ -23,6 +23,7 @@ export default function MapPage() {
   const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<SelectedOption[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
   const {
     center,
     setCenter,
@@ -44,8 +45,10 @@ export default function MapPage() {
       categories: selectedCategories,
       influencers: selectedInfluencers,
       location: selectedLocations,
+      placeName: selectedPlaceName,
+      region: selectedLocations.map((loc) => (loc.sub ? `${loc.main}-${loc.sub}` : loc.main)).join(','),
     }),
-    [selectedCategories, selectedInfluencers, selectedLocations],
+    [selectedCategories, selectedInfluencers, selectedLocations, selectedPlaceName],
   );
 
   const handleLocationChange = useCallback((value: SelectedOption) => {
@@ -111,34 +114,40 @@ export default function MapPage() {
   return (
     <PageContainer>
       <Wrapper>
-        <Text size="l" weight="bold">
-          지도
-        </Text>
-        <DropdownContainer>
-          <DropdownMenu
-            options={locationOptions}
-            multiLevel
-            onChange={handleLocationChange}
-            placeholder="위치"
-            type="location"
-            selectedOptions={selectedLocations}
-          />
-          <DropdownMenu
-            options={influencerOptions}
-            onChange={handleInfluencerChange}
-            placeholder="인플루언서"
-            type="influencer"
-            defaultValue={undefined}
-            selectedOptions={selectedInfluencers}
-          />
-          <DropdownMenu
-            options={categoryOptions}
-            onChange={handleCategoryChange}
-            placeholder="카테고리"
-            type="category"
-            selectedOptions={selectedCategories}
-          />
-        </DropdownContainer>
+        <FilterContainer>
+          <MapSearchBar setCenter={setCenter} setSelectedPlaceName={setSelectedPlaceName} />
+          <DropdownZip>
+            <DropdownMenu
+              options={locationOptions}
+              multiLevel
+              onChange={handleLocationChange}
+              placeholder="지역"
+              type="location"
+              width="90px"
+              selectedOptions={selectedLocations}
+              isSeparator
+            />
+            <DropdownMenu
+              options={influencerOptions}
+              onChange={handleInfluencerChange}
+              placeholder="인플루언서"
+              type="influencer"
+              width="140px"
+              defaultValue={undefined}
+              selectedOptions={selectedInfluencers}
+              isSeparator
+            />
+            <DropdownMenu
+              options={categoryOptions}
+              onChange={handleCategoryChange}
+              placeholder="카테고리"
+              type="category"
+              width="120px"
+              selectedOptions={selectedCategories}
+              isSeparator={false}
+            />
+          </DropdownZip>
+        </FilterContainer>
         <Chip
           selectedLocations={selectedLocations}
           selectedInfluencers={selectedInfluencers}
@@ -213,14 +222,13 @@ const Wrapper = styled.div`
   }
 `;
 
-const DropdownContainer = styled.div`
+const FilterContainer = styled.div`
   display: flex;
-  gap: 14px;
+  justify-content: space-between;
   padding-top: 16px;
 
   @media screen and (max-width: 768px) {
     width: 90%;
-    gap: 12px;
     padding-top: 12px;
     z-index: 9;
 
@@ -272,5 +280,18 @@ const DragHandle = styled.div`
     height: 4px;
     background-color: #666;
     border-radius: 2px;
+  }
+`;
+
+const DropdownZip = styled.div`
+  display: flex;
+  align-items: center;
+  border: 1px solid #a5a5a5;
+  border-radius: 16px;
+  background-color: white;
+  height: 38px;
+
+  svg {
+    margin-right: 4px;
   }
 `;

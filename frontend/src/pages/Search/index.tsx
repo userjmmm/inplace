@@ -6,14 +6,10 @@ import SearchBar from '@/components/common/SearchBar';
 import BaseLayout from '@/components/common/BaseLayout';
 import { useGetSearchData } from '@/api/hooks/useGetSearchData';
 // import { useGetSearchKeyword } from '@/api/hooks/useGetSearchKeyword';
-import { useGetSearchKakaoKeyword } from '@/hooks/api/useGetSearchKakaoKeyword';
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('query') || '';
-
-  const { data: kakaoData } = useGetSearchKakaoKeyword(query);
-  console.log(kakaoData);
 
   // const keywordLoc = kakaoData?.documents?.[0] ? { x: kakaoData.documents[0].x, y: kakaoData.documents[0].y } : null;
 

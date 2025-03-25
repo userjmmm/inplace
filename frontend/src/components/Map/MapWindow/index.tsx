@@ -22,6 +22,8 @@ interface MapWindowProps {
   filters: {
     categories: string[];
     influencers: string[];
+    placeName: string;
+    region: string;
     location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
   placeData: PlaceData[];
@@ -81,8 +83,20 @@ export default function MapWindow({
     filters,
     center: mapCenter,
   });
-
+  // const markers = AllmarkerData?.marker || [];
   const selectedMarker = markers.find((m) => m.placeId === selectedPlaceId);
+
+  // useEffect(() => {
+  //   if (AllmarkerData?.map && mapRef.current) {
+  //     const { latitude, longitude, level } = AllmarkerData.map;
+  //     const newCenter = new kakao.maps.LatLng(latitude, longitude);
+
+  //     mapRef.current.setCenter(newCenter);
+  //     mapRef.current.setLevel(level);
+
+  //     setMapCenter({ lat: latitude, lng: longitude });
+  //   }
+  // }, [AllmarkerData]);
 
   const fetchMarkers = useCallback(() => {
     if (!mapRef.current) return;
@@ -96,6 +110,8 @@ export default function MapWindow({
       bottomRightLatitude: bounds.getSouthWest().getLat(),
       bottomRightLongitude: bounds.getNorthEast().getLng(),
     };
+
+    onPlaceSelect(null);
     setMapCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     setMapBound(newBounds);
 
@@ -128,7 +144,7 @@ export default function MapWindow({
             alert('위치 정보 요청이 시간 초과되었습니다. 다시 시도해주세요.');
           }
         },
-        { maximumAge: 30000, timeout: 5000 },
+        { maximumAge: 30000, timeout: 6000 },
       );
     } else {
       setIsLoading(false);
@@ -140,6 +156,16 @@ export default function MapWindow({
     if (mapRef.current && center) {
       const position = new kakao.maps.LatLng(center.lat, center.lng);
       mapRef.current.setCenter(position);
+
+      const bounds = mapRef.current.getBounds();
+      const newBounds: LocationData = {
+        topLeftLatitude: bounds.getNorthEast().getLat(),
+        topLeftLongitude: bounds.getSouthWest().getLng(),
+        bottomRightLatitude: bounds.getSouthWest().getLat(),
+        bottomRightLongitude: bounds.getNorthEast().getLng(),
+      };
+      setMapBound(newBounds);
+      onBoundsChange(newBounds);
     }
   }, [center, mapRef.current]);
 
