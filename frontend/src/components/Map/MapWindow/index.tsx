@@ -24,7 +24,7 @@ interface MapWindowProps {
     categories: string[];
     influencers: string[];
     placeName: string;
-    region: string;
+    regions: string[];
     location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
   placeData: PlaceData[];

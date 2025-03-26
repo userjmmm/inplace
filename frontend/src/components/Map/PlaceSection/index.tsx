@@ -14,7 +14,7 @@ interface PlaceSectionProps {
     categories: string[];
     influencers: string[];
     placeName: string;
-    region: string;
+    regions: string[];
     location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
   center: { lat: number; lng: number };

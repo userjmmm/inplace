@@ -83,7 +83,7 @@ export type FilterParams = {
   categories: string[];
   influencers: string[];
   placeName: string;
-  region: string;
+  regions: string[];
 };
 
 export type PlaceList = {

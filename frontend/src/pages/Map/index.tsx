@@ -46,7 +46,7 @@ export default function MapPage() {
       influencers: selectedInfluencers,
       location: selectedLocations,
       placeName: selectedPlaceName,
-      region: selectedLocations.map((loc) => (loc.sub ? `${loc.main}-${loc.sub}` : loc.main)).join(','),
+      regions: selectedLocations.map((loc) => (loc.sub ? `${loc.main}-${loc.sub}` : loc.main)),
     }),
     [selectedCategories, selectedInfluencers, selectedLocations, selectedPlaceName],
   );
