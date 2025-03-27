@@ -330,7 +330,7 @@ const SearchIcon = styled(FaSearch)`
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#a3a3a3' : '#3b63c3')};
+  color: #a3a3a3;
   cursor: pointer;
 
   @media screen and (max-width: 768px) {
