@@ -1,8 +1,9 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { CustomOverlayMap, Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { TbCurrentLocation } from 'react-icons/tb';
 import { GrPowerCycle } from 'react-icons/gr';
+import { IoMdInformationCircleOutline } from 'react-icons/io';
 import Button from '@/components/common/Button';
 import { FilterParams, LocationData, PlaceData } from '@/types';
 import { useGetAllMarkers } from '@/api/hooks/useGetAllMarkers';
@@ -69,6 +70,7 @@ export default function MapWindow({
   });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
+  const [showNoMarkerMessage, setShowNoMarkerMessage] = useState(false);
   const isMobile = useIsMobile();
   const { moveMapToMarker, handleResetCenter } = useMapActions({ mapRef, onPlaceSelect });
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
@@ -82,7 +84,7 @@ export default function MapWindow({
   const originSize = isMobile ? 26 : 34;
   const userLocationSize = isMobile ? 16 : 24;
 
-  const { data: markers = [] } = useGetAllMarkers(
+  const { data: markers = [], isLoading: isLoadingAllMarkers } = useGetAllMarkers(
     {
       location: mapBound,
       filters,
@@ -91,7 +93,7 @@ export default function MapWindow({
     !filtersWithPlaceName.placeName,
   );
 
-  const { data: placeNameMarkers = [] } = useGetSearchPlaceMarkers(
+  const { data: placeNameMarkers = [], isLoading: isLoadingPlaceMarkers } = useGetSearchPlaceMarkers(
     {
       filters: filtersWithPlaceName,
     },
@@ -99,6 +101,7 @@ export default function MapWindow({
   );
 
   const markerListToRender = filtersWithPlaceName.placeName ? placeNameMarkers : markers;
+  const isLoadingMarker = filtersWithPlaceName.placeName ? isLoadingPlaceMarkers : isLoadingAllMarkers;
 
   const selectedMarker = markerListToRender.find((m) => m.placeId === selectedPlaceId) || null;
 
@@ -212,6 +215,18 @@ export default function MapWindow({
     setShowSearchButton(false);
   }, [fetchMarkers]);
 
+  // 마커 정보가 없을 경우
+  useEffect(() => {
+    const shouldShowNoMarkerMessage = !isLoading && !isLoadingMarker && markerListToRender.length === 0;
+    setShowNoMarkerMessage(shouldShowNoMarkerMessage);
+
+    if (shouldShowNoMarkerMessage) {
+      setTimeout(() => {
+        setShowNoMarkerMessage(false);
+      }, 4000);
+    }
+  }, [markerListToRender, isLoading]);
+
   return (
     <MapContainer>
       {isLoading ? (
@@ -222,6 +237,12 @@ export default function MapWindow({
           </Text>
         </LoadingWrapper>
       ) : null}
+      {showNoMarkerMessage && (
+        <NoItemMarker>
+          <IoMdInformationCircleOutline size={18} />
+          일치하는 장소가 없어요!
+        </NoItemMarker>
+      )}
       {showSearchButton && (
         <ButtonContainer>
           <Button
@@ -406,4 +427,61 @@ const ListViewButton = styled.button`
     align-items: center;
     gap: 4px;
   }
+`;
+
+const fadeOut = keyframes`
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  80% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+`;
+const shake = keyframes`
+  0% {
+    transform: translateX(119.5%);
+  }
+  25% {
+    transform: translateX(120.5%);
+  }
+  50% {
+    transform: translateX(119.5%);
+  }
+  75% {
+    transform: translateX(120.5%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+`;
+
+const NoItemMarker = styled.div`
+  position: absolute;
+  top: 10px;
+  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 0px;
+  font-size: 14px;
+  gap: 4px;
+  text-align: center;
+  border-radius: 6px;
+  transform: translateX(120%);
+  color: white;
+  background-color: #292929f0;
+  z-index: 100;
+
+  svg {
+    margin-bottom: 1px;
+  }
+  animation:
+    ${shake} 0.5s ease-out,
+    ${fadeOut} 3.5s ease-out forwards;
 `;
