@@ -29,6 +29,8 @@ interface MapWindowProps {
   };
   filtersWithPlaceName: FilterParams;
   placeData: PlaceData[];
+  isChangedLocation: boolean;
+  setIsChangedLocation: React.Dispatch<React.SetStateAction<boolean>>;
   selectedPlaceId: number | null;
   onPlaceSelect: (placeId: number | null) => void;
   isListExpanded?: boolean;
@@ -42,6 +44,8 @@ export default function MapWindow({
   filters,
   filtersWithPlaceName,
   placeData,
+  isChangedLocation,
+  setIsChangedLocation,
   selectedPlaceId,
   onPlaceSelect,
   isListExpanded,
@@ -180,9 +184,10 @@ export default function MapWindow({
         bottomRightLongitude: bounds.getNorthEast().getLng(),
       };
       onPlaceSelect(null);
-      // mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
-      // 줌아웃하고 지역 필터링 걸었을때 그 레벨상태로 이동됨 -> 위를 주석처리 하고 지역필터링 선택시 레벨 4로 조정
-      // 줌아웃하고 이위치에서장소보기 했을때 디폴트 레벨로 변경돼서 보임 -> 안됨
+      if (isChangedLocation) {
+        mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
+        setIsChangedLocation(false);
+      }
       setMapCenter(center);
       setMapBound(newBounds);
       onBoundsChange(newBounds);

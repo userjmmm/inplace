@@ -26,6 +26,7 @@ export default function MapPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
   const [isDropdownOpened, setIsDropdownOpened] = useState(false);
+  const [isChangedLocation, setIsChangedLocation] = useState(false);
   const isMobile = useIsMobile();
   const {
     center,
@@ -84,7 +85,7 @@ export default function MapPage() {
 
     if (value.lat && value.lng) {
       setCenter({ lat: value.lat, lng: value.lng });
-      // 맵 레벨도 4로 바꿔야함 - todo
+      setIsChangedLocation(true);
     }
   }, []);
 
@@ -208,6 +209,8 @@ export default function MapPage() {
         filtersWithPlaceName={filtersWithPlaceName}
         placeData={placeData}
         selectedPlaceId={selectedPlaceId}
+        isChangedLocation={isChangedLocation}
+        setIsChangedLocation={setIsChangedLocation}
         onPlaceSelect={handlePlaceSelect}
         isListExpanded={isListExpanded}
         onListExpand={handleListExpand}
