@@ -2,14 +2,12 @@ import styled from 'styled-components';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { IoMdStar } from 'react-icons/io';
 import { IoQrCode } from 'react-icons/io5';
-import { FaComment } from 'react-icons/fa';
-import { FcGoogle } from 'react-icons/fc';
 import { Suspense, useContext, useEffect, useState } from 'react';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import FacilitySign from './FacilitySign';
-import { FacilityInfo, GoogleReview } from '@/types';
+import { AddressInfo, FacilityInfo, GoogleReview } from '@/types';
 import OpenHour from './OpenHour';
 import { Text } from '@/components/common/typography/Text';
 import GoogleReviewList from '../GoogleReviewList';
@@ -19,12 +17,15 @@ import VisitModal from '../VisitModal';
 import Loading from '@/components/common/layouts/Loading';
 import ErrorComponent from '@/components/common/layouts/Error';
 import { ThemeContext } from '@/provider/Themes';
+import SpeedDialMap from './SpeedDialMap';
 
 type Props = {
+  address: AddressInfo;
   category: string;
   facility: FacilityInfo;
   openingHours: string[];
   kakaoPlaceUrl: string;
+  naverPlaceUrl: string;
   googlePlaceUrl: string;
   googleReviews: GoogleReview[];
   longitude: string;
@@ -33,10 +34,12 @@ type Props = {
   placeId: number;
 };
 export default function InfoTap({
+  address,
   category,
   facility,
   openingHours,
   kakaoPlaceUrl,
+  naverPlaceUrl,
   googlePlaceUrl,
   googleReviews,
   longitude,
@@ -70,31 +73,14 @@ export default function InfoTap({
             모바일로 연결
           </StyledButton>
         ) : null}
-        <WebMap>
-          <StyledButton
-            aria-label="kakao_btn"
-            variant={buttonVariant}
-            onClick={() => {
-              window.location.href = kakaoPlaceUrl;
-            }}
-          >
-            <FaComment size={16} color="fee500" />
-            카카오맵
-          </StyledButton>
-          {googlePlaceUrl ? (
-            <StyledButton
-              aria-label="google_btn"
-              variant={buttonVariant}
-              onClick={() => {
-                window.location.href = googlePlaceUrl;
-              }}
-            >
-              <FcGoogle size={18} />
-              구글맵
-            </StyledButton>
-          ) : null}
-        </WebMap>
+        <SpeedDialMap kakaoPlaceUrl={kakaoPlaceUrl} naverPlaceUrl={naverPlaceUrl} googlePlaceUrl={googlePlaceUrl} />
       </ButtonWrapper>
+      <Paragraph size="s" weight="bold">
+        주소
+      </Paragraph>
+      <Text size="xs" weight="normal">
+        {[address.address1, address.address2, address.address3].join(' ')}
+      </Text>
       {googlePlaceUrl ? (
         <>
           <Paragraph size="s" weight="bold">
@@ -226,16 +212,6 @@ const StyledText = styled(Text)`
   align-items: end;
   svg {
     margin-left: 10px;
-  }
-`;
-
-const WebMap = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  @media screen and (max-width: 768px) {
-    flex-direction: row;
   }
 `;
 

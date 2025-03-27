@@ -5,16 +5,24 @@ import { Text } from '@/components/common/typography/Text';
 import SearchBar from '@/components/common/SearchBar';
 import BaseLayout from '@/components/common/BaseLayout';
 import { useGetSearchData } from '@/api/hooks/useGetSearchData';
+// import { useGetSearchKeyword } from '@/api/hooks/useGetSearchKeyword';
+import { useGetSearchKakaoKeyword } from '@/hooks/api/useGetSearchKakaoKeyword';
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('query') || '';
 
+  const { data: kakaoData } = useGetSearchKakaoKeyword(query);
+  console.log(kakaoData);
+
+  // const keywordLoc = kakaoData?.documents?.[0] ? { x: kakaoData.documents[0].x, y: kakaoData.documents[0].y } : null;
+
   const [{ data: influencersData }, { data: VideoData }, { data: places }] = useGetSearchData(query);
+  // const { data: mapData } = useGetSearchKeyword(query, keywordLoc?.x ?? 0, keywordLoc?.y ?? 0, !!keywordLoc);
 
   return (
     <Wrapper>
-      <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
+      <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" isSearchPage width="960px" />
       <Title>
         <Paragraph weight="normal" size="m">
           <Text weight="bold" size="m" variant="mint">

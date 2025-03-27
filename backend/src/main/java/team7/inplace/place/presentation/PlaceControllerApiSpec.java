@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import reactor.core.publisher.Mono;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlacesResponse;
 import team7.inplace.place.presentation.dto.PlacesResponse.Location;
@@ -21,7 +22,7 @@ public interface PlaceControllerApiSpec {
         @RequestBody PlaceRequest.Create request
     );
 
-    @Operation(summary = "장소 조회", description = "위치 기반으로 반경 내의 장소 목록을 조회합니다.")
+    @Operation(summary = "장소 조회", description = "지도 반경 내 혹은 필터링 기준의 장소 페이지네이션 목록을 조회합니다.")
     ResponseEntity<Page<PlacesResponse.Simple>> getPlaces(
         @RequestParam Double longitude,
         @RequestParam Double latitude,
@@ -29,12 +30,13 @@ public interface PlaceControllerApiSpec {
         @RequestParam Double topLeftLatitude,
         @RequestParam Double bottomRightLongitude,
         @RequestParam Double bottomRightLatitude,
+        @RequestParam(required = false) String regions,
         @RequestParam(required = false) String categories,
         @RequestParam(required = false) String influencers,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 
-    @Operation(summary = "모든 장소 조회", description = "지도 내의 모든 장소 목록을 조회합니다.")
+    @Operation(summary = "모든 장소 조회", description = "지도 반경 내 혹은 필터링 기준의 모든 장소 목록을 조회합니다.")
     ResponseEntity<List<Location>> getPlaceLocations(
         @RequestParam Double longitude,
         @RequestParam Double latitude,
@@ -42,6 +44,7 @@ public interface PlaceControllerApiSpec {
         @RequestParam Double topLeftLatitude,
         @RequestParam Double bottomRightLongitude,
         @RequestParam Double bottomRightLatitude,
+        @RequestParam(required = false) String regions,
         @RequestParam(required = false) String categories,
         @RequestParam(required = false) String influencers
     );
@@ -50,7 +53,7 @@ public interface PlaceControllerApiSpec {
     ResponseEntity<PlacesResponse.Category> getCategories();
 
     @Operation(summary = "장소 상세 조회", description = "장소 ID를 통해 특정 장소의 상세 정보를 조회합니다.")
-    ResponseEntity<PlacesResponse.Detail> getPlaceDetail(
+    Mono<ResponseEntity<PlacesResponse.Detail>> getPlaceDetail(
         @PathVariable("id") Long placeId
     );
 

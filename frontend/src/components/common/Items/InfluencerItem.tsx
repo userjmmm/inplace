@@ -25,8 +25,8 @@ export default function InfluencerItem({
   influencerImgUrl,
   influencerJob,
   likes,
-  useBackCard = true,
-  useNav = true,
+  useBackCard = false,
+  useNav = false,
 }: InfluencerItemProps) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();

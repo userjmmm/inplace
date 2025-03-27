@@ -7,7 +7,7 @@ const darkMode = {
 };
 
 const lightMode = {
-  backgroundColor: '#ecfbfb',
+  backgroundColor: '#f7fcff',
   textColor: '#333333',
 };
 
@@ -33,7 +33,6 @@ export default function ThemeProvider({ children }: ThemeProviderProps) {
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
-    console.log('바뀐 theme:', theme);
   }, [theme]);
 
   const toggleTheme = () => {

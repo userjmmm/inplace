@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 import team7.inplace.place.application.PlaceFacade;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand;
@@ -56,6 +57,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @RequestParam Double topLeftLatitude,
         @RequestParam Double bottomRightLongitude,
         @RequestParam Double bottomRightLatitude,
+        @RequestParam(required = false) String regions,
         @RequestParam(required = false) String categories,
         @RequestParam(required = false) String influencers,
         @PageableDefault(page = 0, size = 10) Pageable pageable
@@ -66,7 +68,7 @@ public class PlaceController implements PlaceControllerApiSpec {
                 bottomRightLongitude, bottomRightLatitude,
                 longitude, latitude
             ),
-            new PlacesCommand.FilterParams(categories, influencers),
+            new PlacesCommand.FilterParams(regions, categories, influencers),
             pageable
         );
 
@@ -86,6 +88,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @RequestParam Double topLeftLatitude,
         @RequestParam Double bottomRightLongitude,
         @RequestParam Double bottomRightLatitude,
+        @RequestParam(required = false, defaultValue = "") String regions,
         @RequestParam(required = false, defaultValue = "") String categories,
         @RequestParam(required = false, defaultValue = "") String influencers
     ) {
@@ -95,7 +98,7 @@ public class PlaceController implements PlaceControllerApiSpec {
                 bottomRightLongitude, bottomRightLatitude,
                 longitude, latitude
             ),
-            new PlacesCommand.FilterParams(categories, influencers)
+            new PlacesCommand.FilterParams(regions, categories, influencers)
         );
 
         return new ResponseEntity<>(
@@ -106,13 +109,15 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<PlacesResponse.Detail> getPlaceDetail(
+    public Mono<ResponseEntity<PlacesResponse.Detail>> getPlaceDetail(
         @PathVariable("id") Long placeId
     ) {
-        var placeInfo = placeFacade.getDetailedPlaces(placeId);
-        var response = PlacesResponse.Detail.from(placeInfo);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return placeFacade.getDetailedPlaces(placeId)
+            .map(placeInfo -> {
+                var response = PlacesResponse.Detail.from(placeInfo);
+                return ResponseEntity.ok(response);
+            })
+            .doOnError(e -> log.error("오류 발생: ", e));
     }
 
     @GetMapping("/{id}/marker")

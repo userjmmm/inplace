@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
@@ -19,6 +20,7 @@ import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
+import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.client.GooglePlaceClient;
 import team7.inplace.place.client.GooglePlaceClientResponse;
@@ -70,12 +72,13 @@ public class PlaceService {
         FilterParams filterParamsCommand,
         Pageable pageable
     ) {
+        var regionFilters = filterParamsCommand.getRegionFilters();
         var categoryFilters = filterParamsCommand.getCategoryFilters();
         var influencerFilters = filterParamsCommand.getInfluencerFilters();
 
         // 위치와 필터링으로 Place 조회
         var placesPage = getPlacesByDistance(
-            coordinateCommand, categoryFilters, influencerFilters,
+            coordinateCommand, regionFilters, categoryFilters, influencerFilters,
             pageable, userId);
         if (placesPage.isEmpty()) {
             return new PageImpl<>(List.of(), pageable, 0);
@@ -86,6 +89,7 @@ public class PlaceService {
 
     private Page<PlaceQueryResult.DetailedPlace> getPlacesByDistance(
         Coordinate placesCoordinateCommand,
+        List<RegionFilter> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
@@ -98,6 +102,7 @@ public class PlaceService {
             placesCoordinateCommand.bottomRightLatitude(),
             placesCoordinateCommand.longitude(),
             placesCoordinateCommand.latitude(),
+            regionFilters,
             categoryFilters,
             influencerFilters,
             pageable,
@@ -126,14 +131,16 @@ public class PlaceService {
         Coordinate coordinateCommand,
         FilterParams filterParamsCommand
     ) {
-        List<Category> categoryFilter = filterParamsCommand.getCategoryFilters();
-        List<String> influencerFilter = filterParamsCommand.getInfluencerFilters();
+        var regionFilters = filterParamsCommand.getRegionFilters();
+        var categoryFilter = filterParamsCommand.getCategoryFilters();
+        var influencerFilter = filterParamsCommand.getInfluencerFilters();
 
         return placeReadRepository.findPlaceLocationsInMapRange(
             coordinateCommand.topLeftLongitude(),
             coordinateCommand.topLeftLatitude(),
             coordinateCommand.bottomRightLongitude(),
             coordinateCommand.bottomRightLatitude(),
+            regionFilters,
             categoryFilter,
             influencerFilter
         );
@@ -151,7 +158,7 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public GooglePlaceClientResponse.Place getGooglePlaceInfo(String googlePlaceId) {
+    public Mono<GooglePlaceClientResponse.Place> getGooglePlaceInfo(String googlePlaceId) {
         return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
     }
 

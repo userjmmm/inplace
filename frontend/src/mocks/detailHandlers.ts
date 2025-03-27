@@ -128,9 +128,9 @@ export const detailHandlers = [
         placeId: 1,
         placeName: '료코',
         address: {
-          address1: '대구',
-          address2: '북구',
-          address3: '대학로',
+          address1: '경북',
+          address2: '경주시',
+          address3: '첨성로99번길 24 료코',
         },
         likes: true,
         videos: [
@@ -167,6 +167,7 @@ export const detailHandlers = [
         rating: 2.5,
         googlePlaceUrl: 'https://google.com',
         kakaoPlaceUrl: 'https://kakao.com',
+        naverPlaceUrl: 'https://naver.com',
         googleReviews: [
           {
             like: true,
