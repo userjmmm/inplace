@@ -124,7 +124,7 @@ const PlaceCard = styled.div<{ $isSelected: boolean }>`
   box-sizing: border-box;
 
   &:hover {
-    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1b1a1a' : '#d5ecec')};
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1b1a1a' : '#daeeee')};
   }
 
   @media screen and (max-width: 768px) {
