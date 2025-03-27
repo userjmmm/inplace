@@ -359,7 +359,7 @@ const ResetButtonContainer = styled.div`
   position: absolute;
   bottom: 46px;
   right: 30px;
-  z-index: 10;
+  z-index: 9;
 
   @media screen and (max-width: 768px) {
     bottom: 34px;
@@ -397,7 +397,7 @@ const ListViewButton = styled.button`
     border-radius: 20px;
     padding: 8px 16px;
     cursor: pointer;
-    z-index: 10;
+    z-index: 9;
     align-items: center;
     gap: 4px;
   }

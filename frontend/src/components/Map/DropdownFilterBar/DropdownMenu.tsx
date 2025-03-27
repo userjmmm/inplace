@@ -19,7 +19,7 @@ export interface DropdownMenuProps {
   onChange: (value: { main: string; sub?: string; lat?: number; lng?: number }) => void;
   placeholder?: string;
   type: 'location' | 'influencer' | 'category';
-  width: string;
+  width: number;
   defaultValue?: { main: string; sub?: string };
   selectedOptions?: string[] | { main: string; sub?: string }[];
 }
@@ -215,12 +215,16 @@ export default function DropdownMenu({
   );
 }
 
-const DropdownContainer = styled.div<{ type: 'location' | 'influencer' | 'category'; $width: string }>`
+const DropdownContainer = styled.div<{ type: 'location' | 'influencer' | 'category'; $width: number }>`
   position: relative;
   height: 100%;
-  width: ${({ $width }) => $width};
+  width: ${({ $width }) => `${$width}px`};
   align-items: center;
   align-content: center;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const DropdownButton = styled.button<{ $isOpen: boolean }>`

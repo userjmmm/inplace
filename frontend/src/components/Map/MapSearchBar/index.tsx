@@ -166,7 +166,7 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
   };
 
   const placeholder =
-    searchType === 'location' ? '랜드마크를 입력해주세요 ex) 경북대' : '장소 이름을 입력해주세요 ex) 유정분식';
+    searchType === 'location' ? '랜드마크를 입력해주세요 ex) 경북대' : '장소 이름을 입력해주세요 ex) 모수';
 
   return (
     <SearchBarContainer ref={searchBarRef}>
@@ -181,7 +181,7 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
             }}
           >
             {searchType === 'location' ? '위치' : '장소'}
-            {isTypeOpen ? <IoIosArrowUp size={12} /> : <IoIosArrowDown size={12} />}
+            {isTypeOpen ? <IoIosArrowUp size={10} /> : <IoIosArrowDown size={10} />}
           </DropdownButton>
           {isTypeOpen && (
             <OptionsContainer>
@@ -267,7 +267,7 @@ const SearchBarContainer = styled.div`
   z-index: 100;
 
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 100%;
   }
 `;
 
@@ -284,6 +284,10 @@ const SearchForm = styled.div<{ $isOpen: boolean; $isTypeOpen: boolean }>`
   border-bottom-color: ${({ $isOpen }) => ($isOpen ? 'transparent' : null)};
   border-radius: ${({ $isOpen }) => ($isOpen ? '16px 16px 0 0' : '16px')};
   border-bottom-left-radius: ${({ $isTypeOpen }) => ($isTypeOpen ? '0px' : null)};
+
+  @media screen and (max-width: 768px) {
+    height: 34px;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -360,7 +364,8 @@ const DropdownButton = styled.button`
   text-overflow: ellipsis;
 
   @media screen and (max-width: 768px) {
-    padding: 6px;
+    padding: 8px;
+    font-size: 12px;
   }
 `;
 
@@ -396,5 +401,8 @@ const TypeItem = styled.div`
 
   &:hover {
     background-color: #d5ecec;
+  }
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
   }
 `;

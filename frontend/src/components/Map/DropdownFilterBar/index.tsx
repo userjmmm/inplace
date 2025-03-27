@@ -38,6 +38,7 @@ export default function DropdownFilterBar({ items }: DropdownFilterBarProps) {
 }
 
 const BarContainer = styled.div`
+  height: 38px;
   display: flex;
   align-items: center;
   border: 1px solid #a5a5a5;
@@ -46,6 +47,10 @@ const BarContainer = styled.div`
 
   svg {
     margin-right: 4px;
+  }
+
+  @media screen and (max-width: 768px) {
+    height: 34px;
   }
 `;
 
@@ -60,4 +65,7 @@ const HoverWrapper = styled.div`
   display: flex;
   align-items: center;
   height: 100%;
+  @media screen and (max-width: 768px) {
+    flex: 1;
+  }
 `;

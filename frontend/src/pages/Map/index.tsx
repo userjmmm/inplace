@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
-import { IoOptionsOutline } from 'react-icons/io5';
 import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
 import Chip from '@/components/common/Chip';
@@ -11,6 +10,7 @@ import useTouchDrag from '@/hooks/Map/useTouchDrag';
 import useMapState from '@/hooks/Map/useMapState';
 import MapSearchBar from '@/components/Map/MapSearchBar';
 import DropdownFilterBar, { FilterBarItem } from '@/components/Map/\bDropdownFilterBar';
+import useIsMobile from '@/hooks/useIsMobile';
 
 type SelectedOption = {
   main: string;
@@ -26,6 +26,7 @@ export default function MapPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
   const [isDropdownOpened, setIsDropdownOpened] = useState(false);
+  const isMobile = useIsMobile();
   const {
     center,
     setCenter,
@@ -124,6 +125,12 @@ export default function MapPage() {
     });
   }, []);
 
+  const handleToggleDropdown = () => {
+    if (isMobile) {
+      setIsDropdownOpened((prev) => !prev);
+    }
+  };
+
   const dropdownItems: FilterBarItem[] = [
     {
       type: 'dropdown',
@@ -170,19 +177,20 @@ export default function MapPage() {
     <PageContainer>
       <Wrapper>
         <FilterContainer>
-          {isDropdownOpened && (
-            <MobileDropdownSection>
-              <DropdownFilterBar items={dropdownItems} />
-            </MobileDropdownSection>
-          )}
-          <MobileDropdownButton onClick={() => setIsDropdownOpened(!isDropdownOpened)}>
-            <IoOptionsOutline size={26} />
-          </MobileDropdownButton>
-          <MapSearchBar setCenter={setCenter} setSelectedPlaceName={setSelectedPlaceName} />
+          <MobileFilterContainer onClick={handleToggleDropdown}>
+            <MapSearchBar setCenter={setCenter} setSelectedPlaceName={setSelectedPlaceName} />
+          </MobileFilterContainer>
           <DesktopDropdownSection>
             <DropdownFilterBar items={dropdownItems} />
           </DesktopDropdownSection>
         </FilterContainer>
+        {isDropdownOpened && (
+          <MobileDropdownSection $isDropdownOpened={isDropdownOpened}>
+            <MapSearchBar setCenter={setCenter} setSelectedPlaceName={setSelectedPlaceName} />
+            <DropdownFilterBar items={dropdownItems} />
+            <CloseBtn onClick={() => setIsDropdownOpened(false)}>닫기</CloseBtn>
+          </MobileDropdownSection>
+        )}
         <Chip
           selectedLocations={selectedLocations}
           selectedInfluencers={selectedInfluencers}
@@ -265,13 +273,13 @@ const FilterContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 16px;
+  padding-top: 10px;
 
   @media screen and (max-width: 768px) {
     width: 90%;
     padding-top: 12px;
-    z-index: 9;
-
+    z-index: 10;
+    gap: 10px;
     flex-wrap: wrap;
   }
 `;
@@ -323,32 +331,34 @@ const DragHandle = styled.div`
   }
 `;
 
-const MobileDropdownButton = styled.div`
-  display: none;
+const MobileFilterContainer = styled.div`
   @media screen and (max-width: 768px) {
-    display: block;
+    width: 100%;
   }
 `;
+
+const MobileDropdownSection = styled.div<{ $isDropdownOpened: boolean }>`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: ${({ theme }) => theme.backgroundColor};
+    z-index: 101;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+`;
+
 const DesktopDropdownSection = styled.div`
   @media screen and (max-width: 768px) {
     display: none;
   }
 `;
 
-const MobileDropdownSection = styled.div`
-  display: none;
-  @media screen and (max-width: 768px) {
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100vh;
-    left: 0px;
-    top: 0px;
-    display: flex;
-    align-items: start;
-    justify-content: center;
-    background-color: ${({ theme }) =>
-      theme.backgroundColor === '#292929' ? 'rgba(41, 41, 41, 0.9)' : 'rgba(236, 251, 251, 0.9)'};
-    z-index: 111;
-  }
-`;
+const CloseBtn = styled.button``;
