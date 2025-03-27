@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
+import { IoIosClose, IoIosSearch, IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
 import { useGetSearchComplete } from '@/api/hooks/useGetSearchComplete';
 import useDebounce from '@/hooks/useDebounce';
 import { useGetSearchKakaoKeyword } from '@/hooks/api/useGetSearchKakaoKeyword';
@@ -83,6 +83,8 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
   useEffect(() => {
     if (inputValue === '') {
       setIsOpen(false);
+      setItemIndex(-1);
+      setSelectedPlaceName('');
     } else if (!preventDropdownOpen) {
       setIsOpen(true);
     }
@@ -133,7 +135,6 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
   const handleDropDownKey = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (!inputValue || event.nativeEvent.isComposing || !isOpen) return;
-
       switch (event.key) {
         case 'ArrowDown':
           setItemIndex((prev) => (prev === dropDownList.length - 1 ? 0 : prev + 1));
@@ -158,9 +159,10 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
     [inputValue, isOpen, dropDownList, handleDropDownItem, handleSearch],
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleClickSearchRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    handleSearch(inputValue, false);
+    setInputValue('');
+    setSelectedPlaceName('');
   };
 
   const placeholder =
@@ -168,7 +170,7 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
 
   return (
     <SearchBarContainer ref={searchBarRef}>
-      <SearchForm $isOpen={isOpen} $isTypeOpen={isTypeOpen} onSubmit={handleSubmit}>
+      <SearchForm $isOpen={isOpen} $isTypeOpen={isTypeOpen}>
         <SearchType ref={searchTypeRef}>
           <DropdownButton
             type="button"
@@ -188,6 +190,7 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
                 onClick={() => {
                   setSearchType('location');
                   setIsTypeOpen(false);
+                  setSelectedPlaceName('');
                 }}
               >
                 위치
@@ -211,9 +214,9 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
           onKeyDown={handleDropDownKey}
           placeholder={placeholder}
         />
-        <SearchButton type="submit" aria-label="검색">
-          <SearchIcon $isExpanded />
-        </SearchButton>
+        <SearchRemoveButton aria-label="search-remove-btn" onClick={handleClickSearchRemove}>
+          {inputValue ? <IoIosClose size={26} /> : <IoIosSearch size={20} />}
+        </SearchRemoveButton>
       </SearchForm>
       {inputValue && isOpen && (
         <SearchDropDownBox>
@@ -268,7 +271,7 @@ const SearchBarContainer = styled.div`
   }
 `;
 
-const SearchForm = styled.form<{ $isOpen: boolean; $isTypeOpen: boolean }>`
+const SearchForm = styled.div<{ $isOpen: boolean; $isTypeOpen: boolean }>`
   position: relative;
   height: 38px;
   width: 100%;
@@ -297,25 +300,12 @@ const SearchInput = styled.input`
   }
 `;
 
-const SearchButton = styled.button`
+const SearchRemoveButton = styled.button`
   background: transparent;
   border: none;
   cursor: pointer;
   z-index: 2;
   padding: 0 8px 0px 6px;
-`;
-
-const SearchIcon = styled.span<{ $isExpanded: boolean }>`
-  width: 18px;
-  height: 18px;
-  background-color: ${(props) => {
-    if (props.$isExpanded) return '#55ebff';
-    if (props.theme.backgroundColor === '#292929') return '#ffffff';
-    return '#292929';
-  }};
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M23.384,21.619,16.855,15.09a9.284,9.284,0,1,0-1.768,1.768l6.529,6.529a1.266,1.266,0,0,0,1.768,0A1.251,1.251,0,0,0,23.384,21.619ZM2.75,9.5a6.75,6.75,0,1,1,6.75,6.75A6.758,6.758,0,0,1,2.75,9.5Z'/%3E%3C/svg%3E")
-    center / contain no-repeat;
-  display: block;
 `;
 
 const SearchDropDownBox = styled.ul`
