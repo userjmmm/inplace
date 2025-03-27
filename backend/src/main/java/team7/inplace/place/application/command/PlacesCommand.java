@@ -34,10 +34,41 @@ public class PlacesCommand {
         }
     }
 
+    public record RegionFilter(
+        String city,
+        String district
+    ){
+        public static RegionFilter from(
+            String regions
+        ){
+            var parts = regions.split("-");
+            return new RegionFilter(
+                parts[0],
+                "전체".equals(parts[1]) ? null : parts[1]
+            );
+        }
+
+        public static RegionFilter of(
+            String city,
+            String district
+        ){
+            return new RegionFilter(city, district);
+        }
+    }
+
     public record FilterParams(
+        String regions,
         String categories,
         String influencers
     ) {
+        public List<RegionFilter> getRegionFilters() {
+            if (regionFilterNotExists()) {
+                return null;
+            }
+            return Arrays.stream(regions.split(","))
+                .map(RegionFilter::from)
+                .toList();
+        }
 
         public List<Category> getCategoryFilters() {
             if (categoryFilterNotExists()) {
@@ -53,6 +84,10 @@ public class PlacesCommand {
                 return null;
             }
             return Arrays.stream(influencers.split(",")).toList();
+        }
+
+        private boolean regionFilterNotExists() {
+            return !StringUtils.isNotEmpty(regions);
         }
 
         private boolean categoryFilterNotExists() {
