@@ -7,28 +7,35 @@ interface UseMapActionsProps {
 
 export default function useMapActions({ mapRef, onPlaceSelect }: UseMapActionsProps) {
   const PAN_DELAY_MS = 100;
-  const MIN_ZOOM_LEVEL = 4;
-  const MAX_ZOOM_THRESHOLD = 10;
-  const BASE_OFFSET_Y = -0.007;
+  const DEFAULT_ZOOM_LEVEL = 4;
+  const MIN_ZOOM_LEVEL = 2;
+  const BASE_OFFSET_Y = -0.002;
+  const SMALL_ZOOM_OFFSET_Y = -0.0007;
 
   const moveMapToMarker = useCallback((latitude: number, longitude: number) => {
     if (!mapRef.current) return;
 
-    const levelMultiplier = mapRef.current.getLevel() > MAX_ZOOM_THRESHOLD ? 2 : 1;
-    const offsetY = (BASE_OFFSET_Y * levelMultiplier) / 3;
-    const position = new kakao.maps.LatLng(latitude - offsetY, longitude);
+    const currentLevel = mapRef.current.getLevel();
 
-    if (mapRef.current.getLevel() > MIN_ZOOM_LEVEL) {
-      mapRef.current.setLevel(MIN_ZOOM_LEVEL, { anchor: position, animate: true });
+    if (currentLevel === 1) {
+      mapRef.current.setLevel(MIN_ZOOM_LEVEL, { animate: true });
     }
 
-    setTimeout(() => mapRef.current?.panTo(position), PAN_DELAY_MS);
+    if (currentLevel > DEFAULT_ZOOM_LEVEL) {
+      mapRef.current.setLevel(DEFAULT_ZOOM_LEVEL, { animate: true });
+    }
+
+    const offsetY = currentLevel < DEFAULT_ZOOM_LEVEL ? SMALL_ZOOM_OFFSET_Y : BASE_OFFSET_Y;
+    const position = new kakao.maps.LatLng(latitude - offsetY, longitude);
+    setTimeout(() => {
+      mapRef.current?.panTo(position);
+    }, PAN_DELAY_MS);
   }, []);
 
   const handleResetCenter = useCallback((userLocation: { lat: number; lng: number }) => {
     if (mapRef.current && userLocation) {
       mapRef.current.setCenter(new kakao.maps.LatLng(userLocation.lat, userLocation.lng));
-      mapRef.current.setLevel(4);
+      mapRef.current.setLevel(DEFAULT_ZOOM_LEVEL);
       onPlaceSelect(null);
     }
   }, []);
