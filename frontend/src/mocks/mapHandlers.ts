@@ -2,6 +2,7 @@ import { rest } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { MarkerInfo, PlaceData } from '@/types';
 import { getAllMarkersPath } from '@/api/hooks/useGetAllMarkers';
+import { getSearchPlaceMarkersPath } from '@/api/hooks/useGetSearchPlaceMarker';
 
 const dummyInfluencers = [
   { influencerName: '성시경' },
@@ -26,12 +27,12 @@ const dummyAllMarkers = [
   { placeId: 8, longitude: '127.753131738285', latitude: '37.8763535115171' },
   { placeId: 9, longitude: '127.1436094525637', latitude: '37.275820090934495' },
   { placeId: 10, longitude: '129.11483195198562', latitude: '35.158494192685914' },
-  { placeId: 11, longitude: '128.748643', latitude: '35.783343' },
-  { placeId: 12, longitude: '128.642', latitude: '35.79' },
-  { placeId: 13, longitude: '128.545', latitude: '35.81' },
-  { placeId: 14, longitude: '128.51', latitude: '35.7777' },
-  { placeId: 15, longitude: '128.79', latitude: '35.783222' },
-  { placeId: 16, longitude: '128.71', latitude: '35.02222' },
+  { placeId: 11, longitude: '128.848643', latitude: '35.783343' },
+  { placeId: 12, longitude: '128.848642', latitude: '35.7834' },
+  { placeId: 13, longitude: '128.8483', latitude: '35.789' },
+  { placeId: 14, longitude: '128.74873', latitude: '35.689' },
+  { placeId: 15, longitude: '128.8499', latitude: '35.71' },
+  { placeId: 16, longitude: '128.9', latitude: '35.78' },
 ];
 const dummyMarkerInfos: Record<string, MarkerInfo> = {
   '16': {
@@ -333,8 +334,8 @@ const dummyPlaces: PlaceData[] = [
         videoUrl: 'https://www.youtube.com/watch?v=nCEtQ7dP8zY',
       },
     ],
-    longitude: '128.84873',
-    latitude: '35.789',
+    longitude: '128.74873',
+    latitude: '35.689',
     likes: false,
     menuImgUrl: null,
   },
@@ -423,6 +424,48 @@ export const mapHandlers = [
       }),
     );
   }),
+  rest.get(`${BASE_URL}/places/search`, (req, res, ctx) => {
+    const url = new URL(req.url);
+    const page = parseInt(url.searchParams.get('page') ?? '0', 10);
+    const size = parseInt(url.searchParams.get('size') ?? '10', 10);
+
+    const totalElements = dummyPlaces.length;
+    const totalPages = Math.ceil(totalElements / size);
+    const startIndex = page * size;
+    const endIndex = Math.min(startIndex + size, totalElements);
+    const paginatedContent = dummyPlaces.slice(startIndex, endIndex);
+    return res(
+      ctx.status(200),
+      ctx.json({
+        totalPages,
+        totalElements,
+        size,
+        content: paginatedContent,
+        number: page,
+        sort: {
+          empty: true,
+          sorted: true,
+          unsorted: true,
+        },
+        numberOfElements: paginatedContent.length,
+        pageable: {
+          offset: page * size,
+          sort: {
+            empty: true,
+            sorted: true,
+            unsorted: true,
+          },
+          paged: true,
+          pageNumber: page,
+          pageSize: size,
+          unpaged: false,
+        },
+        first: page === 0,
+        last: page === totalPages - 1,
+        empty: paginatedContent.length === 0,
+      }),
+    );
+  }),
   rest.post(`${BASE_URL}/places/likes`, (req, res, ctx) => {
     const { placeId, likes } = req.body as { placeId: string; likes: boolean };
     return res(
@@ -438,6 +481,22 @@ export const mapHandlers = [
   }),
   rest.get(`${BASE_URL}${getAllMarkersPath()}`, (_, res, ctx) => {
     return res(ctx.status(200), ctx.json(dummyAllMarkers));
+  }),
+  rest.get(`${BASE_URL}${getSearchPlaceMarkersPath()}`, (req, res, ctx) => {
+    const url = new URL(req.url);
+    const name = url.searchParams.get('placeName') || '';
+
+    const searchPlaceMarkers = dummyAllMarkers.filter((marker) => {
+      return dummyPlaces.some((place) => {
+        return (
+          place.placeName.toLowerCase().includes(name) &&
+          place.latitude === marker.latitude &&
+          place.longitude === marker.longitude
+        );
+      });
+    });
+
+    return res(ctx.status(200), ctx.json(searchPlaceMarkers));
   }),
   rest.get(`${BASE_URL}/places/marker/:id`, (req, res, ctx) => {
     const { id } = req.params;

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { TbCurrentLocation } from 'react-icons/tb';
 import { GrPowerCycle } from 'react-icons/gr';
 import Button from '@/components/common/Button';
-import { LocationData, PlaceData } from '@/types';
+import { FilterParams, LocationData, PlaceData } from '@/types';
 import { useGetAllMarkers } from '@/api/hooks/useGetAllMarkers';
 import InfoWindow from '@/components/InfluencerInfo/InfluencerMapTap/InfoWindow';
 import OriginMarker from '@/assets/images/OriginMarker.png';
@@ -15,6 +15,7 @@ import Loading from '@/components/common/layouts/Loading';
 import useMapActions from '@/hooks/Map/useMapAction';
 import useMarkerData from '@/hooks/Map/useMarkerData';
 import useIsMobile from '@/hooks/useIsMobile';
+import { useGetSearchPlaceMarkers } from '@/api/hooks/useGetSearchPlaceMarker';
 
 interface MapWindowProps {
   center: { lat: number; lng: number };
@@ -23,10 +24,10 @@ interface MapWindowProps {
   filters: {
     categories: string[];
     influencers: string[];
-    placeName: string;
     regions: string[];
     location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
+  filtersWithPlaceName: FilterParams;
   placeData: PlaceData[];
   selectedPlaceId: number | null;
   onPlaceSelect: (placeId: number | null) => void;
@@ -39,6 +40,7 @@ export default function MapWindow({
   onBoundsChange,
   onCenterChange,
   filters,
+  filtersWithPlaceName,
   placeData,
   selectedPlaceId,
   onPlaceSelect,
@@ -76,25 +78,39 @@ export default function MapWindow({
   const originSize = isMobile ? 26 : 34;
   const userLocationSize = isMobile ? 16 : 24;
 
-  const { data: markers = [] } = useGetAllMarkers({
-    location: mapBound,
-    filters,
-    center: mapCenter,
-  });
-  // const markers = AllmarkerData?.marker || [];
-  const selectedMarker = markers.find((m) => m.placeId === selectedPlaceId);
+  const { data: markers = [] } = useGetAllMarkers(
+    {
+      location: mapBound,
+      filters,
+      center: mapCenter,
+    },
+    !filtersWithPlaceName.placeName,
+  );
 
-  // useEffect(() => {
-  //   if (AllmarkerData?.map && mapRef.current) {
-  //     const { latitude, longitude, level } = AllmarkerData.map;
-  //     const newCenter = new kakao.maps.LatLng(latitude, longitude);
+  const { data: placeNameMarkers = [] } = useGetSearchPlaceMarkers(
+    {
+      filters: filtersWithPlaceName,
+    },
+    !!filtersWithPlaceName.placeName,
+  );
 
-  //     mapRef.current.setCenter(newCenter);
-  //     mapRef.current.setLevel(level);
+  const markerListToRender = filtersWithPlaceName.placeName ? placeNameMarkers : markers;
 
-  //     setMapCenter({ lat: latitude, lng: longitude });
-  //   }
-  // }, [AllmarkerData]);
+  const selectedMarker = markerListToRender.find((m) => m.placeId === selectedPlaceId) || null;
+
+  // placeName로 검색 시 지도 범위 확장
+  useEffect(() => {
+    if (!mapRef.current || placeNameMarkers.length === 0) return;
+
+    const bounds = new kakao.maps.LatLngBounds();
+
+    placeNameMarkers.forEach((marker) => {
+      bounds.extend(new kakao.maps.LatLng(marker.latitude, marker.longitude));
+    });
+
+    mapRef.current.setBounds(bounds);
+    setShowSearchButton(false);
+  }, [placeNameMarkers]);
 
   const fetchMarkers = useCallback(() => {
     if (!mapRef.current) return;
@@ -115,6 +131,7 @@ export default function MapWindow({
 
     onCenterChange({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     onBoundsChange(newBounds);
+    setShowSearchButton(false);
   }, [mapRef]);
 
   useEffect(() => {
@@ -163,22 +180,27 @@ export default function MapWindow({
         bottomRightLongitude: bounds.getNorthEast().getLng(),
       };
       onPlaceSelect(null);
-      mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
+      // mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
+      // 줌아웃하고 지역 필터링 걸었을때 그 레벨상태로 이동됨 -> 위를 주석처리 하고 지역필터링 선택시 레벨 4로 조정
+      // 줌아웃하고 이위치에서장소보기 했을때 디폴트 레벨로 변경돼서 보임 -> 안됨
       setMapCenter(center);
       setMapBound(newBounds);
       onBoundsChange(newBounds);
+      setShowSearchButton(false);
     }
   }, [center, mapRef]);
 
   // 초기 선택 시에만 이동하도록
   useEffect(() => {
     if (selectedPlaceId) {
-      const marker = markers.find((m) => m.placeId === selectedPlaceId);
-      if (marker) {
-        moveMapToMarker(marker.latitude, marker.longitude);
+      const targetMarker = filtersWithPlaceName.placeName
+        ? placeNameMarkers.find((m) => m.placeId === selectedPlaceId)
+        : markers.find((m) => m.placeId === selectedPlaceId);
+      if (targetMarker) {
+        moveMapToMarker(targetMarker.latitude, targetMarker.longitude);
       }
     }
-  }, [selectedPlaceId, moveMapToMarker]);
+  }, [selectedPlaceId]);
 
   const handleSearchNearby = useCallback(() => {
     fetchMarkers();
@@ -241,7 +263,7 @@ export default function MapWindow({
           />
         )}
         <MarkerClusterer averageCenter minLevel={10} minClusterSize={2}>
-          {markers.map((place) => (
+          {markerListToRender.map((place) => (
             <MapMarker
               key={place.placeId}
               zIndex={selectedPlaceId === place.placeId ? 999 : 1}

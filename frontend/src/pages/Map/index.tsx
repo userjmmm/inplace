@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
+import { IoOptionsOutline } from 'react-icons/io5';
 import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
 import Chip from '@/components/common/Chip';
@@ -24,6 +25,7 @@ export default function MapPage() {
   const [selectedLocations, setSelectedLocations] = useState<SelectedOption[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
+  const [isDropdownOpened, setIsDropdownOpened] = useState(false);
   const {
     center,
     setCenter,
@@ -41,6 +43,16 @@ export default function MapPage() {
     useTouchDrag(setIsListExpanded);
 
   const filters = useMemo(
+    () => ({
+      categories: selectedCategories,
+      influencers: selectedInfluencers,
+      location: selectedLocations,
+      regions: selectedLocations.map((loc) => (loc.sub ? `${loc.main}-${loc.sub}` : loc.main)),
+    }),
+    [selectedCategories, selectedInfluencers, selectedLocations],
+  );
+
+  const filtersWithPlaceName = useMemo(
     () => ({
       categories: selectedCategories,
       influencers: selectedInfluencers,
@@ -71,6 +83,7 @@ export default function MapPage() {
 
     if (value.lat && value.lng) {
       setCenter({ lat: value.lat, lng: value.lng });
+      // 맵 레벨도 4로 바꿔야함 - todo
     }
   }, []);
 
@@ -121,7 +134,7 @@ export default function MapPage() {
         onChange: handleLocationChange,
         placeholder: '지역',
         type: 'location',
-        width: '90px',
+        width: 90,
         selectedOptions: selectedLocations,
       },
     },
@@ -134,7 +147,7 @@ export default function MapPage() {
         onChange: handleInfluencerChange,
         placeholder: '인플루언서',
         type: 'influencer',
-        width: '140px',
+        width: 140,
         selectedOptions: selectedInfluencers,
       },
     },
@@ -147,7 +160,7 @@ export default function MapPage() {
         onChange: handleCategoryChange,
         placeholder: '카테고리',
         type: 'category',
-        width: '120px',
+        width: 120,
         selectedOptions: selectedCategories,
       },
     },
@@ -157,8 +170,18 @@ export default function MapPage() {
     <PageContainer>
       <Wrapper>
         <FilterContainer>
+          {isDropdownOpened && (
+            <MobileDropdownSection>
+              <DropdownFilterBar items={dropdownItems} />
+            </MobileDropdownSection>
+          )}
+          <MobileDropdownButton onClick={() => setIsDropdownOpened(!isDropdownOpened)}>
+            <IoOptionsOutline size={26} />
+          </MobileDropdownButton>
           <MapSearchBar setCenter={setCenter} setSelectedPlaceName={setSelectedPlaceName} />
-          <DropdownFilterBar items={dropdownItems} />
+          <DesktopDropdownSection>
+            <DropdownFilterBar items={dropdownItems} />
+          </DesktopDropdownSection>
         </FilterContainer>
         <Chip
           selectedLocations={selectedLocations}
@@ -174,6 +197,7 @@ export default function MapPage() {
         onBoundsChange={handleBoundsChange}
         onCenterChange={handleCenterChange}
         filters={filters}
+        filtersWithPlaceName={filtersWithPlaceName}
         placeData={placeData}
         selectedPlaceId={selectedPlaceId}
         onPlaceSelect={handlePlaceSelect}
@@ -184,6 +208,7 @@ export default function MapPage() {
         <PlaceSection
           mapBounds={mapBounds}
           filters={filters}
+          filtersWithPlaceName={filtersWithPlaceName}
           center={center}
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
@@ -202,6 +227,7 @@ export default function MapPage() {
         <PlaceSection
           mapBounds={mapBounds}
           filters={filters}
+          filtersWithPlaceName={filtersWithPlaceName}
           center={center}
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
@@ -217,6 +243,7 @@ export default function MapPage() {
 const PageContainer = styled.div`
   padding: 6px 0;
   @media screen and (max-width: 768px) {
+    position: relative;
     width: 100%;
     align-items: center;
     touch-action: none;
@@ -237,6 +264,7 @@ const Wrapper = styled.div`
 const FilterContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding-top: 16px;
 
   @media screen and (max-width: 768px) {
@@ -292,5 +320,35 @@ const DragHandle = styled.div`
     height: 4px;
     background-color: #666;
     border-radius: 2px;
+  }
+`;
+
+const MobileDropdownButton = styled.div`
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: block;
+  }
+`;
+const DesktopDropdownSection = styled.div`
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobileDropdownSection = styled.div`
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    left: 0px;
+    top: 0px;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    background-color: ${({ theme }) =>
+      theme.backgroundColor === '#292929' ? 'rgba(41, 41, 41, 0.9)' : 'rgba(236, 251, 251, 0.9)'};
+    z-index: 111;
   }
 `;
