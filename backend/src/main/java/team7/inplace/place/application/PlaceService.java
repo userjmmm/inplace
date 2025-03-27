@@ -17,10 +17,11 @@ import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.liked.likedPlace.domain.LikedPlace;
 import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
+import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
-import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
+import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.client.GooglePlaceClient;
 import team7.inplace.place.client.GooglePlaceClientResponse;
@@ -28,6 +29,7 @@ import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.video.persistence.VideoReadRepository;
 
 @Slf4j
@@ -72,9 +74,9 @@ public class PlaceService {
         FilterParams filterParamsCommand,
         Pageable pageable
     ) {
-        var regionFilters = filterParamsCommand.getRegionFilters();
-        var categoryFilters = filterParamsCommand.getCategoryFilters();
-        var influencerFilters = filterParamsCommand.getInfluencerFilters();
+        var regionFilters = filterParamsCommand.regions();
+        var categoryFilters = filterParamsCommand.categories();
+        var influencerFilters = filterParamsCommand.influencers();
 
         // 위치와 필터링으로 Place 조회
         var placesPage = getPlacesByDistance(
@@ -89,7 +91,7 @@ public class PlaceService {
 
     private Page<PlaceQueryResult.DetailedPlace> getPlacesByDistance(
         Coordinate placesCoordinateCommand,
-        List<RegionFilter> regionFilters,
+        List<RegionParam> regionParams,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
@@ -102,7 +104,7 @@ public class PlaceService {
             placesCoordinateCommand.bottomRightLatitude(),
             placesCoordinateCommand.longitude(),
             placesCoordinateCommand.latitude(),
-            regionFilters,
+            regionParams,
             categoryFilters,
             influencerFilters,
             pageable,
@@ -131,9 +133,9 @@ public class PlaceService {
         Coordinate coordinateCommand,
         FilterParams filterParamsCommand
     ) {
-        var regionFilters = filterParamsCommand.getRegionFilters();
-        var categoryFilter = filterParamsCommand.getCategoryFilters();
-        var influencerFilter = filterParamsCommand.getInfluencerFilters();
+        var regionFilters = filterParamsCommand.regions();
+        var categoryFilter = filterParamsCommand.categories();
+        var influencerFilter = filterParamsCommand.influencers();
 
         return placeReadRepository.findPlaceLocationsInMapRange(
             coordinateCommand.topLeftLongitude(),
@@ -166,5 +168,27 @@ public class PlaceService {
         return Arrays.stream(Category.values())
             .map(category -> new PlaceInfo.Category(category.name()))
             .toList();
+    }
+
+    public List<Location> getPlaceLocationsByName(String name, FilterParams command) {
+        return placeReadRepository.findPlaceLocationsByName(
+            name,
+            command.regions(),
+            command.categories(),
+            command.influencers()
+        );
+    }
+
+    public Page<PlaceQueryResult.DetailedPlace> getPlacesByName(
+        Long userId, String name, PlacesCommand.FilterParams command, Pageable pageable
+    ) {
+        return placeReadRepository.findPlacesByNameWithPaging(
+            userId,
+            name,
+            command.regions(),
+            command.categories(),
+            command.influencers(),
+            pageable
+        );
     }
 }

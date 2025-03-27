@@ -14,7 +14,9 @@ import team7.inplace.place.application.command.PlacesCommand.Coordinate;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.application.dto.PlaceInfo.Marker;
+import team7.inplace.place.application.dto.PlaceInfo.Simple;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.review.application.ReviewService;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.VideoService;
@@ -47,18 +49,22 @@ public class PlaceFacade {
         var placeInfoMono = Mono.fromCallable(() -> placeService.getPlaceInfo(placeId, userId));
 
         return placeInfoMono.flatMap(placeInfo -> {
-            var videoInfosMono = Mono.fromCallable(() -> videoService.getVideosByPlaceId(placeInfo.placeId()));
-            var reviewRatesMono = Mono.fromCallable(() -> reviewService.getReviewLikeRate(placeInfo.placeId()));
+            var videoInfosMono = Mono.fromCallable(
+                () -> videoService.getVideosByPlaceId(placeInfo.placeId()));
+            var reviewRatesMono = Mono.fromCallable(
+                () -> reviewService.getReviewLikeRate(placeInfo.placeId()));
 
             if (placeInfo.haveNoGooglePlaceId()) {
                 return Mono.zip(videoInfosMono, reviewRatesMono)
-                    .map(tuple -> PlaceInfo.Detail.of(placeInfo, null, tuple.getT1(), tuple.getT2()));
+                    .map(tuple -> PlaceInfo.Detail.of(placeInfo, null, tuple.getT1(),
+                        tuple.getT2()));
             }
 
             var googlePlaceMono = placeService.getGooglePlaceInfo(placeInfo.googlePlaceId());
 
             return Mono.zip(googlePlaceMono, videoInfosMono, reviewRatesMono)
-                .map(tuple -> PlaceInfo.Detail.of(placeInfo, tuple.getT1(), tuple.getT2(), tuple.getT3()));
+                .map(tuple -> PlaceInfo.Detail.of(placeInfo, tuple.getT1(), tuple.getT2(),
+                    tuple.getT3()));
         });
     }
 
@@ -70,7 +76,9 @@ public class PlaceFacade {
     }
 
     public Page<PlaceInfo.Simple> getPlacesInMapRange(
-        Coordinate coordinateCommand, FilterParams filterParamsCommand, Pageable pageable
+        Coordinate coordinateCommand,
+        FilterParams filterParamsCommand,
+        Pageable pageable
     ) {
         var userId = AuthorizationUtil.getUserId();
 
@@ -96,5 +104,23 @@ public class PlaceFacade {
 
     public List<PlaceInfo.Category> getCategories() {
         return placeService.getCategories();
+    }
+
+    public List<Location> getPlaceLocationsByName(String name, FilterParams command) {
+        return placeService.getPlaceLocationsByName(name, command);
+    }
+
+    public Page<Simple> getPlacesByName(String name, FilterParams command, Pageable pageable) {
+        var userId = AuthorizationUtil.getUserId();
+
+        var placeSimpleInfos = placeService.getPlacesByName(userId, name, command, pageable);
+        var placeIds = placeSimpleInfos.getContent()
+            .stream()
+            .map(PlaceQueryResult.DetailedPlace::placeId)
+            .toList();
+        var placeVideos = videoService.getVideosByPlaceId(placeIds);
+
+        return placeSimpleInfos
+            .map(place -> PlaceInfo.Simple.of(place, placeVideos.get(place.placeId())));
     }
 }

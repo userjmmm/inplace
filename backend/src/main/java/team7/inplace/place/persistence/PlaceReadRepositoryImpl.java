@@ -5,6 +5,7 @@ import static com.querydsl.core.types.ExpressionUtils.count;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -16,10 +17,12 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import team7.inplace.influencer.domain.QInfluencer;
 import team7.inplace.liked.likedPlace.domain.QLikedPlace;
-import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
+import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.SimplePlace;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_DetailedPlace;
@@ -77,7 +80,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Double topLeftLongitude, Double topLeftLatitude,
         Double bottomRightLongitude, Double bottomRightLatitude,
         Double longitude, Double latitude,
-        List<RegionFilter> regionFilters,
+        List<RegionParam> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
@@ -152,12 +155,12 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Double topLeftLatitude,
         Double bottomRightLongitude,
         Double bottomRightLatitude,
-        List<RegionFilter> regionFilters,
+        List<RegionParam> regionParams,
         List<Category> categoryFilters,
         List<String> influencerFilters
     ) {
         var locationCondition = locationRegionCondition( // 주소 or 바운더리 검색 조건
-            regionFilters,
+            regionParams,
             topLeftLongitude, topLeftLatitude,
             bottomRightLongitude, bottomRightLatitude
         );
@@ -191,15 +194,15 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     private BooleanBuilder locationRegionCondition(
-        List<RegionFilter> regionFilters,
+        List<RegionParam> regionParams,
         Double topLeftLongitude, Double topLeftLatitude,
         Double bottomRightLongitude, Double bottomRightLatitude
     ) {
         BooleanBuilder expression = new BooleanBuilder();
 
-        if (regionFilters != null && !regionFilters.isEmpty()) {
+        if (regionParams != null && !regionParams.isEmpty()) {
             BooleanBuilder regionBuilder = new BooleanBuilder();
-            for (RegionFilter region : regionFilters) {
+            for (RegionParam region : regionParams) {
                 BooleanExpression cityCondition = QPlace.place.address.address1.eq(region.city());
                 BooleanExpression districtCondition = region.district() == null // '전체'인 경우
                     ? Expressions.TRUE // address1만 체크하도록 설정
@@ -207,17 +210,26 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
                 regionBuilder.or(cityCondition.and(districtCondition));
             }
             expression.and(regionBuilder);
-        } else {
-            // 지역 필터가 없으면 기존의 바운더리로 검색
-            expression.and(QPlace.place.coordinate.longitude.between(topLeftLongitude, bottomRightLongitude));
-            expression.and(QPlace.place.coordinate.latitude.between(bottomRightLatitude, topLeftLatitude));
+
+            return expression;
         }
+        if (topLeftLongitude == null || topLeftLatitude == null ||
+            bottomRightLongitude == null || bottomRightLatitude == null
+        ) {
+            return expression;
+        }
+        // 지역 필터가 없으면 기존의 바운더리로 검색
+        expression.and(
+            QPlace.place.coordinate.longitude.between(topLeftLongitude, bottomRightLongitude));
+        expression.and(
+            QPlace.place.coordinate.latitude.between(bottomRightLatitude, topLeftLatitude));
 
         return expression;
     }
 
     private BooleanBuilder createFilters(
-        List<Category> categoryFilters, List<String> influencerFilters
+        List<Category> categoryFilters,
+        List<String> influencerFilters
     ) {
         BooleanBuilder expression = new BooleanBuilder();
         if (categoryFilters != null && categoryFilters.size() > 0) {
@@ -316,5 +328,119 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             .from(QPlace.place)
             .where(QPlace.place.id.eq(placeId))
             .fetchOne();
+    }
+
+    @Override
+    public List<Location> findPlaceLocationsByName(
+        String name,
+        List<RegionParam> regionParams,
+        List<Category> categoryFilters,
+        List<String> influencerFilters
+    ) {
+        var locationCondition = locationRegionCondition(regionParams, null, null, null, null);
+        var filterExpression = createFilters(categoryFilters, influencerFilters);
+        var searchCondition = getMatchScore(name);
+
+        List<Long> filteredPlaceId = jpaQueryFactory
+            .select(QPlace.place.id).distinct()
+            .from(QPlace.place)
+            .leftJoin(QVideo.video).on(QVideo.video.placeId.eq(QPlace.place.id))
+            .leftJoin(QInfluencer.influencer)
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
+            .where(
+                locationCondition,
+                filterExpression,
+                searchCondition.gt(0),
+                QPlace.place.deleteAt.isNull(),
+                QVideo.video.deleteAt.isNull(),
+                QInfluencer.influencer.deleteAt.isNull()
+            ).fetch();
+
+        return jpaQueryFactory
+            .select(new QPlaceQueryResult_Location(
+                    QPlace.place.id,
+                    QPlace.place.coordinate.longitude,
+                    QPlace.place.coordinate.latitude
+                )
+            )
+            .from(QPlace.place)
+            .where(QPlace.place.id.in(filteredPlaceId))
+            .fetch();
+    }
+
+    @Override
+    public Page<DetailedPlace> findPlacesByNameWithPaging(
+        Long userId, String name,
+        List<RegionParam> regions, List<Category> categories, List<String> influencers,
+        Pageable pageable
+    ) {
+        var locationCondition = locationRegionCondition(regions, null, null, null, null);
+        var filterExpression = createFilters(categories, influencers);
+        var searchCondition = getMatchScore(name);
+
+        List<Long> filteredPlaceId = jpaQueryFactory
+            .select(QPlace.place.id).distinct()
+            .from(QPlace.place)
+            .leftJoin(QVideo.video).on(QVideo.video.placeId.eq(QPlace.place.id))
+            .leftJoin(QInfluencer.influencer)
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
+            .where(
+                locationCondition,
+                filterExpression,
+                searchCondition.gt(0),
+                QPlace.place.deleteAt.isNull(),
+                QVideo.video.deleteAt.isNull(),
+                QInfluencer.influencer.deleteAt.isNull()
+            ).fetch();
+
+        var places = jpaQueryFactory
+            .select(new QPlaceQueryResult_DetailedPlace(
+                QPlace.place.id,
+                QPlace.place.name,
+                QPlace.place.address.address1,
+                QPlace.place.address.address2,
+                QPlace.place.address.address3,
+                QPlace.place.coordinate.longitude,
+                QPlace.place.coordinate.latitude,
+                QPlace.place.category,
+                QPlace.place.googlePlaceId,
+                QPlace.place.kakaoPlaceId,
+                QLikedPlace.likedPlace.isLiked.isNotNull()
+            )).distinct()
+            .from(QPlace.place)
+            .leftJoin(QVideo.video).on(QVideo.video.placeId.eq(QPlace.place.id))
+            .leftJoin(QInfluencer.influencer)
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
+            .leftJoin(QLikedPlace.likedPlace).on(QLikedPlace.likedPlace.placeId.eq(QPlace.place.id)
+                .and(userId != null ?
+                    QLikedPlace.likedPlace.userId.eq(userId) :
+                    QLikedPlace.likedPlace.userId.isNull())
+                .and(QLikedPlace.likedPlace.isLiked.isTrue()))
+            .where(
+                locationCondition,
+                filterExpression,
+                searchCondition.gt(0),
+                QPlace.place.deleteAt.isNull(),
+                QVideo.video.deleteAt.isNull(),
+                QInfluencer.influencer.deleteAt.isNull(),
+                QLikedPlace.likedPlace.deleteAt.isNull()
+            )
+            .orderBy(QPlace.place.id.asc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+        if (places.isEmpty()) {
+            return new PageImpl<>(List.of(), pageable, 0);
+        }
+        return PageableExecutionUtils.getPage(places, pageable, filteredPlaceId::size);
+    }
+
+    private NumberTemplate<Double> getMatchScore(String keyword) {
+        return Expressions.numberTemplate(
+            Double.class,
+            "function('match_against', {0}, {1})",
+            QPlace.place.name,
+            keyword
+        );
     }
 }
