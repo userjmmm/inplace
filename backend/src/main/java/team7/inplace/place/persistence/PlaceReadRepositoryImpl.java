@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ import team7.inplace.place.persistence.dto.QPlaceQueryResult_SimplePlace;
 import team7.inplace.video.domain.QVideo;
 
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class PlaceReadRepositoryImpl implements PlaceReadRepository {
 
