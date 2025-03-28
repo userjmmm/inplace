@@ -65,7 +65,7 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
   }, [searchPlaceResults, searchLocationResults, searchType]);
 
   // 외부 클릭 처리
-  const handleClickOutside = useCallback((event: MouseEvent) => {
+  const handleOutsideClick = useCallback((event: MouseEvent) => {
     if (searchTypeRef.current?.contains(event.target as Node)) {
       setIsOpen(false);
       return;
@@ -89,12 +89,12 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
       setIsOpen(true);
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleOutsideClick);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [inputValue, preventDropdownOpen, handleClickOutside]);
+  }, [inputValue, preventDropdownOpen, handleOutsideClick]);
 
   const handleSearch = useCallback(
     (searchValue: string, isIndexChoice: boolean) => {
@@ -159,7 +159,7 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
     [inputValue, isOpen, dropDownList, handleDropDownItem, handleSearch],
   );
 
-  const handleClickSearchRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSearchRemoveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setInputValue('');
     setSelectedPlaceName('');
@@ -214,8 +214,8 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
           onKeyDown={handleDropDownKey}
           placeholder={placeholder}
         />
-        <SearchRemoveButton aria-label="search-remove-btn" onClick={handleClickSearchRemove}>
-          {inputValue ? <IoIosClose size={26} /> : <IoIosSearch size={20} />}
+        <SearchRemoveButton aria-label="search-remove-btn" onClick={handleSearchRemoveClick}>
+          {inputValue ? <IoIosClose size={26} color="#292929" /> : <IoIosSearch size={20} color="#292929" />}
         </SearchRemoveButton>
       </SearchForm>
       {inputValue && isOpen && (

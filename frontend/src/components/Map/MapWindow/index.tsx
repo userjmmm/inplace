@@ -72,7 +72,7 @@ export default function MapWindow({
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [showNoMarkerMessage, setShowNoMarkerMessage] = useState(false);
   const isMobile = useIsMobile();
-  const { moveMapToMarker, handleResetCenter } = useMapActions({ mapRef, onPlaceSelect });
+  const { moveMapToMarker, handleCenterReset } = useMapActions({ mapRef, onPlaceSelect });
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
     placeData,
@@ -326,7 +326,7 @@ export default function MapWindow({
       <ResetButtonContainer>
         <StyledBtn
           aria-label="reset_btn"
-          onClick={() => userLocation && handleResetCenter(userLocation)}
+          onClick={() => userLocation && handleCenterReset(userLocation)}
           variant="white"
           size="small"
         >

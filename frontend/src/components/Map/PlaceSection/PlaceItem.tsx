@@ -39,7 +39,7 @@ export default function PlaceItem({
   const extractedVideoId = useExtractYoutubeVideoId(videos[0].videoUrl || '');
   const imgSrc = isYoutubeUrl ? `https://img.youtube.com/vi/${extractedVideoId}/mqdefault.jpg` : '';
 
-  const handleClickLike = useCallback(
+  const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
@@ -90,7 +90,7 @@ export default function PlaceItem({
         <LikeIcon
           role="button"
           aria-label="like_btn"
-          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClickLike(e)}
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
         >
           {isLike ? (
             <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />

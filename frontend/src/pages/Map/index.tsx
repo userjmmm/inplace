@@ -104,17 +104,17 @@ export default function MapPage() {
     });
   }, []);
 
-  const handleClearLocation = useCallback((locationToRemove: SelectedOption) => {
+  const handleLocationClear = useCallback((locationToRemove: SelectedOption) => {
     setSelectedLocations((prev) =>
       prev.filter((location) => !(location.main === locationToRemove.main && location.sub === locationToRemove.sub)),
     );
   }, []);
 
-  const handleClearInfluencer = useCallback((influencerToRemove: string) => {
+  const handleInfluencerClear = useCallback((influencerToRemove: string) => {
     setSelectedInfluencers((prev) => prev.filter((influencer) => influencer !== influencerToRemove));
   }, []);
 
-  const handleClearCategory = useCallback((categoryToRemove: string) => {
+  const handleCategoryClear = useCallback((categoryToRemove: string) => {
     setSelectedCategories((prev) => prev.filter((category) => category !== categoryToRemove));
   }, []);
 
@@ -196,9 +196,9 @@ export default function MapPage() {
           selectedLocations={selectedLocations}
           selectedInfluencers={selectedInfluencers}
           selectedCategories={selectedCategories}
-          onClearLocation={handleClearLocation}
-          onClearInfluencer={handleClearInfluencer}
-          onClearCategory={handleClearCategory}
+          onClearLocation={handleLocationClear}
+          onClearInfluencer={handleInfluencerClear}
+          onClearCategory={handleCategoryClear}
         />
       </Wrapper>
       <MapWindow
@@ -347,6 +347,8 @@ const MobileDropdownSection = styled.div<{ $isDropdownOpened: boolean }>`
     display: flex;
     flex-direction: column;
     position: fixed;
+    align-items: end;
+    gap: 10px;
     top: 0;
     left: 0;
     width: 100%;
@@ -364,4 +366,20 @@ const DesktopDropdownSection = styled.div`
   }
 `;
 
-const CloseBtn = styled.button``;
+const CloseBtn = styled.button`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: block;
+    position: fixed;
+    bottom: 10%;
+    width: 45%;
+    font-size: 14px;
+    padding: 10px 0px;
+    border-radius: 4px;
+
+    background: none;
+    color: #55ebff;
+    border: 1px solid #55ebff;
+  }
+`;

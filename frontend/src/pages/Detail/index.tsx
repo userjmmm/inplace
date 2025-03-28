@@ -68,7 +68,7 @@ export default function DetailPage() {
     return () => clearInterval(interval);
   }, [infoData?.videos?.length]);
 
-  const handleClickLike = useCallback(
+  const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
@@ -133,7 +133,7 @@ export default function DetailPage() {
             <LikeIcon
               role="button"
               aria-label="like_btn"
-              onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClickLike(e)}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
             >
               {isLike ? (
                 <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />

@@ -28,7 +28,7 @@ export default function InfoWindow({ data }: Props) {
   const videos = data.videos || [];
   const totalVideos = videos.length;
 
-  const handleClickInfo = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleInfoClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     navigate(`/detail/${data.placeId}`);
   };
@@ -98,7 +98,7 @@ export default function InfoWindow({ data }: Props) {
           </Text>
         </TextInfo>
       </Info>
-      <DetailBtn onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClickInfo(e)}>상세보기</DetailBtn>
+      <DetailBtn onClick={(e: React.MouseEvent<HTMLDivElement>) => handleInfoClick(e)}>상세보기</DetailBtn>
     </Wrapper>
   );
 }

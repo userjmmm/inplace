@@ -26,7 +26,7 @@ export default function ChoiceItem({
   const [showLoginModal, setShowLoginModal] = useState(false);
   const location = useLocation();
 
-  const handleClickLike = useCallback(
+  const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
@@ -45,7 +45,7 @@ export default function ChoiceItem({
     <>
       <Wrapper>
         <ImageContainer>
-          <LikeIcon onClick={handleClickLike}>
+          <LikeIcon onClick={handleLikeClick}>
             {isSelected ? <PiHeartFill color="#fe7373" size={32} /> : <PiHeartLight size={32} color="white" />}
           </LikeIcon>
           <FallbackImage src={influencerImgUrl} alt={influencerName} />

@@ -42,7 +42,7 @@ export default function InfluencerInfoPage() {
 
   const { mutate: postLike } = usePostInfluencerLike();
 
-  const handleClickLike = useCallback(
+  const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
@@ -96,7 +96,7 @@ export default function InfluencerInfoPage() {
         <LikeIcon
           aria-label="like_btn"
           role="button"
-          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClickLike(e)}
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
         >
           {isLike ? (
             <PiHeartFill color="#fe7373" size={32} data-testid="PiHeartFill" />

@@ -34,7 +34,7 @@ export default function SearchBar({
     return searchResults || [];
   }, [searchResults]);
 
-  const handleClickOutside = useCallback(
+  const handleOutsideClick = useCallback(
     (event: MouseEvent) => {
       if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -47,14 +47,14 @@ export default function SearchBar({
     [isSearchPage],
   );
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleOutsideClick);
 
     setIsOpen(inputValue !== '' && isExpanded);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [inputValue, isExpanded, handleClickOutside]);
+  }, [inputValue, isExpanded, handleOutsideClick]);
 
   useEffect(() => {
     setIsOpen(false);

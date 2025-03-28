@@ -32,7 +32,7 @@ export default function useMapActions({ mapRef, onPlaceSelect }: UseMapActionsPr
     }, PAN_DELAY_MS);
   }, []);
 
-  const handleResetCenter = useCallback((userLocation: { lat: number; lng: number }) => {
+  const handleCenterReset = useCallback((userLocation: { lat: number; lng: number }) => {
     if (mapRef.current && userLocation) {
       mapRef.current.setCenter(new kakao.maps.LatLng(userLocation.lat, userLocation.lng));
       mapRef.current.setLevel(DEFAULT_ZOOM_LEVEL);
@@ -40,5 +40,5 @@ export default function useMapActions({ mapRef, onPlaceSelect }: UseMapActionsPr
     }
   }, []);
 
-  return { moveMapToMarker, handleResetCenter };
+  return { moveMapToMarker, handleCenterReset };
 }
