@@ -131,6 +131,17 @@ export default function DropdownMenu({
     setSearchTerm(event.target.value);
   };
 
+  const handleDropdownToggle = () => {
+    if (isOpen) {
+      setIsOpen(false);
+      setSelectedMainOption(null);
+      setSelectedSubOption(null);
+      setSearchTerm('');
+    } else {
+      setIsOpen(true);
+    }
+  };
+
   const renderMainOptions = () => {
     return filteredOptions.map((option) => {
       const isFiltered = type === 'location' ? false : (selectedOptions as string[])?.includes(option.label);
@@ -190,12 +201,7 @@ export default function DropdownMenu({
   };
   return (
     <DropdownContainer ref={ref} type={type} $width={width}>
-      <DropdownButton
-        className={isOpen ? 'selected' : ''}
-        aria-label="dropdown_btn"
-        $isOpen={isOpen}
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <DropdownButton aria-label="dropdown_btn" $isOpen={isOpen} onClick={handleDropdownToggle}>
         {displayIcon()}
         {displayValue}
       </DropdownButton>
@@ -231,7 +237,7 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
   width: 100%;
   height: 100%;
   border: none;
-  background: ${({ $isOpen }) => ($isOpen ? '#ececec' : '#ffffff')};
+  background-color: ${({ $isOpen }) => ($isOpen ? '#daeeee' : '#ffffff')};
   border-radius: 16px;
   display: flex;
   color: #333333;
@@ -246,10 +252,6 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
   &:hover {
     background-color: #daeeee;
     border: none;
-  }
-
-  &.selected {
-    background: #daeeee;
   }
 
   @media screen and (max-width: 768px) {
@@ -273,14 +275,14 @@ const DropdownMenuContainer = styled.div<{
     }
     if ($type === 'influencer') {
       return `
-        left: -25%;
+        left: -50%;
       `;
     }
     return `
         left: 0;
       `;
   }}
-  width: ${(props) => (props.$multiLevel && props.$hasSubOptions ? '350px' : '200px')};
+  width: ${(props) => (props.$multiLevel && props.$hasSubOptions ? '300%' : '200%')};
   background: #ffffff;
   color: #333333;
   box-shadow: 0 3px 12px 0 rgb(0 0 0/0.15);
@@ -304,7 +306,7 @@ const SearchInputContainer = styled.div`
   width: 100%;
 
   @media screen and (max-width: 768px) {
-    padding: 4px;
+    padding: 2px 4px;
   }
 `;
 
@@ -335,8 +337,8 @@ const SearchIcon = styled(FaSearch)`
 
   @media screen and (max-width: 768px) {
     right: 12px;
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
   }
 `;
 

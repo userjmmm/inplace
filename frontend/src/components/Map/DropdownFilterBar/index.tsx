@@ -44,6 +44,7 @@ const BarContainer = styled.div`
   border: 1px solid #a5a5a5;
   border-radius: 16px;
   background-color: white;
+  box-sizing: border-box;
 
   svg {
     margin-right: 4px;
@@ -51,6 +52,7 @@ const BarContainer = styled.div`
 
   @media screen and (max-width: 768px) {
     height: 34px;
+    width: 100%;
   }
 `;
 
