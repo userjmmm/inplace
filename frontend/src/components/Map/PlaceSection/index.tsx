@@ -62,7 +62,7 @@ export default function PlaceSection({
       center,
       size: 10, // 한 페이지에 보여줄 아이템 개수; 변경하며 api 잘 받아오는지 확인 가능
     },
-    !filtersWithPlaceName.placeName, // 장소이름검색한경우에서 부산-진구 필터걸면? 언제 장소이름필터링을 없애나? chip이없음
+    !filtersWithPlaceName.placeName,
   );
 
   const {
