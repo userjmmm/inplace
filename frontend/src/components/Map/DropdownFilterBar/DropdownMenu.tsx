@@ -17,6 +17,7 @@ export interface DropdownMenuProps {
   options: Option[];
   multiLevel?: boolean;
   onChange: (value: { main: string; sub?: string; lat?: number; lng?: number }) => void;
+  isMobileOpen: boolean;
   placeholder?: string;
   type: 'location' | 'influencer' | 'category';
   width: number;
@@ -28,13 +29,14 @@ export default function DropdownMenu({
   options,
   multiLevel = false,
   onChange,
+  isMobileOpen = false,
   placeholder = '',
   type,
   width,
   defaultValue,
   selectedOptions,
 }: DropdownMenuProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(isMobileOpen);
   const ref = useDetectClose({ onDetected: () => setIsOpen(false) });
   const [selectedMainOption, setSelectedMainOption] = useState<Option | null>();
   const [selectedSubOption, setSelectedSubOption] = useState<Option | null>(null);
