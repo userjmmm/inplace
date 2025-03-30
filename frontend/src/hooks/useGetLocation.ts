@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 
 export default function useGetLocation() {
   const GEOLOCATION_CONFIG = {
-    maximumAge: 300000,
-    timeout: 5000,
+    maximumAge: 500000,
+    timeout: 50000,
   };
 
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
-      const watchId = navigator.geolocation.watchPosition(
+      navigator.geolocation.getCurrentPosition(
         (position) => {
           const newCenter = {
             lat: position.coords.latitude,
@@ -23,11 +23,8 @@ export default function useGetLocation() {
         },
         GEOLOCATION_CONFIG,
       );
-
-      return () => navigator.geolocation.clearWatch(watchId);
     }
     console.error('Geolocation is not supported by this browser.');
-    return undefined;
   }, []);
 
   return location;

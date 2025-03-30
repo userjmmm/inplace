@@ -55,13 +55,12 @@ export default function MapWindow({
   onListExpand,
 }: MapWindowProps) {
   const GEOLOCATION_CONFIG = {
-    maximumAge: 30000,
+    maximumAge: 500000,
     timeout: 5000,
   };
   const DEFAULT_MAP_ZOOM_LEVEL = 4;
 
   const mapRef = useRef<kakao.maps.Map | null>(null);
-  const [isMapReady, setIsMapReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
@@ -78,8 +77,6 @@ export default function MapWindow({
 
   const originSize = isMobile ? 26 : 34;
   const userLocationSize = isMobile ? 16 : 24;
-
-  const hasRequestedLocation = useRef(false);
 
   const { data: markers = [], isLoading: isLoadingAllMarkers } = useGetAllMarkers(
     {
@@ -118,13 +115,11 @@ export default function MapWindow({
   }, [placeNameMarkers, filtersWithPlaceName.placeName]);
 
   useEffect(() => {
-    if (!isMapReady || hasRequestedLocation.current) return;
-    hasRequestedLocation.current = true;
-
     const startTime = performance.now();
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        setIsLoading(false);
         const endTime = performance.now();
         const elapsed = (endTime - startTime).toFixed(2);
         console.log(`✅ 위치 받아오는데 걸린 시간: ${elapsed}ms`);
@@ -133,10 +128,11 @@ export default function MapWindow({
           lng: position.coords.longitude,
         };
         setUserLocation(userLoc);
-        mapRef.current?.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
+        if (mapRef.current) {
+          mapRef.current.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
+        }
         setCenter(userLoc);
         updateMapBounds();
-        setIsLoading(false);
       },
       (error) => {
         const endTime = performance.now();
@@ -154,7 +150,18 @@ export default function MapWindow({
       },
       GEOLOCATION_CONFIG,
     );
-  }, [isMapReady]);
+  }, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!mapRef.current) {
+        alert('지도를 불러오지 못했어요. 네트워크 상태를 확인한 후 새로고침 해주세요.');
+        setIsLoading(false);
+      }
+    }, 6000);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   const updateMapBounds = useCallback(() => {
     if (!mapRef.current) return;
@@ -218,14 +225,14 @@ export default function MapWindow({
 
   return (
     <MapContainer>
-      {isLoading ? (
+      {isLoading && (
         <LoadingWrapper>
           <Loading />
           <Text size="s" weight="normal" variant="white">
             내 위치 찾는 중...
           </Text>
         </LoadingWrapper>
-      ) : null}
+      )}
       {showNoMarkerMessage && (
         <NoItemMarker>
           <IoMdInformationCircleOutline size={18} />
@@ -258,7 +265,6 @@ export default function MapWindow({
         level={DEFAULT_MAP_ZOOM_LEVEL}
         onCreate={(mapInstance) => {
           mapRef.current = mapInstance;
-          setIsMapReady(true);
         }}
         onCenterChanged={() => setShowSearchButton(true)}
         onZoomChanged={() => setShowSearchButton(true)}
