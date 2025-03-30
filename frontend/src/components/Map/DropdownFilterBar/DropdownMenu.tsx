@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FaSearch } from 'react-icons/fa';
-import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io';
+import { FaUser, FaSearch } from 'react-icons/fa';
+import { ImSpoonKnife } from 'react-icons/im';
+import { MdLocationOn } from 'react-icons/md';
 import styled from 'styled-components';
 import DropdownItem from './DropdownItem';
 import useDetectClose from '@/hooks/useDetectClose';
@@ -12,12 +13,14 @@ interface Option {
   subOptions?: Option[];
 }
 
-interface DropdownMenuProps {
+export interface DropdownMenuProps {
   options: Option[];
   multiLevel?: boolean;
   onChange: (value: { main: string; sub?: string; lat?: number; lng?: number }) => void;
+  isMobileOpen: boolean;
   placeholder?: string;
   type: 'location' | 'influencer' | 'category';
+  width: number;
   defaultValue?: { main: string; sub?: string };
   selectedOptions?: string[] | { main: string; sub?: string }[];
 }
@@ -26,12 +29,14 @@ export default function DropdownMenu({
   options,
   multiLevel = false,
   onChange,
+  isMobileOpen = false,
   placeholder = '',
   type,
+  width,
   defaultValue,
   selectedOptions,
 }: DropdownMenuProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(isMobileOpen);
   const ref = useDetectClose({ onDetected: () => setIsOpen(false) });
   const [selectedMainOption, setSelectedMainOption] = useState<Option | null>();
   const [selectedSubOption, setSelectedSubOption] = useState<Option | null>(null);
@@ -128,12 +133,20 @@ export default function DropdownMenu({
     setSearchTerm(event.target.value);
   };
 
+  const handleDropdownToggle = () => {
+    if (isOpen) {
+      setIsOpen(false);
+      setSelectedMainOption(null);
+      setSelectedSubOption(null);
+      setSearchTerm('');
+    } else {
+      setIsOpen(true);
+    }
+  };
+
   const renderMainOptions = () => {
     return filteredOptions.map((option) => {
-      const isFiltered =
-        type === 'location'
-          ? (selectedOptions as { main: string; sub?: string }[])?.some((item) => item.main === option.label)
-          : (selectedOptions as string[])?.includes(option.label);
+      const isFiltered = type === 'location' ? false : (selectedOptions as string[])?.includes(option.label);
 
       return (
         <DropdownItem
@@ -179,15 +192,23 @@ export default function DropdownMenu({
   };
 
   const displayValue = placeholder;
-
+  const displayIcon = () => {
+    if (type === 'location') {
+      return <MdLocationOn size={20} color="#5ae3fb" />;
+    }
+    if (type === 'category') {
+      return <ImSpoonKnife color="#5ae3fb" />;
+    }
+    return <FaUser color="#5ae3fb" />;
+  };
   return (
-    <DropdownContainer ref={ref} type={type}>
-      <DropdownButton aria-label="dropdown_btn" $isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
+    <DropdownContainer ref={ref} type={type} $width={width}>
+      <DropdownButton aria-label="dropdown_btn" $isOpen={isOpen} onClick={handleDropdownToggle}>
+        {displayIcon()}
         {displayValue}
-        {isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
       </DropdownButton>
       {isOpen && (
-        <DropdownMenuContainer $multiLevel={multiLevel} $hasSubOptions={!!selectedMainOption?.subOptions}>
+        <DropdownMenuContainer $multiLevel={multiLevel} $hasSubOptions={!!selectedMainOption?.subOptions} $type={type}>
           <SearchInputContainer>
             <SearchInput placeholder="검색" value={searchTerm} onChange={handleSearchInputChange} />
             <SearchIcon />
@@ -202,36 +223,37 @@ export default function DropdownMenu({
   );
 }
 
-const DropdownContainer = styled.div<{ type: 'location' | 'influencer' | 'category' }>`
+const DropdownContainer = styled.div<{ type: 'location' | 'influencer' | 'category'; $width: number }>`
   position: relative;
-  min-width: ${(props) => (props.type === 'influencer' ? '170px' : '130px')};
-  max-width: ${(props) => (props.type === 'influencer' ? '300px' : '400px')};
+  height: 100%;
+  width: ${({ $width }) => `${$width}px`};
+  align-items: center;
+  align-content: center;
 
   @media screen and (max-width: 768px) {
-    min-width: ${(props) => (props.type === 'influencer' ? '130px' : '90px')};
-    max-width: ${(props) => (props.type === 'influencer' ? '240px' : '200px')};
+    width: 100%;
   }
 `;
 
 const DropdownButton = styled.button<{ $isOpen: boolean }>`
   width: 100%;
-  padding: 8px 10px;
-  background: #ffffff;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  height: 100%;
+  border: none;
+  background-color: ${({ $isOpen }) => ($isOpen ? '#daeeee' : '#ffffff')};
+  border-radius: 16px;
   display: flex;
-  justify-content: space-between;
+  color: #333333;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-weight: 700;
   font-size: 16px;
-  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#004cff' : '#3b63c3')};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
   &:hover {
-    background-color: #f8f8f8;
+    background-color: #daeeee;
+    border: none;
   }
 
   @media screen and (max-width: 768px) {
@@ -240,14 +262,33 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
   }
 `;
 
-const DropdownMenuContainer = styled.div<{ $multiLevel: boolean; $hasSubOptions: boolean }>`
+const DropdownMenuContainer = styled.div<{
+  $multiLevel: boolean;
+  $hasSubOptions: boolean;
+  $type: 'location' | 'influencer' | 'category';
+}>`
   position: absolute;
   top: 100%;
-  left: 0;
-  width: ${(props) => (props.$multiLevel && props.$hasSubOptions ? '200%' : '100%')};
+  ${({ $type }) => {
+    if ($type === 'category') {
+      return `
+        right: 0;
+      `;
+    }
+    if ($type === 'influencer') {
+      return `
+        left: -50%;
+      `;
+    }
+    return `
+        left: 0;
+      `;
+  }}
+  width: ${(props) => (props.$multiLevel && props.$hasSubOptions ? '300%' : '200%')};
   background: #ffffff;
-  color: black;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  color: #333333;
+  box-shadow: 0 3px 12px 0 rgb(0 0 0/0.15);
+  padding: 2px;
   box-sizing: border-box;
   border-radius: 8px;
   margin-top: 4px;
@@ -267,7 +308,7 @@ const SearchInputContainer = styled.div`
   width: 100%;
 
   @media screen and (max-width: 768px) {
-    padding: 4px;
+    padding: 2px 4px;
   }
 `;
 
@@ -293,13 +334,13 @@ const SearchIcon = styled(FaSearch)`
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#004cff' : '#3b63c3')};
+  color: #a3a3a3;
   cursor: pointer;
 
   @media screen and (max-width: 768px) {
     right: 12px;
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
   }
 `;
 

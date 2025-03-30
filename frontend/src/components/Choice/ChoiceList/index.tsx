@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ChoiceItem from '@/components/common/Items/ChoiceItem';
 import { InfluencerData } from '@/types';
 import NoItem from '@/components/common/layouts/NoItem';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface ChoiceListProps {
   items: InfluencerData[];
@@ -11,19 +11,10 @@ interface ChoiceListProps {
 }
 
 export default function ChoiceList({ items, onToggleLike, selectedInfluencers }: ChoiceListProps) {
-  const [isMobile, setIsMobile] = useState(false);
+  const MOBILE_INFLUENCER_LIMIT = 9;
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const displayItems = isMobile ? items.slice(0, 9) : items;
+  const displayItems = isMobile ? items.slice(0, MOBILE_INFLUENCER_LIMIT) : items;
 
   return displayItems.length === 0 ? (
     <NoItem message="인플루언서 정보가 없어요!" height={350} alignItems="center" />

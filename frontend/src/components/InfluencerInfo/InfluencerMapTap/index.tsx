@@ -29,7 +29,7 @@ export default function InfluencerMapTap({
   const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
     useTouchDrag(setIsListExpanded);
   const fetchLocationRef = useRef<() => void>();
-  const filters = { categories: [], influencers: [influencerName] };
+  const filters = { categories: [], influencers: [influencerName], placeName: '', regions: [] };
   const [shouldFetchPlaces, setShouldFetchPlaces] = useState(false);
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -58,7 +58,7 @@ export default function InfluencerMapTap({
     setTranslateY(value ? 0 : window.innerHeight);
   }, []);
 
-  const handleSetSearchNearby = useCallback((fn: () => void) => {
+  const handleNearbySearch = useCallback((fn: () => void) => {
     fetchLocationRef.current = fn;
   }, []);
 
@@ -76,7 +76,7 @@ export default function InfluencerMapTap({
         onPlaceSelect={handlePlaceSelect}
         isListExpanded={isListExpanded}
         onListExpand={handleListExpand}
-        onSearchNearby={handleSetSearchNearby}
+        onSearchNearby={handleNearbySearch}
       />
       <PlaceSectionDesktop>
         <InfluencerPlaceSection

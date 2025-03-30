@@ -11,7 +11,7 @@ export default function ReviewItem({ reviewId, likes, comment, userNickname, cre
   const queryClient = useQueryClient();
 
   const { mutate: deleteReview } = useDeleteReview();
-  const handleDeleteReview = () => {
+  const handleReviewDelete = () => {
     const isConfirm = window.confirm('삭제하시겠습니까?');
     if (!isConfirm) return;
 
@@ -44,7 +44,7 @@ export default function ReviewItem({ reviewId, likes, comment, userNickname, cre
           {comment}
         </Paragraph>
         {mine ? (
-          <DeleteBtn aria-label="delete_btn" onClick={handleDeleteReview}>
+          <DeleteBtn aria-label="delete_btn" onClick={handleReviewDelete}>
             삭제
           </DeleteBtn>
         ) : null}

@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import InfluencerItem from '@/components/common/Items/InfluencerItem';
 import { InfluencerData } from '@/types';
 import NoItem from '@/components/common/layouts/NoItem';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface InfluencerListProps {
   items: InfluencerData[];
@@ -11,19 +11,10 @@ interface InfluencerListProps {
 }
 
 export default function InfluencerList({ items, useBackCard = true, useNav = true }: InfluencerListProps) {
-  const [isMobile, setIsMobile] = useState(false);
+  const MOBILE_INFLUENCER_LIMIT = 9;
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const displayItems = isMobile ? items.slice(0, 9) : items;
+  const displayItems = isMobile ? items.slice(0, MOBILE_INFLUENCER_LIMIT) : items;
 
   return displayItems.length === 0 ? (
     <NoItem message="인플루언서 정보가 없어요!" alignItems="center" />

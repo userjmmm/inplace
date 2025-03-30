@@ -20,29 +20,22 @@ import { usePostPlaceLike } from '@/api/hooks/usePostPlaceLike';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 import Button from '@/components/common/Button';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function DetailPage() {
+  const CAROUSEL_AUTO_SCROLL_MS = 5000;
+
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   // const [activeTab, setActiveTab] = useState<'info' | 'review'>('info');
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const { id } = useParams() as { id: string };
   const { data: infoData } = useGetPlaceInfo(id);
-  const [isMobile, setIsMobile] = useState(false);
   const [isLike, setIsLike] = useState(infoData.likes);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const isMobile = useIsMobile();
   const { mutate: postLike } = usePostPlaceLike();
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const currentVideoUrl = infoData?.videos[currentVideoIndex]?.videoUrl || '';
 
@@ -70,12 +63,12 @@ export default function DetailPage() {
       if (infoData?.videos?.length > 1) {
         setCurrentVideoIndex((prevIndex) => (prevIndex === infoData.videos.length - 1 ? 0 : prevIndex + 1));
       }
-    }, 5000);
+    }, CAROUSEL_AUTO_SCROLL_MS);
 
     return () => clearInterval(interval);
   }, [infoData?.videos?.length]);
 
-  const handleClickLike = useCallback(
+  const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
@@ -140,7 +133,7 @@ export default function DetailPage() {
             <LikeIcon
               role="button"
               aria-label="like_btn"
-              onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClickLike(e)}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
             >
               {isLike ? (
                 <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />

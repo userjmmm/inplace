@@ -7,7 +7,7 @@ interface UseDetectCloseProps {
 export default function useDetectClose({ onDetected }: UseDetectCloseProps) {
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleClickOutside = useCallback(
+  const handleOutsideClick = useCallback(
     (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
         onDetected();
@@ -17,11 +17,11 @@ export default function useDetectClose({ onDetected }: UseDetectCloseProps) {
   );
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleOutsideClick);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [handleClickOutside]);
+  }, [handleOutsideClick]);
 
   return ref;
 }

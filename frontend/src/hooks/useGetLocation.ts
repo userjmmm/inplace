@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 
 export default function useGetLocation() {
+  const GEOLOCATION_CONFIG = {
+    maximumAge: 300000,
+    timeout: 5000,
+  };
+
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
@@ -16,7 +21,7 @@ export default function useGetLocation() {
         (error) => {
           console.error('Error fetching location', error);
         },
-        { maximumAge: 300000, timeout: 5000 },
+        GEOLOCATION_CONFIG,
       );
 
       return () => navigator.geolocation.clearWatch(watchId);

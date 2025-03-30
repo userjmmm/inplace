@@ -1,10 +1,11 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { CustomOverlayMap, Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { TbCurrentLocation } from 'react-icons/tb';
 import { GrPowerCycle } from 'react-icons/gr';
+import { IoMdInformationCircleOutline } from 'react-icons/io';
 import Button from '@/components/common/Button';
-import { LocationData, PlaceData } from '@/types';
+import { FilterParams, LocationData, PlaceData } from '@/types';
 import { useGetAllMarkers } from '@/api/hooks/useGetAllMarkers';
 import InfoWindow from '@/components/InfluencerInfo/InfluencerMapTap/InfoWindow';
 import OriginMarker from '@/assets/images/OriginMarker.png';
@@ -14,6 +15,8 @@ import nowLocation from '@/assets/images/now_location.webp';
 import Loading from '@/components/common/layouts/Loading';
 import useMapActions from '@/hooks/Map/useMapAction';
 import useMarkerData from '@/hooks/Map/useMarkerData';
+import useIsMobile from '@/hooks/useIsMobile';
+import { useGetSearchPlaceMarkers } from '@/api/hooks/useGetSearchPlaceMarker';
 
 interface MapWindowProps {
   center: { lat: number; lng: number };
@@ -22,9 +25,13 @@ interface MapWindowProps {
   filters: {
     categories: string[];
     influencers: string[];
+    regions: string[];
     location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
+  filtersWithPlaceName: FilterParams;
   placeData: PlaceData[];
+  isChangedLocation: { lat: number; lng: number } | null;
+  setIsChangedLocation: React.Dispatch<React.SetStateAction<{ lat: number; lng: number } | null>>;
   selectedPlaceId: number | null;
   onPlaceSelect: (placeId: number | null) => void;
   isListExpanded?: boolean;
@@ -36,12 +43,21 @@ export default function MapWindow({
   onBoundsChange,
   onCenterChange,
   filters,
+  filtersWithPlaceName,
   placeData,
+  isChangedLocation,
+  setIsChangedLocation,
   selectedPlaceId,
   onPlaceSelect,
   isListExpanded,
   onListExpand,
 }: MapWindowProps) {
+  const GEOLOCATION_CONFIG = {
+    maximumAge: 30000,
+    timeout: 5000,
+  };
+  const DEFAULT_MAP_ZOOM_LEVEL = 4;
+
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,8 +70,9 @@ export default function MapWindow({
   });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const { moveMapToMarker, handleResetCenter } = useMapActions(mapRef);
+  const [showNoMarkerMessage, setShowNoMarkerMessage] = useState(false);
+  const isMobile = useIsMobile();
+  const { moveMapToMarker, handleCenterReset } = useMapActions({ mapRef, onPlaceSelect });
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
     placeData,
@@ -64,25 +81,43 @@ export default function MapWindow({
     mapRef,
   });
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   const originSize = isMobile ? 26 : 34;
   const userLocationSize = isMobile ? 16 : 24;
 
-  const { data: markers = [] } = useGetAllMarkers({
-    location: mapBound,
-    filters,
-    center: mapCenter,
-  });
+  const { data: markers = [], isLoading: isLoadingAllMarkers } = useGetAllMarkers(
+    {
+      location: mapBound,
+      filters,
+      center: mapCenter,
+    },
+    !filtersWithPlaceName.placeName,
+  );
 
-  const selectedMarker = markers.find((m) => m.placeId === selectedPlaceId);
+  const { data: placeNameMarkers = [], isLoading: isLoadingPlaceMarkers } = useGetSearchPlaceMarkers(
+    {
+      filters: filtersWithPlaceName,
+    },
+    !!filtersWithPlaceName.placeName,
+  );
+
+  const markerListToRender = filtersWithPlaceName.placeName ? placeNameMarkers : markers;
+  const isLoadingMarker = filtersWithPlaceName.placeName ? isLoadingPlaceMarkers : isLoadingAllMarkers;
+
+  const selectedMarker = markerListToRender.find((m) => m.placeId === selectedPlaceId) || null;
+
+  // placeName로 검색 시 지도 범위 확장
+  useEffect(() => {
+    if (!mapRef.current || placeNameMarkers.length === 0) return;
+
+    const bounds = new kakao.maps.LatLngBounds();
+
+    placeNameMarkers.forEach((marker) => {
+      bounds.extend(new kakao.maps.LatLng(marker.latitude, marker.longitude));
+    });
+
+    mapRef.current.setBounds(bounds);
+    setShowSearchButton(false);
+  }, [placeNameMarkers]);
 
   const fetchMarkers = useCallback(() => {
     if (!mapRef.current) return;
@@ -96,12 +131,15 @@ export default function MapWindow({
       bottomRightLatitude: bounds.getSouthWest().getLat(),
       bottomRightLongitude: bounds.getNorthEast().getLng(),
     };
+
+    onPlaceSelect(null);
     setMapCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     setMapBound(newBounds);
 
     onCenterChange({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     onBoundsChange(newBounds);
-  }, [mapRef.current]);
+    setShowSearchButton(false);
+  }, []);
 
   useEffect(() => {
     if (!isMapReady) return;
@@ -128,7 +166,7 @@ export default function MapWindow({
             alert('위치 정보 요청이 시간 초과되었습니다. 다시 시도해주세요.');
           }
         },
-        { maximumAge: 30000, timeout: 5000 },
+        GEOLOCATION_CONFIG,
       );
     } else {
       setIsLoading(false);
@@ -140,23 +178,77 @@ export default function MapWindow({
     if (mapRef.current && center) {
       const position = new kakao.maps.LatLng(center.lat, center.lng);
       mapRef.current.setCenter(position);
+      setMapCenter(center);
+      onCenterChange(center);
+
+      const bounds = mapRef.current.getBounds();
+      const newBounds: LocationData = {
+        topLeftLatitude: bounds.getNorthEast().getLat(),
+        topLeftLongitude: bounds.getSouthWest().getLng(),
+        bottomRightLatitude: bounds.getSouthWest().getLat(),
+        bottomRightLongitude: bounds.getNorthEast().getLng(),
+      };
+      onPlaceSelect(null);
+      setMapBound(newBounds);
+      onBoundsChange(newBounds);
+      setShowSearchButton(false);
     }
-  }, [center, mapRef.current]);
+  }, [center]);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    if (!isChangedLocation) return;
+
+    const LocPosition = new kakao.maps.LatLng(isChangedLocation.lat, isChangedLocation.lng);
+    mapRef.current.setCenter(LocPosition);
+    mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
+    setMapCenter({ lat: isChangedLocation.lat, lng: isChangedLocation.lng });
+    onCenterChange({ lat: isChangedLocation.lat, lng: isChangedLocation.lng });
+
+    const bounds = mapRef.current.getBounds();
+    const newBounds: LocationData = {
+      topLeftLatitude: bounds.getNorthEast().getLat(),
+      topLeftLongitude: bounds.getSouthWest().getLng(),
+      bottomRightLatitude: bounds.getSouthWest().getLat(),
+      bottomRightLongitude: bounds.getNorthEast().getLng(),
+    };
+    onPlaceSelect(null);
+    setMapBound(newBounds);
+    onBoundsChange(newBounds);
+    setShowSearchButton(false);
+    setTimeout(() => {
+      setIsChangedLocation(null);
+    }, 0);
+  }, [isChangedLocation?.lat, isChangedLocation?.lng]);
 
   // 초기 선택 시에만 이동하도록
   useEffect(() => {
     if (selectedPlaceId) {
-      const marker = markers.find((m) => m.placeId === selectedPlaceId);
-      if (marker) {
-        moveMapToMarker(marker.latitude, marker.longitude);
+      const targetMarker = filtersWithPlaceName.placeName
+        ? placeNameMarkers.find((m) => m.placeId === selectedPlaceId)
+        : markers.find((m) => m.placeId === selectedPlaceId);
+      if (targetMarker) {
+        moveMapToMarker(targetMarker.latitude, targetMarker.longitude);
       }
     }
-  }, [selectedPlaceId, moveMapToMarker]);
+  }, [selectedPlaceId]);
 
   const handleSearchNearby = useCallback(() => {
     fetchMarkers();
     setShowSearchButton(false);
   }, [fetchMarkers]);
+
+  // 마커 정보가 없을 경우
+  useEffect(() => {
+    const shouldShowNoMarkerMessage = !isLoading && !isLoadingMarker && markerListToRender.length === 0;
+    setShowNoMarkerMessage(shouldShowNoMarkerMessage);
+
+    if (shouldShowNoMarkerMessage) {
+      setTimeout(() => {
+        setShowNoMarkerMessage(false);
+      }, 4000);
+    }
+  }, [markerListToRender, isLoading]);
 
   return (
     <MapContainer>
@@ -168,6 +260,12 @@ export default function MapWindow({
           </Text>
         </LoadingWrapper>
       ) : null}
+      {showNoMarkerMessage && (
+        <NoItemMarker>
+          <IoMdInformationCircleOutline size={18} />
+          일치하는 장소가 없어요!
+        </NoItemMarker>
+      )}
       {showSearchButton && (
         <ButtonContainer>
           <Button
@@ -191,7 +289,7 @@ export default function MapWindow({
       <Map
         center={mapCenter}
         style={{ width: '100%', height: isMobile ? 'auto' : '570px', aspectRatio: isMobile ? '1' : 'auto' }}
-        level={4}
+        level={DEFAULT_MAP_ZOOM_LEVEL}
         onCreate={(mapInstance) => {
           mapRef.current = mapInstance;
           setIsMapReady(true);
@@ -214,7 +312,7 @@ export default function MapWindow({
           />
         )}
         <MarkerClusterer averageCenter minLevel={10} minClusterSize={2}>
-          {markers.map((place) => (
+          {markerListToRender.map((place) => (
             <MapMarker
               key={place.placeId}
               zIndex={selectedPlaceId === place.placeId ? 999 : 1}
@@ -251,7 +349,7 @@ export default function MapWindow({
       <ResetButtonContainer>
         <StyledBtn
           aria-label="reset_btn"
-          onClick={() => userLocation && handleResetCenter(userLocation)}
+          onClick={() => userLocation && handleCenterReset(userLocation)}
           variant="white"
           size="small"
         >
@@ -277,7 +375,7 @@ const MapContainer = styled.div`
 `;
 const LoadingWrapper = styled.div`
   position: absolute;
-  z-index: 100;
+  z-index: 99;
   width: 100%;
   height: 100%;
   display: flex;
@@ -287,7 +385,7 @@ const LoadingWrapper = styled.div`
   background-color: #29292963;
 
   > div {
-    padding: 4px 16px;
+    padding: 4px 0px;
     height: auto;
     transform: translateY(-50%);
   }
@@ -310,7 +408,7 @@ const ResetButtonContainer = styled.div`
   position: absolute;
   bottom: 46px;
   right: 30px;
-  z-index: 10;
+  z-index: 9;
 
   @media screen and (max-width: 768px) {
     bottom: 34px;
@@ -348,8 +446,93 @@ const ListViewButton = styled.button`
     border-radius: 20px;
     padding: 8px 16px;
     cursor: pointer;
-    z-index: 10;
+    z-index: 9;
     align-items: center;
     gap: 4px;
+  }
+`;
+
+const shakeDesktop = keyframes`
+0% {
+  transform: translateX(119.5%);
+}
+25% {
+  transform: translateX(120.5%);
+}
+50% {
+  transform: translateX(119.5%);
+}
+75% {
+  transform: translateX(120.5%);
+}
+100% {
+  transform: translateX(120%);
+}
+`;
+
+const shakeMobile = keyframes`
+  0% {
+    transform: translateX(21.5%);
+  }
+  25% {
+    transform: translateX(22.5%);
+  }
+  50% {
+    transform: translateX(21.5%);
+  }
+  75% {
+    transform: translateX(22.5%);
+  }
+  100% {
+    transform: translateX(21%);
+  }
+`;
+const fadeOut = keyframes`
+0% {
+  opacity: 1;
+  visibility: visible;
+}
+80% {
+  opacity: 1;
+  visibility: visible;
+}
+100% {
+  opacity: 0;
+  visibility: hidden;
+}
+`;
+
+const NoItemMarker = styled.div`
+  position: absolute;
+  top: 5%;
+  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 0px;
+  font-size: 14px;
+  gap: 4px;
+  text-align: center;
+  border-radius: 6px;
+  transform: translateX(120%);
+  color: white;
+  background-color: #292929f0;
+  z-index: 100;
+
+  svg {
+    margin-bottom: 1px;
+  }
+  animation:
+    ${shakeDesktop} 0.5s ease-out,
+    ${fadeOut} 3.5s ease-out forwards;
+
+  @media screen and (max-width: 768px) {
+    width: 70%;
+    padding: 8px 0px;
+    transform: translateX(22%);
+    font-size: 12px;
+    animation:
+      ${shakeMobile} 0.5s ease-out,
+      ${fadeOut} 3.5s ease-out forwards;
   }
 `;

@@ -10,6 +10,7 @@ import BasicImage from '@/assets/images/basic-image.webp';
 import { Text } from '@/components/common/typography/Text';
 import useMapActions from '@/hooks/Map/useMapAction';
 import useMarkerData from '@/hooks/Map/useMarkerData';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface MapWindowProps {
   influencerImg: string;
@@ -42,8 +43,7 @@ export default function InfluencerMapWindow({
 }: MapWindowProps) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const { moveMapToMarker, handleResetCenter } = useMapActions(mapRef);
+  const { moveMapToMarker, handleCenterReset } = useMapActions({ mapRef, onPlaceSelect });
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
     placeData,
@@ -51,15 +51,7 @@ export default function InfluencerMapWindow({
     moveMapToMarker,
     mapRef,
   });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener('resize', handleResize, { passive: true });
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const isMobile = useIsMobile();
 
   const originSize = isMobile ? 26 : 34;
   const userLocationSize = isMobile ? 16 : 24;
@@ -186,7 +178,7 @@ export default function InfluencerMapWindow({
         <ResetButtonContainer>
           <StyledBtn
             aria-label="reset_btn"
-            onClick={() => userLocation && handleResetCenter(userLocation)}
+            onClick={() => userLocation && handleCenterReset(userLocation)}
             variant="white"
             size="small"
           >

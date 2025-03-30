@@ -11,7 +11,7 @@ export const getAllMarkers = async (
   center: { lat: number; lng: number },
 ) => {
   const { topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude } = location;
-  const { categories, influencers } = filters;
+  const { categories, influencers, regions } = filters;
 
   const params = new URLSearchParams({
     topLeftLongitude: topLeftLongitude.toString(),
@@ -22,6 +22,7 @@ export const getAllMarkers = async (
     latitude: center.lat.toString(),
     categories: categories.join(','),
     influencers: influencers.join(','),
+    regions: regions.join(','),
   });
 
   const response = await fetchInstance.get<MarkerData[]>(`${getAllMarkersPath()}?${params}`);
@@ -36,7 +37,7 @@ interface QueryParams {
 
 export const useGetAllMarkers = ({ location, filters, center }: QueryParams, enabled?: boolean) => {
   return useQuery({
-    queryKey: ['allMarkers', location, filters, center],
+    queryKey: ['allMarkers', location, filters.categories, filters.influencers, center],
     queryFn: () => getAllMarkers(location, filters, center),
     staleTime: 1000 * 60 * 5,
     enabled,

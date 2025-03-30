@@ -28,7 +28,7 @@ export default function InfoWindow({ data }: Props) {
   const videos = data.videos || [];
   const totalVideos = videos.length;
 
-  const handleClickInfo = (event: React.MouseEvent<HTMLDivElement>) => {
+  const handleInfoClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     navigate(`/detail/${data.placeId}`);
   };
@@ -48,12 +48,12 @@ export default function InfoWindow({ data }: Props) {
       <Info>
         <ImageSection>
           {totalVideos > 1 && (
-            <NavButton left onClick={prevImage} disabled={currentIndex === 0}>
+            <NavButton $left onClick={prevImage} disabled={currentIndex === 0}>
               <GrPrevious size={20} />
             </NavButton>
           )}
           <ImageContainer>
-            <ImgWrapper currentIndex={currentIndex}>
+            <ImgWrapper $currentIndex={currentIndex}>
               {videos.map((video) => {
                 const isYoutubeUrl = video?.videoUrl?.includes('youtu');
                 const currentImageUrl = isYoutubeUrl ? extractYoutubeId(video?.videoUrl) : '';
@@ -66,7 +66,7 @@ export default function InfoWindow({ data }: Props) {
             </ImgWrapper>
           </ImageContainer>
           {totalVideos > 1 && (
-            <NavButton right onClick={nextImage} disabled={currentIndex === videos.length - 1}>
+            <NavButton $right onClick={nextImage} disabled={currentIndex === videos.length - 1}>
               <GrNext size={20} />
             </NavButton>
           )}
@@ -80,7 +80,7 @@ export default function InfoWindow({ data }: Props) {
         {totalVideos > 1 && (
           <ImageIndicator>
             {videos.map((video, index) => (
-              <Dot key={video.influencerName} active={index === currentIndex} />
+              <Dot key={video.influencerName} $active={index === currentIndex} />
             ))}
           </ImageIndicator>
         )}
@@ -98,7 +98,7 @@ export default function InfoWindow({ data }: Props) {
           </Text>
         </TextInfo>
       </Info>
-      <DetailBtn onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClickInfo(e)}>상세보기</DetailBtn>
+      <DetailBtn onClick={(e: React.MouseEvent<HTMLDivElement>) => handleInfoClick(e)}>상세보기</DetailBtn>
     </Wrapper>
   );
 }
@@ -161,12 +161,12 @@ const InfluencerOverlay = styled.div`
   pointer-events: none;
 `;
 
-const ImgWrapper = styled.div<{ currentIndex: number }>`
+const ImgWrapper = styled.div<{ $currentIndex: number }>`
   display: flex;
   width: 100%;
   height: 100%;
   transition: transform 0.5s ease-in-out;
-  transform: translateX(${(props) => -props.currentIndex * 100}%);
+  transform: translateX(${(props) => -props.$currentIndex * 100}%);
 `;
 
 const Img = styled.div`
@@ -178,9 +178,9 @@ const Img = styled.div`
   justify-content: center;
 `;
 
-const NavButton = styled.button<{ left?: boolean; right?: boolean }>`
-  ${(props) => (props.left ? 'left: 0px;' : '')}
-  ${(props) => (props.right ? 'right: 0px;' : '')}
+const NavButton = styled.button<{ $left?: boolean; $right?: boolean }>`
+  ${(props) => (props.$left ? 'left: 0px;' : '')}
+  ${(props) => (props.$right ? 'right: 0px;' : '')}
   background: none;
   border: none;
   cursor: pointer;
@@ -200,11 +200,11 @@ const ImageIndicator = styled.div`
   z-index: 2;
 `;
 
-const Dot = styled.div<{ active: boolean }>`
+const Dot = styled.div<{ $active: boolean }>`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: ${(props) => (props.active ? '#bce4e8' : 'rgb(221, 221, 221)')};
+  background-color: ${(props) => (props.$active ? '#bce4e8' : 'rgb(221, 221, 221)')};
 
   @media screen and (max-width: 768px) {
     width: 4px;

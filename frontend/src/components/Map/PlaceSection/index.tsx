@@ -2,19 +2,22 @@ import { useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { useInView } from 'react-intersection-observer';
 import PlaceItem from '@/components/Map/PlaceSection/PlaceItem';
-import { PlaceData, LocationData } from '@/types';
+import { PlaceData, LocationData, FilterParams } from '@/types';
 import Loading from '@/components/common/layouts/Loading';
 import NoItem from '@/components/common/layouts/NoItem';
 import { useGetInfinitePlaceList } from '@/api/hooks/useGetInfinitePlaceList';
 import usePlaceList from '@/hooks/Map/usePlaceList';
+import { useGetInfiniteSearchPlaceList } from '@/api/hooks/useGetInfiniteSearchPlaceList';
 
 interface PlaceSectionProps {
   mapBounds: LocationData;
   filters: {
     categories: string[];
     influencers: string[];
+    regions: string[];
     location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
+  filtersWithPlaceName: FilterParams;
   center: { lat: number; lng: number };
   onGetPlaceData: (data: PlaceData[]) => void;
   onPlaceSelect: (placeId: number) => void;
@@ -26,6 +29,7 @@ interface PlaceSectionProps {
 export default function PlaceSection({
   mapBounds,
   filters,
+  filtersWithPlaceName,
   center,
   onGetPlaceData,
   onPlaceSelect,
@@ -43,19 +47,73 @@ export default function PlaceSection({
   });
 
   // 데이터 fetching hook
-  const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetInfinitePlaceList({
-    location: mapBounds,
-    filters,
-    center,
-    size: 10, // 한 페이지에 보여줄 아이템 개수; 변경하며 api 잘 받아오는지 확인 가능
+  const {
+    data: placeList,
+    isLoading: isLoadingPlaceList,
+    isError: isErrorPlaceList,
+    error: errorPlaceList,
+    fetchNextPage: fetchNextPagePlaceList,
+    hasNextPage: hasNextPagePlaceList,
+    isFetchingNextPage: isFetchingNextPagePlaceList,
+  } = useGetInfinitePlaceList(
+    {
+      location: mapBounds,
+      filters,
+      center,
+      size: 10, // 한 페이지에 보여줄 아이템 개수; 변경하며 api 잘 받아오는지 확인 가능
+    },
+    !filtersWithPlaceName.placeName,
+  );
+
+  const {
+    data: searchPlaceList,
+    isLoading: isLoadingSearchPlaceList,
+    isError: isErrorSearchPlaceList,
+    error: errorSearchPlaceList,
+    fetchNextPage: fetchNextPageSearchPlaceList,
+    hasNextPage: hasNextPageSearchPlaceList,
+    isFetchingNextPage: isFetchingNextPageSearchPlaceList,
+  } = useGetInfiniteSearchPlaceList(
+    {
+      filters: filtersWithPlaceName,
+      size: 10,
+    },
+    !!filtersWithPlaceName.placeName,
+  );
+
+  const isLoading = filtersWithPlaceName.placeName ? isLoadingSearchPlaceList : isLoadingPlaceList;
+  const isError = filtersWithPlaceName.placeName ? isErrorSearchPlaceList : isErrorPlaceList;
+  const error = (filtersWithPlaceName.placeName ? errorSearchPlaceList : errorPlaceList) as Error;
+
+  const { filteredPlaces } = usePlaceList({
+    data: filtersWithPlaceName.placeName ? searchPlaceList : placeList,
+    onGetPlaceData,
   });
-  const { filteredPlaces } = usePlaceList({ data, onGetPlaceData });
 
   useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
+    if (
+      inView &&
+      (filtersWithPlaceName.placeName ? hasNextPageSearchPlaceList : hasNextPagePlaceList) &&
+      !(filtersWithPlaceName.placeName ? isFetchingNextPageSearchPlaceList : isFetchingNextPagePlaceList)
+    ) {
+      if (placeList && !filtersWithPlaceName.placeName) {
+        fetchNextPagePlaceList();
+      }
+      if (searchPlaceList && filtersWithPlaceName.placeName) {
+        fetchNextPageSearchPlaceList();
+      }
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [
+    inView,
+    hasNextPagePlaceList,
+    hasNextPageSearchPlaceList,
+    isFetchingNextPagePlaceList,
+    isFetchingNextPageSearchPlaceList,
+    fetchNextPagePlaceList,
+    fetchNextPageSearchPlaceList,
+    placeList,
+    searchPlaceList,
+  ]);
 
   const handlePlaceClick = useCallback(
     (placeId: number) => {
@@ -67,7 +125,12 @@ export default function PlaceSection({
     [onPlaceSelect, isListExpanded, onListExpand],
   );
 
-  if (isLoading && !isFetchingNextPage && previousPlacesRef.current.length === 0) {
+  if (
+    isLoading &&
+    !isFetchingNextPagePlaceList &&
+    !isFetchingNextPageSearchPlaceList &&
+    previousPlacesRef.current.length === 0
+  ) {
     return (
       <SectionContainer>
         <LoadingContainer>
@@ -101,11 +164,13 @@ export default function PlaceSection({
               />
             ))}
           </PlacesGrid>
-          {(hasNextPage || isFetchingNextPage) && (
-            <LoadMoreTrigger ref={loadMoreRef}>
-              <Loading size={30} />
-            </LoadMoreTrigger>
-          )}
+          {filtersWithPlaceName.placeName
+            ? hasNextPagePlaceList || isFetchingNextPagePlaceList
+            : (hasNextPageSearchPlaceList || isFetchingNextPageSearchPlaceList) && (
+                <LoadMoreTrigger ref={loadMoreRef}>
+                  <Loading size={30} />
+                </LoadMoreTrigger>
+              )}
         </ContentContainer>
       )}
     </SectionContainer>

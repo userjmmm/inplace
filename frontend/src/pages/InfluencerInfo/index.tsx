@@ -42,7 +42,7 @@ export default function InfluencerInfoPage() {
 
   const { mutate: postLike } = usePostInfluencerLike();
 
-  const handleClickLike = useCallback(
+  const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
@@ -96,7 +96,7 @@ export default function InfluencerInfoPage() {
         <LikeIcon
           aria-label="like_btn"
           role="button"
-          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClickLike(e)}
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
         >
           {isLike ? (
             <PiHeartFill color="#fe7373" size={32} data-testid="PiHeartFill" />
@@ -114,30 +114,32 @@ export default function InfluencerInfoPage() {
         </Tap>
       </TapContainer>
       <InfoContainer>
-        {activeTab === 'video' && (
-          <SortSection>
-            <StyledButton
-              aria-label="sort_btn"
-              variant="white"
-              size="small"
-              onClick={() => setShowSortOptions(!showSortOptions)}
-            >
-              <span>{sortLabel[sortOption]}</span>
-              <IoIosArrowDown size={16} />
-            </StyledButton>
-            {showSortOptions && (
-              <SortDropdown>
-                <SortItem onClick={() => handleSortChange('publishTime')}>
-                  최신순 {sortOption === 'publishTime'}
-                </SortItem>
-                <SortItem onClick={() => handleSortChange('popularity')}>인기순 {sortOption === 'popularity'}</SortItem>
-                <SortItem onClick={() => handleSortChange('likes')}>좋아요순 {sortOption === 'likes'}</SortItem>
-              </SortDropdown>
-            )}
-          </SortSection>
-        )}
         {activeTab === 'video' ? (
-          <InfluencerVideoTap influencerId={id} sortOption={sortOption} />
+          <>
+            <SortSection>
+              <StyledButton
+                aria-label="sort_btn"
+                variant="white"
+                size="small"
+                onClick={() => setShowSortOptions(!showSortOptions)}
+              >
+                <span>{sortLabel[sortOption]}</span>
+                <IoIosArrowDown size={16} />
+              </StyledButton>
+              {showSortOptions && (
+                <SortDropdown>
+                  <SortItem onClick={() => handleSortChange('publishTime')}>
+                    최신순 {sortOption === 'publishTime'}
+                  </SortItem>
+                  <SortItem onClick={() => handleSortChange('popularity')}>
+                    인기순 {sortOption === 'popularity'}
+                  </SortItem>
+                  <SortItem onClick={() => handleSortChange('likes')}>좋아요순 {sortOption === 'likes'}</SortItem>
+                </SortDropdown>
+              )}
+            </SortSection>
+            <InfluencerVideoTap influencerId={id} sortOption={sortOption} />
+          </>
         ) : (
           <QueryErrorResetBoundary>
             {({ reset }) => (

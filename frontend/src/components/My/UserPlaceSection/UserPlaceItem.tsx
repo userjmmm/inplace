@@ -25,7 +25,7 @@ export default function UserPlaceItem({ placeId, placeName, influencerName, like
   const { mutate: postLike } = usePostPlaceLike();
   const queryClient = useQueryClient();
 
-  const handleClickLike = useCallback(
+  const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
@@ -64,7 +64,7 @@ export default function UserPlaceItem({ placeId, placeName, influencerName, like
             {influencerName}
           </Paragraph>
         </TextWrapper>
-        <LikeIcon onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClickLike(e)}>
+        <LikeIcon onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}>
           {isLike ? <PiHeartFill color="#fe7373" size={26} /> : <PiHeartLight size={30} />}
         </LikeIcon>
       </Wrapper>

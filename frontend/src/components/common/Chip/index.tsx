@@ -30,7 +30,7 @@ export default function Chip({
     <Container>
       {selectedLocations.map((location) => (
         <FilterChip key={`${location.main}-${location.sub}`}>
-          <Text size="xs" weight="bold" variant="#36617f">
+          <Text size="xxs" weight="normal" variant="#36617f">
             {location.sub ? `${location.main} > ${location.sub}` : location.main}
           </Text>
           <ClearButton aria-label="loca-clear_btn" onClick={() => onClearLocation(location)}>
@@ -41,7 +41,7 @@ export default function Chip({
 
       {selectedInfluencers.map((influencer) => (
         <FilterChip key={influencer}>
-          <Text size="xs" weight="bold" variant="#36617f">
+          <Text size="xxs" weight="normal" variant="#36617f">
             {influencer}
           </Text>
           <ClearButton aria-label="infl-clear_btn" onClick={() => onClearInfluencer(influencer)}>
@@ -52,7 +52,7 @@ export default function Chip({
 
       {selectedCategories.map((category) => (
         <FilterChip key={category}>
-          <Text size="xs" weight="bold" variant="#36617f">
+          <Text size="xxs" weight="normal" variant="#36617f">
             {category}
           </Text>
           <ClearButton aria-label="cate-clear_btn" onClick={() => onClearCategory(category)}>
@@ -68,7 +68,7 @@ const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 16px 0;
+  margin: 12px 0;
   @media screen and (max-width: 768px) {
     padding: 0;
     gap: 8px;
@@ -99,7 +99,7 @@ const FilterChip = styled.div`
   padding: 4px 10px 4px 18px;
   height: 24px;
   border-radius: 18px;
-  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#e8f9ff' : '#d2edf2')};
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#e8f9ff' : '#daeeee')};
   color: black;
   @media screen and (max-width: 768px) {
     padding: 4px 10px 4px 14px;

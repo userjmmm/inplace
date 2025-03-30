@@ -11,25 +11,21 @@ import InfluencerSearchBar from '@/components/common/InfluencerSearchBar';
 import { useGetSearchInfluencers } from '@/api/hooks/useGetSearchInfluencers';
 import useDebounce from '@/hooks/useDebounce';
 import useTheme from '@/hooks/useTheme';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function ChoicePage() {
+  const PAGE_SIZE_MOBILE = 9;
+  const PAGE_SIZE_DESKTOP = 10;
+  const DEBOUNCE_DELAY_MS = 300;
+
   const navigate = useNavigate();
   const { mutateAsync: postMultipleLikes } = usePostMultipleInfluencerLike();
   const [selectedInfluencers, setSelectedInfluencers] = useState<Set<number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState('');
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   useEffect(() => {
     const isFirstUser = document.cookie
@@ -44,11 +40,11 @@ export default function ChoicePage() {
     document.cookie = 'is_first_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.inplace.my; Secure';
   }, [navigate]);
 
-  const debouncedInputValue = useDebounce(inputValue, 300);
+  const debouncedInputValue = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
 
   const { data: allInfluencersData } = useGetAllInfluencers({
     page: currentPage - 1,
-    size: isMobile ? 9 : 10,
+    size: isMobile ? PAGE_SIZE_MOBILE : PAGE_SIZE_DESKTOP,
   });
 
   const { data: filteredData } = useGetSearchInfluencers({

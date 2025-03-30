@@ -31,7 +31,7 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
     }
   }, [isProtectedPath, isAuthenticated, userInfo, isLoading, isError, navigate]);
 
-  const handleCloseModal = () => {
+  const handleModalClose = () => {
     if (window.history.length > 2) {
       navigate(-1);
     } else {
@@ -59,7 +59,7 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
       <LoginModal
         currentPath={location.pathname}
         immediateOpen
-        onClose={handleCloseModal}
+        onClose={handleModalClose}
         onLoginSuccess={handleModalSuccess}
       />
     );

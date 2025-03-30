@@ -82,6 +82,8 @@ export type LocationData = {
 export type FilterParams = {
   categories: string[];
   influencers: string[];
+  placeName?: string;
+  regions: string[];
 };
 
 export type PlaceList = {
@@ -220,3 +222,12 @@ export interface ReviewInfo {
   influencerName: string;
   userNickname: string;
 }
+
+export type AllMarkerWithCenter = {
+  marker: MarkerData[];
+  map: {
+    longitude: number;
+    latitude: number;
+    level: number;
+  };
+};

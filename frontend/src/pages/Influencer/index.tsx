@@ -1,33 +1,27 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useGetAllInfluencers } from '@/api/hooks/useGetAllInfluencers';
-import { Text } from '@/components/common/typography/Text';
 import BaseLayout from '@/components/common/BaseLayout';
 import Pagination from '@/components/common/Pagination';
 import InfluencerSearchBar from '@/components/common/InfluencerSearchBar';
 import { useGetSearchInfluencers } from '@/api/hooks/useGetSearchInfluencers';
 import useDebounce from '@/hooks/useDebounce';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function InfluencerPage() {
+  const DEBOUNCE_DELAY_MS = 300;
+  const PAGE_SIZE_MOBILE = 9;
+  const PAGE_SIZE_DESKTOP = 10;
+
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState('');
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const debouncedInputValue = useDebounce(inputValue, 300);
+  const debouncedInputValue = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
 
   const { data: allInfluencersData } = useGetAllInfluencers({
     page: currentPage - 1,
-    size: isMobile ? 9 : 10,
+    size: isMobile ? PAGE_SIZE_MOBILE : PAGE_SIZE_DESKTOP,
   });
 
   const { data: filteredData } = useGetSearchInfluencers({
@@ -48,11 +42,6 @@ export default function InfluencerPage() {
 
   return (
     <PageContainer>
-      <Title>
-        <Text size="l" weight="bold">
-          인플루언서
-        </Text>
-      </Title>
       <InfluencerSearchBar inputValue={inputValue} setInputValue={setInputValue} />
       <LayoutWrapper>
         <BaseLayout
@@ -96,8 +85,4 @@ const LayoutWrapper = styled.div`
     display: flex;
     justify-content: center;
   }
-`;
-
-const Title = styled.div`
-  width: 90%;
 `;
