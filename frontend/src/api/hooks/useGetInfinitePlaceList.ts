@@ -42,7 +42,7 @@ export const useGetInfinitePlaceList = ({ location, filters, center, size }: Que
     PageableData<PlaceData>,
     Error,
     { pages: PageableData<PlaceData>[]; pageParams: number[] },
-    [string, LocationData, categories: string[], influencers: string[], { lat: number; lng: number }, number],
+    [string, LocationData, string[], string[], { lat: number; lng: number }, number],
     number
   >({
     queryKey: ['infinitePlaceList', location, filters.categories, filters.influencers, center, size],
