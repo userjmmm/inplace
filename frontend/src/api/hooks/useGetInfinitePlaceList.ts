@@ -42,10 +42,10 @@ export const useGetInfinitePlaceList = ({ location, filters, center, size }: Que
     PageableData<PlaceData>,
     Error,
     { pages: PageableData<PlaceData>[]; pageParams: number[] },
-    [string, LocationData, FilterParams, { lat: number; lng: number }, number],
+    [string, LocationData, categories: string[], influencers: string[], { lat: number; lng: number }, number],
     number
   >({
-    queryKey: ['infinitePlaceList', location, filters, center, size],
+    queryKey: ['infinitePlaceList', location, filters.categories, filters.influencers, center, size],
     // pageParam = 각 페이지를 가져올 때마다 사용되는 현재 페이지 번호
     queryFn: ({ pageParam = 0 }) => getPlaceList(location, filters, center, pageParam, size),
     initialPageParam: 0, // 초기 페이지 번호(0부터 시작)

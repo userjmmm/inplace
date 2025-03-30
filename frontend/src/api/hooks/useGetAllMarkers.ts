@@ -37,7 +37,7 @@ interface QueryParams {
 
 export const useGetAllMarkers = ({ location, filters, center }: QueryParams, enabled?: boolean) => {
   return useQuery({
-    queryKey: ['allMarkers', location, filters, center],
+    queryKey: ['allMarkers', location, filters.categories, filters.influencers, center],
     queryFn: () => getAllMarkers(location, filters, center),
     staleTime: 1000 * 60 * 5,
     enabled,
