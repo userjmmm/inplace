@@ -504,7 +504,7 @@ const fadeOut = keyframes`
 
 const NoItemMarker = styled.div`
   position: absolute;
-  top: 10px;
+  top: 5%;
   width: 30%;
   display: flex;
   align-items: center;
