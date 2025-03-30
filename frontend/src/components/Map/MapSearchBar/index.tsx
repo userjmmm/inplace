@@ -4,6 +4,7 @@ import { IoIosClose, IoIosSearch, IoIosArrowUp, IoIosArrowDown } from 'react-ico
 import { useGetSearchComplete } from '@/api/hooks/useGetSearchComplete';
 import useDebounce from '@/hooks/useDebounce';
 import { useGetSearchKakaoKeyword } from '@/hooks/api/useGetSearchKakaoKeyword';
+import useClickOutside from '@/hooks/useClickOutside';
 
 interface KakaoKeywordDocuments {
   place_name: string;
@@ -33,6 +34,11 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
 
   const searchBarRef = useRef<HTMLDivElement>(null);
   const searchTypeRef = useRef<HTMLDivElement>(null);
+
+  useClickOutside([searchBarRef, searchTypeRef], () => {
+    setIsOpen(false);
+    setIsTypeOpen(false);
+  });
 
   const { data: searchPlaceResults } = useGetSearchComplete(
     debouncedInput,
@@ -64,22 +70,6 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
     return [];
   }, [searchPlaceResults, searchLocationResults, searchType]);
 
-  // 외부 클릭 처리
-  const handleOutsideClick = useCallback((event: MouseEvent) => {
-    if (searchTypeRef.current?.contains(event.target as Node)) {
-      setIsOpen(false);
-      return;
-    }
-
-    if (searchBarRef.current?.contains(event.target as Node)) {
-      setIsTypeOpen(false);
-      return;
-    }
-
-    setIsOpen(false);
-    setIsTypeOpen(false);
-  }, []);
-
   useEffect(() => {
     if (inputValue === '') {
       setIsOpen(false);
@@ -88,13 +78,7 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
     } else if (!preventDropdownOpen) {
       setIsOpen(true);
     }
-
-    document.addEventListener('mousedown', handleOutsideClick);
-
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, [inputValue, preventDropdownOpen, handleOutsideClick]);
+  }, [inputValue, preventDropdownOpen]);
 
   const handleSearch = useCallback(
     (searchValue: string, isIndexChoice: boolean) => {
@@ -267,7 +251,7 @@ const SearchBarContainer = styled.div`
   z-index: 100;
 
   @media screen and (max-width: 768px) {
-    width: 100%;
+    flex: 1;
   }
 `;
 
@@ -327,7 +311,7 @@ const SearchDropDownBox = styled.ul`
   box-shadow: 0 10px 10px rgb(0, 0, 0, 0.3);
   list-style-type: none;
   color: #333333;
-  z-index: 100;
+  z-index: 101;
   box-sizing: border-box;
   margin-top: -1.5px;
 `;
