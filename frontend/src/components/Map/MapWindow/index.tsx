@@ -362,7 +362,7 @@ const LoadingWrapper = styled.div`
   background-color: #29292963;
 
   > div {
-    padding: 4px 16px;
+    padding: 4px 0px;
     height: auto;
     transform: translateY(-50%);
   }
@@ -429,36 +429,54 @@ const ListViewButton = styled.button`
   }
 `;
 
-const fadeOut = keyframes`
-  0% {
-    opacity: 1;
-    visibility: visible;
-  }
-  80% {
-    opacity: 1;
-    visibility: visible;
-  }
-  100% {
-    opacity: 0;
-    visibility: hidden;
-  }
+const shakeDesktop = keyframes`
+0% {
+  transform: translateX(119.5%);
+}
+25% {
+  transform: translateX(120.5%);
+}
+50% {
+  transform: translateX(119.5%);
+}
+75% {
+  transform: translateX(120.5%);
+}
+100% {
+  transform: translateX(120%);
+}
 `;
-const shake = keyframes`
+
+const shakeMobile = keyframes`
   0% {
-    transform: translateX(119.5%);
+    transform: translateX(21.5%);
   }
   25% {
-    transform: translateX(120.5%);
+    transform: translateX(22.5%);
   }
   50% {
-    transform: translateX(119.5%);
+    transform: translateX(21.5%);
   }
   75% {
-    transform: translateX(120.5%);
+    transform: translateX(22.5%);
   }
   100% {
-    transform: translateX(120%);
+    transform: translateX(21%);
   }
+`;
+const fadeOut = keyframes`
+0% {
+  opacity: 1;
+  visibility: visible;
+}
+80% {
+  opacity: 1;
+  visibility: visible;
+}
+100% {
+  opacity: 0;
+  visibility: hidden;
+}
 `;
 
 const NoItemMarker = styled.div`
@@ -482,6 +500,16 @@ const NoItemMarker = styled.div`
     margin-bottom: 1px;
   }
   animation:
-    ${shake} 0.5s ease-out,
+    ${shakeDesktop} 0.5s ease-out,
     ${fadeOut} 3.5s ease-out forwards;
+
+  @media screen and (max-width: 768px) {
+    width: 70%;
+    padding: 8px 0px;
+    transform: translateX(22%);
+    font-size: 12px;
+    animation:
+      ${shakeMobile} 0.5s ease-out,
+      ${fadeOut} 3.5s ease-out forwards;
+  }
 `;
