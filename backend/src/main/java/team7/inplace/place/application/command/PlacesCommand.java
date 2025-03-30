@@ -1,7 +1,5 @@
 package team7.inplace.place.application.command;
 
-import io.micrometer.common.util.StringUtils;
-import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import team7.inplace.place.domain.Category;
@@ -34,34 +32,19 @@ public class PlacesCommand {
         }
     }
 
-    public record FilterParams(
-        String categories,
-        String influencers
+    public record RegionParam(
+        String city,
+        String district
     ) {
 
-        public List<Category> getCategoryFilters() {
-            if (categoryFilterNotExists()) {
-                return null;
-            }
-            return Arrays.stream(categories.split(","))
-                .map(Category::of)
-                .toList();
-        }
+    }
 
-        public List<String> getInfluencerFilters() {
-            if (influencerFilterNotExists()) {
-                return null;
-            }
-            return Arrays.stream(influencers.split(",")).toList();
-        }
+    public record FilterParams(
+        List<RegionParam> regions,
+        List<Category> categories,
+        List<String> influencers
+    ) {
 
-        private boolean categoryFilterNotExists() {
-            return !StringUtils.isNotEmpty(categories);
-        }
-
-        private boolean influencerFilterNotExists() {
-            return !StringUtils.isNotEmpty(influencers);
-        }
     }
 
     public record Create(

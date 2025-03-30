@@ -3,6 +3,7 @@ package team7.inplace.place.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,16 +17,19 @@ import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.liked.likedPlace.domain.LikedPlace;
 import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
+import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
+import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.client.GooglePlaceClient;
-import team7.inplace.place.client.GooglePlaceClientResponse;
+import team7.inplace.place.client.GooglePlaceClientResponse.Place;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.video.persistence.VideoReadRepository;
 
 @Slf4j
@@ -70,12 +74,13 @@ public class PlaceService {
         FilterParams filterParamsCommand,
         Pageable pageable
     ) {
-        var categoryFilters = filterParamsCommand.getCategoryFilters();
-        var influencerFilters = filterParamsCommand.getInfluencerFilters();
+        var regionFilters = filterParamsCommand.regions();
+        var categoryFilters = filterParamsCommand.categories();
+        var influencerFilters = filterParamsCommand.influencers();
 
         // 위치와 필터링으로 Place 조회
         var placesPage = getPlacesByDistance(
-            coordinateCommand, categoryFilters, influencerFilters,
+            coordinateCommand, regionFilters, categoryFilters, influencerFilters,
             pageable, userId);
         if (placesPage.isEmpty()) {
             return new PageImpl<>(List.of(), pageable, 0);
@@ -86,6 +91,7 @@ public class PlaceService {
 
     private Page<PlaceQueryResult.DetailedPlace> getPlacesByDistance(
         Coordinate placesCoordinateCommand,
+        List<RegionParam> regionParams,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
@@ -98,6 +104,7 @@ public class PlaceService {
             placesCoordinateCommand.bottomRightLatitude(),
             placesCoordinateCommand.longitude(),
             placesCoordinateCommand.latitude(),
+            regionParams,
             categoryFilters,
             influencerFilters,
             pageable,
@@ -126,14 +133,16 @@ public class PlaceService {
         Coordinate coordinateCommand,
         FilterParams filterParamsCommand
     ) {
-        List<Category> categoryFilter = filterParamsCommand.getCategoryFilters();
-        List<String> influencerFilter = filterParamsCommand.getInfluencerFilters();
+        var regionFilters = filterParamsCommand.regions();
+        var categoryFilter = filterParamsCommand.categories();
+        var influencerFilter = filterParamsCommand.influencers();
 
         return placeReadRepository.findPlaceLocationsInMapRange(
             coordinateCommand.topLeftLongitude(),
             coordinateCommand.topLeftLatitude(),
             coordinateCommand.bottomRightLongitude(),
             coordinateCommand.bottomRightLatitude(),
+            regionFilters,
             categoryFilter,
             influencerFilter
         );
@@ -145,13 +154,17 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<String> getGooglePlaceId(Long placeId) {
+        return placeJpaRepository.findGooglePlaceIdById(placeId);
+    }
+
+    @Transactional(readOnly = true)
     public PlaceQueryResult.DetailedPlace getPlaceInfo(Long userId, Long placeId) {
         return placeReadRepository.findDetailedPlaceById(userId, placeId)
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
-    public GooglePlaceClientResponse.Place getGooglePlaceInfo(String googlePlaceId) {
+    public Place getGooglePlaceInfo(String googlePlaceId) {
         return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
     }
 
@@ -159,5 +172,27 @@ public class PlaceService {
         return Arrays.stream(Category.values())
             .map(category -> new PlaceInfo.Category(category.name()))
             .toList();
+    }
+
+    public List<Location> getPlaceLocationsByName(String name, FilterParams command) {
+        return placeReadRepository.findPlaceLocationsByName(
+            name,
+            command.regions(),
+            command.categories(),
+            command.influencers()
+        );
+    }
+
+    public Page<PlaceQueryResult.DetailedPlace> getPlacesByName(
+        Long userId, String name, PlacesCommand.FilterParams command, Pageable pageable
+    ) {
+        return placeReadRepository.findPlacesByNameWithPaging(
+            userId,
+            name,
+            command.regions(),
+            command.categories(),
+            command.influencers(),
+            pageable
+        );
     }
 }
