@@ -13,14 +13,6 @@ export default function useMapState() {
   const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
   const [placeData, setPlaceData] = useState<PlaceData[]>([]);
 
-  const handleBoundsChange = useCallback((bounds: LocationData) => {
-    setMapBounds(bounds);
-  }, []);
-
-  const handleCenterChange = useCallback((newCenter: { lat: number; lng: number }) => {
-    setCenter(newCenter);
-  }, []);
-
   const handlePlaceSelect = useCallback((placeId: number | null) => {
     setSelectedPlaceId((prev) => (prev === placeId ? null : placeId));
   }, []);
@@ -37,13 +29,12 @@ export default function useMapState() {
   return {
     center,
     setCenter,
+    setMapBounds,
     mapBounds,
     isListExpanded,
     selectedPlaceId,
     placeData,
     setIsListExpanded,
-    handleBoundsChange,
-    handleCenterChange,
     handlePlaceSelect,
     handleGetPlaceData,
   };

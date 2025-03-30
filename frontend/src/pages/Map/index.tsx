@@ -33,13 +33,12 @@ export default function MapPage() {
   const {
     center,
     setCenter,
+    setMapBounds,
     mapBounds,
     isListExpanded,
     selectedPlaceId,
     placeData,
     setIsListExpanded,
-    handleBoundsChange,
-    handleCenterChange,
     handlePlaceSelect,
     handleGetPlaceData,
   } = useMapState();
@@ -202,7 +201,7 @@ export default function MapPage() {
       </Wrapper>
       {isFilterBarOpened && (
         <>
-          <Background isVisible={isFilterBarOpened} onClick={() => setIsFilterBarOpened(false)} />
+          <Background onClick={() => setIsFilterBarOpened(false)} />
           <MobileDropdownSection ref={filterRef}>
             <CloseBtn onClick={() => setIsFilterBarOpened(false)}>X</CloseBtn>
             <DropdownFilterBar items={dropdownItems} />
@@ -211,8 +210,9 @@ export default function MapPage() {
       )}
       <MapWindow
         center={center}
-        onBoundsChange={handleBoundsChange}
-        onCenterChange={handleCenterChange}
+        setCenter={setCenter}
+        setMapBounds={setMapBounds}
+        mapBounds={mapBounds}
         filters={filters}
         filtersWithPlaceName={filtersWithPlaceName}
         placeData={placeData}
@@ -225,10 +225,10 @@ export default function MapPage() {
       />
       <PlaceSectionDesktop>
         <PlaceSection
+          center={center}
           mapBounds={mapBounds}
           filters={filters}
           filtersWithPlaceName={filtersWithPlaceName}
-          center={center}
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
@@ -420,7 +420,7 @@ const CloseBtn = styled.button`
   }
 `;
 
-const Background = styled.div<{ isVisible: boolean }>`
+const Background = styled.div`
   display: none;
 
   @media screen and (max-width: 768px) {
