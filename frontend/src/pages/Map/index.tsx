@@ -27,7 +27,7 @@ export default function MapPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
   const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
-  const [isChangedLocation, setIsChangedLocation] = useState(false);
+  const [isChangedLocation, setIsChangedLocation] = useState<{ lat: number; lng: number } | null>(null);
   const filterRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useIsMobile();
   const {
@@ -90,8 +90,7 @@ export default function MapPage() {
     });
 
     if (value.lat && value.lng) {
-      setCenter({ lat: value.lat, lng: value.lng });
-      setIsChangedLocation(true);
+      setIsChangedLocation({ lat: value.lat, lng: value.lng });
     }
   }, []);
 

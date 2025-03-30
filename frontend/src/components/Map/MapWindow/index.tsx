@@ -30,8 +30,8 @@ interface MapWindowProps {
   };
   filtersWithPlaceName: FilterParams;
   placeData: PlaceData[];
-  isChangedLocation: boolean;
-  setIsChangedLocation: React.Dispatch<React.SetStateAction<boolean>>;
+  isChangedLocation: { lat: number; lng: number } | null;
+  setIsChangedLocation: React.Dispatch<React.SetStateAction<{ lat: number; lng: number } | null>>;
   selectedPlaceId: number | null;
   onPlaceSelect: (placeId: number | null) => void;
   isListExpanded?: boolean;
@@ -139,7 +139,7 @@ export default function MapWindow({
     onCenterChange({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     onBoundsChange(newBounds);
     setShowSearchButton(false);
-  }, [mapRef]);
+  }, []);
 
   useEffect(() => {
     if (!isMapReady) return;
@@ -178,6 +178,8 @@ export default function MapWindow({
     if (mapRef.current && center) {
       const position = new kakao.maps.LatLng(center.lat, center.lng);
       mapRef.current.setCenter(position);
+      setMapCenter(center);
+      onCenterChange(center);
 
       const bounds = mapRef.current.getBounds();
       const newBounds: LocationData = {
@@ -187,16 +189,37 @@ export default function MapWindow({
         bottomRightLongitude: bounds.getNorthEast().getLng(),
       };
       onPlaceSelect(null);
-      if (isChangedLocation) {
-        mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
-        setIsChangedLocation(false);
-      }
-      setMapCenter(center);
       setMapBound(newBounds);
       onBoundsChange(newBounds);
       setShowSearchButton(false);
     }
-  }, [center, mapRef]);
+  }, [center]);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+    if (!isChangedLocation) return;
+
+    const LocPosition = new kakao.maps.LatLng(isChangedLocation.lat, isChangedLocation.lng);
+    mapRef.current.setCenter(LocPosition);
+    mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
+    setMapCenter({ lat: isChangedLocation.lat, lng: isChangedLocation.lng });
+    onCenterChange({ lat: isChangedLocation.lat, lng: isChangedLocation.lng });
+
+    const bounds = mapRef.current.getBounds();
+    const newBounds: LocationData = {
+      topLeftLatitude: bounds.getNorthEast().getLat(),
+      topLeftLongitude: bounds.getSouthWest().getLng(),
+      bottomRightLatitude: bounds.getSouthWest().getLat(),
+      bottomRightLongitude: bounds.getNorthEast().getLng(),
+    };
+    onPlaceSelect(null);
+    setMapBound(newBounds);
+    onBoundsChange(newBounds);
+    setShowSearchButton(false);
+    setTimeout(() => {
+      setIsChangedLocation(null);
+    }, 0);
+  }, [isChangedLocation?.lat, isChangedLocation?.lng]);
 
   // 초기 선택 시에만 이동하도록
   useEffect(() => {
