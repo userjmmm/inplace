@@ -148,6 +148,7 @@ export default function MapSearchBar({ setIsChangedLocation, setSelectedPlaceNam
     e.preventDefault();
     setInputValue('');
     setSelectedPlaceName('');
+    setIsChangedLocation(null);
   };
 
   const placeholder =
