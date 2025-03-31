@@ -96,10 +96,9 @@ export default function PlaceSection({
       (filtersWithPlaceName.placeName ? hasNextPageSearchPlaceList : hasNextPagePlaceList) &&
       !(filtersWithPlaceName.placeName ? isFetchingNextPageSearchPlaceList : isFetchingNextPagePlaceList)
     ) {
-      if (placeList && !filtersWithPlaceName.placeName) {
+      if (!filtersWithPlaceName.placeName) {
         fetchNextPagePlaceList();
-      }
-      if (searchPlaceList && filtersWithPlaceName.placeName) {
+      } else {
         fetchNextPageSearchPlaceList();
       }
     }
@@ -111,8 +110,6 @@ export default function PlaceSection({
     isFetchingNextPageSearchPlaceList,
     fetchNextPagePlaceList,
     fetchNextPageSearchPlaceList,
-    placeList,
-    searchPlaceList,
   ]);
 
   const handlePlaceClick = useCallback(
@@ -164,13 +161,13 @@ export default function PlaceSection({
               />
             ))}
           </PlacesGrid>
-          {filtersWithPlaceName.placeName
-            ? hasNextPagePlaceList || isFetchingNextPagePlaceList
-            : (hasNextPageSearchPlaceList || isFetchingNextPageSearchPlaceList) && (
-                <LoadMoreTrigger ref={loadMoreRef}>
-                  <Loading size={30} />
-                </LoadMoreTrigger>
-              )}
+          {(filtersWithPlaceName.placeName
+            ? hasNextPageSearchPlaceList || isFetchingNextPageSearchPlaceList
+            : hasNextPagePlaceList || isFetchingNextPagePlaceList) && (
+            <LoadMoreTrigger ref={loadMoreRef}>
+              <Loading size={30} />
+            </LoadMoreTrigger>
+          )}
         </ContentContainer>
       )}
     </SectionContainer>
