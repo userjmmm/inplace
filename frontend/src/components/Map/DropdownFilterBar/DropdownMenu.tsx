@@ -1,33 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FaUser, FaSearch } from 'react-icons/fa';
 import { ImSpoonKnife } from 'react-icons/im';
-import { MdLocationOn } from 'react-icons/md';
 import styled from 'styled-components';
 import DropdownItem from './DropdownItem';
 import useDetectClose from '@/hooks/useDetectClose';
 
 interface Option {
   label: string;
-  lat?: number;
-  lng?: number;
-  subOptions?: Option[];
 }
 
 export interface DropdownMenuProps {
   options: Option[];
-  multiLevel?: boolean;
   onChange: (value: { main: string; sub?: string; lat?: number; lng?: number }) => void;
   isMobileOpen: boolean;
   placeholder?: string;
-  type: 'location' | 'influencer' | 'category';
+  type: 'influencer' | 'category';
   width: number;
-  defaultValue?: { main: string; sub?: string };
-  selectedOptions?: string[] | { main: string; sub?: string }[];
+  defaultValue?: string;
+  selectedOptions?: string[];
 }
 
 export default function DropdownMenu({
   options,
-  multiLevel = false,
   onChange,
   isMobileOpen = false,
   placeholder = '',
@@ -39,37 +33,23 @@ export default function DropdownMenu({
   const [isOpen, setIsOpen] = useState(isMobileOpen);
   const ref = useDetectClose({ onDetected: () => setIsOpen(false) });
   const [selectedMainOption, setSelectedMainOption] = useState<Option | null>();
-  const [selectedSubOption, setSelectedSubOption] = useState<Option | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const isInitialized = useRef(false);
 
   useEffect(() => {
-    if (isInitialized.current || !defaultValue?.main || !options?.length) {
+    if (isInitialized.current || !defaultValue || !options?.length) {
       return;
     }
 
-    const mainOption = options.find((option) => option.label === defaultValue.main);
+    const mainOption = options.find((option) => option.label === defaultValue);
     if (!mainOption) {
       return;
     }
-    const updates = () => {
-      setSelectedMainOption(mainOption);
-      if (defaultValue.sub && mainOption.subOptions) {
-        const subOption = mainOption.subOptions.find((sub) => sub.label === defaultValue.sub);
-        if (subOption) {
-          setSelectedSubOption(subOption);
-        }
-      }
+    setSelectedMainOption(mainOption);
+    onChange({
+      main: mainOption.label,
+    });
 
-      onChange({
-        main: mainOption.label,
-        sub: undefined,
-        lat: mainOption.lat,
-        lng: mainOption.lng,
-      });
-    };
-
-    updates();
     isInitialized.current = true;
   }, [defaultValue, options, onChange]);
 
@@ -78,11 +58,7 @@ export default function DropdownMenu({
       return (
         options?.filter((option) => {
           const mainMatch = option?.label?.toLowerCase().includes(searchTerm.toLowerCase());
-
-          const hasMatchingSubOption = option?.subOptions?.some((subOption) =>
-            subOption?.label?.toLowerCase().includes(searchTerm.toLowerCase()),
-          );
-          return mainMatch || hasMatchingSubOption;
+          return mainMatch;
         }) || []
       );
     } catch {
@@ -90,43 +66,13 @@ export default function DropdownMenu({
     }
   }, [options, searchTerm]);
 
-  useEffect(() => {
-    if (!searchTerm || !options?.length) return;
-    const mainOptionWithSubMatch = options.find((option) =>
-      option?.subOptions?.some?.((subOption) => subOption?.label?.toLowerCase().includes(searchTerm.toLowerCase())),
-    );
-
-    if (mainOptionWithSubMatch) {
-      setSelectedMainOption(mainOptionWithSubMatch);
-    }
-  }, [searchTerm, options]);
-
   const handleMainOptionClick = (option: Option) => {
     setSelectedMainOption(option);
-    setSelectedSubOption(null);
-    if (!multiLevel || !option.subOptions) {
-      onChange({
-        main: option.label,
-        sub: undefined,
-        lat: option.lat,
-        lng: option.lng,
-      });
-      setIsOpen(false);
-      setSelectedMainOption(null);
-    }
-  };
-
-  const handleSubOptionClick = (subOption: Option) => {
-    setSelectedSubOption(subOption);
     onChange({
-      main: selectedMainOption!.label,
-      sub: subOption.label === '전체' ? undefined : subOption.label,
-      lat: subOption.lat,
-      lng: subOption.lng,
+      main: option.label,
     });
     setIsOpen(false);
     setSelectedMainOption(null);
-    setSelectedSubOption(null);
   };
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,7 +83,6 @@ export default function DropdownMenu({
     if (isOpen) {
       setIsOpen(false);
       setSelectedMainOption(null);
-      setSelectedSubOption(null);
       setSearchTerm('');
     } else {
       setIsOpen(true);
@@ -146,7 +91,7 @@ export default function DropdownMenu({
 
   const renderMainOptions = () => {
     return filteredOptions.map((option) => {
-      const isFiltered = type === 'location' ? false : (selectedOptions as string[])?.includes(option.label);
+      const isFiltered = selectedOptions && selectedOptions.includes(option.label);
 
       return (
         <DropdownItem
@@ -154,37 +99,7 @@ export default function DropdownMenu({
           label={option.label}
           onClick={() => handleMainOptionClick(option)}
           type={type}
-          isSelected={selectedMainOption === option}
-          isFiltered={isFiltered}
-        />
-      );
-    });
-  };
-
-  const renderSubOptions = () => {
-    if (!selectedMainOption || !selectedMainOption.subOptions) return null;
-    const allOption: Option = {
-      label: '전체',
-      lat: selectedMainOption.lat,
-      lng: selectedMainOption.lng,
-    };
-    const filteredSubOptions = [allOption, ...selectedMainOption.subOptions].filter(
-      (subOption) => !searchTerm || subOption.label.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-
-    return filteredSubOptions.map((subOption) => {
-      const isFiltered = (selectedOptions as { main: string; sub?: string }[])?.some(
-        (item) =>
-          item.main === selectedMainOption.label &&
-          (subOption.label === '전체' ? !item.sub : item.sub === subOption.label),
-      );
-      return (
-        <DropdownItem
-          key={subOption.label}
-          label={subOption.label}
-          onClick={() => handleSubOptionClick(subOption)}
-          type={type}
-          isSelected={selectedSubOption === subOption}
+          isSelected={selectedMainOption?.label === option.label}
           isFiltered={isFiltered}
         />
       );
@@ -193,9 +108,6 @@ export default function DropdownMenu({
 
   const displayValue = placeholder;
   const displayIcon = () => {
-    if (type === 'location') {
-      return <MdLocationOn size={20} color="#5ae3fb" />;
-    }
     if (type === 'category') {
       return <ImSpoonKnife color="#5ae3fb" />;
     }
@@ -208,14 +120,13 @@ export default function DropdownMenu({
         {displayValue}
       </DropdownButton>
       {isOpen && (
-        <DropdownMenuContainer $multiLevel={multiLevel} $hasSubOptions={!!selectedMainOption?.subOptions} $type={type}>
+        <DropdownMenuContainer $type={type}>
           <SearchInputContainer>
             <SearchInput placeholder="검색" value={searchTerm} onChange={handleSearchInputChange} />
             <SearchIcon />
           </SearchInputContainer>
           <OptionsContainer>
             <MainOptions>{renderMainOptions()}</MainOptions>
-            {multiLevel && selectedMainOption?.subOptions && <SubOptions>{renderSubOptions()}</SubOptions>}
           </OptionsContainer>
         </DropdownMenuContainer>
       )}
@@ -223,7 +134,7 @@ export default function DropdownMenu({
   );
 }
 
-const DropdownContainer = styled.div<{ type: 'location' | 'influencer' | 'category'; $width: number }>`
+const DropdownContainer = styled.div<{ type: 'influencer' | 'category'; $width: number }>`
   position: relative;
   height: 100%;
   width: ${({ $width }) => `${$width}px`};
@@ -239,7 +150,7 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
   width: 100%;
   height: 100%;
   border: none;
-  background-color: ${({ $isOpen }) => ($isOpen ? '#daeeee' : '#ffffff')};
+  background-color: ${({ $isOpen }) => ($isOpen ? '#e8f9ff' : '#ffffff')};
   border-radius: 16px;
   display: flex;
   color: #333333;
@@ -252,7 +163,7 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
   text-overflow: ellipsis;
 
   &:hover {
-    background-color: #daeeee;
+    background-color: #e8f9ff;
     border: none;
   }
 
@@ -263,9 +174,7 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
 `;
 
 const DropdownMenuContainer = styled.div<{
-  $multiLevel: boolean;
-  $hasSubOptions: boolean;
-  $type: 'location' | 'influencer' | 'category';
+  $type: 'influencer' | 'category';
 }>`
   position: absolute;
   top: 100%;
@@ -275,16 +184,11 @@ const DropdownMenuContainer = styled.div<{
         right: 0;
       `;
     }
-    if ($type === 'influencer') {
-      return `
-        left: -50%;
-      `;
-    }
     return `
         left: 0;
       `;
   }}
-  width: ${(props) => (props.$multiLevel && props.$hasSubOptions ? '300%' : '200%')};
+  width: 150%;
   background: #ffffff;
   color: #333333;
   box-shadow: 0 3px 12px 0 rgb(0 0 0/0.15);
@@ -356,17 +260,6 @@ const OptionsContainer = styled.div`
 
 const MainOptions = styled.div`
   flex: 1;
-  max-height: 250px;
-  overflow-y: auto;
-
-  @media screen and (max-width: 768px) {
-    max-height: 150px;
-  }
-`;
-
-const SubOptions = styled.div`
-  flex: 1;
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
   max-height: 250px;
   overflow-y: auto;
 

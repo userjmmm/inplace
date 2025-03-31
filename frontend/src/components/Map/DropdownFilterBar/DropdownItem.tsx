@@ -34,7 +34,7 @@ const DropdownItems = styled.div<{
   }};
 
   &:hover {
-    background-color: ${(props) => (props.$isSelected ? '#d1e5ff' : '#f0f0f0')};
+    background-color: ${(props) => (props.$isSelected ? '#e8f9ff' : '#f0f0f0')};
   }
 
   @media screen and (max-width: 768px) {

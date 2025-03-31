@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import styled from 'styled-components';
+import { useState } from 'react';
 import DropdownMenu, { DropdownMenuProps } from './DropdownMenu';
 
 interface DropdownItem {
@@ -18,19 +18,16 @@ export type FilterBarItem = DropdownItem | SeparatorItem;
 interface DropdownFilterBarProps {
   items: FilterBarItem[];
 }
-
 export default function DropdownFilterBar({ items }: DropdownFilterBarProps) {
-  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const [isHover, setIsHover] = useState<boolean>(false);
 
   return (
-    <BarContainer>
-      {items.map((item, idx) =>
+    <BarContainer onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+      {items.map((item) =>
         item.type === 'dropdown' ? (
-          <HoverWrapper key={item.id} onMouseEnter={() => setHoverIndex(idx)} onMouseLeave={() => setHoverIndex(null)}>
-            <DropdownMenu {...item.props} />
-          </HoverWrapper>
+          <DropdownMenu key={item.id} {...item.props} />
         ) : (
-          <Separator key={item.id} $isHidden={hoverIndex === idx - 1 || hoverIndex === idx + 1} />
+          <Separator key={item.id} $isHidden={isHover} />
         ),
       )}
     </BarContainer>
@@ -61,13 +58,4 @@ const Separator = styled.div<{ $isHidden?: boolean }>`
   height: 45%;
   background-color: ${({ $isHidden }) => ($isHidden ? 'white' : '#c7c7c7')};
   margin: auto 0px;
-`;
-
-const HoverWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  height: 100%;
-  @media screen and (max-width: 768px) {
-    flex: 1;
-  }
 `;
