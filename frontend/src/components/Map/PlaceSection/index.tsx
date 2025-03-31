@@ -17,6 +17,7 @@ interface PlaceSectionProps {
   };
   filtersWithPlaceName: FilterParams;
   center: { lat: number; lng: number };
+  isInitialLoad: boolean;
   onGetPlaceData: (data: PlaceData[]) => void;
   onPlaceSelect: (placeId: number) => void;
   selectedPlaceId: number | null;
@@ -29,6 +30,7 @@ export default function PlaceSection({
   filters,
   filtersWithPlaceName,
   center,
+  isInitialLoad,
   onGetPlaceData,
   onPlaceSelect,
   selectedPlaceId,
@@ -60,7 +62,7 @@ export default function PlaceSection({
       center,
       size: 10, // 한 페이지에 보여줄 아이템 개수; 변경하며 api 잘 받아오는지 확인 가능
     },
-    !filtersWithPlaceName.placeName,
+    !isInitialLoad && !filtersWithPlaceName.placeName,
   );
 
   const {

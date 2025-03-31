@@ -17,6 +17,7 @@ export default function MapPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
   const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isChangedLocation, setIsChangedLocation] = useState<{ lat: number; lng: number } | null>(null);
   const filterRef = useRef<HTMLDivElement | null>(null);
   const {
@@ -152,12 +153,13 @@ export default function MapPage() {
         setCenter={setCenter}
         setMapBounds={setMapBounds}
         mapBounds={mapBounds}
+        isInitialLoad={isInitialLoad}
+        setIsInitialLoad={setIsInitialLoad}
         filters={filters}
         filtersWithPlaceName={filtersWithPlaceName}
         placeData={placeData}
         selectedPlaceId={selectedPlaceId}
         isChangedLocation={isChangedLocation}
-        setIsChangedLocation={setIsChangedLocation}
         onPlaceSelect={handlePlaceSelect}
         isListExpanded={isListExpanded}
         onListExpand={handleListExpand}
@@ -167,6 +169,7 @@ export default function MapPage() {
           center={center}
           mapBounds={mapBounds}
           filters={filters}
+          isInitialLoad={isInitialLoad}
           filtersWithPlaceName={filtersWithPlaceName}
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
@@ -187,6 +190,7 @@ export default function MapPage() {
           filters={filters}
           filtersWithPlaceName={filtersWithPlaceName}
           center={center}
+          isInitialLoad={isInitialLoad}
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
