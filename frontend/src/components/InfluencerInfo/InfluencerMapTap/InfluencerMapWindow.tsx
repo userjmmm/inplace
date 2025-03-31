@@ -16,30 +16,30 @@ interface MapWindowProps {
   influencerImg: string;
   markers: MarkerData[];
   placeData: PlaceData[];
+  setCenter: React.Dispatch<React.SetStateAction<{ lat: number; lng: number }>>;
+  setMapBounds: React.Dispatch<React.SetStateAction<LocationData>>;
   selectedPlaceId: number | null;
-  onBoundsChange: (bounds: LocationData) => void;
-  onCenterChange: (center: { lat: number; lng: number }) => void;
-  shouldFetchPlaces: boolean;
+  // shouldFetchPlaces: boolean;
   onCompleteFetch: (value: boolean) => void;
   onPlaceSelect: (placeId: number | null) => void;
   isListExpanded?: boolean;
   onListExpand?: (value: boolean) => void;
-  onSearchNearby?: (handleSearcNearby: () => void) => void;
+  onNearbySearch?: (handleNearbySearch: () => void) => void;
 }
 
 export default function InfluencerMapWindow({
   influencerImg,
   markers,
+  setCenter,
+  setMapBounds,
   placeData,
   selectedPlaceId,
-  onBoundsChange,
-  onCenterChange,
-  shouldFetchPlaces,
+  // shouldFetchPlaces,
   onCompleteFetch,
   onPlaceSelect,
   isListExpanded,
   onListExpand,
-  onSearchNearby,
+  onNearbySearch,
 }: MapWindowProps) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -82,39 +82,40 @@ export default function InfluencerMapWindow({
     }
   }, []);
 
-  const fetchLocation = useCallback(() => {
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!mapRef.current) {
+        alert('지도를 불러오지 못했어요. 네트워크 상태를 확인한 후 새로고침 해주세요.');
+      }
+    }, 6000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const updateMapBounds = useCallback(() => {
     if (!mapRef.current) return;
-
     const bounds = mapRef.current.getBounds();
-    const currentCenter = mapRef.current.getCenter();
-
-    const newBounds: LocationData = {
+    const newBounds = {
       topLeftLatitude: bounds.getNorthEast().getLat(),
       topLeftLongitude: bounds.getSouthWest().getLng(),
       bottomRightLatitude: bounds.getSouthWest().getLat(),
       bottomRightLongitude: bounds.getNorthEast().getLng(),
     };
-    onCenterChange({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
-    onBoundsChange(newBounds);
-
+    setMapBounds(newBounds);
     onCompleteFetch(true);
-  }, [onBoundsChange, onCenterChange, onCompleteFetch]);
+  }, [setMapBounds, onCompleteFetch]);
 
-  // 장소 정보 업데이트가 필요한 경우 바운더리와 센터를 구해서 전달
-  useEffect(() => {
-    if (shouldFetchPlaces) {
-      fetchLocation();
-      onCompleteFetch(false);
-    }
-  }, [shouldFetchPlaces, fetchLocation, onCompleteFetch]);
-
-  const handleSearchNearby = useCallback(() => {
-    fetchLocation();
-  }, [fetchLocation]);
+  const handleNearbySearch = useCallback(() => {
+    if (!mapRef.current) return;
+    const currentCenter = mapRef.current.getCenter();
+    setCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
+    onPlaceSelect(null);
+    updateMapBounds();
+  }, []);
 
   useEffect(() => {
-    onSearchNearby?.(handleSearchNearby);
-  }, [handleSearchNearby, onSearchNearby]);
+    onNearbySearch?.(handleNearbySearch);
+  }, [handleNearbySearch, onNearbySearch]);
 
   return (
     <>
@@ -193,7 +194,7 @@ export default function InfluencerMapWindow({
           </ListViewButton>
         )}
       </MapContainer>
-      <Btn onClick={handleSearchNearby}>
+      <Btn onClick={handleNearbySearch}>
         <GrPowerCycle />
         현재 위치에서 장소정보 보기
       </Btn>
