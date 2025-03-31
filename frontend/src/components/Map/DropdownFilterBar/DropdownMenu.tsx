@@ -3,7 +3,8 @@ import { FaUser, FaSearch } from 'react-icons/fa';
 import { ImSpoonKnife } from 'react-icons/im';
 import styled from 'styled-components';
 import DropdownItem from './DropdownItem';
-import useDetectClose from '@/hooks/useDetectClose';
+import useClickOutside from '@/hooks/useClickOutside';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface Option {
   label: string;
@@ -30,11 +31,16 @@ export default function DropdownMenu({
   defaultValue,
   selectedOptions,
 }: DropdownMenuProps) {
-  const [isOpen, setIsOpen] = useState(isMobileOpen);
-  const ref = useDetectClose({ onDetected: () => setIsOpen(false) });
+  const isMobile = useIsMobile();
+  const [isOpen, setIsOpen] = useState(isMobile && isMobileOpen);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [selectedMainOption, setSelectedMainOption] = useState<Option | null>();
   const [searchTerm, setSearchTerm] = useState('');
   const isInitialized = useRef(false);
+
+  useClickOutside([dropdownRef], () => {
+    setIsOpen(false);
+  });
 
   useEffect(() => {
     if (isInitialized.current || !defaultValue || !options?.length) {
@@ -114,7 +120,7 @@ export default function DropdownMenu({
     return <FaUser color="#5ae3fb" />;
   };
   return (
-    <DropdownContainer ref={ref} type={type} $width={width}>
+    <DropdownContainer ref={dropdownRef} type={type} $width={width}>
       <DropdownButton aria-label="dropdown_btn" $isOpen={isOpen} onClick={handleDropdownToggle}>
         {displayIcon()}
         {displayValue}
@@ -151,6 +157,7 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
   height: 100%;
   border: none;
   background-color: ${({ $isOpen }) => ($isOpen ? '#e8f9ff' : '#ffffff')};
+  font-weight: ${({ $isOpen }) => ($isOpen ? 'bold' : 'normal')};
   border-radius: 16px;
   display: flex;
   color: #333333;
@@ -168,8 +175,19 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
   }
 
   @media screen and (max-width: 768px) {
-    padding: 6px 8px;
+    padding: 0px 8px 6px 8px;
     font-size: 14px;
+    border-radius: 0px;
+    background-color: transparent;
+    color: ${({ $isOpen, theme }) => {
+      if ($isOpen && theme.backgroundColor === '#292929') return 'white';
+      if ($isOpen && !(theme.backgroundColor === '#292929')) return 'black';
+      return 'grey';
+    }};
+
+    &:hover {
+      background-color: transparent;
+    }
   }
 `;
 
@@ -200,7 +218,10 @@ const DropdownMenuContainer = styled.div<{
   z-index: 101;
 
   @media screen and (max-width: 768px) {
-    max-height: 200px;
+    height: 100vh;
+    width: 200%;
+    background: transparent;
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
     margin-top: 2px;
     border-radius: 4px;
     overflow: hidden;
@@ -219,7 +240,6 @@ const SearchInputContainer = styled.div`
 const SearchInput = styled.input`
   width: 100%;
   padding: 10px;
-  padding-right: 30px;
   border: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   outline: none;
@@ -227,9 +247,12 @@ const SearchInput = styled.input`
   box-sizing: border-box;
 
   @media screen and (max-width: 768px) {
-    padding: 6px;
-    padding-right: 24px;
     font-size: 16px;
+    background: transparent;
+    border-bottom: ${({ theme }) =>
+      theme.backgroundColor === '#292929' ? '1px solid rgba(255, 255, 255, 0.1);' : '1px solid rgba(0, 0, 0, 0.1);'};
+    border-radius: 0px;
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
   }
 `;
 
@@ -245,6 +268,7 @@ const SearchIcon = styled(FaSearch)`
     right: 12px;
     width: 14px;
     height: 14px;
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#d8d8d8' : '#7c7c7c')};
   }
 `;
 
@@ -254,7 +278,7 @@ const OptionsContainer = styled.div`
   overflow-y: auto;
 
   @media screen and (max-width: 768px) {
-    max-height: 150px;
+    max-height: 85%;
   }
 `;
 
@@ -264,6 +288,6 @@ const MainOptions = styled.div`
   overflow-y: auto;
 
   @media screen and (max-width: 768px) {
-    max-height: 150px;
+    max-height: 100%;
   }
 `;

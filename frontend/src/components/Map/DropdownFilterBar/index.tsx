@@ -22,7 +22,7 @@ export default function DropdownFilterBar({ items }: DropdownFilterBarProps) {
   const [isHover, setIsHover] = useState<boolean>(false);
 
   return (
-    <BarContainer onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+    <MobileBarContainer onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
       {items.map((item) =>
         item.type === 'dropdown' ? (
           <DropdownMenu key={item.id} {...item.props} />
@@ -30,11 +30,11 @@ export default function DropdownFilterBar({ items }: DropdownFilterBarProps) {
           <Separator key={item.id} $isHidden={isHover} />
         ),
       )}
-    </BarContainer>
+    </MobileBarContainer>
   );
 }
 
-const BarContainer = styled.div`
+const MobileBarContainer = styled.div`
   height: 38px;
   display: flex;
   align-items: center;
@@ -48,8 +48,12 @@ const BarContainer = styled.div`
   }
 
   @media screen and (max-width: 768px) {
-    height: 34px;
+    height: 40px;
     width: 100%;
+    border-radius: 0px;
+    background: transparent;
+    border: none;
+    border-bottom: ${({ theme }) => (theme.backgroundColor === '#292929' ? '1px solid #a5a5a5' : '1px solid #8e8e8e')};
   }
 `;
 

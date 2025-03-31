@@ -94,7 +94,7 @@ export default function MapPage() {
       props: {
         options: influencerOptions,
         onChange: handleInfluencerChange,
-        isMobileOpen: false,
+        isMobileOpen: true,
         placeholder: '인플루언서',
         type: 'influencer',
         width: 140,
