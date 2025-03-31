@@ -26,8 +26,6 @@ interface MapWindowProps {
   filters: {
     categories: string[];
     influencers: string[];
-    regions: string[];
-    location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
   filtersWithPlaceName: FilterParams;
   placeData: PlaceData[];
@@ -193,6 +191,7 @@ export default function MapWindow({
     onPlaceSelect(null);
     updateMapBounds();
     setShowSearchButton(false);
+    // 무한 루프 방지
     setTimeout(() => {
       setIsChangedLocation(null);
     }, 0);

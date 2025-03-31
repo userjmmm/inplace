@@ -2,43 +2,16 @@ import styled from 'styled-components';
 import { IoClose } from 'react-icons/io5';
 import { Text } from '@/components/common/typography/Text';
 
-type SelectedOption = {
-  main: string;
-  sub?: string;
-  lat?: number;
-  lng?: number;
-};
-
 type Props = {
-  selectedLocations: SelectedOption[];
   selectedInfluencers: string[];
   selectedCategories: string[];
-  onClearLocation: (option: SelectedOption) => void;
   onClearInfluencer: (influencer: string) => void;
   onClearCategory: (category: string) => void;
 };
 
-export default function Chip({
-  selectedLocations,
-  selectedInfluencers,
-  selectedCategories,
-  onClearLocation,
-  onClearInfluencer,
-  onClearCategory,
-}: Props) {
+export default function Chip({ selectedInfluencers, selectedCategories, onClearInfluencer, onClearCategory }: Props) {
   return (
     <Container>
-      {selectedLocations.map((location) => (
-        <FilterChip key={`${location.main}-${location.sub}`}>
-          <Text size="xxs" weight="normal" variant="#36617f">
-            {location.sub ? `${location.main} > ${location.sub}` : location.main}
-          </Text>
-          <ClearButton aria-label="loca-clear_btn" onClick={() => onClearLocation(location)}>
-            <IoClose size={14} />
-          </ClearButton>
-        </FilterChip>
-      ))}
-
       {selectedInfluencers.map((influencer) => (
         <FilterChip key={influencer}>
           <Text size="xxs" weight="normal" variant="#36617f">
