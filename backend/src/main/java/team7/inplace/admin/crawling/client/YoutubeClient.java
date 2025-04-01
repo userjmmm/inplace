@@ -3,10 +3,14 @@ package team7.inplace.admin.crawling.client;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import team7.inplace.global.annotation.Client;
 import team7.inplace.global.properties.GoogleApiProperties;
@@ -38,85 +42,67 @@ public class YoutubeClient {
         return response;
     }
 
-    public List<JsonNode> getMediumVideos(String chanelId, String finalVideoUUID) {
+    public List<JsonNode> getMediumVideos(String channelId, String finalVideoUUID) {
+        return getVideos(channelId, finalVideoUUID, MEDIUM_VIDEO_SEARCH_PARAMS);
+    }
+
+    public List<JsonNode> getLongVideos(String channelId, String finalVideoUUID) {
+        return getVideos(channelId, finalVideoUUID, LONG_VIDEO_SEARCH_PARAMS);
+    }
+
+    private List<JsonNode> getVideos(String channelId, String finalVideoUUID, String searchParams) {
         List<JsonNode> videoItems = new ArrayList<>();
+        Iterator<String> keyIterator = Arrays.stream(googleApiProperties.getGoogleKey()).iterator();
+        String currentKey = keyIterator.next();
         String nextPageToken = null;
-        var key = Arrays.stream(googleApiProperties.getGoogleKey()).iterator();
-        var curKey = key.next();
+
         while (true) {
-            String url =
-                VIDEO_SEARCH_URL + String.format(MEDIUM_VIDEO_SEARCH_PARAMS, chanelId, curKey);
+            String url = buildSearchUrl(channelId, currentKey, nextPageToken, searchParams);
 
             JsonNode response = null;
-            if (Objects.nonNull(nextPageToken)) {
-                url += "&pageToken=" + nextPageToken;
-            }
             try {
                 response = restTemplate.getForObject(url, JsonNode.class);
-            } catch (Exception e) {
-                log.error("Youtube API 호출이 실패했습니다. Youtuber Id {}", chanelId);
-                break;
-            }
-
-            if (response.path("error").path("code").asText().equals("403")) {
-                if (key.hasNext()) {
-                    curKey = key.next();
+            } catch (HttpClientErrorException e) {
+                if (e.getStatusCode() == HttpStatus.FORBIDDEN && keyIterator.hasNext()) {
+                    log.warn("403 Forbidden: 키 변경  channelId: {}", channelId);
+                    currentKey = keyIterator.next();
                     continue;
                 }
-                log.error("Youtube API 호출이 실패했습니다. Youtuber Id {}", chanelId);
+                log.error("Youtube Key 만료 - channelId: {}, 상태: {}", channelId, e.getStatusCode());
                 break;
-            }
-            if (Objects.isNull(response)) {
-                log.error("Youtube API Response 가 NULL입니다 {}.", chanelId);
+            } catch (RestClientException e) {
+                log.error("Youtube API 예외 발생 - channelId: {}, message: {}", channelId,
+                    e.getMessage());
+                break;
+            } catch (Exception e) {
+                log.error("알 수 없는 예외 - channelId: {}, error: {}", channelId, e.getMessage());
                 break;
             }
 
-            var containsLastVideo = extractSnippets(videoItems, response.path("items"),
+            if (Objects.isNull(response)) {
+                log.error("Youtube API 응답 NULL - channelId: {}", channelId);
+                break;
+            }
+
+            boolean containsLastVideo = extractSnippets(videoItems, response.path("items"),
                 finalVideoUUID);
             if (containsLastVideo) {
                 break;
             }
+
             nextPageToken = response.path("nextPageToken").asText();
             if (isLastPage(nextPageToken)) {
                 break;
             }
         }
+
         return videoItems;
     }
 
-    public List<JsonNode> getLongVidoes(String chanelId, String finalVideoUUID) {
-        List<JsonNode> videoItems = new ArrayList<>();
-        String nextPageToken = null;
-        while (true) {
-            String url = VIDEO_SEARCH_URL + String.format(LONG_VIDEO_SEARCH_PARAMS, chanelId,
-                googleApiProperties.crawlingKey());
-
-            JsonNode response = null;
-            if (Objects.nonNull(nextPageToken)) {
-                url += "&pageToken=" + nextPageToken;
-            }
-            try {
-                response = restTemplate.getForObject(url, JsonNode.class);
-            } catch (Exception e) {
-                log.error("Youtube API 호출이 실패했습니다. Youtuber Id {}", chanelId);
-                break;
-            }
-            if (Objects.isNull(response)) {
-                log.error("Youtube API Response가 NULL입니다 {}.", chanelId);
-                break;
-            }
-
-            var containsLastVideo = extractSnippets(videoItems, response.path("items"),
-                finalVideoUUID);
-            if (containsLastVideo) {
-                break;
-            }
-            nextPageToken = response.path("nextPageToken").asText();
-            if (isLastPage(nextPageToken)) {
-                break;
-            }
-        }
-        return videoItems;
+    private String buildSearchUrl(
+        String channelId, String apiKey, String pageToken, String searchParams) {
+        String url = VIDEO_SEARCH_URL + String.format(searchParams, channelId, apiKey);
+        return (pageToken != null && !pageToken.isEmpty()) ? url + "&pageToken=" + pageToken : url;
     }
 
     private boolean isLastPage(String nextPageToken) {
