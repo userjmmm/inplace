@@ -32,7 +32,7 @@ public interface PlaceControllerApiSpec {
 
     @Operation(summary = "장소 조회(장소 이름으로 검색했을 때)", description = "장소 이름으로 검색한 장소 페이지네이션 목록을 조회합니다.")
     ResponseEntity<Page<PlacesResponse.Simple>> getPlacesByName(
-        @RequestParam String name,
+        @RequestParam String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     );
@@ -43,9 +43,9 @@ public interface PlaceControllerApiSpec {
         @ModelAttribute PlaceRequest.Filter filterParams
     );
 
-    @Operation(summary = "모든 장소 위치 조회(장소 이름으록 검색했을 때", description = "장소 이름으로 검색한 모든 장소 목록을 조회합니다.")
+    @Operation(summary = "모든 장소 위치 조회(장소 이름으로 검색했을 때", description = "장소 이름으로 검색한 모든 장소 목록을 조회합니다.")
     ResponseEntity<List<Location>> getPlaceLocationsByName(
-        @RequestParam String name,
+        @RequestParam String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams
     );
 
