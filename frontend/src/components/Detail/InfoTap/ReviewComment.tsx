@@ -1,25 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Paragraph } from '@/components/common/typography/Paragraph';
+import useIsMobile from '@/hooks/useIsMobile';
+
+const REVIEW_TRUNCATE_LENGTH = {
+  MOBILE: 65,
+  DESKTOP: 150,
+};
 
 export default function GoogleReviewComment({ text }: { text: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-  const slice = isMobile ? 65 : 150;
+  const slice = isMobile ? REVIEW_TRUNCATE_LENGTH.MOBILE : REVIEW_TRUNCATE_LENGTH.DESKTOP;
   const truncatedText = text.length > slice ? `${text.slice(0, slice)}...` : text;
 
   return (
-    <Paragraph size="xs" weight="normal" variant="white">
+    <Paragraph size="xs" weight="normal">
       {isExpanded ? text : truncatedText}
       {text.length > slice && !isExpanded && <MoreLink onClick={() => setIsExpanded(true)}>더보기</MoreLink>}
       {isExpanded && <MoreLink onClick={() => setIsExpanded(false)}>간략히</MoreLink>}

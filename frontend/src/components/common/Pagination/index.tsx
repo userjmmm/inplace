@@ -89,14 +89,9 @@ const ArrowButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   background: transparent;
-  color: white;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
   box-shadow: none;
   border: none;
-
-  &:hover:not(:disabled) {
-    background: #c8c8c8;
-    color: black;
-  }
 
   &:disabled {
     cursor: not-allowed;
@@ -117,17 +112,28 @@ const PageNumber = styled.button<PageNumberProps>`
   border: none;
   border-radius: 4px;
   background: transparent;
-  color: ${(props) => (props.$active ? 'black' : 'white')};
+  color: ${(props) => {
+    if (!props.$active) return props.theme.textColor === '#ffffff' ? 'white' : '#979797';
+    return 'black';
+  }};
   cursor: pointer;
 
   ${(props) =>
     props.$active &&
     `
-    background: #c8c8c8;
-    border: 1px solid #000;
+    background: ${props.theme.backgroundColor === '#292929' ? '#c8c8c8' : '#c6e6e6'};
   `}
 
   &:hover {
-    background: ${(props) => (props.$active ? '#c8c8c8' : 'grey')};
+    background: ${(props) => {
+      if (props.theme.backgroundColor === '#292929') {
+        return props.$active ? '#c8c8c8' : 'grey';
+      }
+      return props.$active ? '#c7c8c8' : '#e0f6f6';
+    }};
+    color: ${(props) => {
+      if (!props.$active) return props.theme.textColor === '#ffffff' ? 'inherit' : '#626262';
+      return 'black';
+    }};
   }
 `;

@@ -1,113 +1,60 @@
 import { useState, useMemo, useCallback, useRef } from 'react';
 import styled from 'styled-components';
-import DropdownMenu from '@/components/Map/DropdownMenu';
 import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
 import Chip from '@/components/common/Chip';
-import { Text } from '@/components/common/typography/Text';
-import locationOptions from '@/utils/constants/LocationOptions';
 import categoryOptions from '@/utils/constants/CategoryOptions';
-import { LocationData, PlaceData } from '@/types';
 import useGetDropdownName from '@/api/hooks/useGetDropdownName';
-
-type SelectedOption = {
-  main: string;
-  sub?: string;
-  lat?: number;
-  lng?: number;
-};
+import useTouchDrag from '@/hooks/Map/useTouchDrag';
+import useMapState from '@/hooks/Map/useMapState';
+import DropdownFilterBar, { FilterBarItem } from '@/components/Map/\bDropdownFilterBar';
+import MapSearchBar from '@/components/Map/MapSearchBar';
+import useClickOutside from '@/hooks/useClickOutside';
 
 export default function MapPage() {
   const { data: influencerOptions } = useGetDropdownName();
-  const [isListExpanded, setIsListExpanded] = useState(false);
   const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>([]);
-  const [selectedLocations, setSelectedLocations] = useState<SelectedOption[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [center, setCenter] = useState({ lat: 37.5665, lng: 126.978 });
-  const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
-  const [placeData, setPlaceData] = useState<PlaceData[]>([]);
-  const [translateY, setTranslateY] = useState(window.innerHeight);
-  const lastMoveTimeRef = useRef(0);
-  const dragStartRef = useRef<{
-    isDragging: boolean;
-    startY: number;
-    startTranslate: number;
-  }>({ isDragging: false, startY: 0, startTranslate: window.innerHeight });
+  const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
+  const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isChangedLocation, setIsChangedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const filterRef = useRef<HTMLDivElement | null>(null);
+  const {
+    center,
+    setCenter,
+    setMapBounds,
+    mapBounds,
+    isListExpanded,
+    selectedPlaceId,
+    placeData,
+    setIsListExpanded,
+    handlePlaceSelect,
+    handleGetPlaceData,
+  } = useMapState();
+  const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
+    useTouchDrag(setIsListExpanded);
 
-  const [mapBounds, setMapBounds] = useState<LocationData>({
-    topLeftLatitude: 0,
-    topLeftLongitude: 0,
-    bottomRightLatitude: 0,
-    bottomRightLongitude: 0,
+  useClickOutside([filterRef], () => {
+    if (isFilterBarOpened) setIsFilterBarOpened(false);
   });
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    dragStartRef.current = {
-      isDragging: true,
-      startY: e.touches[0].clientY,
-      startTranslate: translateY,
-    };
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!dragStartRef.current.isDragging) return;
-
-    const now = Date.now();
-    if (now - lastMoveTimeRef.current < 50) return;
-
-    lastMoveTimeRef.current = now;
-
-    const delta = e.touches[0].clientY - dragStartRef.current.startY;
-    const newTranslate = dragStartRef.current.startTranslate + delta;
-    const clampedTranslate = Math.max(0, Math.min(window.innerHeight, newTranslate));
-    setTranslateY(clampedTranslate);
-  };
-  const autoCloseThreshold = window.innerHeight * 0.75;
-
-  const handleTouchEnd = () => {
-    dragStartRef.current.isDragging = false;
-
-    const threshold = 50;
-
-    if (Math.abs(translateY - dragStartRef.current.startTranslate) < threshold) {
-      setTranslateY(dragStartRef.current.startTranslate);
-    } else if (translateY > autoCloseThreshold) {
-      setTranslateY(window.innerHeight);
-      setIsListExpanded(false);
-    }
-  };
 
   const filters = useMemo(
     () => ({
       categories: selectedCategories,
       influencers: selectedInfluencers,
-      location: selectedLocations,
     }),
-    [selectedCategories, selectedInfluencers, selectedLocations],
+    [selectedCategories, selectedInfluencers],
   );
 
-  const handleLocationChange = useCallback((value: SelectedOption) => {
-    setSelectedLocations((prev) => {
-      // 중복 생성 방지
-      const isDuplicate = prev.some((loc) => loc.main === value.main && loc.sub === value.sub);
-      if (isDuplicate) return prev;
-
-      if (value.sub === '전체' || !value.sub) {
-        const hasAll = prev.some((loc) => loc.main === value.main && loc.sub === '전체');
-        if (hasAll) return prev;
-        return [...prev, value];
-      }
-
-      if (value.sub) {
-        return [...prev, value];
-      }
-      return prev;
-    });
-
-    if (value.lat && value.lng) {
-      setCenter({ lat: value.lat, lng: value.lng });
-    }
-  }, []);
+  const filtersWithPlaceName = useMemo(
+    () => ({
+      categories: selectedCategories,
+      influencers: selectedInfluencers,
+      placeName: selectedPlaceName,
+    }),
+    [selectedCategories, selectedInfluencers, selectedPlaceName],
+  );
 
   const handleInfluencerChange = useCallback((value: { main: string }) => {
     setSelectedInfluencers((prev) => {
@@ -124,39 +71,12 @@ export default function MapPage() {
     });
   }, []);
 
-  const handleClearLocation = useCallback((locationToRemove: SelectedOption) => {
-    setSelectedLocations((prev) =>
-      prev.filter((location) => !(location.main === locationToRemove.main && location.sub === locationToRemove.sub)),
-    );
-  }, []);
-
-  const handleClearInfluencer = useCallback((influencerToRemove: string) => {
+  const handleInfluencerClear = useCallback((influencerToRemove: string) => {
     setSelectedInfluencers((prev) => prev.filter((influencer) => influencer !== influencerToRemove));
   }, []);
 
-  const handleClearCategory = useCallback((categoryToRemove: string) => {
+  const handleCategoryClear = useCallback((categoryToRemove: string) => {
     setSelectedCategories((prev) => prev.filter((category) => category !== categoryToRemove));
-  }, []);
-
-  const handleBoundsChange = useCallback((bounds: LocationData) => {
-    setMapBounds(bounds);
-  }, []);
-
-  const handleCenterChange = useCallback((newCenter: { lat: number; lng: number }) => {
-    setCenter(newCenter);
-  }, []);
-
-  const handleGetPlaceData = useCallback((data: PlaceData[]) => {
-    setPlaceData((prevData) => {
-      if (JSON.stringify(prevData) !== JSON.stringify(data)) {
-        return data;
-      }
-      return prevData;
-    });
-  }, []);
-
-  const handlePlaceSelect = useCallback((placeId: number | null) => {
-    setSelectedPlaceId((prevId) => (prevId === placeId ? null : placeId));
   }, []);
 
   const handleListExpand = useCallback(() => {
@@ -167,62 +87,90 @@ export default function MapPage() {
     });
   }, []);
 
+  const dropdownItems: FilterBarItem[] = [
+    {
+      type: 'dropdown',
+      id: 'influencer',
+      props: {
+        options: influencerOptions,
+        onChange: handleInfluencerChange,
+        isMobileOpen: true,
+        placeholder: '인플루언서',
+        type: 'influencer',
+        width: 140,
+        selectedOptions: selectedInfluencers,
+      },
+    },
+    { type: 'separator', id: 'sep2' },
+    {
+      type: 'dropdown',
+      id: 'category',
+      props: {
+        options: categoryOptions,
+        onChange: handleCategoryChange,
+        isMobileOpen: false,
+        placeholder: '카테고리',
+        type: 'category',
+        width: 120,
+        selectedOptions: selectedCategories,
+      },
+    },
+  ];
+
   return (
     <PageContainer>
       <Wrapper>
-        <Text size="l" weight="bold" variant="white">
-          지도
-        </Text>
-        <DropdownContainer>
-          <DropdownMenu
-            options={locationOptions}
-            multiLevel
-            onChange={handleLocationChange}
-            placeholder="위치"
-            type="location"
-            selectedOptions={selectedLocations}
-          />
-          <DropdownMenu
-            options={influencerOptions}
-            onChange={handleInfluencerChange}
-            placeholder="인플루언서"
-            type="influencer"
-            defaultValue={undefined}
-            selectedOptions={selectedInfluencers}
-          />
-          <DropdownMenu
-            options={categoryOptions}
-            onChange={handleCategoryChange}
-            placeholder="카테고리"
-            type="category"
-            selectedOptions={selectedCategories}
-          />
-        </DropdownContainer>
+        <FilterContainer>
+          <MobileFilterContainer>
+            <FilterButtonContainer aria-label="filterbar_btn" onClick={() => setIsFilterBarOpened((prev) => !prev)}>
+              필터
+            </FilterButtonContainer>
+            <MapSearchBar setIsChangedLocation={setIsChangedLocation} setSelectedPlaceName={setSelectedPlaceName} />
+          </MobileFilterContainer>
+          <DesktopDropdownSection>
+            <DropdownFilterBar items={dropdownItems} />
+          </DesktopDropdownSection>
+        </FilterContainer>
+
         <Chip
-          selectedLocations={selectedLocations}
           selectedInfluencers={selectedInfluencers}
           selectedCategories={selectedCategories}
-          onClearLocation={handleClearLocation}
-          onClearInfluencer={handleClearInfluencer}
-          onClearCategory={handleClearCategory}
+          onClearInfluencer={handleInfluencerClear}
+          onClearCategory={handleCategoryClear}
         />
       </Wrapper>
+      {isFilterBarOpened && (
+        <>
+          <Background onClick={() => setIsFilterBarOpened(false)} />
+          <MobileDropdownSection ref={filterRef}>
+            <CloseBtn onClick={() => setIsFilterBarOpened(false)}>X</CloseBtn>
+            <DropdownFilterBar items={dropdownItems} />
+          </MobileDropdownSection>
+        </>
+      )}
       <MapWindow
         center={center}
-        onBoundsChange={handleBoundsChange}
-        onCenterChange={handleCenterChange}
+        setCenter={setCenter}
+        setMapBounds={setMapBounds}
+        mapBounds={mapBounds}
+        isInitialLoad={isInitialLoad}
+        setIsInitialLoad={setIsInitialLoad}
         filters={filters}
+        filtersWithPlaceName={filtersWithPlaceName}
         placeData={placeData}
         selectedPlaceId={selectedPlaceId}
+        isChangedLocation={isChangedLocation}
         onPlaceSelect={handlePlaceSelect}
         isListExpanded={isListExpanded}
         onListExpand={handleListExpand}
       />
       <PlaceSectionDesktop>
         <PlaceSection
+          center={center}
           mapBounds={mapBounds}
           filters={filters}
-          center={center}
+          isInitialLoad={isInitialLoad}
+          filtersWithPlaceName={filtersWithPlaceName}
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
@@ -240,7 +188,9 @@ export default function MapPage() {
         <PlaceSection
           mapBounds={mapBounds}
           filters={filters}
+          filtersWithPlaceName={filtersWithPlaceName}
           center={center}
+          isInitialLoad={isInitialLoad}
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
@@ -255,6 +205,7 @@ export default function MapPage() {
 const PageContainer = styled.div`
   padding: 6px 0;
   @media screen and (max-width: 768px) {
+    position: relative;
     width: 100%;
     align-items: center;
     touch-action: none;
@@ -272,22 +223,23 @@ const Wrapper = styled.div`
   }
 `;
 
-const DropdownContainer = styled.div`
+const FilterContainer = styled.div`
   display: flex;
-  gap: 14px;
-  padding-top: 16px;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
 
   @media screen and (max-width: 768px) {
     width: 90%;
-    gap: 12px;
     padding-top: 12px;
-    z-index: 9;
-
+    z-index: 100;
+    gap: 10px;
     flex-wrap: wrap;
   }
 `;
 
 const PlaceSectionDesktop = styled.div`
+  margin-top: 10px;
   @media screen and (max-width: 768px) {
     display: none;
   }
@@ -304,7 +256,7 @@ const MobilePlaceSection = styled.div<{ $translateY: number; $isExpanded: boolea
     width: 100%;
     transform: translateY(${(props) => props.$translateY}px);
     height: 80vh;
-    background-color: #3c3c3c;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#3c3c3c' : '#fafafa')};
     z-index: 90;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
@@ -330,5 +282,108 @@ const DragHandle = styled.div`
     height: 4px;
     background-color: #666;
     border-radius: 2px;
+  }
+`;
+
+const MobileFilterContainer = styled.div`
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    z-index: 2001;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+  }
+`;
+
+const DesktopDropdownSection = styled.div`
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const FilterButtonContainer = styled.div`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: block;
+    flex-shrink: 1;
+    z-index: 9;
+    padding: 8px 6px;
+    background: white;
+    color: #292929;
+    font-size: 12px;
+    border: 1.5px solid #a5a5a5;
+    border-radius: 6px;
+  }
+`;
+
+const MobileDropdownSection = styled.div`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    align-items: end;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60vh;
+    background-color: ${({ theme }) => theme.backgroundColor};
+    z-index: 101;
+    padding: 10px 20px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    animation: slideUp 0.3s ease-out forwards;
+    box-sizing: border-box;
+
+    @keyframes slidUp {
+      from {
+        transform: translateY(100%);
+      }
+      to {
+        transform: translateY(0%);
+      }
+    }
+  }
+`;
+const CloseBtn = styled.button`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: block;
+    top: 10px;
+    right: 4px;
+    font-size: 16px;
+    padding: 10px 0px;
+    background: none;
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : '#a5a5a5')};
+    border: none;
+  }
+`;
+
+const Background = styled.div`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    animation: fadeIn 0.3s ease-out forwards;
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
   }
 `;

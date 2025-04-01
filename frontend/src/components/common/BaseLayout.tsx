@@ -70,7 +70,7 @@ export default function BaseLayout({
       <TitleContainer>
         <Paragraph size="m" weight="bold">
           {prevSubText || ''}
-          <Text size="ll" weight="bold" variant="mint">
+          <Text size="ll" weight="bold" style={{ color: '#47c8d9' }}>
             {mainText || ''}
           </Text>
           {SubText}
@@ -104,7 +104,6 @@ const TitleContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: end;
-  color: white;
   width: 100%;
 `;
 

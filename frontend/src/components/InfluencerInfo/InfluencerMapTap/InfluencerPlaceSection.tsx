@@ -1,18 +1,20 @@
-import { useEffect, useMemo, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { useInView } from 'react-intersection-observer';
 import { GrPowerCycle } from 'react-icons/gr';
 import PlaceItem from '@/components/Map/PlaceSection/PlaceItem';
-import { PlaceData, LocationData, PageableData } from '@/types';
+import { PlaceData, LocationData } from '@/types';
 import Loading from '@/components/common/layouts/Loading';
 import NoItem from '@/components/common/layouts/NoItem';
 import { useGetInfinitePlaceList } from '@/api/hooks/useGetInfinitePlaceList';
+import usePlaceList from '@/hooks/Map/usePlaceList';
 
 export interface PlaceSectionProps {
   mapBounds: LocationData;
   filters: {
     categories: string[];
     influencers: string[];
+    placeName?: string;
   };
   center: { lat: number; lng: number };
   shouldFetchPlaces: boolean;
@@ -20,6 +22,8 @@ export interface PlaceSectionProps {
   onGetPlaceData: (data: PlaceData[]) => void;
   onPlaceSelect: (placeId: number) => void;
   selectedPlaceId: number | null;
+  isListExpanded?: boolean;
+  onListExpand?: (value: boolean) => void;
   onSearchNearby?: () => void;
 }
 
@@ -32,6 +36,8 @@ export default function InfluencerPlaceSection({
   onGetPlaceData,
   onPlaceSelect,
   selectedPlaceId,
+  isListExpanded,
+  onListExpand,
   onSearchNearby,
 }: PlaceSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -53,17 +59,7 @@ export default function InfluencerPlaceSection({
     shouldFetchPlaces,
   );
 
-  const filteredPlaces = useMemo(() => {
-    if (!data?.pages) return [];
-    return data.pages.flatMap((page: PageableData<PlaceData>) => page.content);
-  }, [data]);
-
-  useEffect(() => {
-    if (data?.pages) {
-      const places = data.pages.flatMap((page: PageableData<PlaceData>) => page.content);
-      onGetPlaceData(places);
-    }
-  }, [data, onGetPlaceData]);
+  const { filteredPlaces } = usePlaceList({ data, onGetPlaceData });
 
   useEffect(() => {
     if (shouldFetchPlaces) {
@@ -81,8 +77,11 @@ export default function InfluencerPlaceSection({
   const handlePlaceClick = useCallback(
     (placeId: number) => {
       onPlaceSelect(placeId);
+      if (window.innerWidth <= 768 && onListExpand) {
+        onListExpand(false);
+      }
     },
-    [onPlaceSelect],
+    [onPlaceSelect, isListExpanded, onListExpand],
   );
 
   if (isLoading && !isFetchingNextPage && previousPlacesRef.current.length === 0) {
@@ -150,18 +149,12 @@ const SectionContainer = styled.div`
   box-sizing: content-box;
   &::-webkit-scrollbar {
     width: 8px;
-    color: #1f1f1f;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #1f1f1f;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1f1f1f' : '#8e8e8e')};
     border-radius: 4px;
     border: none;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: #1f1f1f;
-    width: 8px;
   }
 
   &::-webkit-scrollbar-track {
@@ -185,14 +178,10 @@ const ContentContainer = styled.div`
 const PlacesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 30px;
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  @media screen and (max-width: 430px) {
-    gap: 8px;
+    gap: 20px;
   }
 `;
 
@@ -226,11 +215,10 @@ const Btn = styled.div`
     display: flex;
     font-size: 14px;
   }
-
-  color: #c3c3c3;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#c3c3c3' : '#6f6f6f')};
   border-radius: 0px;
   font-size: 16px;
-  border-bottom: 0.5px solid #c3c3c3;
+  border-bottom: 0.5px solid ${({ theme }) => (theme.textColor === '#ffffff' ? '#c3c3c3' : '#6f6f6f')};
   width: fit-content;
   gap: 6px;
   margin-bottom: 18px;

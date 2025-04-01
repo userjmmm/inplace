@@ -71,12 +71,12 @@ export default function MyPage() {
       <TitleWrapper>
         {isVisible ? (
           <NickNameWrapper>
-            <Text size="l" weight="bold" variant="white">
-              <Text size="xl" weight="bold" variant="mint">
+            <Text size="l" weight="bold">
+              <Text size="xl" weight="bold" style={{ color: '#47c8d9' }}>
                 {userNickname?.nickname}
               </Text>
               <CustomButton aria-label="rename_btn" onClick={() => setIsVisible(false)}>
-                <MdOutlineDriveFileRenameOutline size={24} color="#55EBFF" />
+                <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
               </CustomButton>
               님, 안녕하세요!
             </Text>
@@ -85,11 +85,11 @@ export default function MyPage() {
           <Form onSubmit={handleSubmit}>
             <Input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
             <CustomButton aria-label="rename_btn" type="submit">
-              <MdOutlineDriveFileRenameOutline size={24} color="#55EBFF" />
+              <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
             </CustomButton>
           </Form>
         )}
-        <Paragraph size="m" weight="bold" variant="white">
+        <Paragraph size="m" weight="bold">
           인플레이스를 이용해주셔서 감사합니다.
         </Paragraph>
       </TitleWrapper>

@@ -1,20 +1,23 @@
-import { useEffect, useMemo, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { useInView } from 'react-intersection-observer';
 import PlaceItem from '@/components/Map/PlaceSection/PlaceItem';
-import { PlaceData, LocationData, PageableData } from '@/types';
+import { PlaceData, LocationData, FilterParams } from '@/types';
 import Loading from '@/components/common/layouts/Loading';
 import NoItem from '@/components/common/layouts/NoItem';
 import { useGetInfinitePlaceList } from '@/api/hooks/useGetInfinitePlaceList';
+import usePlaceList from '@/hooks/Map/usePlaceList';
+import { useGetInfiniteSearchPlaceList } from '@/api/hooks/useGetInfiniteSearchPlaceList';
 
 interface PlaceSectionProps {
   mapBounds: LocationData;
   filters: {
     categories: string[];
     influencers: string[];
-    location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
+  filtersWithPlaceName: FilterParams;
   center: { lat: number; lng: number };
+  isInitialLoad: boolean;
   onGetPlaceData: (data: PlaceData[]) => void;
   onPlaceSelect: (placeId: number) => void;
   selectedPlaceId: number | null;
@@ -25,7 +28,9 @@ interface PlaceSectionProps {
 export default function PlaceSection({
   mapBounds,
   filters,
+  filtersWithPlaceName,
   center,
+  isInitialLoad,
   onGetPlaceData,
   onPlaceSelect,
   selectedPlaceId,
@@ -36,49 +41,76 @@ export default function PlaceSection({
   const previousPlacesRef = useRef<PlaceData[]>([]);
 
   const { ref: loadMoreRef, inView } = useInView({
-    // useInView = Intersection Oberser API를 react hook으로 구현한 것
     root: sectionRef.current,
     rootMargin: '0px',
     threshold: 0, // 요소가 조금이라도 보이면 감지
   });
 
   // 데이터 fetching hook
-  const { data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetInfinitePlaceList({
-    location: mapBounds,
-    filters,
-    center,
-    size: 10, // 한 페이지에 보여줄 아이템 개수; 변경하며 api 잘 받아오는지 확인 가능
+  const {
+    data: placeList,
+    isLoading: isLoadingPlaceList,
+    isError: isErrorPlaceList,
+    error: errorPlaceList,
+    fetchNextPage: fetchNextPagePlaceList,
+    hasNextPage: hasNextPagePlaceList,
+    isFetchingNextPage: isFetchingNextPagePlaceList,
+  } = useGetInfinitePlaceList(
+    {
+      location: mapBounds,
+      filters,
+      center,
+      size: 10, // 한 페이지에 보여줄 아이템 개수; 변경하며 api 잘 받아오는지 확인 가능
+    },
+    !isInitialLoad && !filtersWithPlaceName.placeName,
+  );
+
+  const {
+    data: searchPlaceList,
+    isLoading: isLoadingSearchPlaceList,
+    isError: isErrorSearchPlaceList,
+    error: errorSearchPlaceList,
+    fetchNextPage: fetchNextPageSearchPlaceList,
+    hasNextPage: hasNextPageSearchPlaceList,
+    isFetchingNextPage: isFetchingNextPageSearchPlaceList,
+  } = useGetInfiniteSearchPlaceList(
+    {
+      filters: filtersWithPlaceName,
+      size: 10,
+    },
+    !!filtersWithPlaceName.placeName,
+  );
+
+  const isLoading = filtersWithPlaceName.placeName ? isLoadingSearchPlaceList : isLoadingPlaceList;
+  const isError = filtersWithPlaceName.placeName ? isErrorSearchPlaceList : isErrorPlaceList;
+  const error = (filtersWithPlaceName.placeName ? errorSearchPlaceList : errorPlaceList) as Error;
+
+  const { filteredPlaces } = usePlaceList({
+    data: filtersWithPlaceName.placeName ? searchPlaceList : placeList,
+    onGetPlaceData,
   });
 
-  const filteredPlaces = useMemo(() => {
-    if (data === undefined) {
-      return previousPlacesRef.current;
-    }
-
-    if (!data.pages) {
-      return [];
-    }
-
-    const newPlaces = data.pages.flatMap((page: PageableData<PlaceData>) => {
-      return page.content;
-    });
-
-    previousPlacesRef.current = newPlaces;
-    return newPlaces;
-  }, [data]);
-
   useEffect(() => {
-    if (data?.pages) {
-      const places = data.pages.flatMap((page: PageableData<PlaceData>) => page.content);
-      onGetPlaceData(places);
+    if (
+      inView &&
+      (filtersWithPlaceName.placeName ? hasNextPageSearchPlaceList : hasNextPagePlaceList) &&
+      !(filtersWithPlaceName.placeName ? isFetchingNextPageSearchPlaceList : isFetchingNextPagePlaceList)
+    ) {
+      if (!filtersWithPlaceName.placeName) {
+        fetchNextPagePlaceList();
+      } else {
+        fetchNextPageSearchPlaceList();
+      }
     }
-  }, [data, onGetPlaceData]);
-
-  useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  }, [
+    inView,
+    hasNextPagePlaceList,
+    hasNextPageSearchPlaceList,
+    isFetchingNextPagePlaceList,
+    isFetchingNextPageSearchPlaceList,
+    fetchNextPagePlaceList,
+    fetchNextPageSearchPlaceList,
+  ]);
 
   const handlePlaceClick = useCallback(
     (placeId: number) => {
@@ -90,7 +122,12 @@ export default function PlaceSection({
     [onPlaceSelect, isListExpanded, onListExpand],
   );
 
-  if (isLoading && !isFetchingNextPage && previousPlacesRef.current.length === 0) {
+  if (
+    isLoading &&
+    !isFetchingNextPagePlaceList &&
+    !isFetchingNextPageSearchPlaceList &&
+    previousPlacesRef.current.length === 0
+  ) {
     return (
       <SectionContainer>
         <LoadingContainer>
@@ -124,7 +161,9 @@ export default function PlaceSection({
               />
             ))}
           </PlacesGrid>
-          {(hasNextPage || isFetchingNextPage) && (
+          {(filtersWithPlaceName.placeName
+            ? hasNextPageSearchPlaceList || isFetchingNextPageSearchPlaceList
+            : hasNextPagePlaceList || isFetchingNextPagePlaceList) && (
             <LoadMoreTrigger ref={loadMoreRef}>
               <Loading size={30} />
             </LoadMoreTrigger>
@@ -143,18 +182,12 @@ const SectionContainer = styled.div`
   box-sizing: content-box;
   &::-webkit-scrollbar {
     width: 8px;
-    color: #1f1f1f;
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #1f1f1f;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1f1f1f' : '#8e8e8e')};
     border-radius: 4px;
     border: none;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background-color: #1f1f1f;
-    width: 8px;
   }
 
   &::-webkit-scrollbar-track {
@@ -180,11 +213,11 @@ const ContentContainer = styled.div`
 const PlacesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 30px;
 
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 20px;
   }
 `;
 

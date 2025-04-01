@@ -25,8 +25,8 @@ export default function InfluencerItem({
   influencerImgUrl,
   influencerJob,
   likes,
-  useBackCard = true,
-  useNav = true,
+  useBackCard = false,
+  useNav = false,
 }: InfluencerItemProps) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
@@ -35,7 +35,7 @@ export default function InfluencerItem({
   const { mutate: postLike } = usePostInfluencerLike();
   const queryClient = useQueryClient();
 
-  const handleClickLike = useCallback(
+  const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
       event.preventDefault();
@@ -72,7 +72,7 @@ export default function InfluencerItem({
           <LikeIcon
             role="button"
             aria-label="like_btn"
-            onClick={(e: React.MouseEvent<HTMLDivElement>) => handleClickLike(e)}
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
           >
             {isLike ? (
               <PiHeartFill color="#fe7373" size={32} data-testid="PiHeartFill" />
@@ -84,17 +84,17 @@ export default function InfluencerItem({
           {useBackCard && useNav && (
             <BackImageWrapper>
               <MdLocationOn size={50} color="#55EBFF" />
-              <Paragraph size="m" variant="white" weight="bold">
+              <Paragraph size="m" weight="bold" variant="white">
                 지도 보기
               </Paragraph>
             </BackImageWrapper>
           )}
         </ImageContainer>
         <TextWrapper>
-          <Paragraph size="m" weight="bold" variant="white">
+          <Paragraph size="m" weight="bold">
             {influencerName}
           </Paragraph>
-          <Paragraph size="xs" weight="normal" variant="white">
+          <Paragraph size="xs" weight="normal">
             {influencerJob}
           </Paragraph>
         </TextWrapper>
@@ -114,6 +114,7 @@ const Wrapper = styled(Link)`
   text-align: center;
   text-decoration: none;
   gap: 10px;
+  color: inherit;
 
   @media screen and (max-width: 768px) {
     height: 100%;

@@ -34,11 +34,23 @@ const DropdownItems = styled.div<{
   }};
 
   &:hover {
-    background-color: ${(props) => (props.$isSelected ? '#d1e5ff' : '#f0f0f0')};
+    background-color: ${($isSelected) => ($isSelected ? '#e8f9ff' : '#f0f0f0')};
   }
 
   @media screen and (max-width: 768px) {
-    padding: 8px 12px;
+    padding: 12px 12px;
     font-size: 14px;
+    background-color: ${({ $isSelected, $isFiltered, theme }) => {
+      if ($isFiltered && theme.backgroundColor === '#292929') return '#1d1d1d';
+      if ($isSelected && theme.backgroundColor === '#292929') return '#1d1d1d';
+      return null;
+    }};
+
+    &:hover {
+      background-color: ${({ theme }) => {
+        if (theme.backgroundColor === '#292929') return '#1d1d1d';
+        return null;
+      }};
+    }
   }
 `;

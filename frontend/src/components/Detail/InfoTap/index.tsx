@@ -2,14 +2,12 @@ import styled from 'styled-components';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { IoMdStar } from 'react-icons/io';
 import { IoQrCode } from 'react-icons/io5';
-import { FaComment } from 'react-icons/fa';
-import { FcGoogle } from 'react-icons/fc';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useContext, useState } from 'react';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import FacilitySign from './FacilitySign';
-import { FacilityInfo, GoogleReview } from '@/types';
+import { AddressInfo, FacilityInfo, GoogleReview } from '@/types';
 import OpenHour from './OpenHour';
 import { Text } from '@/components/common/typography/Text';
 import GoogleReviewList from '../GoogleReviewList';
@@ -18,12 +16,17 @@ import NoItem from '@/components/common/layouts/NoItem';
 import VisitModal from '../VisitModal';
 import Loading from '@/components/common/layouts/Loading';
 import ErrorComponent from '@/components/common/layouts/Error';
+import { ThemeContext } from '@/provider/Themes';
+import SpeedDialMap from './SpeedDialMap';
+import useIsMobile from '@/hooks/useIsMobile';
 
 type Props = {
+  address: AddressInfo;
   category: string;
   facility: FacilityInfo;
   openingHours: string[];
   kakaoPlaceUrl: string;
+  naverPlaceUrl: string;
   googlePlaceUrl: string;
   googleReviews: GoogleReview[];
   longitude: string;
@@ -32,10 +35,12 @@ type Props = {
   placeId: number;
 };
 export default function InfoTap({
+  address,
   category,
   facility,
   openingHours,
   kakaoPlaceUrl,
+  naverPlaceUrl,
   googlePlaceUrl,
   googleReviews,
   longitude,
@@ -46,67 +51,42 @@ export default function InfoTap({
   const lat = Number(latitude);
   const lng = Number(longitude);
   const [visitModal, setVisitModal] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const { theme } = useContext(ThemeContext);
+  const buttonVariant = theme === 'dark' ? 'outline' : 'blackOutline';
+  const isMobile = useIsMobile();
 
   return (
     <Wrapper>
       <ButtonWrapper>
         {!isMobile ? (
-          <StyledButton aria-label="mobile_qr_btn" variant="outline" onClick={() => setVisitModal(!visitModal)}>
+          <StyledButton aria-label="mobile_qr_btn" variant={buttonVariant} onClick={() => setVisitModal(!visitModal)}>
             <IoQrCode size={16} color="fee500" />
             모바일로 연결
           </StyledButton>
         ) : null}
-        <WebMap>
-          <StyledButton
-            aria-label="kakao_btn"
-            variant="outline"
-            onClick={() => {
-              window.location.href = kakaoPlaceUrl;
-            }}
-          >
-            <FaComment size={16} color="fee500" />
-            카카오맵
-          </StyledButton>
-          {googlePlaceUrl ? (
-            <StyledButton
-              aria-label="google_btn"
-              variant="outline"
-              onClick={() => {
-                window.location.href = googlePlaceUrl;
-              }}
-            >
-              <FcGoogle size={18} />
-              구글맵
-            </StyledButton>
-          ) : null}
-        </WebMap>
+        <SpeedDialMap kakaoPlaceUrl={kakaoPlaceUrl} naverPlaceUrl={naverPlaceUrl} googlePlaceUrl={googlePlaceUrl} />
       </ButtonWrapper>
+      <Paragraph size="s" weight="bold">
+        주소
+      </Paragraph>
+      <Text size="xs" weight="normal">
+        {[address.address1, address.address2, address.address3].join(' ')}
+      </Text>
       {googlePlaceUrl ? (
         <>
-          <Paragraph size="s" weight="bold" variant="white">
+          <Paragraph size="s" weight="bold">
             시설 정보
           </Paragraph>
           <FacilitySign category={category} facilityInfo={facility} />
-          <Paragraph size="s" weight="bold" variant="white">
+          <Paragraph size="s" weight="bold">
             운영 시간
           </Paragraph>
           <OpenHour openHour={openingHours} />
           <GoogleReviewTitle>
-            <StyledText size="s" weight="bold" variant="white">
+            <StyledText size="s" weight="bold">
               Google 리뷰
               <IoMdStar size={20} color="#FBBC04" />
-              <Text size="xs" weight="normal" variant="white">
+              <Text size="xs" weight="normal">
                 {rating}
               </Text>
             </StyledText>
@@ -134,7 +114,7 @@ export default function InfoTap({
           alignItems="center"
         />
       )}
-      <Paragraph size="s" weight="bold" variant="white">
+      <Paragraph size="s" weight="bold">
         지도 보기
       </Paragraph>
       <MapContainer>
@@ -220,20 +200,9 @@ const GoogleReviewTitle = styled.div`
 const StyledText = styled(Text)`
   display: flex;
   gap: 3px;
-  color: white;
   align-items: end;
   svg {
     margin-left: 10px;
-  }
-`;
-
-const WebMap = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  @media screen and (max-width: 768px) {
-    flex-direction: row;
   }
 `;
 
