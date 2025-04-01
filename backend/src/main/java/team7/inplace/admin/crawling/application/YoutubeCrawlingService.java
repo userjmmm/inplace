@@ -35,7 +35,7 @@ public class YoutubeCrawlingService {
                 var lastLongVideoId = influencer.getLastLongVideo();
 
                 var mediumVideoItems = youtubeClient.getMediumVideos(channel, lastMediumVideoId);
-                var longVideoItems = youtubeClient.getLongVidoes(channel, lastLongVideoId);
+                var longVideoItems = youtubeClient.getLongVideos(channel, lastLongVideoId);
                 return new CrawlingInfo.VideoPlaceInfo(influencer.getId(), mediumVideoItems,
                     longVideoItems);
             }).toList();

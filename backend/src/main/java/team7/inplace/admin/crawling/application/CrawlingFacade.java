@@ -1,5 +1,6 @@
 package team7.inplace.admin.crawling.application;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,27 +16,34 @@ public class CrawlingFacade {
     private final YoutubeCrawlingService youtubeCrawlingService;
     private final VideoFacade videoFacade;
 
-    @Scheduled(cron = "0 0 2 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "${crawling.updateVideoTimeCron}", zone = "Asia/Seoul")
     public void updateVideos() {
         var crawlingInfos = youtubeCrawlingService.crawlAllVideos();
         for (var crawlingInfo : crawlingInfos) {
-            var mediumVideoCommands = crawlingInfo.toMediumVideoCommands();
+            var mediumVideoCommands = crawlingInfo.toMediumVideoCommands()
+                .stream()
+                .filter(Objects::nonNull)
+                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
+                .toList();
+
             if (mediumVideoCommands.isEmpty()) {
                 continue;
             }
-            mediumVideoCommands.sort((a, b) -> b.createdAt().compareTo(a.createdAt()));
             videoFacade.createMediumVideos(mediumVideoCommands, crawlingInfo.influencerId());
 
-            var longVideoCommands = crawlingInfo.toLongVideoCommands();
+            var longVideoCommands = crawlingInfo.toLongVideoCommands()
+                .stream()
+                .filter(Objects::nonNull)
+                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
+                .toList();
             if (longVideoCommands.isEmpty()) {
                 continue;
             }
-            longVideoCommands.sort((a, b) -> b.createdAt().compareTo(a.createdAt()));
             videoFacade.createLongVideos(longVideoCommands, crawlingInfo.influencerId());
         }
     }
 
-    @Scheduled(cron = "0 30 2 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "${crawling.updateVideoViewTimeCron}", zone = "Asia/Seoul")
     public void updateVideoView() {
         var crawlingInfos = youtubeCrawlingService.crawlingVideoView();
         var videoCommands = crawlingInfos.stream()

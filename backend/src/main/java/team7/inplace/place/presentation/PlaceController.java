@@ -73,11 +73,11 @@ public class PlaceController implements PlaceControllerApiSpec {
     @Override
     @GetMapping("/search")
     public ResponseEntity<Page<Simple>> getPlacesByName(
-        @RequestParam String name,
+        @RequestParam String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        var placeSimpleInfos = placeFacade.getPlacesByName(name, filterParams.toCommand(),
+        var placeSimpleInfos = placeFacade.getPlacesByName(placeName, filterParams.toCommand(),
             pageable);
         var responses = PlacesResponse.Simple.from(placeSimpleInfos.getContent());
         return new ResponseEntity<>(
@@ -106,11 +106,11 @@ public class PlaceController implements PlaceControllerApiSpec {
     @Override
     @GetMapping("/all/search")
     public ResponseEntity<List<Location>> getPlaceLocationsByName(
-        @RequestParam(required = true) String name,
+        @RequestParam(required = true) String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams
     ) {
         List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocationsByName(
-            name,
+            placeName,
             filterParams.toCommand()
         );
 
