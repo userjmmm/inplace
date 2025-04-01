@@ -3,8 +3,8 @@ package team7.inplace.place.presentation.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import team7.inplace.place.application.dto.PlaceInfo;
@@ -16,7 +16,6 @@ import team7.inplace.place.client.GooglePlaceClientResponse.RegularOpeningHours;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
-import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
 
 public class PlacesResponse {
 
@@ -25,11 +24,11 @@ public class PlacesResponse {
         String placeName,
         Address address,
         String category,
-        String influencerName,
         String menuImgUrl,
         String longitude,
         String latitude,
-        Boolean likes
+        Boolean likes,
+        List<PlacesResponse.Video> videos
     ) {
 
         public static List<Simple> from(List<PlaceInfo.Simple> placeInfos) {
@@ -48,14 +47,13 @@ public class PlacesResponse {
                     placeInfo.place().address3()
                 ),
                 placeInfo.place().category().getName(),
-                placeInfo.video().stream().map(SimpleVideo::influencerName)
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.joining(", ")),
                 "",
                 placeInfo.place().longitude().toString(),
                 placeInfo.place().latitude().toString(),
-                placeInfo.place().isLiked()
+                placeInfo.place().isLiked(),
+                placeInfo.video().stream()
+                    .map(PlacesResponse.Video::from)
+                    .collect(Collectors.toList())
             );
         }
     }
@@ -73,6 +71,7 @@ public class PlacesResponse {
         Double rating,
         String kakaoPlaceUrl,
         String googlePlaceUrl,
+        String naverPlaceUrl,
         List<String> openingHours,
         PlacesResponse.PlaceLike placeLikes,
         Boolean likes
@@ -107,6 +106,13 @@ public class PlacesResponse {
                 null,
                 "http://place.map.kakao.com/" + place.place().kakaoPlaceId(),
                 null,
+                "https://map.naver.com/p/search/"
+                    + convertParamsForNaverSearch(
+                    place.place().address1(),
+                    place.place().address2(),
+                    place.place().address3(),
+                    place.place().placeName()
+                ),
                 List.of(),
                 PlacesResponse.PlaceLike.from(place.reviewLikeRate()),
                 place.place().isLiked()
@@ -140,12 +146,23 @@ public class PlacesResponse {
                 place.googlePlace().rating(),
                 "http://place.map.kakao.com/" + place.place().kakaoPlaceId(),
                 place.googlePlace().googleMapsUri(),
+                "https://map.naver.com/p/search/"
+                    + convertParamsForNaverSearch(
+                        place.place().address1(),
+                        place.place().address2(),
+                        place.place().address3(),
+                        place.place().placeName()
+                    ),
                 place.googlePlace().regularOpeningHours()
                     .map(RegularOpeningHours::weekdayDescriptions)
                     .orElse(List.of()),
                 PlacesResponse.PlaceLike.from(place.reviewLikeRate()),
                 place.place().isLiked()
             );
+        }
+
+        private static String convertParamsForNaverSearch(String... params) {
+            return String.join("%20", params);
         }
     }
 
@@ -264,23 +281,25 @@ public class PlacesResponse {
         Long placeId,
         String placeName,
         String category,
-        String influencerName,
         Address address,
-        String menuImgUrl
+        String menuImgUrl,
+        List<Video> videos
     ) {
 
         public static Marker from(PlaceInfo.Marker marker) {
             return new Marker(
                 marker.place().placeId(),
                 marker.place().placeName(),
-                team7.inplace.place.domain.Category.valueOf(marker.place().category()).getName(),
-                marker.influencerNames(),
+                marker.place().category().getName(),
                 new Address(
                     marker.place().address1(),
                     marker.place().address2(),
                     marker.place().address3()
                 ),
-                ""
+                "",
+                marker.videos().stream()
+                    .map(PlacesResponse.Video::from)
+                    .toList()
             );
         }
     }

@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,29 +23,30 @@ public interface PlaceControllerApiSpec {
         @RequestBody PlaceRequest.Create request
     );
 
-    @Operation(summary = "장소 조회", description = "위치 기반으로 반경 내의 장소 목록을 조회합니다.")
+    @Operation(summary = "장소 조회", description = "지도 반경 내 혹은 필터링 기준의 장소 페이지네이션 목록을 조회합니다.")
     ResponseEntity<Page<PlacesResponse.Simple>> getPlaces(
-        @RequestParam Double longitude,
-        @RequestParam Double latitude,
-        @RequestParam Double topLeftLongitude,
-        @RequestParam Double topLeftLatitude,
-        @RequestParam Double bottomRightLongitude,
-        @RequestParam Double bottomRightLatitude,
-        @RequestParam(required = false) String categories,
-        @RequestParam(required = false) String influencers,
+        @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
+        @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 
-    @Operation(summary = "모든 장소 조회", description = "지도 내의 모든 장소 목록을 조회합니다.")
+    @Operation(summary = "장소 조회(장소 이름으로 검색했을 때)", description = "장소 이름으로 검색한 장소 페이지네이션 목록을 조회합니다.")
+    ResponseEntity<Page<PlacesResponse.Simple>> getPlacesByName(
+        @RequestParam String placeName,
+        @ModelAttribute PlaceRequest.Filter filterParams,
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    );
+
+    @Operation(summary = "모든 장소 위치 조회(필터링만)", description = "지도 반경 내 혹은 필터링 기준의 모든 장소 목록을 조회합니다.")
     ResponseEntity<List<Location>> getPlaceLocations(
-        @RequestParam Double longitude,
-        @RequestParam Double latitude,
-        @RequestParam Double topLeftLongitude,
-        @RequestParam Double topLeftLatitude,
-        @RequestParam Double bottomRightLongitude,
-        @RequestParam Double bottomRightLatitude,
-        @RequestParam(required = false) String categories,
-        @RequestParam(required = false) String influencers
+        @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
+        @ModelAttribute PlaceRequest.Filter filterParams
+    );
+
+    @Operation(summary = "모든 장소 위치 조회(장소 이름으로 검색했을 때", description = "장소 이름으로 검색한 모든 장소 목록을 조회합니다.")
+    ResponseEntity<List<Location>> getPlaceLocationsByName(
+        @RequestParam String placeName,
+        @ModelAttribute PlaceRequest.Filter filterParams
     );
 
     @Operation(summary = "카테고리 조회", description = "장소의 카테고리 목록을 조회합니다.")

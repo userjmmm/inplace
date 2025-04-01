@@ -2,12 +2,16 @@ import * as Sentry from '@sentry/react';
 import { browserTracingIntegration } from '@sentry/react';
 import { getSentryInitialized, setSentryInitialized } from './sentry';
 
-export const initSentryWithRetry = async (retryCount = 0, maxRetries = 3): Promise<boolean> => {
+const SENTRY_INIT_MAX_RETRIES = 3;
+const SENTRY_INIT_RETRY_DELAY_MS = 1000;
+const SENTRY_TRACES_SAMPLE_RATE = 1.0;
+
+export const initSentryWithRetry = async (retryCount = 0, maxRetries = SENTRY_INIT_MAX_RETRIES): Promise<boolean> => {
   try {
     Sentry.init({
       dsn: import.meta.env.VITE_SENTRY_DSN,
       integrations: [browserTracingIntegration()],
-      tracesSampleRate: 1.0,
+      tracesSampleRate: SENTRY_TRACES_SAMPLE_RATE,
       tracePropagationTargets: [/^https:\/\/api\.inplace\.my/, '!http://localhost/', '!https://localhost/'],
       beforeSend: (event) => {
         if (getSentryInitialized()) {
@@ -23,7 +27,7 @@ export const initSentryWithRetry = async (retryCount = 0, maxRetries = 3): Promi
     if (retryCount < maxRetries) {
       console.warn(`Sentry initialization failed, retrying... (${retryCount + 1}/${maxRetries})`);
       await new Promise((resolve) => {
-        setTimeout(resolve, 1000);
+        setTimeout(resolve, SENTRY_INIT_RETRY_DELAY_MS);
       });
       return initSentryWithRetry(retryCount + 1, maxRetries);
     }

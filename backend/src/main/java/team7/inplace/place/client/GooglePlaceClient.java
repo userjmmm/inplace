@@ -1,16 +1,15 @@
 package team7.inplace.place.client;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import team7.inplace.global.annotation.Client;
 import team7.inplace.global.properties.GoogleApiProperties;
+import team7.inplace.place.client.GooglePlaceClientResponse.Place;
 
-@Component
-@Slf4j
+@Client("Google Place Client")
 @RequiredArgsConstructor
 public class GooglePlaceClient {
 
@@ -21,9 +20,8 @@ public class GooglePlaceClient {
     private final RestTemplate restTemplate;
     private final GoogleApiProperties googleApiProperties;
 
-    public GooglePlaceClientResponse.Place requestForPlaceDetail(String placeId) {
+    public Place requestForPlaceDetail(String placeId) {
         var url = String.format(PLACE_DETAIL_URL, placeId);
-
         HttpHeaders headers = new HttpHeaders();
         headers.set(FIELD_HEADER, FIELD);
         headers.set(API_KEY_HEADER, googleApiProperties.crawlingKey());
@@ -31,7 +29,7 @@ public class GooglePlaceClient {
         HttpEntity<String> entity = new HttpEntity<>(headers);
         var response = restTemplate.exchange(url, HttpMethod.GET, entity,
             GooglePlaceClientResponse.Place.class);
-
         return response.getBody();
+
     }
 }

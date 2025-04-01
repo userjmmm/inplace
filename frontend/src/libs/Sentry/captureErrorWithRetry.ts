@@ -1,6 +1,9 @@
 import * as Sentry from '@sentry/react';
 import { getSentryInitialized } from './sentry';
 
+const ERROR_CAPTURE_MAX_RETRIES = 3;
+const ERROR_CAPTURE_RETRY_DELAY_MS = 1000;
+
 export const captureErrorWithRetry = async (
   error: unknown,
   options?: {
@@ -8,7 +11,7 @@ export const captureErrorWithRetry = async (
     level?: Sentry.SeverityLevel;
   },
   retryCount = 0,
-  maxRetries = 3,
+  maxRetries = ERROR_CAPTURE_MAX_RETRIES,
 ): Promise<boolean> => {
   if (!getSentryInitialized()) {
     return false;
@@ -41,7 +44,7 @@ export const captureErrorWithRetry = async (
     if (retryCount < maxRetries) {
       console.warn(`Error capture failed, retrying... (${retryCount + 1}/${maxRetries})`);
       await new Promise((resolve) => {
-        setTimeout(resolve, 1000);
+        setTimeout(resolve, ERROR_CAPTURE_RETRY_DELAY_MS);
       });
       return captureErrorWithRetry(error, options, retryCount + 1, maxRetries);
     }

@@ -6,8 +6,11 @@ import getCurrentConfig from '../config';
 import captureErrorWithRetry from '@/libs/Sentry/captureErrorWithRetry';
 
 const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
+  const DEFAULT_AXIOS_TIMEOUT_MS = 20_000;
+  const NON_REPORTING_STATUS_CODES = [401, 403, 409];
+
   const instance = axios.create({
-    timeout: 20000,
+    timeout: DEFAULT_AXIOS_TIMEOUT_MS,
     ...config,
     headers: {
       'Content-Type': 'application/json',
@@ -29,7 +32,11 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
       }
 
       // 예기치 못한 4~500번대 오류 로깅
-      if (import.meta.env.PROD && error.response.status >= 400 && ![401, 403, 409].includes(error.response.status)) {
+      if (
+        import.meta.env.PROD &&
+        error.response.status >= 400 &&
+        !NON_REPORTING_STATUS_CODES.includes(error.response.status)
+      ) {
         const isServerError = error.response.status >= 500;
         const errorType = isServerError ? 'Server Error' : 'Api Error';
         await captureErrorWithRetry(`[${errorType}] ${error.config.url} \n${error.message}`, {

@@ -1,18 +1,20 @@
-import { useEffect, useMemo, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { useInView } from 'react-intersection-observer';
 import { GrPowerCycle } from 'react-icons/gr';
 import PlaceItem from '@/components/Map/PlaceSection/PlaceItem';
-import { PlaceData, LocationData, PageableData } from '@/types';
+import { PlaceData, LocationData } from '@/types';
 import Loading from '@/components/common/layouts/Loading';
 import NoItem from '@/components/common/layouts/NoItem';
 import { useGetInfinitePlaceList } from '@/api/hooks/useGetInfinitePlaceList';
+import usePlaceList from '@/hooks/Map/usePlaceList';
 
 export interface PlaceSectionProps {
   mapBounds: LocationData;
   filters: {
     categories: string[];
     influencers: string[];
+    placeName?: string;
   };
   center: { lat: number; lng: number };
   shouldFetchPlaces: boolean;
@@ -20,6 +22,8 @@ export interface PlaceSectionProps {
   onGetPlaceData: (data: PlaceData[]) => void;
   onPlaceSelect: (placeId: number) => void;
   selectedPlaceId: number | null;
+  isListExpanded?: boolean;
+  onListExpand?: (value: boolean) => void;
   onSearchNearby?: () => void;
 }
 
@@ -32,6 +36,8 @@ export default function InfluencerPlaceSection({
   onGetPlaceData,
   onPlaceSelect,
   selectedPlaceId,
+  isListExpanded,
+  onListExpand,
   onSearchNearby,
 }: PlaceSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -53,17 +59,7 @@ export default function InfluencerPlaceSection({
     shouldFetchPlaces,
   );
 
-  const filteredPlaces = useMemo(() => {
-    if (!data?.pages) return [];
-    return data.pages.flatMap((page: PageableData<PlaceData>) => page.content);
-  }, [data]);
-
-  useEffect(() => {
-    if (data?.pages) {
-      const places = data.pages.flatMap((page: PageableData<PlaceData>) => page.content);
-      onGetPlaceData(places);
-    }
-  }, [data, onGetPlaceData]);
+  const { filteredPlaces } = usePlaceList({ data, onGetPlaceData });
 
   useEffect(() => {
     if (shouldFetchPlaces) {
@@ -81,8 +77,11 @@ export default function InfluencerPlaceSection({
   const handlePlaceClick = useCallback(
     (placeId: number) => {
       onPlaceSelect(placeId);
+      if (window.innerWidth <= 768 && onListExpand) {
+        onListExpand(false);
+      }
     },
-    [onPlaceSelect],
+    [onPlaceSelect, isListExpanded, onListExpand],
   );
 
   if (isLoading && !isFetchingNextPage && previousPlacesRef.current.length === 0) {
@@ -179,14 +178,10 @@ const ContentContainer = styled.div`
 const PlacesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 30px;
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  @media screen and (max-width: 430px) {
-    gap: 8px;
+    gap: 20px;
   }
 `;
 
