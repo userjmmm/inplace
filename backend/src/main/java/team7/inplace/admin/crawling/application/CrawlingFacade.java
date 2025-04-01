@@ -1,5 +1,6 @@
 package team7.inplace.admin.crawling.application;
 
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,18 +20,25 @@ public class CrawlingFacade {
     public void updateVideos() {
         var crawlingInfos = youtubeCrawlingService.crawlAllVideos();
         for (var crawlingInfo : crawlingInfos) {
-            var mediumVideoCommands = crawlingInfo.toMediumVideoCommands();
+            var mediumVideoCommands = crawlingInfo.toMediumVideoCommands()
+                .stream()
+                .filter(Objects::nonNull)
+                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
+                .toList();
+
             if (mediumVideoCommands.isEmpty()) {
                 continue;
             }
-            mediumVideoCommands.sort((a, b) -> b.createdAt().compareTo(a.createdAt()));
             videoFacade.createMediumVideos(mediumVideoCommands, crawlingInfo.influencerId());
 
-            var longVideoCommands = crawlingInfo.toLongVideoCommands();
+            var longVideoCommands = crawlingInfo.toLongVideoCommands()
+                .stream()
+                .filter(Objects::nonNull)
+                .sorted((a, b) -> b.createdAt().compareTo(a.createdAt()))
+                .toList();
             if (longVideoCommands.isEmpty()) {
                 continue;
             }
-            longVideoCommands.sort((a, b) -> b.createdAt().compareTo(a.createdAt()));
             videoFacade.createLongVideos(longVideoCommands, crawlingInfo.influencerId());
         }
     }
