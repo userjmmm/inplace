@@ -12,7 +12,7 @@ interface KakaoKeywordDocuments {
   y: string;
 }
 interface MapSearchBarProps {
-  setCenter: React.Dispatch<React.SetStateAction<{ lat: number; lng: number }>>;
+  setIsChangedLocation: React.Dispatch<React.SetStateAction<{ lat: number; lng: number } | null>>;
   setSelectedPlaceName: React.Dispatch<React.SetStateAction<string>>;
 }
 interface DropdownItem {
@@ -20,7 +20,7 @@ interface DropdownItem {
   text: string;
 }
 
-export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSearchBarProps) {
+export default function MapSearchBar({ setIsChangedLocation, setSelectedPlaceName }: MapSearchBarProps) {
   const DEBOUNCE_DELAY_MS = 300;
   const MAX_LOCATION_RESULTS = 5;
 
@@ -90,7 +90,8 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
         const selected = searchLocationResults.documents[index];
 
         if (isIndexChoice || selected.place_name === searchValue) {
-          setCenter({ lat: selected.y, lng: selected.x });
+          setIsChangedLocation({ lat: selected.y, lng: selected.x });
+          // setCenter({ lat: selected.y, lng: selected.x });
           setItemIndex(-1);
           setIsOpen(false);
         }
@@ -147,6 +148,7 @@ export default function MapSearchBar({ setCenter, setSelectedPlaceName }: MapSea
     e.preventDefault();
     setInputValue('');
     setSelectedPlaceName('');
+    setIsChangedLocation(null);
   };
 
   const placeholder =

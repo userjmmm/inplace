@@ -10,7 +10,7 @@ export const getPlaceList = async (
   size: number,
 ): Promise<PageableData<PlaceData>> => {
   const { topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude } = location;
-  const { categories, influencers, regions } = filters;
+  const { categories, influencers } = filters;
 
   const params = new URLSearchParams({
     topLeftLongitude: topLeftLongitude.toString(),
@@ -23,7 +23,6 @@ export const getPlaceList = async (
     size: size.toString(),
     categories: categories.join(','),
     influencers: influencers.join(','),
-    regions: regions.join(','),
   });
 
   const response = await fetchInstance.get<PageableData<PlaceData>>(`/places?${params}`);
@@ -42,10 +41,10 @@ export const useGetInfinitePlaceList = ({ location, filters, center, size }: Que
     PageableData<PlaceData>,
     Error,
     { pages: PageableData<PlaceData>[]; pageParams: number[] },
-    [string, LocationData, string[], string[], { lat: number; lng: number }, number],
+    [string, LocationData, FilterParams, { lat: number; lng: number }, number],
     number
   >({
-    queryKey: ['infinitePlaceList', location, filters.categories, filters.influencers, center, size],
+    queryKey: ['infinitePlaceList', location, filters, center, size],
     // pageParam = 각 페이지를 가져올 때마다 사용되는 현재 페이지 번호
     queryFn: ({ pageParam = 0 }) => getPlaceList(location, filters, center, pageParam, size),
     initialPageParam: 0, // 초기 페이지 번호(0부터 시작)

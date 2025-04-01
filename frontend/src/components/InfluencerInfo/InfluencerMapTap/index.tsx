@@ -17,19 +17,19 @@ export default function InfluencerMapTap({
   const {
     center,
     mapBounds,
+    setCenter,
+    setMapBounds,
     isListExpanded,
     selectedPlaceId,
     placeData,
     setIsListExpanded,
-    handleBoundsChange,
-    handleCenterChange,
     handlePlaceSelect,
     handleGetPlaceData,
   } = useMapState();
   const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
     useTouchDrag(setIsListExpanded);
   const fetchLocationRef = useRef<() => void>();
-  const filters = { categories: [], influencers: [influencerName], placeName: '', regions: [] };
+  const filters = { categories: [], influencers: [influencerName], placeName: '' };
   const [shouldFetchPlaces, setShouldFetchPlaces] = useState(false);
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -67,16 +67,16 @@ export default function InfluencerMapTap({
       <InfluencerMapWindow
         influencerImg={influencerImg}
         placeData={placeData}
+        setCenter={setCenter}
+        setMapBounds={setMapBounds}
         markers={markers}
         selectedPlaceId={selectedPlaceId}
-        onBoundsChange={handleBoundsChange}
-        onCenterChange={handleCenterChange}
-        shouldFetchPlaces={shouldFetchPlaces}
+        // shouldFetchPlaces={shouldFetchPlaces}
         onCompleteFetch={handleCompleteFetch}
         onPlaceSelect={handlePlaceSelect}
         isListExpanded={isListExpanded}
         onListExpand={handleListExpand}
-        onSearchNearby={handleNearbySearch}
+        onNearbySearch={handleNearbySearch}
       />
       <PlaceSectionDesktop>
         <InfluencerPlaceSection

@@ -18,11 +18,11 @@ export default function useMapActions({ mapRef, onPlaceSelect }: UseMapActionsPr
     const currentLevel = mapRef.current.getLevel();
 
     if (currentLevel === 1) {
-      mapRef.current.setLevel(MIN_ZOOM_LEVEL, { animate: true });
+      mapRef.current.setLevel(MIN_ZOOM_LEVEL, { animate: false });
     }
 
     if (currentLevel > DEFAULT_ZOOM_LEVEL) {
-      mapRef.current.setLevel(DEFAULT_ZOOM_LEVEL, { animate: true });
+      mapRef.current.setLevel(DEFAULT_ZOOM_LEVEL, { animate: false });
     }
 
     const offsetY = currentLevel < DEFAULT_ZOOM_LEVEL ? SMALL_ZOOM_OFFSET_Y : BASE_OFFSET_Y;

@@ -20,18 +20,18 @@ import { useGetSearchPlaceMarkers } from '@/api/hooks/useGetSearchPlaceMarker';
 
 interface MapWindowProps {
   center: { lat: number; lng: number };
-  onBoundsChange: (bounds: LocationData) => void;
-  onCenterChange: (center: { lat: number; lng: number }) => void;
+  setCenter: React.Dispatch<React.SetStateAction<{ lat: number; lng: number }>>;
+  setMapBounds: React.Dispatch<React.SetStateAction<LocationData>>;
+  mapBounds: LocationData;
+  isInitialLoad: boolean;
+  setIsInitialLoad: React.Dispatch<React.SetStateAction<boolean>>;
   filters: {
     categories: string[];
     influencers: string[];
-    regions: string[];
-    location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
   filtersWithPlaceName: FilterParams;
   placeData: PlaceData[];
   isChangedLocation: { lat: number; lng: number } | null;
-  setIsChangedLocation: React.Dispatch<React.SetStateAction<{ lat: number; lng: number } | null>>;
   selectedPlaceId: number | null;
   onPlaceSelect: (placeId: number | null) => void;
   isListExpanded?: boolean;
@@ -40,34 +40,28 @@ interface MapWindowProps {
 
 export default function MapWindow({
   center,
-  onBoundsChange,
-  onCenterChange,
+  setCenter,
+  mapBounds,
+  setMapBounds,
+  isInitialLoad,
+  setIsInitialLoad,
   filters,
   filtersWithPlaceName,
   placeData,
   isChangedLocation,
-  setIsChangedLocation,
   selectedPlaceId,
   onPlaceSelect,
   isListExpanded,
   onListExpand,
 }: MapWindowProps) {
   const GEOLOCATION_CONFIG = {
-    maximumAge: 30000,
+    maximumAge: 500000,
     timeout: 5000,
   };
   const DEFAULT_MAP_ZOOM_LEVEL = 4;
 
   const mapRef = useRef<kakao.maps.Map | null>(null);
-  const [isMapReady, setIsMapReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [mapCenter, setMapCenter] = useState(center || { lat: 37.5665, lng: 126.978 });
-  const [mapBound, setMapBound] = useState<LocationData>({
-    topLeftLatitude: 0,
-    topLeftLongitude: 0,
-    bottomRightLatitude: 0,
-    bottomRightLongitude: 0,
-  });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [showNoMarkerMessage, setShowNoMarkerMessage] = useState(false);
@@ -86,11 +80,11 @@ export default function MapWindow({
 
   const { data: markers = [], isLoading: isLoadingAllMarkers } = useGetAllMarkers(
     {
-      location: mapBound,
+      location: mapBounds,
       filters,
-      center: mapCenter,
+      center,
     },
-    !filtersWithPlaceName.placeName,
+    !isInitialLoad && !filtersWithPlaceName.placeName,
   );
 
   const { data: placeNameMarkers = [], isLoading: isLoadingPlaceMarkers } = useGetSearchPlaceMarkers(
@@ -107,159 +101,153 @@ export default function MapWindow({
 
   // placeName로 검색 시 지도 범위 확장
   useEffect(() => {
-    if (!mapRef.current || placeNameMarkers.length === 0) return;
+    if (!mapRef.current) return;
+    if (!filtersWithPlaceName.placeName) return;
+    if (!placeNameMarkers || placeNameMarkers.length === 0) return;
 
     const bounds = new kakao.maps.LatLngBounds();
-
     placeNameMarkers.forEach((marker) => {
       bounds.extend(new kakao.maps.LatLng(marker.latitude, marker.longitude));
     });
 
     mapRef.current.setBounds(bounds);
     setShowSearchButton(false);
-  }, [placeNameMarkers]);
+  }, [placeNameMarkers, filtersWithPlaceName.placeName]);
 
-  const fetchMarkers = useCallback(() => {
+  // 초기 접속 시
+  useEffect(() => {
+    if (!isInitialLoad) return;
+    const startTime = performance.now();
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setIsLoading(false);
+        const endTime = performance.now();
+        const elapsed = (endTime - startTime).toFixed(2);
+        console.log(`✅ 위치 받아오는데 걸린 시간: ${elapsed}ms`);
+        const userLoc = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        setUserLocation(userLoc);
+        if (mapRef.current) {
+          mapRef.current.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
+        }
+        setTimeout(() => {
+          setCenter(userLoc);
+          updateMapBounds();
+          setIsInitialLoad(false);
+        }, 1000);
+      },
+      (error) => {
+        const endTime = performance.now();
+        const elapsed = (endTime - startTime).toFixed(2);
+        console.log(`❌ 위치 탐색 실패. 소요 시간: ${elapsed}ms`);
+        console.error('Geolocation error:', error);
+        setIsLoading(false);
+        setTimeout(() => {
+          setIsInitialLoad(false);
+          updateMapBounds();
+        }, 1000);
+        if (error.code === error.PERMISSION_DENIED) {
+          alert('위치 권한이 차단되었습니다. 위치를 수동으로 설정하세요.');
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          alert('위치 정보를 가져올 수 없습니다.');
+        } else if (error.code === error.TIMEOUT) {
+          alert('위치 정보 요청이 시간 초과되었습니다. 다시 시도해주세요.');
+        }
+      },
+      GEOLOCATION_CONFIG,
+    );
+  }, []);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!mapRef.current) {
+        alert('지도를 불러오지 못했어요. 네트워크 상태를 확인한 후 새로고침 해주세요.');
+        setIsLoading(false);
+      }
+    }, 6000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  const updateMapBounds = useCallback(() => {
     if (!mapRef.current) return;
-
     const bounds = mapRef.current.getBounds();
-    const currentCenter = mapRef.current.getCenter();
-
-    const newBounds: LocationData = {
+    const newBounds = {
       topLeftLatitude: bounds.getNorthEast().getLat(),
       topLeftLongitude: bounds.getSouthWest().getLng(),
       bottomRightLatitude: bounds.getSouthWest().getLat(),
       bottomRightLongitude: bounds.getNorthEast().getLng(),
     };
+    setMapBounds(newBounds);
+  }, [setMapBounds]);
 
-    onPlaceSelect(null);
-    setMapCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
-    setMapBound(newBounds);
-
-    onCenterChange({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
-    onBoundsChange(newBounds);
-    setShowSearchButton(false);
-  }, []);
-
-  useEffect(() => {
-    if (!isMapReady) return;
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setIsLoading(false);
-          const userLoc = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setUserLocation(userLoc);
-          mapRef.current?.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
-          fetchMarkers();
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-          setIsLoading(false);
-          if (error.code === error.PERMISSION_DENIED) {
-            alert('위치 권한이 차단되었습니다. 위치를 수동으로 설정하세요.');
-          } else if (error.code === error.POSITION_UNAVAILABLE) {
-            alert('위치 정보를 가져올 수 없습니다.');
-          } else if (error.code === error.TIMEOUT) {
-            alert('위치 정보 요청이 시간 초과되었습니다. 다시 시도해주세요.');
-          }
-        },
-        GEOLOCATION_CONFIG,
-      );
-    } else {
-      setIsLoading(false);
-      console.warn('Geolocation is not supported by this browser.');
-    }
-  }, [isMapReady]);
-
-  useEffect(() => {
-    if (mapRef.current && center) {
-      const position = new kakao.maps.LatLng(center.lat, center.lng);
-      mapRef.current.setCenter(position);
-      setMapCenter(center);
-      onCenterChange(center);
-
-      const bounds = mapRef.current.getBounds();
-      const newBounds: LocationData = {
-        topLeftLatitude: bounds.getNorthEast().getLat(),
-        topLeftLongitude: bounds.getSouthWest().getLng(),
-        bottomRightLatitude: bounds.getSouthWest().getLat(),
-        bottomRightLongitude: bounds.getNorthEast().getLng(),
-      };
-      onPlaceSelect(null);
-      setMapBound(newBounds);
-      onBoundsChange(newBounds);
-      setShowSearchButton(false);
-    }
-  }, [center]);
-
-  useEffect(() => {
+  const handleNearbyClick = () => {
     if (!mapRef.current) return;
-    if (!isChangedLocation) return;
+    const currentCenter = mapRef.current.getCenter();
+    setCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
+    onPlaceSelect(null);
+    if (!isChangedLocation) {
+      updateMapBounds();
+    }
+    setShowSearchButton(false);
+  };
+
+  useEffect(() => {
+    if (!mapRef.current || (!isChangedLocation && isInitialLoad)) return;
+
+    // 값을 지운 경우
+    if (!isChangedLocation) {
+      handleNearbyClick();
+      return;
+    }
 
     const LocPosition = new kakao.maps.LatLng(isChangedLocation.lat, isChangedLocation.lng);
     mapRef.current.setCenter(LocPosition);
     mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
-    setMapCenter({ lat: isChangedLocation.lat, lng: isChangedLocation.lng });
-    onCenterChange({ lat: isChangedLocation.lat, lng: isChangedLocation.lng });
-
-    const bounds = mapRef.current.getBounds();
-    const newBounds: LocationData = {
-      topLeftLatitude: bounds.getNorthEast().getLat(),
-      topLeftLongitude: bounds.getSouthWest().getLng(),
-      bottomRightLatitude: bounds.getSouthWest().getLat(),
-      bottomRightLongitude: bounds.getNorthEast().getLng(),
-    };
+    setCenter(isChangedLocation);
     onPlaceSelect(null);
-    setMapBound(newBounds);
-    onBoundsChange(newBounds);
+    updateMapBounds();
     setShowSearchButton(false);
-    setTimeout(() => {
-      setIsChangedLocation(null);
-    }, 0);
   }, [isChangedLocation?.lat, isChangedLocation?.lng]);
 
   // 초기 선택 시에만 이동하도록
   useEffect(() => {
-    if (selectedPlaceId) {
-      const targetMarker = filtersWithPlaceName.placeName
-        ? placeNameMarkers.find((m) => m.placeId === selectedPlaceId)
-        : markers.find((m) => m.placeId === selectedPlaceId);
-      if (targetMarker) {
-        moveMapToMarker(targetMarker.latitude, targetMarker.longitude);
-      }
-    }
-  }, [selectedPlaceId]);
+    if (!selectedPlaceId || !mapRef.current) return;
 
-  const handleSearchNearby = useCallback(() => {
-    fetchMarkers();
-    setShowSearchButton(false);
-  }, [fetchMarkers]);
+    const list = filtersWithPlaceName.placeName ? placeNameMarkers : markers;
+    const marker = list.find((m) => m.placeId === selectedPlaceId);
+    if (marker) {
+      moveMapToMarker(marker.latitude, marker.longitude);
+    }
+  }, [selectedPlaceId, placeNameMarkers, markers]);
 
   // 마커 정보가 없을 경우
   useEffect(() => {
-    const shouldShowNoMarkerMessage = !isLoading && !isLoadingMarker && markerListToRender.length === 0;
-    setShowNoMarkerMessage(shouldShowNoMarkerMessage);
-
-    if (shouldShowNoMarkerMessage) {
-      setTimeout(() => {
+    const isEmpty = !isInitialLoad && !isLoadingMarker && markerListToRender.length === 0;
+    if (isEmpty) {
+      setShowNoMarkerMessage(true);
+      const timer = setTimeout(() => {
         setShowNoMarkerMessage(false);
       }, 4000);
+
+      return () => clearTimeout(timer);
     }
-  }, [markerListToRender, isLoading]);
+    return undefined;
+  }, [markerListToRender, isLoadingMarker]);
 
   return (
     <MapContainer>
-      {isLoading ? (
+      {isLoading && (
         <LoadingWrapper>
           <Loading />
           <Text size="s" weight="normal" variant="white">
             내 위치 찾는 중...
           </Text>
         </LoadingWrapper>
-      ) : null}
+      )}
       {showNoMarkerMessage && (
         <NoItemMarker>
           <IoMdInformationCircleOutline size={18} />
@@ -270,7 +258,7 @@ export default function MapWindow({
         <ButtonContainer>
           <Button
             aria-label="around_btn"
-            onClick={handleSearchNearby}
+            onClick={handleNearbyClick}
             variant="white"
             size="small"
             style={{
@@ -287,19 +275,14 @@ export default function MapWindow({
         </ButtonContainer>
       )}
       <Map
-        center={mapCenter}
+        center={center}
         style={{ width: '100%', height: isMobile ? 'auto' : '570px', aspectRatio: isMobile ? '1' : 'auto' }}
         level={DEFAULT_MAP_ZOOM_LEVEL}
         onCreate={(mapInstance) => {
           mapRef.current = mapInstance;
-          setIsMapReady(true);
         }}
-        onCenterChanged={() => {
-          setShowSearchButton(true);
-        }}
-        onZoomChanged={() => {
-          setShowSearchButton(true);
-        }}
+        onCenterChanged={() => setShowSearchButton(true)}
+        onZoomChanged={() => setShowSearchButton(true)}
         onClick={handleMapClick}
       >
         {userLocation && (

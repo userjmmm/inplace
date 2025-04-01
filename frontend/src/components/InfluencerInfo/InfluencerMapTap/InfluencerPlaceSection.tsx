@@ -14,8 +14,7 @@ export interface PlaceSectionProps {
   filters: {
     categories: string[];
     influencers: string[];
-    placeName: string;
-    regions: string[];
+    placeName?: string;
   };
   center: { lat: number; lng: number };
   shouldFetchPlaces: boolean;

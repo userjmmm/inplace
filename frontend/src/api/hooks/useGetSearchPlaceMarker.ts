@@ -6,13 +6,12 @@ import { FilterParams, MarkerData } from '@/types';
 export const getSearchPlaceMarkersPath = () => `/places/all/search`;
 
 export const getSearchPlaceMarkers = async (filters: FilterParams) => {
-  const { categories, influencers, placeName = '', regions } = filters;
+  const { categories, influencers, placeName = '' } = filters;
 
   const params = new URLSearchParams({
     categories: categories.join(','),
     influencers: influencers.join(','),
     placeName: placeName.toString(),
-    regions: regions.join(','),
   });
 
   const response = await fetchInstance.get<MarkerData[]>(`${getSearchPlaceMarkersPath()}?${params}`);

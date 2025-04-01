@@ -14,11 +14,10 @@ interface PlaceSectionProps {
   filters: {
     categories: string[];
     influencers: string[];
-    regions: string[];
-    location: { main: string; sub?: string; lat?: number; lng?: number }[];
   };
   filtersWithPlaceName: FilterParams;
   center: { lat: number; lng: number };
+  isInitialLoad: boolean;
   onGetPlaceData: (data: PlaceData[]) => void;
   onPlaceSelect: (placeId: number) => void;
   selectedPlaceId: number | null;
@@ -31,6 +30,7 @@ export default function PlaceSection({
   filters,
   filtersWithPlaceName,
   center,
+  isInitialLoad,
   onGetPlaceData,
   onPlaceSelect,
   selectedPlaceId,
@@ -62,7 +62,7 @@ export default function PlaceSection({
       center,
       size: 10, // 한 페이지에 보여줄 아이템 개수; 변경하며 api 잘 받아오는지 확인 가능
     },
-    !filtersWithPlaceName.placeName,
+    !isInitialLoad && !filtersWithPlaceName.placeName,
   );
 
   const {
@@ -96,10 +96,9 @@ export default function PlaceSection({
       (filtersWithPlaceName.placeName ? hasNextPageSearchPlaceList : hasNextPagePlaceList) &&
       !(filtersWithPlaceName.placeName ? isFetchingNextPageSearchPlaceList : isFetchingNextPagePlaceList)
     ) {
-      if (placeList && !filtersWithPlaceName.placeName) {
+      if (!filtersWithPlaceName.placeName) {
         fetchNextPagePlaceList();
-      }
-      if (searchPlaceList && filtersWithPlaceName.placeName) {
+      } else {
         fetchNextPageSearchPlaceList();
       }
     }
@@ -111,8 +110,6 @@ export default function PlaceSection({
     isFetchingNextPageSearchPlaceList,
     fetchNextPagePlaceList,
     fetchNextPageSearchPlaceList,
-    placeList,
-    searchPlaceList,
   ]);
 
   const handlePlaceClick = useCallback(
@@ -164,13 +161,13 @@ export default function PlaceSection({
               />
             ))}
           </PlacesGrid>
-          {filtersWithPlaceName.placeName
-            ? hasNextPagePlaceList || isFetchingNextPagePlaceList
-            : (hasNextPageSearchPlaceList || isFetchingNextPageSearchPlaceList) && (
-                <LoadMoreTrigger ref={loadMoreRef}>
-                  <Loading size={30} />
-                </LoadMoreTrigger>
-              )}
+          {(filtersWithPlaceName.placeName
+            ? hasNextPageSearchPlaceList || isFetchingNextPageSearchPlaceList
+            : hasNextPagePlaceList || isFetchingNextPagePlaceList) && (
+            <LoadMoreTrigger ref={loadMoreRef}>
+              <Loading size={30} />
+            </LoadMoreTrigger>
+          )}
         </ContentContainer>
       )}
     </SectionContainer>

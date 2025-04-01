@@ -3,43 +3,32 @@ import styled from 'styled-components';
 import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
 import Chip from '@/components/common/Chip';
-import locationOptions from '@/utils/constants/LocationOptions';
 import categoryOptions from '@/utils/constants/CategoryOptions';
 import useGetDropdownName from '@/api/hooks/useGetDropdownName';
 import useTouchDrag from '@/hooks/Map/useTouchDrag';
 import useMapState from '@/hooks/Map/useMapState';
 import DropdownFilterBar, { FilterBarItem } from '@/components/Map/\bDropdownFilterBar';
-import useIsMobile from '@/hooks/useIsMobile';
 import MapSearchBar from '@/components/Map/MapSearchBar';
 import useClickOutside from '@/hooks/useClickOutside';
-
-type SelectedOption = {
-  main: string;
-  sub?: string;
-  lat?: number;
-  lng?: number;
-};
 
 export default function MapPage() {
   const { data: influencerOptions } = useGetDropdownName();
   const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>([]);
-  const [selectedLocations, setSelectedLocations] = useState<SelectedOption[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
   const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isChangedLocation, setIsChangedLocation] = useState<{ lat: number; lng: number } | null>(null);
   const filterRef = useRef<HTMLDivElement | null>(null);
-  const isMobile = useIsMobile();
   const {
     center,
     setCenter,
+    setMapBounds,
     mapBounds,
     isListExpanded,
     selectedPlaceId,
     placeData,
     setIsListExpanded,
-    handleBoundsChange,
-    handleCenterChange,
     handlePlaceSelect,
     handleGetPlaceData,
   } = useMapState();
@@ -54,45 +43,18 @@ export default function MapPage() {
     () => ({
       categories: selectedCategories,
       influencers: selectedInfluencers,
-      location: selectedLocations,
-      regions: selectedLocations.map((loc) => (loc.sub ? `${loc.main}-${loc.sub}` : loc.main)),
     }),
-    [selectedCategories, selectedInfluencers, selectedLocations],
+    [selectedCategories, selectedInfluencers],
   );
 
   const filtersWithPlaceName = useMemo(
     () => ({
       categories: selectedCategories,
       influencers: selectedInfluencers,
-      location: selectedLocations,
       placeName: selectedPlaceName,
-      regions: selectedLocations.map((loc) => (loc.sub ? `${loc.main}-${loc.sub}` : loc.main)),
     }),
-    [selectedCategories, selectedInfluencers, selectedLocations, selectedPlaceName],
+    [selectedCategories, selectedInfluencers, selectedPlaceName],
   );
-
-  const handleLocationChange = useCallback((value: SelectedOption) => {
-    setSelectedLocations((prev) => {
-      // 중복 생성 방지
-      const isDuplicate = prev.some((loc) => loc.main === value.main && loc.sub === value.sub);
-      if (isDuplicate) return prev;
-
-      if (value.sub === '전체' || !value.sub) {
-        const hasAll = prev.some((loc) => loc.main === value.main && loc.sub === '전체');
-        if (hasAll) return prev;
-        return [...prev, value];
-      }
-
-      if (value.sub) {
-        return [...prev, value];
-      }
-      return prev;
-    });
-
-    if (value.lat && value.lng) {
-      setIsChangedLocation({ lat: value.lat, lng: value.lng });
-    }
-  }, []);
 
   const handleInfluencerChange = useCallback((value: { main: string }) => {
     setSelectedInfluencers((prev) => {
@@ -107,12 +69,6 @@ export default function MapPage() {
       if (prev.includes(value.main)) return prev;
       return [...prev, value.main];
     });
-  }, []);
-
-  const handleLocationClear = useCallback((locationToRemove: SelectedOption) => {
-    setSelectedLocations((prev) =>
-      prev.filter((location) => !(location.main === locationToRemove.main && location.sub === locationToRemove.sub)),
-    );
   }, []);
 
   const handleInfluencerClear = useCallback((influencerToRemove: string) => {
@@ -134,26 +90,11 @@ export default function MapPage() {
   const dropdownItems: FilterBarItem[] = [
     {
       type: 'dropdown',
-      id: 'location',
-      props: {
-        options: locationOptions,
-        multiLevel: true,
-        onChange: handleLocationChange,
-        isMobileOpen: !!isMobile,
-        placeholder: '지역',
-        type: 'location',
-        width: 90,
-        selectedOptions: selectedLocations,
-      },
-    },
-    { type: 'separator', id: 'sep1' },
-    {
-      type: 'dropdown',
       id: 'influencer',
       props: {
         options: influencerOptions,
         onChange: handleInfluencerChange,
-        isMobileOpen: false,
+        isMobileOpen: true,
         placeholder: '인플루언서',
         type: 'influencer',
         width: 140,
@@ -184,7 +125,7 @@ export default function MapPage() {
             <FilterButtonContainer aria-label="filterbar_btn" onClick={() => setIsFilterBarOpened((prev) => !prev)}>
               필터
             </FilterButtonContainer>
-            <MapSearchBar setCenter={setCenter} setSelectedPlaceName={setSelectedPlaceName} />
+            <MapSearchBar setIsChangedLocation={setIsChangedLocation} setSelectedPlaceName={setSelectedPlaceName} />
           </MobileFilterContainer>
           <DesktopDropdownSection>
             <DropdownFilterBar items={dropdownItems} />
@@ -192,17 +133,15 @@ export default function MapPage() {
         </FilterContainer>
 
         <Chip
-          selectedLocations={selectedLocations}
           selectedInfluencers={selectedInfluencers}
           selectedCategories={selectedCategories}
-          onClearLocation={handleLocationClear}
           onClearInfluencer={handleInfluencerClear}
           onClearCategory={handleCategoryClear}
         />
       </Wrapper>
       {isFilterBarOpened && (
         <>
-          <Background isVisible={isFilterBarOpened} onClick={() => setIsFilterBarOpened(false)} />
+          <Background onClick={() => setIsFilterBarOpened(false)} />
           <MobileDropdownSection ref={filterRef}>
             <CloseBtn onClick={() => setIsFilterBarOpened(false)}>X</CloseBtn>
             <DropdownFilterBar items={dropdownItems} />
@@ -211,24 +150,27 @@ export default function MapPage() {
       )}
       <MapWindow
         center={center}
-        onBoundsChange={handleBoundsChange}
-        onCenterChange={handleCenterChange}
+        setCenter={setCenter}
+        setMapBounds={setMapBounds}
+        mapBounds={mapBounds}
+        isInitialLoad={isInitialLoad}
+        setIsInitialLoad={setIsInitialLoad}
         filters={filters}
         filtersWithPlaceName={filtersWithPlaceName}
         placeData={placeData}
         selectedPlaceId={selectedPlaceId}
         isChangedLocation={isChangedLocation}
-        setIsChangedLocation={setIsChangedLocation}
         onPlaceSelect={handlePlaceSelect}
         isListExpanded={isListExpanded}
         onListExpand={handleListExpand}
       />
       <PlaceSectionDesktop>
         <PlaceSection
+          center={center}
           mapBounds={mapBounds}
           filters={filters}
+          isInitialLoad={isInitialLoad}
           filtersWithPlaceName={filtersWithPlaceName}
-          center={center}
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
@@ -248,6 +190,7 @@ export default function MapPage() {
           filters={filters}
           filtersWithPlaceName={filtersWithPlaceName}
           center={center}
+          isInitialLoad={isInitialLoad}
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
@@ -420,7 +363,7 @@ const CloseBtn = styled.button`
   }
 `;
 
-const Background = styled.div<{ isVisible: boolean }>`
+const Background = styled.div`
   display: none;
 
   @media screen and (max-width: 768px) {
