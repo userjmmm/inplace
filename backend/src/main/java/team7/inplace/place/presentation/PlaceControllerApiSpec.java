@@ -43,7 +43,7 @@ public interface PlaceControllerApiSpec {
         @ModelAttribute PlaceRequest.Filter filterParams
     );
 
-    @Operation(summary = "모든 장소 위치 조회(장소 이름으록 검색했을 때", description = "장소 이름으로 검색한 모든 장소 목록을 조회합니다.")
+    @Operation(summary = "모든 장소 위치 조회(장소 이름으로 검색했을 때", description = "장소 이름으로 검색한 모든 장소 목록을 조회합니다.")
     ResponseEntity<List<Location>> getPlaceLocationsByName(
         @RequestParam String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams
