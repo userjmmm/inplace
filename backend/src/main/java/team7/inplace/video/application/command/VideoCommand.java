@@ -3,8 +3,10 @@ package team7.inplace.video.application.command;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import lombok.extern.slf4j.Slf4j;
 import team7.inplace.video.domain.Video;
 
+@Slf4j
 public class VideoCommand {
 
     public record Create(
@@ -15,12 +17,17 @@ public class VideoCommand {
     ) {
 
         public static Create from(JsonNode videoItem, Long influencerId) {
-            String videoId = videoItem.get("id").get("videoId").asText();
-            String videoTitle = videoItem.get("snippet").get("title").asText();
-            String publishedAt = videoItem.get("snippet").get("publishedAt").asText();
-            LocalDateTime createdAt = LocalDateTime.parse(publishedAt,
-                DateTimeFormatter.ISO_DATE_TIME);
-            return new Create(videoId, videoTitle, createdAt, influencerId);
+            try {
+                String videoId = videoItem.get("id").get("videoId").asText();
+                String videoTitle = videoItem.get("snippet").get("title").asText();
+                String publishedAt = videoItem.get("snippet").get("publishedAt").asText();
+                LocalDateTime createdAt = LocalDateTime.parse(publishedAt,
+                    DateTimeFormatter.ISO_DATE_TIME);
+                return new Create(videoId, videoTitle, createdAt, influencerId);
+            } catch (Exception e) {
+                log.error("비디오 크롤링 커맨드생성 에러 , VideoItem : {}, 에러 {}", videoItem, e.getMessage());
+            }
+            return null;
         }
 
         public Video toEntity() {
