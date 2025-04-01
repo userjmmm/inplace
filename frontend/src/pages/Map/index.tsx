@@ -7,7 +7,7 @@ import categoryOptions from '@/utils/constants/CategoryOptions';
 import useGetDropdownName from '@/api/hooks/useGetDropdownName';
 import useTouchDrag from '@/hooks/Map/useTouchDrag';
 import useMapState from '@/hooks/Map/useMapState';
-import DropdownFilterBar, { FilterBarItem } from '@/components/Map/\bDropdownFilterBar';
+import DropdownFilterBar, { FilterBarItem } from '@/components/Map/DropdownFilterBar';
 import MapSearchBar from '@/components/Map/MapSearchBar';
 import useClickOutside from '@/hooks/useClickOutside';
 
