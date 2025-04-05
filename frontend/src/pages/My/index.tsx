@@ -129,7 +129,7 @@ export default function MyPage() {
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 80px;
+  gap: 60px;
   padding: 30px 0px 60px;
 
   @media screen and (max-width: 768px) {

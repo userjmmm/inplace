@@ -4,12 +4,28 @@ import { FaChevronRight } from 'react-icons/fa6';
 import VisitPlace from '@/assets/images/visit-place.png';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import useIsMobile from '@/hooks/useIsMobile';
+import { useABTest } from '@/provider/ABTest';
+import { sendGAEvent } from '@/utils/test/googleTestUtils';
 
-export default function MapSection() {
+interface MapSectionProps {
+  mainText?: string;
+  highlightText?: string;
+}
+
+export default function MapSection({ highlightText, mainText }: MapSectionProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const testGroup = useABTest('map_ui_test');
+  const highlight = highlightText || '';
+  const paragraph = mainText || '인플루언서가 방문한 장소는 어디일까요?';
 
   const handleConfirmClick = () => {
+    sendGAEvent('map_navigation_click_main', {
+      test_name: 'map_ui_test',
+      variation: testGroup,
+      from_path: window.location.pathname,
+      to_path: '/map',
+    });
     navigate('/map');
   };
 
@@ -25,7 +41,7 @@ export default function MapSection() {
                 width: '100%',
               }}
             >
-              <HighlightText>내 주변</HighlightText> 인플루언서가 방문한 장소는 어디일까요?
+              <HighlightText>{highlight}</HighlightText> {paragraph}
             </span>
           </Paragraph>
           <IconContainer>
@@ -80,7 +96,7 @@ const TextSection = styled.div`
 `;
 
 const HighlightText = styled.span`
-  color: #35b1c1;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#55EBFF' : '#35b1c1')};
   font-weight: bold;
 `;
 
