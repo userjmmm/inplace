@@ -6,8 +6,8 @@ import { AxiosError } from 'axios';
 import { AuthContext } from '@/provider/Auth';
 import { PlaceInfo, SpotData } from '@/types';
 import ErrorComponent from '@/components/common/layouts/Error';
-import ABTestProvider from '@/provider/ABTest';
 import { BASE_URL } from '@/api/instance';
+import ABTestProvider from '@/provider/ABTest';
 
 export function renderWithQueryClient(children: React.ReactNode) {
   const queryClient = new QueryClient({
@@ -70,12 +70,7 @@ export async function testErrorBoundaryBehavior({
 
   fireEvent.click(screen.getByText('다시 시도하기'));
 
-  await waitFor(
-    () => {
-      expect(screen.queryByText(/서버 오류 발생/)).not.toBeInTheDocument();
-    },
-    {
-      timeout: 5000,
-    },
-  );
+  await waitFor(() => {
+    expect(screen.queryByText(/서버 오류 발생/)).not.toBeInTheDocument();
+  });
 }
