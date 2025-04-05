@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -13,7 +13,7 @@ export function renderWithQueryClient(children: React.ReactNode) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        retry: 1,
+        retry: false,
         staleTime: 0,
       },
     },
@@ -69,4 +69,6 @@ export async function testErrorBoundaryBehavior({
   mockFunction.mockReturnValueOnce(mockSuccessData);
 
   fireEvent.click(screen.getByText('다시 시도하기'));
+
+  await waitForElementToBeRemoved(() => screen.queryByText(/서버 오류 발생/));
 }
