@@ -27,7 +27,7 @@ export function renderWithQueryClient(children: React.ReactNode) {
       }}
     >
       <MemoryRouter future={{ v7_relativeSplatPath: true }}>
-        <ABTestProvider>
+        <ABTestProvider forceGroup="B">
           <ErrorBoundary FallbackComponent={ErrorComponent}>
             <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
           </ErrorBoundary>

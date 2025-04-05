@@ -12,12 +12,14 @@ interface ABTestProviderProps {
   children: ReactNode;
   testDuration?: number;
   testNames?: string[];
+  forceGroup?: ABTestGroup; // 추가된 prop
 }
 
 export default function ABTestProvider({
   children,
   testDuration = 30,
   testNames = ['map_ui_test'],
+  forceGroup, // 추가된 prop
 }: ABTestProviderProps) {
   const [testGroups, setTestGroups] = useState<Record<string, ABTestGroup>>({});
   const [initialized, setInitialized] = useState(false);
@@ -30,20 +32,27 @@ export default function ABTestProvider({
 
     testNames.forEach((testName) => {
       const cookieName = `ab_test_${testName}`;
-      const savedGroup = getCookie(cookieName);
 
-      if (savedGroup === 'A' || savedGroup === 'B') {
-        initializedGroups[testName] = savedGroup as ABTestGroup;
+      // forceGroup이 'B'로 지정된 경우, 무조건 'B' 할당 및 쿠키 설정
+      if (forceGroup === 'B') {
+        initializedGroups[testName] = 'B';
+        setCookie(cookieName, 'B', testDuration);
       } else {
-        const newGroup: ABTestGroup = Math.random() < 0.5 ? 'A' : 'B';
-        initializedGroups[testName] = newGroup;
-        setCookie(cookieName, newGroup, testDuration);
+        const savedGroup = getCookie(cookieName);
+
+        if (savedGroup === 'A' || savedGroup === 'B') {
+          initializedGroups[testName] = savedGroup as ABTestGroup;
+        } else {
+          const newGroup: ABTestGroup = Math.random() < 0.5 ? 'A' : 'B';
+          initializedGroups[testName] = newGroup;
+          setCookie(cookieName, newGroup, testDuration);
+        }
       }
     });
 
     setTestGroups(initializedGroups);
     setInitialized(true);
-  }, [testNames, testDuration, initialized]);
+  }, [testNames, testDuration, initialized, forceGroup]); // forceGroup을 의존성 배열에 추가
 
   // 초기화 끝나고 테스트 그룹이 설정되면 1번만 GA 이벤트 전송
   useEffect(() => {
