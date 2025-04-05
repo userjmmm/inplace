@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -70,5 +70,7 @@ export async function testErrorBoundaryBehavior({
 
   fireEvent.click(screen.getByText('다시 시도하기'));
 
-  await waitForElementToBeRemoved(() => screen.queryByText(/서버 오류 발생/));
+  await waitFor(() => {
+    expect(screen.queryByText(/서버 오류 발생/)).not.toBeInTheDocument();
+  });
 }
