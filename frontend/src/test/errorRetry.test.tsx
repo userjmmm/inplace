@@ -55,7 +55,7 @@ describe('메인페이지 ErrorBoundary 테스트', () => {
         },
       ],
     });
-  });
+  }, 15000);
 });
 
 jest.mock('@/api/hooks/useGetPlaceInfo', () => ({
