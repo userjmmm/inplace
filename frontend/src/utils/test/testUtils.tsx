@@ -6,7 +6,6 @@ import { AxiosError } from 'axios';
 import { AuthContext } from '@/provider/Auth';
 import { PlaceInfo, SpotData } from '@/types';
 import ErrorComponent from '@/components/common/layouts/Error';
-import { BASE_URL } from '@/api/instance';
 import ABTestProvider from '@/provider/ABTest';
 
 export function renderWithQueryClient(children: React.ReactNode) {
@@ -55,7 +54,7 @@ export async function testErrorBoundaryBehavior({
       config: {
         headers: {},
         method: 'GET',
-        url: `${BASE_URL}/videos/cool`,
+        url: '/api/test',
       } as never,
       data: { message: 'Internal Server Error' },
     };
