@@ -34,9 +34,9 @@ export default function ABTestProvider({
       const cookieName = `ab_test_${testName}`;
 
       // forceGroup이 'B'로 지정된 경우, 무조건 'B' 할당 및 쿠키 설정
-      if (forceGroup === 'B') {
-        initializedGroups[testName] = 'B';
-        setCookie(cookieName, 'B', testDuration);
+      if (forceGroup === 'A') {
+        initializedGroups[testName] = 'A';
+        setCookie(cookieName, 'A', testDuration);
       } else {
         const savedGroup = getCookie(cookieName);
 
