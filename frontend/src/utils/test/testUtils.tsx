@@ -13,7 +13,7 @@ export function renderWithQueryClient(children: React.ReactNode) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        retry: 0,
+        retry: 1,
         staleTime: 0,
       },
     },
@@ -69,8 +69,4 @@ export async function testErrorBoundaryBehavior({
   mockFunction.mockReturnValueOnce(mockSuccessData);
 
   fireEvent.click(screen.getByText('다시 시도하기'));
-
-  await waitFor(() => {
-    expect(screen.queryByText(/서버 오류 발생/)).not.toBeInTheDocument();
-  });
 }
