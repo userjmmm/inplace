@@ -255,20 +255,20 @@ public class PlacesResponse {
         }
     }
 
-    public record Location(
+    public record Marker(
         Long placeId,
         Double longitude,
         Double latitude
     ) {
 
-        public static List<Location> from(List<PlaceQueryResult.Marker> markers) {
+        public static List<Marker> from(List<PlaceQueryResult.Marker> markers) {
             return markers.stream()
-                .map(PlacesResponse.Location::from)
+                .map(Marker::from)
                 .toList();
         }
 
-        private static Location from(PlaceQueryResult.Marker marker) {
-            return new Location(
+        private static Marker from(PlaceQueryResult.Marker marker) {
+            return new Marker(
                 marker.placeId(),
                 marker.longitude(),
                 marker.latitude()
@@ -276,7 +276,7 @@ public class PlacesResponse {
         }
     }
 
-    public record Marker(
+    public record MarkerDetail(
         Long placeId,
         String placeName,
         String category,
@@ -285,8 +285,8 @@ public class PlacesResponse {
         List<Video> videos
     ) {
 
-        public static Marker from(PlaceInfo.Marker marker) {
-            return new Marker(
+        public static MarkerDetail from(PlaceInfo.Marker marker) {
+            return new MarkerDetail(
                 marker.place().placeId(),
                 marker.place().placeName(),
                 marker.place().category().getName(),
