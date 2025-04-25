@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import team7.inplace.user.presentation.dto.UserRequest;
 import team7.inplace.user.presentation.dto.UserResponse;
 
-public interface UserControllerApiSepc {
+public interface UserControllerApiSpec {
 
     @Operation(
         summary = "유저 닉네임 변경",

@@ -21,7 +21,7 @@ import team7.inplace.user.presentation.dto.UserResponse;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @PreAuthorize("isAuthenticated()")
-public class UserController implements UserControllerApiSepc {
+public class UserController implements UserControllerApiSpec {
 
     public final UserFacade userFacade;
 
