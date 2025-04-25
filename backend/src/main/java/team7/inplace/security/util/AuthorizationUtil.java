@@ -12,18 +12,14 @@ import team7.inplace.security.application.dto.CustomOAuth2User;
 public class AuthorizationUtil {
 
     public static String getUsername() {
-        if (isNotLoginUser()) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
+        checkLoginUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         return customOAuth2User.getName();
     }
 
     public static Long getUserId() {
-        if (isNotLoginUser()) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
+        checkLoginUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         return customOAuth2User.id();
