@@ -23,12 +23,12 @@ import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.SimplePlace;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_DetailedPlace;
-import team7.inplace.place.persistence.dto.QPlaceQueryResult_Location;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_Marker;
+import team7.inplace.place.persistence.dto.QPlaceQueryResult_MarkerDetail;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_SimplePlace;
 import team7.inplace.video.domain.QVideo;
 
@@ -152,7 +152,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     @Override
-    public List<PlaceQueryResult.Location> findPlaceLocationsInMapRange(
+    public List<Marker> findPlaceLocationsInMapRange(
         Double topLeftLongitude,
         Double topLeftLatitude,
         Double bottomRightLongitude,
@@ -184,7 +184,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             ).fetch();
 
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_Location(
+            .select(new QPlaceQueryResult_Marker(
                     QPlace.place.id,
                     QPlace.place.coordinate.longitude,
                     QPlace.place.coordinate.latitude
@@ -317,9 +317,9 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     @Override
-    public Marker findPlaceMarkerById(Long placeId) {
+    public MarkerDetail findPlaceMarkerById(Long placeId) {
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_Marker(
+            .select(new QPlaceQueryResult_MarkerDetail(
                 QPlace.place.id,
                 QPlace.place.name,
                 QPlace.place.category,
@@ -333,7 +333,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     @Override
-    public List<Location> findPlaceLocationsByName(
+    public List<Marker> findPlaceLocationsByName(
         String name,
         List<RegionParam> regionParams,
         List<Category> categoryFilters,
@@ -359,7 +359,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             ).fetch();
 
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_Location(
+            .select(new QPlaceQueryResult_Marker(
                     QPlace.place.id,
                     QPlace.place.coordinate.longitude,
                     QPlace.place.coordinate.latitude

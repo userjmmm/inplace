@@ -3,7 +3,6 @@ package team7.inplace.place.presentation.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -148,11 +147,11 @@ public class PlacesResponse {
                 place.googlePlace().googleMapsUri(),
                 "https://map.naver.com/p/search/"
                     + convertParamsForNaverSearch(
-                        place.place().address1(),
-                        place.place().address2(),
-                        place.place().address3(),
-                        place.place().placeName()
-                    ),
+                    place.place().address1(),
+                    place.place().address2(),
+                    place.place().address3(),
+                    place.place().placeName()
+                ),
                 place.googlePlace().regularOpeningHours()
                     .map(RegularOpeningHours::weekdayDescriptions)
                     .orElse(List.of()),
@@ -262,17 +261,17 @@ public class PlacesResponse {
         Double latitude
     ) {
 
-        public static List<Location> from(List<PlaceQueryResult.Location> locations) {
-            return locations.stream()
+        public static List<Location> from(List<PlaceQueryResult.Marker> markers) {
+            return markers.stream()
                 .map(PlacesResponse.Location::from)
                 .toList();
         }
 
-        private static Location from(PlaceQueryResult.Location location) {
+        private static Location from(PlaceQueryResult.Marker marker) {
             return new Location(
-                location.placeId(),
-                location.longitude(),
-                location.latitude()
+                marker.placeId(),
+                marker.longitude(),
+                marker.latitude()
             );
         }
     }

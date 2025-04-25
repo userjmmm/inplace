@@ -41,18 +41,18 @@ public class PlaceQueryResult {
         }
     }
 
-    public record Location(
+    public record Marker(
         Long placeId,
         Double longitude,
         Double latitude
     ) {
 
         @QueryProjection
-        public Location {
+        public Marker {
         }
     }
 
-    public record Marker(
+    public record MarkerDetail(
         Long placeId,
         String placeName,
         Category category,
@@ -62,7 +62,7 @@ public class PlaceQueryResult {
     ) {
 
         @QueryProjection
-        public Marker {
+        public MarkerDetail {
         }
     }
 }

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.place.application.PlaceFacade;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlaceRequest.Create;
 import team7.inplace.place.presentation.dto.PlacesResponse;
@@ -92,13 +92,13 @@ public class PlaceController implements PlaceControllerApiSpec {
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
         @ModelAttribute PlaceRequest.Filter filterParams
     ) {
-        List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocations(
+        List<Marker> placeMarkerInfos = placeFacade.getPlaceLocations(
             coordinateParams.toCommand(),
             filterParams.toCommand()
         );
 
         return new ResponseEntity<>(
-            PlacesResponse.Location.from(placeLocationInfos),
+            PlacesResponse.Location.from(placeMarkerInfos),
             HttpStatus.OK
         );
     }
@@ -109,13 +109,13 @@ public class PlaceController implements PlaceControllerApiSpec {
         @RequestParam(required = true) String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams
     ) {
-        List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocationsByName(
+        List<Marker> placeMarkerInfos = placeFacade.getPlaceLocationsByName(
             placeName,
             filterParams.toCommand()
         );
 
         return new ResponseEntity<>(
-            PlacesResponse.Location.from(placeLocationInfos),
+            PlacesResponse.Location.from(placeMarkerInfos),
             HttpStatus.OK
         );
     }
