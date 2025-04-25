@@ -7,8 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.annotation.Facade;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.place.application.command.PlacesCommand;
@@ -56,10 +54,6 @@ public class VideoFacade {
 
     @Transactional(readOnly = true)
     public List<VideoQueryResult.SimpleVideo> getMyInfluencerVideos() {
-        // 토큰 정보에 대한 검증
-        if (AuthorizationUtil.isNotLoginUser()) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
         // User 정보를 쿠키에서 추출
         Long userId = AuthorizationUtil.getUserId();
         // 인플루언서 id를 사용하여 영상을 조회
