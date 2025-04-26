@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import team7.inplace.global.annotation.Facade;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
@@ -45,7 +47,9 @@ public class PlaceFacade {
     }
 
     public PlaceInfo.Detail getDetailedPlaces(Long placeId) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
+        log.info("getDetailedPlaces: userId = {}", userId);
         var googlePlaceId = placeService.getGooglePlaceId(placeId);
         if (googlePlaceId.isEmpty()) {
             var placeInfo = placeService.getPlaceInfo(userId, placeId);
@@ -77,7 +81,8 @@ public class PlaceFacade {
         FilterParams filterParamsCommand,
         Pageable pageable
     ) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
 
         var placeSimpleInfos = placeService.getPlacesInMapRange(
             userId,
@@ -95,7 +100,8 @@ public class PlaceFacade {
     }
 
     public void updateLikedPlace(PlaceLikeCommand placeLikeCommand) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
         placeService.updateLikedPlace(userId, placeLikeCommand);
     }
 
@@ -108,7 +114,8 @@ public class PlaceFacade {
     }
 
     public Page<Simple> getPlacesByName(String name, FilterParams command, Pageable pageable) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
 
         var placeSimpleInfos = placeService.getPlacesByName(userId, name, command, pageable);
         var placeIds = placeSimpleInfos.getContent()
