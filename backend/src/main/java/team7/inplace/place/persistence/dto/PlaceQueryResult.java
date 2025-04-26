@@ -16,15 +16,12 @@ public class PlaceQueryResult {
         Category category,
         String googlePlaceId,
         Long kakaoPlaceId,
+        Long likeCount,
         Boolean isLiked
     ) {
 
         @QueryProjection
         public DetailedPlace {
-        }
-
-        public boolean haveNoGooglePlaceId() {
-            return googlePlaceId == null;
         }
     }
 
