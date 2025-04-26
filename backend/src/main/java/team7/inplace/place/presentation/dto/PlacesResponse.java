@@ -26,6 +26,7 @@ public class PlacesResponse {
         String menuImgUrl,
         String longitude,
         String latitude,
+        Long likeCount,
         Boolean likes,
         List<PlacesResponse.Video> videos
     ) {
@@ -49,6 +50,7 @@ public class PlacesResponse {
                 "",
                 placeInfo.place().longitude().toString(),
                 placeInfo.place().latitude().toString(),
+                placeInfo.place().likeCount(),
                 placeInfo.place().isLiked(),
                 placeInfo.video().stream()
                     .map(PlacesResponse.Video::from)
@@ -72,7 +74,8 @@ public class PlacesResponse {
         String googlePlaceUrl,
         String naverPlaceUrl,
         List<String> openingHours,
-        PlacesResponse.PlaceLike placeLikes,
+        ReviewLike reviewLikes,
+        Long likeCount,
         Boolean likes
     ) {
 
@@ -113,7 +116,8 @@ public class PlacesResponse {
                     place.place().placeName()
                 ),
                 List.of(),
-                PlacesResponse.PlaceLike.from(place.reviewLikeRate()),
+                ReviewLike.from(place.reviewLikeRate()),
+                place.place().likeCount(),
                 place.place().isLiked()
             );
         }
@@ -155,7 +159,8 @@ public class PlacesResponse {
                 place.googlePlace().regularOpeningHours()
                     .map(RegularOpeningHours::weekdayDescriptions)
                     .orElse(List.of()),
-                PlacesResponse.PlaceLike.from(place.reviewLikeRate()),
+                ReviewLike.from(place.reviewLikeRate()),
+                place.place().likeCount(),
                 place.place().isLiked()
             );
         }
@@ -235,13 +240,13 @@ public class PlacesResponse {
 
     }
 
-    public record PlaceLike(
+    public record ReviewLike(
         Long like,
         Long dislike
     ) {
 
-        public static PlacesResponse.PlaceLike from(ReviewQueryResult.LikeRate placeLike) {
-            return new PlacesResponse.PlaceLike(placeLike.likes(), placeLike.dislikes());
+        public static ReviewLike from(ReviewQueryResult.LikeRate placeLike) {
+            return new ReviewLike(placeLike.likes(), placeLike.dislikes());
         }
     }
 
