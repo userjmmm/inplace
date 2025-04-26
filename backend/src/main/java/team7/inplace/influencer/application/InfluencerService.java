@@ -169,7 +169,7 @@ public class InfluencerService {
     @Transactional(readOnly = true)
     public Detail getInfluencerDetail(Long influencerId) {
         Long userId = AuthorizationUtil.getUserId()
-            .orElseGet(null);
+            .orElseGet(() -> null);
 
         return influencerReadRepositoryImpl.getInfluencerDetail(influencerId, userId)
             .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));
