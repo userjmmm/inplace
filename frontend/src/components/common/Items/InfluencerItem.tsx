@@ -131,14 +131,8 @@ const ImageContainer = styled.div`
   overflow: hidden;
   margin-bottom: 4px;
 
-  &:hover {
-    & > div:nth-child(2) {
-      opacity: 0;
-    }
-
-    & > div:last-child {
-      opacity: 1;
-    }
+  &:hover img {
+    transform: scale(1.06);
   }
 
   @media screen and (max-width: 768px) {
