@@ -49,7 +49,6 @@ public class PlaceFacade {
     public PlaceInfo.Detail getDetailedPlaces(Long placeId) {
         var userId = AuthorizationUtil.getUserId()
             .orElseGet(() -> null);
-        log.info("getDetailedPlaces: userId = {}", userId);
         var googlePlaceId = placeService.getGooglePlaceId(placeId);
         if (googlePlaceId.isEmpty()) {
             var placeInfo = placeService.getPlaceInfo(userId, placeId);
