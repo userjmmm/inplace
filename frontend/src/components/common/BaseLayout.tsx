@@ -58,7 +58,7 @@ export default function BaseLayout({
           />
         );
       }
-      return <InfluencerList items={items as InfluencerData[]} useBackCard={false} />;
+      return <InfluencerList items={items as InfluencerData[]} />;
     }
     if (type === 'influencer') {
       return <InfluencerSection items={items as InfluencerData[]} />;
