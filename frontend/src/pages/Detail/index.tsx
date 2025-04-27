@@ -151,7 +151,7 @@ export default function DetailPage() {
               aria-label="youtube_btn"
               variant="outline"
               onClick={() => {
-                window.location.href = currentVideoUrl;
+                window.open(currentVideoUrl, '_blank');
               }}
             >
               <FaYoutube size={24} color="red" />

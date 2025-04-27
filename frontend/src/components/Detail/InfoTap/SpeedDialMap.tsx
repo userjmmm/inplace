@@ -44,7 +44,7 @@ export default function SpeedDialMap({
           aria-label="kakao_btn"
           variant="white"
           onClick={() => {
-            window.location.href = kakaoPlaceUrl;
+            window.open(kakaoPlaceUrl, '_blank');
           }}
           data-tooltip="카카오맵"
         >
@@ -55,7 +55,7 @@ export default function SpeedDialMap({
           aria-label="naver_btn"
           variant="white"
           onClick={() => {
-            window.location.href = naverPlaceUrl;
+            window.open(naverPlaceUrl, '_blank');
           }}
           data-tooltip="네이버맵"
         >
@@ -67,7 +67,7 @@ export default function SpeedDialMap({
             aria-label="google_btn"
             variant="white"
             onClick={() => {
-              window.location.href = googlePlaceUrl;
+              window.open(googlePlaceUrl, '_blank');
             }}
             data-tooltip="구글맵"
           >
