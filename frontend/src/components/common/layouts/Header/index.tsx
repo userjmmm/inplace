@@ -63,7 +63,7 @@ export default function Header() {
               </>
             ) : (
               <>
-                <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼">
+                <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼" $isDarkMode={isDarkMode}>
                   {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
                 </ThemeButton>
                 <MobileMenuButton onClick={() => setIsMenuOpen(false)} aria-label="메뉴 닫기">
@@ -135,7 +135,7 @@ const MobileMenuButton = styled.button`
   padding: 0;
 `;
 
-const ThemeButton = styled.button`
+const ThemeButton = styled.button<{ $isDarkMode: boolean }>`
   background: none;
   border: none;
   cursor: pointer;
@@ -146,7 +146,7 @@ const ThemeButton = styled.button`
   transition: transform 0.3s ease;
 
   &:hover {
-    transform: rotate(30deg);
+    transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
   }
 
   @media screen and (max-width: 768px) {
