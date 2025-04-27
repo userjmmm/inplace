@@ -163,6 +163,20 @@ const SpeedDialItems = styled.div<{ isOpen: boolean }>`
   & > *:nth-child(4) {
     transform: ${(props) => (props.isOpen ? 'translateY(480%)' : 'translateY(0)')};
   }
+
+  @media screen and (max-width: 768px) {
+    & > *:nth-child(1) {
+      transform: ${(props) => (props.isOpen ? 'translateY(-190%)' : 'translateY(0)')};
+    }
+
+    & > *:nth-child(2) {
+      transform: ${(props) => (props.isOpen ? 'translateY(-320%)' : 'translateY(0)')};
+    }
+
+    & > *:nth-child(3) {
+      transform: ${(props) => (props.isOpen ? 'translateY(-450%)' : 'translateY(0)')};
+    }
+  }
 `;
 
 const SpeedDialItem = styled(Button)`
