@@ -17,10 +17,8 @@ import team7.inplace.liked.likedInfluencer.domain.QLikedInfluencer;
 import team7.inplace.liked.likedPlace.domain.QLikedPlace;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.video.domain.QVideo;
-import team7.inplace.video.persistence.dto.QVideoQueryResult_DetailedVideo;
 import team7.inplace.video.persistence.dto.QVideoQueryResult_SimpleVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
-import team7.inplace.video.persistence.dto.VideoQueryResult.DetailedVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
 
 @Repository
@@ -31,7 +29,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<VideoQueryResult.DetailedVideo> findSimpleVideosInSurround(
+    public Page<VideoQueryResult.SimpleVideo> findSimpleVideosInSurround(
         Double topLeftLongitude, Double topLeftLatitude,
         Double bottomRightLongitude, Double bottomRightLatitude,
         Double longitude, Double latitude,
@@ -52,16 +50,13 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
 
         // 페이징된 결과 조회
         var content = queryFactory
-            .select(new QVideoQueryResult_DetailedVideo(
+            .select(new QVideoQueryResult_SimpleVideo(
                 QVideo.video.id,
                 QVideo.video.uuid,
                 QInfluencer.influencer.name,
                 QPlace.place.id,
                 QPlace.place.name,
-                QPlace.place.category,
-                QPlace.place.address.address1,
-                QPlace.place.address.address2,
-                QPlace.place.address.address3
+                QPlace.place.category
             ))
             .from(QVideo.video)
             .join(QPlace.place).on(QVideo.video.placeId.eq(QPlace.place.id))
@@ -83,18 +78,15 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     }
 
     @Override
-    public List<DetailedVideo> findTop10ByViewCountIncrement() {
+    public List<SimpleVideo> findTop10ByViewCountIncrement() {
         var top10Videos = queryFactory
-            .select(new QVideoQueryResult_DetailedVideo(
+            .select(new QVideoQueryResult_SimpleVideo(
                 QVideo.video.id,
                 QVideo.video.uuid,
                 QInfluencer.influencer.name,
                 QPlace.place.id,
                 QPlace.place.name,
-                QPlace.place.category,
-                QPlace.place.address.address1,
-                QPlace.place.address.address2,
-                QPlace.place.address.address3
+                QPlace.place.category
             ))
             .from(QVideo.video)
             .join(QPlace.place).on(QVideo.video.placeId.eq(QPlace.place.id))
@@ -113,18 +105,15 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     }
 
     @Override
-    public List<DetailedVideo> findTop10ByLatestUploadDate() {
+    public List<SimpleVideo> findTop10ByLatestUploadDate() {
         var top10Videos = queryFactory
-            .select(new QVideoQueryResult_DetailedVideo(
+            .select(new QVideoQueryResult_SimpleVideo(
                 QVideo.video.id,
                 QVideo.video.uuid,
                 QInfluencer.influencer.name,
                 QPlace.place.id,
                 QPlace.place.name,
-                QPlace.place.category,
-                QPlace.place.address.address1,
-                QPlace.place.address.address2,
-                QPlace.place.address.address3
+                QPlace.place.category
             ))
             .from(QVideo.video)
             .join(QPlace.place).on(QVideo.video.placeId.eq(QPlace.place.id))
@@ -143,18 +132,15 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     }
 
     @Override
-    public List<DetailedVideo> findTop10ByLikedInfluencer(Long userId) {
+    public List<SimpleVideo> findTop10ByLikedInfluencer(Long userId) {
         var top10Videos = queryFactory
-            .select(new QVideoQueryResult_DetailedVideo(
+            .select(new QVideoQueryResult_SimpleVideo(
                 QVideo.video.id,
                 QVideo.video.uuid,
                 QInfluencer.influencer.name,
                 QPlace.place.id,
                 QPlace.place.name,
-                QPlace.place.category,
-                QPlace.place.address.address1,
-                QPlace.place.address.address2,
-                QPlace.place.address.address3
+                QPlace.place.category
             ))
             .from(QVideo.video)
             .join(QPlace.place).on(QVideo.video.placeId.eq(QPlace.place.id))
