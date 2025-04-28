@@ -30,16 +30,17 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
-  // A/B 테스트 그룹에 따라 컴포넌트 결정
   const DesktopNav = testGroup === 'A' ? DesktopNavA : DesktopNavB;
   const AuthButtons = testGroup === 'A' ? AuthButtonsA : AuthButtonsB;
 
   return (
     <HeaderContainer ref={headerRef}>
       <HeaderContentWrapper>
-        <LeftSection>
-          <LogoSection />
-        </LeftSection>
+        {!isMenuOpen && (
+          <LeftSection>
+            <LogoSection />
+          </LeftSection>
+        )}
 
         <DesktopNav />
 
@@ -52,22 +53,22 @@ export default function Header() {
           <MobileOnlyIcons>
             {!isMenuOpen ? (
               <>
-                {testGroup === 'B' && (
-                  <MobileSearchBar>
-                    <SearchBar placeholder="검색하기" />
-                  </MobileSearchBar>
-                )}
+                <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼" $isDarkMode={isDarkMode}>
+                  {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
+                </ThemeButton>
                 <MobileMenuButton onClick={() => setIsMenuOpen(true)} aria-label="메뉴 열기">
                   <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
             ) : (
               <>
-                <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼" $isDarkMode={isDarkMode}>
-                  {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
-                </ThemeButton>
+                {testGroup === 'B' && (
+                  <MobileSearchBar>
+                    <SearchBar placeholder="검색어를 입력해주세요!" />
+                  </MobileSearchBar>
+                )}
                 <MobileMenuButton onClick={() => setIsMenuOpen(false)} aria-label="메뉴 닫기">
-                  <RiCloseLine size={24} color={isDarkMode ? 'white' : 'grey'} />
+                  <RiCloseLine size={26} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
             )}
@@ -104,6 +105,7 @@ const LeftSection = styled.div`
 const RightSection = styled.div`
   display: flex;
   align-items: center;
+  margin-left: auto;
   gap: 26px;
 `;
 const DesktopOnlySearchBar = styled.div`
@@ -113,9 +115,11 @@ const DesktopOnlySearchBar = styled.div`
 `;
 
 const MobileSearchBar = styled.div`
-  width: 140px;
+  width: 160px;
+  margin-right: 18px;
+
   & form {
-    right: 30%;
+    right: 22%;
   }
 `;
 const MobileOnlyIcons = styled.div`
@@ -148,8 +152,7 @@ const ThemeButton = styled.button<{ $isDarkMode: boolean }>`
   &:hover {
     transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
   }
-
   @media screen and (max-width: 768px) {
-    margin-right: 20px;
+    margin-right: 14px;
   }
 `;

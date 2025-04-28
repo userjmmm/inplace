@@ -223,7 +223,7 @@ const SearchBarContainer = styled.div<{ $width: string; $isSearchPage: boolean }
   width: ${({ $width }) => $width};
 
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 100%;
   }
 `;
 
@@ -250,6 +250,18 @@ const SearchForm = styled.form<{ $isOpen: boolean; $isSearchPage: boolean }>`
     to {
       width: calc(100% - 40px);
       opacity: 1;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    @keyframes slideFromRight {
+      from {
+        width: 0;
+        opacity: 0;
+      }
+      to {
+        width: 100%;
+        opacity: 1;
+      }
     }
   }
 `;
@@ -307,11 +319,11 @@ const SearchDropDownBox = styled.ul<{ $isSearchPage: boolean }>`
   list-style-type: none;
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
   box-sizing: border-box;
-  z-index: 10;
+  z-index: 11;
 
   @media screen and (max-width: 768px) {
-    width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : 'calc(100% - 37.1px)')};
-    right: ${({ $isSearchPage }) => ($isSearchPage ? 'auto' : '38px')};
+    width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : '101.9%')};
+    right: ${({ $isSearchPage }) => ($isSearchPage ? 'auto' : '35px')};
   }
 `;
 

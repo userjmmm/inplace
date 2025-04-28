@@ -123,7 +123,7 @@ const Container = styled(motion.nav)<{ $isOpen: boolean }>`
   @media screen and (max-width: 768px) {
     display: flex;
     position: absolute;
-    top: 52px;
+    top: 66px;
     left: 0;
     width: 100%;
     flex-direction: column;
@@ -131,7 +131,7 @@ const Container = styled(motion.nav)<{ $isOpen: boolean }>`
       theme.backgroundColor === '#292929' ? 'rgba(41, 41, 41, 0.9)' : 'rgba(236, 251, 251, 0.9)'};
     padding: 20px 0;
     gap: 20px;
-    z-index: 101;
+    z-index: 10;
     pointer-events: ${({ $isOpen }) => ($isOpen ? 'auto' : 'none')};
   }
 `;
