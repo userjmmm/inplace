@@ -38,6 +38,7 @@ export default function UserPlaceSection({ items = [] }: { items: UserPlaceData[
                   key={place.placeId}
                   placeId={place.placeId}
                   placeName={place.placeName}
+                  videoUrl={place.videoUrl}
                   influencerName={place.influencerName}
                   address={place.address}
                   likes={place.likes}
