@@ -12,7 +12,12 @@ export const initSentryWithRetry = async (retryCount = 0, maxRetries = SENTRY_IN
       dsn: import.meta.env.VITE_SENTRY_DSN,
       integrations: [browserTracingIntegration()],
       tracesSampleRate: SENTRY_TRACES_SAMPLE_RATE,
-      tracePropagationTargets: [/^https:\/\/api\.inplace\.my/, '!http://localhost/', '!https://localhost/'],
+      tracePropagationTargets: [
+        /^https:\/\/api\.inplace\.my/,
+        '!http://localhost/',
+        '!https://localhost/',
+        '!https://ecalpni-dev.inplace.my/',
+      ],
       beforeSend: (event) => {
         if (getSentryInitialized()) {
           return event;
