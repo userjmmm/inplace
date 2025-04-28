@@ -68,7 +68,12 @@ export default function InfluencerItem({
             {isLike ? (
               <PiHeartFill color="#fe7373" size={32} data-testid="PiHeartFill" />
             ) : (
-              <PiHeartLight color="white" size={32} data-testid="PiHeartLight" />
+              <PiHeartLight
+                color="white"
+                size={32}
+                data-testid="PiHeartLight"
+                style={{ filter: 'drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.3))' }}
+              />
             )}
           </LikeIcon>
           <FallbackImage src={influencerImgUrl} alt={influencerName} />
