@@ -121,7 +121,6 @@ const LikeIcon = styled.div`
   right: 10px;
   z-index: 100;
   cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.7);
   border-radius: 50%;
   width: 36px;
   height: 36px;
