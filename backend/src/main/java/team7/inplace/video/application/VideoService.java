@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.VideoErrorCode;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.command.VideoCommand;
@@ -38,9 +37,7 @@ public class VideoService {
         Pageable pageable
     ) {
         // 토큰 정보에 대한 검증
-        if (AuthorizationUtil.isNotLoginUser()) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
+        AuthorizationUtil.checkLoginUser();
 
         var surroundVideos = videoReadRepository.findSimpleVideosInSurround(
             Double.valueOf(videoSearchParams.topLeftLongitude()),

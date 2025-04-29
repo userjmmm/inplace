@@ -1,10 +1,10 @@
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaLock, FaLockOpen } from 'react-icons/fa6';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import useAuth from '@/hooks/useAuth';
 import useTheme from '@/hooks/useTheme';
 import LoginModal from '@/components/common/modals/LoginModal';
+import { Text } from '../../typography/Text';
 
 export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
@@ -16,19 +16,23 @@ export default function AuthButtons() {
     <Container>
       {isAuthenticated ? (
         <IconButton onClick={handleLogout}>
-          <FaLockOpen size={22} />
+          <Text size="xs" weight="normal">
+            로그아웃
+          </Text>
         </IconButton>
       ) : (
         <LoginModal currentPath={location.pathname}>
           {(openModal: () => void) => (
             <IconButton onClick={openModal}>
-              <FaLock size={22} />
+              <Text size="xs" weight="normal">
+                로그인
+              </Text>
             </IconButton>
           )}
         </LoginModal>
       )}
       <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼">
-        {isDarkMode ? <FiSun size={22} color="white" /> : <FiMoon size={22} color="black" />}
+        {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
       </ThemeButton>
     </Container>
   );
@@ -37,7 +41,8 @@ export default function AuthButtons() {
 const Container = styled.div`
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
+  margin-left: 20px;
 
   @media screen and (max-width: 768px) {
     display: none;

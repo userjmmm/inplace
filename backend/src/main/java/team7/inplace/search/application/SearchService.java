@@ -35,7 +35,7 @@ public class SearchService {
     public List<AutoCompletionInfo> searchAutoCompletions(SearchType type, String keyword) {
         var placeSearchInfo = placeSearchRepository.searchAutoComplete(keyword).stream()
             .map(
-                info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.INFLUENCER))
+                info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.PLACE))
             .toList();
 
         if (type.equals(SearchType.PLACE)) {
@@ -43,7 +43,8 @@ public class SearchService {
         }
 
         var influencerSearchInfo = influencerSearchRepository.searchAutoComplete(keyword).stream()
-            .map(info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.PLACE))
+            .map(
+                info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.INFLUENCER))
             .toList();
 
         return Stream.concat(influencerSearchInfo.stream(), placeSearchInfo.stream())
@@ -53,14 +54,16 @@ public class SearchService {
     }
 
     public Page<InfluencerQueryResult.Simple> searchInfluencer(String keyword, Pageable pageable) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
         var influencerInfos = influencerSearchRepository.search(keyword, pageable, userId);
 
         return influencerInfos;
     }
 
     public List<InfluencerQueryResult.Simple> searchInfluencer(String keyword) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
         var influencerInfos = influencerSearchRepository.search(
             keyword,
             Pageable.ofSize(SEARCH_LIMIT),
@@ -71,7 +74,8 @@ public class SearchService {
     }
 
     public List<VideoQueryResult.SimpleVideo> searchVideo(String keyword) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
         var videoInfos = videoSearchRepository.search(
             keyword,
             Pageable.ofSize(SEARCH_LIMIT),
@@ -82,7 +86,8 @@ public class SearchService {
     }
 
     public List<SearchQueryResult.Place> searchPlace(String keyword) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
         var placeInfos = placeSearchRepository.search(
             keyword,
             Pageable.ofSize(SEARCH_LIMIT),

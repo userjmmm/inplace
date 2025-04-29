@@ -5,6 +5,7 @@ import * as api from '@/api/hooks/useGetSearchData';
 import * as completeApi from '@/api/hooks/useGetSearchComplete';
 import SearchPage from '@/pages/Search';
 import { AuthContext } from '@/provider/Auth';
+import ABTestProvider from '@/provider/ABTest';
 
 jest.mock('@/api/hooks/useGetSearchComplete');
 (completeApi.useGetSearchComplete as jest.Mock).mockReturnValue({
@@ -27,11 +28,16 @@ jest.mock('@/api/hooks/useGetSearchData', () => ({
     data: [
       {
         videoId: 1,
-        videoAlias: '풍자 이(가) Video',
+        influencerName: '풍자 이(가) Video',
         videoUrl: '',
         place: {
           placeId: 1,
           placeName: '풍쟈',
+          address: {
+            address1: '대구',
+            address2: '북구',
+            address3: '대현동 119-11',
+          },
         },
       },
     ],
@@ -62,20 +68,21 @@ const queryClient = new QueryClient();
 
 test('특정 키워드 검색 시 검색 결과가 잘 나오는 지 확인', async () => {
   render(
-    <AuthContext.Provider
-      value={{
-        isAuthenticated: false,
-        handleLoginSuccess: jest.fn(),
-        handleLogout: jest.fn(),
-      }}
-    >
-      <MemoryRouter>
-        <QueryClientProvider client={queryClient}>
-          <SearchPage />
-        </QueryClientProvider>
-      </MemoryRouter>
-      ,
-    </AuthContext.Provider>,
+    <ABTestProvider>
+      <AuthContext.Provider
+        value={{
+          isAuthenticated: false,
+          handleLoginSuccess: jest.fn(),
+          handleLogout: jest.fn(),
+        }}
+      >
+        <MemoryRouter>
+          <QueryClientProvider client={queryClient}>
+            <SearchPage />
+          </QueryClientProvider>
+        </MemoryRouter>
+      </AuthContext.Provider>
+    </ABTestProvider>,
   );
   const searchInput = screen.getByPlaceholderText('인플루언서, 장소를 검색해주세요!');
   fireEvent.change(searchInput, { target: { value: 'Influencer' } });

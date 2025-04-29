@@ -6,6 +6,9 @@ import { AxiosError } from 'axios';
 import { AuthContext } from '@/provider/Auth';
 import { PlaceInfo, SpotData } from '@/types';
 import ErrorComponent from '@/components/common/layouts/Error';
+import { ABTestContext } from '@/provider/ABTest';
+import { BASE_URL } from '@/api/instance';
+import { ABTestGroup } from './googleTestUtils';
 
 export function renderWithQueryClient(children: React.ReactNode) {
   const queryClient = new QueryClient({
@@ -26,7 +29,18 @@ export function renderWithQueryClient(children: React.ReactNode) {
     >
       <MemoryRouter future={{ v7_relativeSplatPath: true }}>
         <ErrorBoundary FallbackComponent={ErrorComponent}>
-          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          <QueryClientProvider client={queryClient}>
+            <ABTestContext.Provider
+              value={{
+                testGroups: {
+                  map_ui_test: 'A' as ABTestGroup,
+                },
+                getTestGroup: () => 'A' as ABTestGroup,
+              }}
+            >
+              {children}
+            </ABTestContext.Provider>
+          </QueryClientProvider>
         </ErrorBoundary>
       </MemoryRouter>
     </AuthContext.Provider>,
@@ -51,7 +65,7 @@ export async function testErrorBoundaryBehavior({
       config: {
         headers: {},
         method: 'GET',
-        url: '/api/test',
+        url: `${BASE_URL}/videos/cool`,
       } as never,
       data: { message: 'Internal Server Error' },
     };

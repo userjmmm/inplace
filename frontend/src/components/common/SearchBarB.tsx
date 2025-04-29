@@ -27,6 +27,7 @@ export default function SearchBar({
   const debouncedInputValue = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
 
   const searchBarRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: searchResults } = useGetSearchComplete(debouncedInputValue, 'all', !!debouncedInputValue);
 
@@ -49,7 +50,7 @@ export default function SearchBar({
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
 
-    setIsOpen(inputValue !== '' && isExpanded);
+    setIsOpen(inputValue.length > 1 && isExpanded);
 
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
@@ -136,11 +137,18 @@ export default function SearchBar({
     handleSearch(inputValue);
   };
 
+  useEffect(() => {
+    if (isExpanded) {
+      inputRef.current?.focus();
+    }
+  }, [isExpanded]);
+
   return (
     <SearchBarContainer ref={searchBarRef} $width={isSearchPage ? '960px' : width} $isSearchPage={isSearchPage}>
       {(isExpanded || isSearchPage) && (
         <SearchForm $isOpen={isOpen} onSubmit={handleSubmit} $isSearchPage={isSearchPage}>
           <SearchInput
+            ref={inputRef}
             type="text"
             value={inputValue}
             onChange={handleInputChange}
@@ -162,7 +170,7 @@ export default function SearchBar({
         </SearchButton>
       )}
 
-      {inputValue && isOpen && isExpanded && (
+      {inputValue.length > 1 && isOpen && isExpanded && (
         <SearchDropDownBox $isSearchPage={isSearchPage}>
           {dropDownList.length === 0 ? (
             <SearchDropDownItem>해당하는 키워드가 없습니다!</SearchDropDownItem>
@@ -271,8 +279,8 @@ const SearchButton = styled.button<{ $isSearchPage?: boolean }>`
 `;
 
 const SearchIcon = styled.span<{ $isExpanded: boolean }>`
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   background-color: ${(props) => {
     if (props.$isExpanded) return '#55ebff';
     if (props.theme.backgroundColor === '#292929') return '#ffffff';
@@ -302,7 +310,8 @@ const SearchDropDownBox = styled.ul<{ $isSearchPage: boolean }>`
   z-index: 10;
 
   @media screen and (max-width: 768px) {
-    width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : '90%')};
+    width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : 'calc(100% - 37.1px)')};
+    right: ${({ $isSearchPage }) => ($isSearchPage ? 'auto' : '38px')};
   }
 `;
 

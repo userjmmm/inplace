@@ -56,12 +56,9 @@ public class VideoFacade {
 
     @Transactional(readOnly = true)
     public List<VideoQueryResult.SimpleVideo> getMyInfluencerVideos() {
-        // 토큰 정보에 대한 검증
-        if (AuthorizationUtil.isNotLoginUser()) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
         // User 정보를 쿠키에서 추출
-        Long userId = AuthorizationUtil.getUserId();
+        Long userId = AuthorizationUtil.getUserId()
+            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
         // 인플루언서 id를 사용하여 영상을 조회
         return videoService.getMyInfluencerVideos(userId);
     }
