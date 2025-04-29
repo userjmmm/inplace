@@ -11,10 +11,12 @@ import LoginModal from '@/components/common/modals/LoginModal';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import FallbackImage from '../../Items/FallbackImage';
 import useClickOutside from '@/hooks/useClickOutside';
+import { useDeleteUser } from '@/api/hooks/useDeleteUser';
 
 export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
   const { data: imgSrc } = useGetUserInfo();
+  const { mutate: deleteUser } = useDeleteUser();
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
   const location = useLocation();
@@ -23,6 +25,21 @@ export default function AuthButtons() {
   const [isOpen, setIsOpen] = useState(isAuthenticated);
   const handleClickProfile = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handleDeleteUser = () => {
+    if (window.confirm('정말 회원 탈퇴를 하시겠습니까?')) {
+      deleteUser(undefined, {
+        onSuccess: () => {
+          handleLogout();
+          alert('회원탈퇴가 완료되었습니다.');
+        },
+        onError: (error) => {
+          console.error('회원탈퇴 실패:', error);
+          alert('회원탈퇴에 실패했습니다. 다시 시도해주세요.');
+        },
+      });
+    }
   };
 
   useClickOutside([dropdownRef], () => setIsOpen(false));
@@ -43,11 +60,10 @@ export default function AuthButtons() {
                 <MdOutlineLogout size={16} />
                 로그아웃
               </DropdownItem>
-              <DropdownItem onClick={handleLogout}>
+              <DropdownItem onClick={handleDeleteUser}>
                 <RiUserUnfollowLine size={16} />
                 회원탈퇴
               </DropdownItem>
-              {/* todo - 회원탈퇴 */}
             </UserDropdown>
           )}
         </UserProfile>
