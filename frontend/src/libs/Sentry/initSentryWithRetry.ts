@@ -9,15 +9,11 @@ const SENTRY_TRACES_SAMPLE_RATE = 1.0;
 export const initSentryWithRetry = async (retryCount = 0, maxRetries = SENTRY_INIT_MAX_RETRIES): Promise<boolean> => {
   try {
     Sentry.init({
+      denyUrls: [/dev/],
       dsn: import.meta.env.VITE_SENTRY_DSN,
       integrations: [browserTracingIntegration()],
       tracesSampleRate: SENTRY_TRACES_SAMPLE_RATE,
-      tracePropagationTargets: [
-        /^https:\/\/api\.inplace\.my/,
-        '!http://localhost/',
-        '!https://localhost/',
-        '!https://ecalpni-dev.inplace.my/',
-      ],
+      tracePropagationTargets: [/^https:\/\/api\.inplace\.my/, '!http://localhost/', '!https://localhost/'],
       beforeSend: (event) => {
         if (getSentryInitialized()) {
           return event;
