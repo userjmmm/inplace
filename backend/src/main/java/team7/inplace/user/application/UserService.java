@@ -44,7 +44,7 @@ public class UserService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
-        user.updateInfo(nickname);
+        user.updateNickname(nickname);
     }
 
     @Transactional(readOnly = true)
@@ -59,5 +59,13 @@ public class UserService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public void updateProfileImageUrl(Long userId, String profileImageUrl) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+
+        user.updateProfileImageUrl(profileImageUrl);
     }
 }
