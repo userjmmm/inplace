@@ -47,27 +47,44 @@ export default function Header() {
         <RightSection>
           {testGroup === 'B' && (
             <DesktopOnlySearchBar>
-              <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
+              <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" onClose={() => setIsMenuOpen(false)} />
             </DesktopOnlySearchBar>
           )}
           <MobileOnlyIcons>
             {!isMenuOpen ? (
               <>
-                <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼" $isDarkMode={isDarkMode}>
+                <ThemeButton
+                  onClick={toggleTheme}
+                  aria-label="테마 변경 버튼"
+                  $isDarkMode={isDarkMode}
+                  style={{ position: 'fixed', right: '60px' }}
+                >
                   {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
                 </ThemeButton>
-                <MobileMenuButton onClick={() => setIsMenuOpen(true)} aria-label="메뉴 열기">
+                <MobileMenuButton
+                  onClick={() => setIsMenuOpen(true)}
+                  aria-label="메뉴 열기"
+                  style={{ position: 'fixed', right: '20px' }}
+                >
                   <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
             ) : (
               <>
                 {testGroup === 'B' && (
-                  <MobileSearchBar>
-                    <SearchBar placeholder="검색어를 입력해주세요!" />
-                  </MobileSearchBar>
+                  <FixedMarginSearchBar>
+                    <SearchBar
+                      placeholder="인플루언서, 장소를 검색해주세요!"
+                      width="100%"
+                      onClose={() => setIsMenuOpen(false)}
+                    />
+                  </FixedMarginSearchBar>
                 )}
-                <MobileMenuButton onClick={() => setIsMenuOpen(false)} aria-label="메뉴 닫기">
+                <MobileMenuButton
+                  onClick={() => setIsMenuOpen(false)}
+                  aria-label="메뉴 닫기"
+                  style={{ position: 'fixed', right: '20px' }}
+                >
                   <RiCloseLine size={26} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
@@ -114,13 +131,10 @@ const DesktopOnlySearchBar = styled.div`
   }
 `;
 
-const MobileSearchBar = styled.div`
-  width: 160px;
-  margin-right: 18px;
-
-  & form {
-    right: 22%;
-  }
+const FixedMarginSearchBar = styled.div`
+  position: absolute;
+  left: 20px;
+  width: calc(100% - 80px);
 `;
 const MobileOnlyIcons = styled.div`
   display: none;
@@ -128,7 +142,6 @@ const MobileOnlyIcons = styled.div`
   @media screen and (max-width: 768px) {
     display: flex;
     align-items: center;
-    gap: 4px;
   }
 `;
 
@@ -153,6 +166,6 @@ const ThemeButton = styled.button<{ $isDarkMode: boolean }>`
     transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
   }
   @media screen and (max-width: 768px) {
-    margin-right: 14px;
+    margin-right: 4px;
   }
 `;
