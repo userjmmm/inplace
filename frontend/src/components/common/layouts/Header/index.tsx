@@ -42,13 +42,23 @@ export default function Header() {
           </LeftSection>
         )}
 
-        <DesktopNav />
+        {testGroup === 'A' && (
+          <NavItemsWrapper>
+            <DesktopNav />
+            <AuthButtons />
+          </NavItemsWrapper>
+        )}
 
-        <RightSection>
+        {testGroup === 'B' && <DesktopNav />}
+
+        <RightSection testGroup={testGroup}>
           {testGroup === 'B' && (
-            <DesktopOnlySearchBar>
-              <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" onClose={() => setIsMenuOpen(false)} />
-            </DesktopOnlySearchBar>
+            <>
+              <DesktopOnlySearchBar>
+                <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" onClose={() => setIsMenuOpen(false)} />
+              </DesktopOnlySearchBar>
+              <AuthButtons />
+            </>
           )}
           <MobileOnlyIcons>
             {!isMenuOpen ? (
@@ -90,7 +100,6 @@ export default function Header() {
               </>
             )}
           </MobileOnlyIcons>
-          <AuthButtons />
         </RightSection>
       </HeaderContentWrapper>
 
@@ -115,16 +124,28 @@ const HeaderContentWrapper = styled.div`
 `;
 
 const LeftSection = styled.div`
+  margin-right: 24px;
   display: flex;
   align-items: center;
 `;
 
-const RightSection = styled.div`
+const NavItemsWrapper = styled.div`
   display: flex;
   align-items: center;
   margin-left: auto;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const RightSection = styled.div<{ testGroup: string }>`
+  display: flex;
+  align-items: center;
+  margin-left: ${({ testGroup }) => (testGroup === 'A' ? '0' : 'auto')};
   gap: 26px;
 `;
+
 const DesktopOnlySearchBar = styled.div`
   @media screen and (max-width: 768px) {
     display: none;
