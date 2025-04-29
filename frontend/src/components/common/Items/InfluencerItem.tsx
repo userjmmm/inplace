@@ -134,7 +134,7 @@ const LikeIcon = styled.div`
   height: 30px;
   right: 10px;
   top: 12px;
-  z-index: 100;
+  z-index: 20;
   cursor: pointer;
 
   @media screen and (max-width: 768px) {
