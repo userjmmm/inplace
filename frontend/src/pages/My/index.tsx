@@ -157,7 +157,7 @@ const Input = styled.input`
   background: none;
   border: none;
   font-size: 32px;
-  color: white;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : '#333333')};
   height: 32px;
   max-width: 200px;
   padding: 0;

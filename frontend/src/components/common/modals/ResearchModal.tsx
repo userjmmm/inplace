@@ -203,6 +203,7 @@ const CheckboxWrapper = styled.div`
   align-items: center;
   gap: 2px;
   background-color: #383838;
+  border-radius: 0 0 6px 6px;
 
   @media screen and (max-width: 768px) {
     padding: 4px 2px;

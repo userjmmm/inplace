@@ -112,6 +112,22 @@ const NavExternalLink = styled.a`
   cursor: pointer;
   color: inherit;
   position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 3px;
+    background-color: #47c8d9;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
 `;
 
 const NavButton = styled.button<{ $isActive: boolean }>`

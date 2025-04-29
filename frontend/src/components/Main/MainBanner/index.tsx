@@ -201,11 +201,11 @@ const Container = styled.div`
 `;
 
 const PrevIconWrapper = styled.div`
-  filter: drop-shadow(-2px 0 2px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(-1px 0 1px rgba(0, 0, 0, 0.4));
 `;
 
 const NextIconWrapper = styled.div`
-  filter: drop-shadow(2px 0 2px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(1px 0 1px rgba(0, 0, 0, 0.4));
 `;
 
 const PrevBtn = styled.button`
