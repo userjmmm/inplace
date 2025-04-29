@@ -145,7 +145,7 @@ export default function DetailPage() {
                     <PiHeartLight color="white" size={30} data-testid="PiHeartLight" />
                   )}
                 </LikeIcon>
-                <Text size="l" weight="bold" variant="white">
+                <Text size="xs" weight="normal" variant="white">
                   {infoData.likedCount}
                 </Text>
               </LikeContainer>
@@ -288,7 +288,7 @@ const TitleContainer = styled.div`
   justify-content: space-between;
   align-items: flex-end;
   @media screen and (max-width: 768px) {
-    bottom: 8px;
+    bottom: 12px;
   }
 `;
 
