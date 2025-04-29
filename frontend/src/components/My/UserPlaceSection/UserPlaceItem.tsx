@@ -105,10 +105,6 @@ const Wrapper = styled(Link)`
   justify-content: space-between;
   color: inherit;
 
-  &:hover {
-    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1b1a1a' : '#d5ecec')};
-  }
-
   @media screen and (max-width: 768px) {
     width: 240px;
   }
