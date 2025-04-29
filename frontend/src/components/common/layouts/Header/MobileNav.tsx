@@ -147,7 +147,7 @@ const Container = styled(motion.nav)<{ $isOpen: boolean }>`
       theme.backgroundColor === '#292929' ? 'rgba(41, 41, 41, 0.9)' : 'rgba(236, 251, 251, 0.9)'};
     padding: 20px 0;
     gap: 20px;
-    z-index: 30;
+    z-index: 102;
     pointer-events: ${({ $isOpen }) => ($isOpen ? 'auto' : 'none')};
   }
 `;
