@@ -39,7 +39,7 @@ export default function SpeedDialMap({
         {isOpen ? <IoClose size={30} /> : <FaMapMarkedAlt size={24} />}
       </MainButton>
 
-      <SpeedDialItems isOpen={isOpen}>
+      <SpeedDialItems $isOpen={isOpen}>
         <KakaoButton
           aria-label="kakao_btn"
           variant="white"
@@ -134,7 +134,7 @@ const MainButton = styled(Button)`
   }
 `;
 
-const SpeedDialItems = styled.div<{ isOpen: boolean }>`
+const SpeedDialItems = styled.div<{ $isOpen: boolean }>`
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -144,37 +144,37 @@ const SpeedDialItems = styled.div<{ isOpen: boolean }>`
   & > * {
     position: absolute;
     transition: transform 0.3s ease;
-    opacity: ${(props) => (props.isOpen ? 1 : 0)};
-    pointer-events: ${(props) => (props.isOpen ? 'auto' : 'none')};
+    opacity: ${(props) => (props.$isOpen ? 1 : 0)};
+    pointer-events: ${(props) => (props.$isOpen ? 'auto' : 'none')};
   }
 
   & > *:nth-child(1) {
-    transform: ${(props) => (props.isOpen ? 'translateY(90%)' : 'translateY(0)')};
+    transform: ${(props) => (props.$isOpen ? 'translateY(90%)' : 'translateY(0)')};
   }
 
   & > *:nth-child(2) {
-    transform: ${(props) => (props.isOpen ? 'translateY(220%)' : 'translateY(0)')};
+    transform: ${(props) => (props.$isOpen ? 'translateY(220%)' : 'translateY(0)')};
   }
 
   & > *:nth-child(3) {
-    transform: ${(props) => (props.isOpen ? 'translateY(350%)' : 'translateY(0)')};
+    transform: ${(props) => (props.$isOpen ? 'translateY(350%)' : 'translateY(0)')};
   }
 
   & > *:nth-child(4) {
-    transform: ${(props) => (props.isOpen ? 'translateY(480%)' : 'translateY(0)')};
+    transform: ${(props) => (props.$isOpen ? 'translateY(480%)' : 'translateY(0)')};
   }
 
   @media screen and (max-width: 768px) {
     & > *:nth-child(1) {
-      transform: ${(props) => (props.isOpen ? 'translateY(-190%)' : 'translateY(0)')};
+      transform: ${(props) => (props.$isOpen ? 'translateY(-190%)' : 'translateY(0)')};
     }
 
     & > *:nth-child(2) {
-      transform: ${(props) => (props.isOpen ? 'translateY(-320%)' : 'translateY(0)')};
+      transform: ${(props) => (props.$isOpen ? 'translateY(-320%)' : 'translateY(0)')};
     }
 
     & > *:nth-child(3) {
-      transform: ${(props) => (props.isOpen ? 'translateY(-450%)' : 'translateY(0)')};
+      transform: ${(props) => (props.$isOpen ? 'translateY(-450%)' : 'translateY(0)')};
     }
   }
 `;

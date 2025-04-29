@@ -51,7 +51,7 @@ export default function Header() {
 
         {testGroup === 'B' && <DesktopNav />}
 
-        <RightSection testGroup={testGroup}>
+        <RightSection $testGroup={testGroup}>
           {testGroup === 'B' && (
             <>
               <DesktopOnlySearchBar>
@@ -139,10 +139,10 @@ const NavItemsWrapper = styled.div`
   }
 `;
 
-const RightSection = styled.div<{ testGroup: string }>`
+const RightSection = styled.div<{ $testGroup: string }>`
   display: flex;
   align-items: center;
-  margin-left: ${({ testGroup }) => (testGroup === 'A' ? '0' : 'auto')};
+  margin-left: ${({ $testGroup }) => ($testGroup === 'A' ? '0' : 'auto')};
   gap: 26px;
 `;
 
