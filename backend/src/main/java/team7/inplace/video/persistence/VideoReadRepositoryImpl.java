@@ -69,7 +69,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     @Override
     public List<DetailedVideo> findTop10ByViewCountIncrement() {
         return buildDetailedVideoQuery()
-            .where(commonWhere())
+            .where(commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
             .orderBy(QVideo.video.view.viewCountIncrease.desc())
             .limit(10)
             .fetch();
@@ -78,7 +78,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     @Override
     public List<DetailedVideo> findTop10ByLatestUploadDate() {
         return buildDetailedVideoQuery()
-            .where(commonWhere())
+            .where(commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
             .orderBy(QVideo.video.publishTime.desc())
             .limit(10)
             .fetch();
@@ -93,7 +93,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                         .from(QLikedInfluencer.likedInfluencer)
                         .where(QLikedInfluencer.likedInfluencer.userId.eq(userId)
                             .and(QLikedInfluencer.likedInfluencer.isLiked.isTrue()))),
-                commonWhere())
+                commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
             .orderBy(QVideo.video.publishTime.desc())
             .limit(10)
             .fetch();
@@ -102,7 +102,8 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     @Override
     public List<SimpleVideo> findSimpleVideosByPlaceId(Long placeId) {
         return buildSimpleVideoQuery()
-            .where(QVideo.video.placeId.eq(placeId), commonWhere())
+            .where(QVideo.video.placeId.eq(placeId),
+                commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
             .fetch();
     }
 
@@ -113,7 +114,8 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         }
 
         return buildSimpleVideoQuery()
-            .where(QVideo.video.placeId.in(placeIds), commonWhere())
+            .where(QVideo.video.placeId.in(placeIds),
+                commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
             .fetch()
             .stream()
             .collect(Collectors.groupingBy(SimpleVideo::placeId));
