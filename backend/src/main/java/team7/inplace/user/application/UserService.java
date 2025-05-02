@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
-import team7.inplace.security.application.CurrentUserProvider;
 import team7.inplace.user.application.dto.UserCommand;
 import team7.inplace.user.application.dto.UserCommand.Info;
 import team7.inplace.user.application.dto.UserInfo;
@@ -18,7 +17,6 @@ import team7.inplace.user.persistence.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final CurrentUserProvider currentUserProvider;
 
     @Transactional
     public UserCommand.Info registerUser(UserCommand.Create userCreate) {
