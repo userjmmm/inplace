@@ -21,7 +21,9 @@ import team7.inplace.liked.likedPlace.domain.QLikedPlace;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.domain.QPlaceVideo;
 import team7.inplace.video.domain.QVideo;
+import team7.inplace.video.persistence.dto.QVideoQueryResult_DetailedVideo;
 import team7.inplace.video.persistence.dto.QVideoQueryResult_SimpleVideo;
+import team7.inplace.video.persistence.dto.VideoQueryResult.DetailedVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
 
 @Repository
@@ -32,7 +34,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<SimpleVideo> findSimpleVideosInSurround(
+    public Page<DetailedVideo> findSimpleVideosInSurround(
         Double topLeftLongitude, Double topLeftLatitude,
         Double bottomRightLongitude, Double bottomRightLatitude,
         Double longitude, Double latitude,
@@ -50,7 +52,8 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         if (total == 0) {
             return new PageImpl<>(Collections.emptyList(), pageable, total);
         }
-        List<SimpleVideo> content = buildBaseVideoQuery()
+
+        List<DetailedVideo> content = buildDetailedVideoQuery()
             .where(locationCondition(longitude, latitude),
                 QVideo.video.deleteAt.isNull(),
                 QPlace.place.deleteAt.isNull(),
@@ -64,33 +67,33 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     }
 
     @Override
-    public List<SimpleVideo> findTop10ByViewCountIncrement() {
-        return buildBaseVideoQuery()
-            .where(commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
+    public List<DetailedVideo> findTop10ByViewCountIncrement() {
+        return buildDetailedVideoQuery()
+            .where(commonWhere())
             .orderBy(QVideo.video.view.viewCountIncrease.desc())
             .limit(10)
             .fetch();
     }
 
     @Override
-    public List<SimpleVideo> findTop10ByLatestUploadDate() {
-        return buildBaseVideoQuery()
-            .where(commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
+    public List<DetailedVideo> findTop10ByLatestUploadDate() {
+        return buildDetailedVideoQuery()
+            .where(commonWhere())
             .orderBy(QVideo.video.publishTime.desc())
             .limit(10)
             .fetch();
     }
 
     @Override
-    public List<SimpleVideo> findTop10ByLikedInfluencer(Long userId) {
-        return buildBaseVideoQuery()
+    public List<DetailedVideo> findTop10ByLikedInfluencer(Long userId) {
+        return buildDetailedVideoQuery()
             .where(
                 QVideo.video.influencerId.in(
                     JPAExpressions.select(QLikedInfluencer.likedInfluencer.influencerId)
                         .from(QLikedInfluencer.likedInfluencer)
                         .where(QLikedInfluencer.likedInfluencer.userId.eq(userId)
                             .and(QLikedInfluencer.likedInfluencer.isLiked.isTrue()))),
-                commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
+                commonWhere())
             .orderBy(QVideo.video.publishTime.desc())
             .limit(10)
             .fetch();
@@ -98,9 +101,8 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
 
     @Override
     public List<SimpleVideo> findSimpleVideosByPlaceId(Long placeId) {
-        return buildBaseVideoQuery()
-            .where(QVideo.video.placeId.eq(placeId),
-                commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
+        return buildSimpleVideoQuery()
+            .where(QVideo.video.placeId.eq(placeId), commonWhere())
             .fetch();
     }
 
@@ -110,9 +112,8 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             return Collections.emptyMap();
         }
 
-        return buildBaseVideoQuery()
-            .where(QVideo.video.placeId.in(placeIds),
-                commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
+        return buildSimpleVideoQuery()
+            .where(QVideo.video.placeId.in(placeIds), commonWhere())
             .fetch()
             .stream()
             .collect(Collectors.groupingBy(SimpleVideo::placeId));
@@ -129,7 +130,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         if (total == 0) {
             return new PageImpl<>(Collections.emptyList(), pageable, total);
         }
-        List<SimpleVideo> videos = buildBaseVideoQuery()
+        List<SimpleVideo> videos = buildSimpleVideoQuery()
             .where(QVideo.video.placeId.isNull(), commonWhere())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -154,7 +155,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             return new PageImpl<>(Collections.emptyList(), pageable, total);
         }
 
-        var query = buildBaseVideoQuery()
+        var query = buildSimpleVideoQuery()
             .where(QVideo.video.influencerId.eq(influencerId));
 
         applySorting(query, pageable);
@@ -167,7 +168,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         return new PageImpl<>(videos, pageable, total);
     }
 
-    private JPAQuery<SimpleVideo> buildBaseVideoQuery() {
+    private JPAQuery<SimpleVideo> buildSimpleVideoQuery() {
         return queryFactory
             .select(new QVideoQueryResult_SimpleVideo(
                 QVideo.video.id,
@@ -176,6 +177,26 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                 QPlace.place.id,
                 QPlace.place.name,
                 QPlace.place.category))
+            .from(QVideo.video)
+            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .leftJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
+            .leftJoin(QInfluencer.influencer)
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id));
+    }
+
+    private JPAQuery<DetailedVideo> buildDetailedVideoQuery() {
+        return queryFactory
+            .select(new QVideoQueryResult_DetailedVideo(
+                QVideo.video.id,
+                QVideo.video.uuid,
+                QInfluencer.influencer.name,
+                QPlace.place.id,
+                QPlace.place.name,
+                QPlace.place.category,
+                QPlace.place.address.address1,
+                QPlace.place.address.address2,
+                QPlace.place.address.address3
+            ))
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .leftJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
