@@ -55,11 +55,11 @@ VALUES (1, 1, 1, 'Video1', 1, '2025-02-06 12:00:01.000000'),
        (25, 5, null, 'Video25', 20, '2025-02-06 12:24:01.000000');
 
 INSERT INTO users (id, nickname, password, username, role)
-VALUES ( 1, 'Test', 'password@', 'TestUser1', 'USER' ),
-       ( 2, 'Test', 'password@', 'TestUser2', 'USER' ),
-       ( 3, 'Test', 'password@', 'TestUser3', 'USER' ),
-       ( 4, 'Test', 'password@', 'TestUser4', 'USER' ),
-       ( 5, 'Test', 'password@', 'TestUser5', 'USER' );
+VALUES (1, 'Test', 'password@', 'TestUser1', 'USER'),
+       (2, 'Test', 'password@', 'TestUser2', 'USER'),
+       (3, 'Test', 'password@', 'TestUser3', 'USER'),
+       (4, 'Test', 'password@', 'TestUser4', 'USER'),
+       (5, 'Test', 'password@', 'TestUser5', 'USER');
 
 INSERT INTO liked_influencers (id, influencer_id, user_id, is_liked)
 VALUES (1, 1, 1, true),
@@ -79,3 +79,26 @@ VALUES (1, 1, 1, true),
        (8, 3, 3, true),
        (9, 3, 4, true),
        (10, 3, 5, true);
+
+
+INSERT INTO place_videos(id, place_id, video_id)
+VALUES (1, 1, 1),
+       (2, 2, 2),
+       (3, 3, 3),
+       (4, 4, 4),
+       (5, 5, 5),
+       (6, 6, 6),
+       (7, 7, 7),
+       (8, 8, 8),
+       (9, 9, 9),
+       (10, 10, 10),
+       (11, 11, 11),
+       (12, 12, 12),
+       (13, 13, 13),
+       (14, 14, 14),
+       (15, 15, 15),
+       (16, 16, 16),
+       (17, 17, 17),
+       (18, 18, 18),
+       (19, 19, 19),
+       (20, 20, 20);
