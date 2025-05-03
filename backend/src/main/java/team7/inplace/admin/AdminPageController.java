@@ -63,7 +63,7 @@ public class AdminPageController {
     }
 
     @GetMapping("/influencer/new")
-    public String getIncluencers(Model model) {
+    public String getInfluencers(Model model) {
         model.addAttribute("youtubeApiKey", googleApiProperties.crawlingKey());
         return "admin/influencer/new.html";
     }
