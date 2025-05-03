@@ -79,7 +79,9 @@ public class InfluencerService {
 
     @Transactional
     public Long updateInfluencer(Long id, InfluencerCommand command) {
-        Influencer influencer = influencerRepository.findById(id).orElseThrow();
+        Influencer influencer = influencerRepository.findById(id).orElseThrow(
+                () -> InplaceException.of(InfluencerErrorCode.NOT_FOUND)
+        );
         influencer.update(command.influencerName(), command.influencerImgUrl(),
             command.influencerJob());
 
@@ -88,8 +90,9 @@ public class InfluencerService {
 
     @Transactional
     public Long updateVisibility(Long id) {
-        var influencer = influencerRepository.findById(id)
-            .orElseThrow();
+        var influencer = influencerRepository.findById(id).orElseThrow(
+                () -> InplaceException.of(InfluencerErrorCode.NOT_FOUND)
+        );
         influencer.changeVisibility();
 
         return influencer.getId();
@@ -97,7 +100,9 @@ public class InfluencerService {
 
     @Transactional
     public void deleteInfluencer(Long id) {
-        Influencer influencer = influencerRepository.findById(id).orElseThrow();
+        Influencer influencer = influencerRepository.findById(id).orElseThrow(
+                () -> InplaceException.of(InfluencerErrorCode.NOT_FOUND)
+        );
 
         influencerRepository.delete(influencer);
     }
