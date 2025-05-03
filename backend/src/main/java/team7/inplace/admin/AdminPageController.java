@@ -41,11 +41,7 @@ public class AdminPageController {
         Page<Video> videoPage = (influencerId != null)
             ? videoRepository.findAllByPlaceIsNullAndInfluencerId(pageable, influencerId)
             : videoRepository.findAllByPlaceIdIsNull(pageable);
-        model.addAttribute("videos", videoPage.getContent());
-        model.addAttribute("currentPage", videoPage.getNumber());
-        model.addAttribute("totalPages", videoPage.getTotalPages());
-        model.addAttribute("isFirst", videoPage.isFirst());
-        model.addAttribute("isLast", videoPage.isLast());
+        model.addAttribute("videoPage", videoPage);
         model.addAttribute("kakaoApiKey", kakaoApiProperties.jsKey());
         model.addAttribute("googleApiKey", googleApiProperties.placeKey1());
 

@@ -41,13 +41,13 @@
   </tr>
   </thead>
   <tbody>
-  <tr th:each="video : ${videos}">
+  <tr th:each="video : ${videoPage.content}">
     <td th:text="${video.id}">Video ID</td>
     <td>
       <img alt="Video Thumbnail"
            onclick="openModal(this)" style="cursor:pointer;width:100px;"
            th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}"
-           th:src="'https://img.youtube.com/vi/' + ${video.uuid} + '/0.jpg'"/>
+           th:src="|https://img.youtube.com/vi/${video.uuid}/0.jpg|"/>
     </td>
     <td>
       <button
@@ -70,21 +70,21 @@
 <div>
   <div>
     <!-- Previous -->
-    <a th:href="@{/admin/video(page=${currentPage - 1}, size=10, influencerId=${selectedInfluencerId})}"
-       th:if="${!isFirst}">Previous</a>
+    <a th:href="@{/admin/video(page=${videoPage.number - 1}, size=10, influencerId=${selectedInfluencerId})}"
+       th:if="${videoPage.hasPrevious()}">Previous</a>
 
     <!-- 페이지 정보 표시 -->
-    <span>페이지 <span th:text="${currentPage + 1}"></span> / <span
-        th:text="${totalPages}"></span></span>
+    <span>페이지 <span th:text="${videoPage.number + 1}"></span> / <span
+        th:text="${videoPage.totalPages}"></span></span>
 
     <!-- Next -->
-    <a th:href="@{/admin/video(page=${currentPage + 1}, size=10, influencerId=${selectedInfluencerId})}"
-       th:if="${!isLast}">Next</a>
+    <a th:href="@{/admin/video(page=${videoPage.number + 1}, size=10, influencerId=${selectedInfluencerId})}"
+       th:if="${videoPage.hasNext()}">Next</a>
   </div>
 </div>
 
 <!-- Modal for Video and Place Search -->
-<div class="modal" id="placeSearchModal">
+<div class="modal" id="placeKakaoSearchModal">
   <div class="modal-content">
     <span class="close" onclick="closeModal()">&times;</span>
     <h2>장소 검색 (카카오)</h2>
