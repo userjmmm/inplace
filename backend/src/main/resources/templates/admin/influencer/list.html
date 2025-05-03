@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<meta charset="UTF-8">
-	<title>인플루언서 관리</title>
-	<link href="/css/style.css" rel="stylesheet">
+<head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
+	<title>Influencer 관리</title>
 	<link href="/css/influencer/list.css" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<th:block th:fragment="scripts">
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	</th:block>
 </head>
+
+
 <body>
-<div class="header">
-	<a class="header-link" href="/admin/main">홈</a>
-</div>
+<header th:replace="fragment/header :: navigation_bar"></header>
 
 <h1>인플루언서 관리</h1>
 

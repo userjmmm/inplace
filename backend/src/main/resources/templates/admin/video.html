@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <meta charset="UTF-8">
+<head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
   <title>Video List</title>
-  <link href="/css/style.css" rel="stylesheet">
   <link href="/css/video.css" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js" type="text/javascript"></script>
-  <script
-      th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoApiKey} + '&libraries=services'"
-      type="text/javascript"></script>
-  <script src="/js/video.js"></script>
+  <th:block th:fragment="scripts">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" type="text/javascript"></script>
+    <script
+        th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoApiKey} + '&libraries=services'"
+        type="text/javascript"></script>
+    <script src="/js/video.js"></script>
+  </th:block>
 </head>
+
+
 <body>
-<div class="header">
-  <a class="header-link" href="/admin/main">홈</a>
-</div>
+<header th:replace="fragment/header :: navigation_bar"></header>
 
 <div class="title-btn-container" id="google-api-key" th:data-api-key="${googleApiKey}">
   <h1>Video List</h1>
