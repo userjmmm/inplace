@@ -34,10 +34,8 @@ public class PlaceFacade {
 
     private final Executor externalApiExecutor;
 
-    public void createPlace(Long videoId, PlacesCommand.Create command) {
-        var placeId = placeService.createPlace(command);
-
-        videoService.addPlaceInfo(videoId, placeId);
+    public void createPlace(PlacesCommand.Create command) {
+        placeService.createPlace(command);
     }
 
     public PlaceInfo.Marker getMarkerInfo(Long placeId) {

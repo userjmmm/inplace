@@ -117,14 +117,6 @@ public class VideoService {
     }
 
     @Transactional
-    public void addPlaceInfo(Long videoId, Long placeId) {
-        var video = videoRepository.findById(videoId)
-            .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
-
-        video.addPlace(placeId);
-    }
-
-    @Transactional
     public void deleteVideo(Long videoId) {
         videoRepository.deleteById(videoId);
     }

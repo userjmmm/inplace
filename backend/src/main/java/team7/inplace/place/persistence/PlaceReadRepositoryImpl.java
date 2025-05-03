@@ -248,7 +248,6 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
                     selfLikedPlace.id.isNotNull()).eq(1)
             ))
             .from(QPlace.place)
-
             .leftJoin(likedPlace)
             .on(likedPlace.placeId.eq(QPlace.place.id).and(likedPlace.isLiked.isTrue()))
             .leftJoin(selfLikedPlace).on(selfLikedPlace.placeId.eq(QPlace.place.id)
