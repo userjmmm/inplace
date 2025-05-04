@@ -4,7 +4,7 @@ function openModal(element) {
   const videoId = element.getAttribute("data-video-id");
   window.selectedVideoId = videoId;
   window.selectedVideoUrl = videoUrl;
-  document.getElementById("placeSearchModal").style.display = "block";
+  document.getElementById("placeKakaoSearchModal").style.display = "block";
   const videoIframe = document.getElementById("videoIframe");
   videoIframe.src = `https://www.youtube.com/embed/${videoUrl}`;
 }
