@@ -133,7 +133,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             return new PageImpl<>(Collections.emptyList(), pageable, total);
         }
         List<SimpleVideo> videos = buildSimpleVideoQuery()
-            .where(QVideo.video.placeId.isNull(), commonWhere())
+            .where(QPlaceVideo.placeVideo.isNull(), commonWhere())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -148,9 +148,9 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         Long total = queryFactory
             .select(QVideo.video.countDistinct())
             .from(QVideo.video)
-            .where(QVideo.video.influencerId.eq(influencerId)
-                .and(QVideo.video.placeId.isNotNull())
-                .and(QVideo.video.deleteAt.isNull()))
+            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .where(QVideo.video.influencerId.eq(influencerId),
+                QVideo.video.deleteAt.isNull(), QPlaceVideo.placeVideo.placeId.isNotNull())
             .fetchOne();
 
         if (total == 0) {
@@ -158,7 +158,8 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         }
 
         var query = buildSimpleVideoQuery()
-            .where(QVideo.video.influencerId.eq(influencerId));
+            .where(QVideo.video.influencerId.eq(influencerId),
+                commonWhere().and(QPlaceVideo.placeVideo.isNotNull()));
 
         applySorting(query, pageable);
 
