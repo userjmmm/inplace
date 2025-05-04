@@ -71,7 +71,6 @@ public class InfluencerResponse {
 
     public record Video(
         Long videoId,
-        String videoAlias,
         String videoUrl,
         InfluencerResponse.Place place
     ) {
@@ -83,7 +82,6 @@ public class InfluencerResponse {
             );
             return new InfluencerResponse.Video(
                 videoInfo.videoId(),
-                videoInfo.influencerName() + "|" + videoInfo.placeName(),
                 videoInfo.videoUrl(),
                 place
             );
@@ -94,6 +92,5 @@ public class InfluencerResponse {
         Long placeId,
         String placeName
     ) {
-
     }
 }
