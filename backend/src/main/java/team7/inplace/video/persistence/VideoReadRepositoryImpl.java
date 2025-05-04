@@ -128,7 +128,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             .select(QVideo.video.count())
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
-            .where(QPlaceVideo.placeVideo.placeId.isNull(),
+            .where(QPlaceVideo.placeVideo.isNull(),
                 QVideo.video.deleteAt.isNull())
             .fetchOne();
 
@@ -153,7 +153,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .where(QVideo.video.influencerId.eq(influencerId),
-                QVideo.video.deleteAt.isNull(), QPlaceVideo.placeVideo.placeId.isNotNull())
+                QVideo.video.deleteAt.isNull(), QPlaceVideo.placeVideo.isNotNull())
             .fetchOne();
 
         if (total == 0) {
