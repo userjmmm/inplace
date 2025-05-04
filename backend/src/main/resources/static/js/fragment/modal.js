@@ -6,6 +6,19 @@ function openPreviewModal(src) {
     currentOpenModalId = 'previewModal';
 }
 
+function openInfluencerEditModal(element) {
+    const editId = element.getAttribute("data-id");
+    const editJob = element.getAttribute("data-job");
+    const editName = element.getAttribute("data-name");
+
+    document.getElementById('editId').value = editId;
+    document.getElementById('editJob').value = editJob;
+    document.getElementById('editName').value = editName;
+
+    document.getElementById('editModal').style.display = "block";
+    currentOpenModalId='editModal'
+}
+
 function openPlaceSearchModal(mapProvider, element=null) {
     console.log(mapProvider + " open");
     if (element) {

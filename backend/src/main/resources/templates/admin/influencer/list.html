@@ -5,6 +5,8 @@
 	<link href="/css/influencer/list.css" rel="stylesheet">
 	<th:block th:fragment="scripts">
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="/js/influencer/list.js"></script>
+		<script src="/js/fragment/modal.js"></script>
 	</th:block>
 </head>
 
@@ -49,7 +51,7 @@
 			</td>
 			<td>
 				<button class="btn-edit"
-						onclick="openEditModal(this)"
+						onclick="openInfluencerEditModal(this)"
 						th:data-id="${influencer.id}"
 						th:data-job="${influencer.job}"
 						th:data-name="${influencer.name}">수정
@@ -65,11 +67,9 @@
 </div>
 
 <!-- 수정 모달 -->
-<div class="modal" id="editModal">
-	<div class="modal-content">
-		<span class="close">&times;</span>
-		<h2>인플루언서 정보 수정</h2>
-		<form class="form-inline" id="editForm">
+<div th:replace="fragment/modal :: modal('editModal', '인플루언서 정보 수정', ~{::contents})">
+	<th:block th:fragment="contents">
+		<form class="form-inline" id="editForm" onsubmit="updateInfluencer()">
 			<div class="form-group">
 				<label for="editName">이름</label>
 				<input id="editName" name="name" required type="text">
@@ -81,9 +81,8 @@
 			<input id="editId" type="hidden">
 			<button type="submit">저장하기</button>
 		</form>
-	</div>
+	</th:block>
 </div>
 
-<script src="/js/influencer/list.js"></script>
 </body>
 </html>
