@@ -99,14 +99,16 @@
           <label th:for="|keyword-${mapProvider}|">키워드:
             <input th:id="|keyword-${mapProvider}|" placeholder="장소를 입력하세요" type="text"/>
           </label>
+
           <label for="category">
             <select id="category" required>
               <option disabled selected value="">카테고리</option>
               <th:block th:each="category : ${categories}">
-                <option th:text="${category.name}" th:value="${category}"></option>
+                <option th:text="${category.name}" th:value="${category}"/>
               </th:block>
             </select>
           </label>
+
           <button type="submit">검색하기</button>
         </form>
       </div>
