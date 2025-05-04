@@ -6,6 +6,21 @@ function openPreviewModal(src) {
     currentOpenModalId = 'previewModal';
 }
 
+function openPlaceSearchModal(mapProvider, element=null) {
+    console.log(mapProvider + " open");
+    if (element) {
+        window.selectedVideoId = element.getAttribute("data-video-id");
+        window.selectedVideoUrl = element.getAttribute("data-video-url");
+    }
+
+    const modalId = `placeSearchModal-${mapProvider}`;
+    document.getElementById(modalId).style.display = "block";
+    const videoIFrame = `videoIFrame-${mapProvider}`;
+    document.getElementById(videoIFrame).src = `https://www.youtube.com/embed/${window.selectedVideoUrl}`;
+
+    currentOpenModalId = modalId;
+}
+
 function closeModal() {
     if (currentOpenModalId) {
         const modal = document.getElementById(currentOpenModalId);
