@@ -11,26 +11,6 @@ function previewImage(input) {
     }
 }
 
-// 이미지 미리보기 모달
-function openPreviewModal(src) {
-    const modal = document.getElementById('previewModal');
-    const modalImg = document.getElementById('modalImage');
-    modal.style.display = "block";
-    modalImg.src = src;
-}
-
-function closePreviewModal() {
-    document.getElementById('previewModal').style.display = "none";
-}
-
-// 모달 외부 클릭시 닫기
-window.onclick = function (event) {
-    const modal = document.getElementById('previewModal');
-    if (event.target === modal) {
-        closePreviewModal();
-    }
-}
-
 // form submit 이벤트 처리
 document.getElementById('imageUploadForm').addEventListener('submit', function (e) {
     e.preventDefault();
