@@ -1,40 +1,51 @@
-// 모달 열기 함수
-function openModal(element) {
-  const videoUrl = element.getAttribute("data-video-url");
-  const videoId = element.getAttribute("data-video-id");
-  window.selectedVideoId = videoId;
-  window.selectedVideoUrl = videoUrl;
-  document.getElementById("placeKakaoSearchModal").style.display = "block";
-  const videoIframe = document.getElementById("videoIframe");
-  videoIframe.src = `https://www.youtube.com/embed/${videoUrl}`;
-}
+let currentOpenModalId = null;
+function openModal(mapProvider, element=null) {
+  console.log(mapProvider + " open");
+  if (element) {
+    window.selectedVideoId = element.getAttribute("data-video-id");
+    window.selectedVideoUrl = element.getAttribute("data-video-url");
+  }
 
-function openGoogleModal() {
-  document.getElementById("placeGoogleSearchModal").style.display = "block";
-  const videoIframe = document.getElementById("videoIframe2");
-  videoIframe.src = `https://www.youtube.com/embed/${window.selectedVideoUrl}`;
+  const modalId = `placeSearchModal-${mapProvider}`;
+  document.getElementById(modalId).style.display = "block";
+  const videoIFrame = `videoIFrame-${mapProvider}`;
+  document.getElementById(videoIFrame).src = `https://www.youtube.com/embed/${window.selectedVideoUrl}`;
+
+  currentOpenModalId = modalId;
 }
 
 // 모달 닫기 함수
 function closeModal() {
-  document.getElementById("placeGoogleSearchModal").style.display = "none";
-  document.getElementById("placeSearchModal").style.display = "none";
-  document.getElementById("videoIframe").src = ""; // 비디오 정지
+  console.log(currentOpenModalId + " close");
+  if (currentOpenModalId) {
+    const modal = document.getElementById(currentOpenModalId);
+    const iframe = modal.querySelector("iframe");
+    if (modal) {
+      modal.style.display = "none";
+    }
+    if (iframe) {
+      iframe.src = "";
+    }
+
+    currentOpenModalId = null;
+  }
 }
 
 // 모달 외부 클릭 시 닫기
 window.onclick = function (event) {
-  const modal = document.getElementById("placeSearchModal");
-  if (event.target === modal) {
-    closeModal();
+  if (currentOpenModalId) {
+    const modal = document.getElementById(currentOpenModalId);
+    if (event.target === modal) {
+      closeModal();
+    }
   }
 };
 
 let placeInfo = null;
 
 function searchKakaoPlaces() {
-
-  const keyword = document.getElementById('keyword').value;
+  console.log("searchKakaoPlaces");
+  const keyword = document.getElementById('keyword-kakao').value;
   if (!keyword.trim()) {
     alert("검색어를 입력하세요.");
     return;
@@ -43,7 +54,7 @@ function searchKakaoPlaces() {
   const ps = new kakao.maps.services.Places();
   // Kakao Maps API를 통해 장소 검색
   ps.keywordSearch(keyword, function (data, status) {
-    const tbody = $('#search-tbody');
+    const tbody = $('#search-tbody-kakao');
     tbody.empty();
 
     if (status === kakao.maps.services.Status.OK) {
@@ -64,6 +75,7 @@ function searchKakaoPlaces() {
 }
 
 function setPlaceInfo(place) {
+  console.log("setPlaceInfo");
   const videoId = window.selectedVideoId;
   const category = document.getElementById('category').value;
   if (!category) {
@@ -83,12 +95,13 @@ function setPlaceInfo(place) {
     kakaoPlaceId: place.id
   };
 
-  closeModal();
-  openGoogleModal();
+  closeModal('placeSearchModal-kakao');
+  openModal('google');
 }
 
 function searchGooglePlaces() {
-  const keyword = document.getElementById('keyword2').value;
+  console.log("searchGooglePlaces");
+  const keyword = document.getElementById('keyword-google').value;
   if (!keyword.trim()) {
     alert("검색어를 입력하세요.");
     return;
@@ -106,7 +119,7 @@ function searchGooglePlaces() {
       textQuery: keyword
     }),
     success: function (res) {
-      const tbody = $('#search-tbody2');
+      const tbody = $('#search-tbody-google');
       tbody.empty();
 
       res.places.forEach(place => {
@@ -122,7 +135,8 @@ function searchGooglePlaces() {
       // 이벤트 리스너 등록
       $(".register-btn").off("click").on("click", function () {
         const placeId = $(this).data("place-id");  // 버튼의 data-place-id 값 가져오기
-        registerPlace(placeId);
+        placeInfo.googlePlaceId = placeId;
+        registerPlace();
       });
     },
     error: function () {
@@ -131,9 +145,8 @@ function searchGooglePlaces() {
   });
 }
 
-function registerPlace(googlePlaceId) {
-  placeInfo.googlePlaceId = googlePlaceId;
-
+function registerPlace() {
+  console.log("registerPlace");
   $.ajax({
     url: `/places`,
     method: 'POST',

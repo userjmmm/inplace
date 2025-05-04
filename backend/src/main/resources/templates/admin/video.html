@@ -45,13 +45,13 @@
     <td th:text="${video.id}">Video ID</td>
     <td>
       <img alt="Video Thumbnail"
-           onclick="openModal(this)" style="cursor:pointer;width:100px;"
+           onclick="openModal('kakao',this)" style="cursor:pointer;width:100px;"
            th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}"
            th:src="|https://img.youtube.com/vi/${video.uuid}/0.jpg|"/>
     </td>
     <td>
       <button
-          onclick="openModal(this)"
+          onclick="openModal('kakao',this)"
           th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}">
         장소 등록
       </button>
@@ -83,82 +83,79 @@
   </div>
 </div>
 
-<!-- Modal for Video and Place Search -->
-<div class="modal" id="placeKakaoSearchModal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2>장소 검색 (카카오)</h2>
+<div th:with="mapProvider=#{video.search.mapProvider.kakao},
+ modalId=|placeSearchModal-${mapProvider}|,
+ modalTitle=|장소 검색 (${mapProvider})|">
+  <div th:replace="fragment/modal :: modal(${modalId}, ${modalTitle}, ~{::contents-kakao})">
+    <th:block th:fragment="contents-kakao">
+      <iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+              frameborder="0" height="315"
+              th:id="|videoIFrame-${mapProvider}|" src=""
+              width="560">
+      </iframe>
 
-    <iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            frameborder="0" height="315"
-            id="videoIframe" src=""
-            width="560">
-    </iframe>
+      <div class="search-container">
+        <form onsubmit="searchKakaoPlaces(); return false;">
+          <label th:for="|keyword-${mapProvider}|">키워드:</label>
+          <input th:id="|keyword-${mapProvider}|" placeholder="장소를 입력하세요" type="text"/>
+          <select id="category" required>
+            <option disabled selected value="">카테고리</option>
+            <th:block th:each="category : ${categories}">
+              <option th:text="${category.name}" th:value="${category}"></option>
+            </th:block>
+          </select>
+          <button type="submit">검색하기</button>
+        </form>
+      </div>
 
-    <!-- Place search form -->
-
-    <div class="category-container">
-      <form onsubmit="searchKakaoPlaces(); return false;">
-        <label for="keyword">키워드:</label>
-        <input id="keyword" placeholder="장소를 입력하세요" type="text"/>
-        <select id="category" required>
-          <option disabled selected value="">카테고리</option>
-          <th:block th:each="category : ${categories}">
-            <option th:text="${category.name}" th:value="${category}"></option>
-          </th:block>
-        </select>
-        <button type="submit">검색하기</button>
-      </form>
-    </div>
-
-    <table id="search-results">
-      <thead>
-      <tr>
-        <th>장소명</th>
-        <th>주소</th>
-        <th>등록</th>
-      </tr>
-      </thead>
-      <tbody id="search-tbody"></tbody>
-    </table>
+      <table th:id="|search-results-${mapProvider}|">
+        <thead>
+        <tr>
+          <th>장소명</th>
+          <th>주소</th>
+          <th>등록</th>
+        </tr>
+        </thead>
+        <tbody th:id="|search-tbody-${mapProvider}|"></tbody>
+      </table>
+    </th:block>
   </div>
 </div>
 
-<!-- Modal for Video and Place Search -->
-<div class="modal" id="placeGoogleSearchModal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">&times;</span>
-    <h2>장소 검색 (구글)</h2>
+<div th:with="mapProvider=#{video.search.mapProvider.google},
+ modalId=|placeSearchModal-${mapProvider}|,
+ modalTitle=|장소 검색 (${mapProvider})|">
+  <div th:replace="fragment/modal :: modal(${modalId}, ${modalTitle}, ~{::contents-google})">
+    <th:block th:fragment="contents-google">
+      <iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+              frameborder="0" height="315"
+              th:id="|videoIFrame-${mapProvider}|" src=""
+              width="560">
+      </iframe>
 
-    <iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            frameborder="0" height="315"
-            id="videoIframe2" src=""
-            width="560">
-    </iframe>
+      <div class="search-container">
+        <form onsubmit="searchGooglePlaces(); return false;">
+          <label th:for="|keyword-${mapProvider}|">키워드:</label>
+          <input th:id="|keyword-${mapProvider}|" placeholder="장소를 입력하세요" type="text"/>
+          <button type="submit">검색하기</button>
+        </form>
+      </div>
 
-    <!-- Place search form -->
-
-    <div class="category-container">
-      <form onsubmit="searchGooglePlaces(); return false;">
-        <label for="keyword2">키워드:</label>
-        <input id="keyword2" placeholder="장소를 입력하세요" type="text"/>
-        <button type="submit">검색하기</button>
-      </form>
-    </div>
-
-    <table id="search-results2">
-      <thead>
-      <tr>
-        <th>장소명</th>
-        <th>주소</th>
-        <th>등록</th>
-      </tr>
-      </thead>
-      <tbody id="search-tbody2"></tbody>
-    </table>
+      <table th:id="|search-results-${mapProvider}|">
+        <thead>
+        <tr>
+          <th>장소명</th>
+          <th>주소</th>
+          <th>등록</th>
+        </tr>
+        </thead>
+        <tbody th:id="|search-tbody-${mapProvider}|"></tbody>
+      </table>
+    </th:block>
   </div>
 </div>
+
 </body>
 </html>
