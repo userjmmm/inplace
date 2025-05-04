@@ -134,8 +134,7 @@ function searchGooglePlaces() {
 
       // 이벤트 리스너 등록
       $(".register-btn").off("click").on("click", function () {
-        const placeId = $(this).data("place-id");  // 버튼의 data-place-id 값 가져오기
-        placeInfo.googlePlaceId = placeId;
+        placeInfo.googlePlaceId = $(this).data("place-id");  // 버튼의 data-place-id 값 가져오기
         registerPlace();
       });
     },
