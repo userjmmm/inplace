@@ -32,7 +32,7 @@ public class PlaceRequest {
 
         public PlacesCommand.Create toCommand() {
             return new PlacesCommand.Create(
-                placeName, category, address, x, y, googlePlaceId, kakaoPlaceId
+                videoId, placeName, category, address, x, y, googlePlaceId, kakaoPlaceId
             );
         }
     }

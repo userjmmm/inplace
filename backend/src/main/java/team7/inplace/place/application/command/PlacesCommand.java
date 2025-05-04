@@ -48,6 +48,7 @@ public class PlacesCommand {
     }
 
     public record Create(
+        Long videoId,
         String placeName,
         String category,
         String address,

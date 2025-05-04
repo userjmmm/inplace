@@ -11,7 +11,6 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.place.application.PlaceService;
-import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.command.VideoCommand;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
@@ -46,12 +45,6 @@ public class VideoFacade {
     @Transactional
     public void updateVideoViews(List<VideoCommand.UpdateViewCount> videoCommands) {
         videoService.updateVideoViews(videoCommands);
-    }
-
-    @Transactional
-    public void addPlaceInfo(Long videoId, PlacesCommand.Create placeCommand) {
-        var placeId = placeService.createPlace(placeCommand);
-        videoService.addPlaceInfo(videoId, placeId);
     }
 
     @Transactional(readOnly = true)

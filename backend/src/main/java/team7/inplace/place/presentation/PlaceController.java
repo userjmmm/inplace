@@ -46,7 +46,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     @PostMapping()
     public ResponseEntity<Void> savePlace(@RequestBody Create request) {
         var command = request.toCommand();
-        placeFacade.createPlace(request.videoId(), command);
+        placeFacade.createPlace(command);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
