@@ -3,7 +3,6 @@ package team7.inplace.influencer.presentation.dto;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.application.dto.InfluencerNameInfo;
 import team7.inplace.influencer.persistence.dto.InfluencerQueryResult;
-import team7.inplace.video.application.AliasUtil;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
 
 public class InfluencerResponse {
@@ -84,7 +83,7 @@ public class InfluencerResponse {
             );
             return new InfluencerResponse.Video(
                 videoInfo.videoId(),
-                AliasUtil.makeAlias(videoInfo.influencerName(), videoInfo.placeCategory()),
+                videoInfo.influencerName() + "|" + videoInfo.placeName(),
                 videoInfo.videoUrl(),
                 place
             );
