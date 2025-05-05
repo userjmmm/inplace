@@ -1,3 +1,19 @@
+function openInfluencerEditModal(element) {
+    const editId = element.getAttribute("data-id");
+    const editJob = element.getAttribute("data-job");
+    const editName = element.getAttribute("data-name");
+    const editImg = element.getAttribute("data-img");
+
+    const editImgElement = document.getElementById('editImg');
+    document.getElementById('editId').value = editId;
+    document.getElementById('editJob').value = editJob;
+    document.getElementById('editName').value = editName;
+    editImgElement.src = editImg;
+    editImgElement.style.display = "none";
+    document.getElementById('editModal').style.display = "block";
+    currentOpenModalId='editModal'
+}
+
 function updateInfluencer() {
     const id = document.getElementById('editId').value;
     const formData = {

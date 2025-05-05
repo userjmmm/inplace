@@ -11,6 +11,12 @@ function previewImage(input) {
     }
 }
 
+function openBannerPreviewModal(src) {
+    document.getElementById('previewModal').style.display = "block";
+    document.getElementById('modalImage').src = src;
+    currentOpenModalId = 'previewModal';
+}
+
 // form submit 이벤트 처리
 document.getElementById('imageUploadForm').addEventListener('submit', function (e) {
     e.preventDefault();

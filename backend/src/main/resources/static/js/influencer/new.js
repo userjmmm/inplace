@@ -37,13 +37,13 @@ function displaySearchResults(items) {
            <td><img src="${item.snippet.thumbnails.default.url}" alt="채널 썸네일"></td>
            <td>${item.snippet.channelTitle}</td>
            <td><a href="https://www.youtube.com/channel/${item.id.channelId}" target="_blank">채널 보기</a></td>
-           <td><button onclick="openRegisterModal('${item.id.channelId}', '${item.snippet.channelTitle}', '${item.snippet.thumbnails.default.url}')">등록</button></td>
+           <td><button onclick="openInfluencerRegisterModal('${item.id.channelId}', '${item.snippet.channelTitle}', '${item.snippet.thumbnails.default.url}')">등록</button></td>
        `);
         tbody.append(row);
     });
 }
 
-function openRegisterModal(channelId, channelTitle, thumbnailUrl) {
+function openInfluencerRegisterModal(channelId, channelTitle, thumbnailUrl) {
     // 채널 정보를 hidden input에 저장
     document.getElementById("channelId").value = channelId;
     document.getElementById("channelTitle").value = channelTitle;
