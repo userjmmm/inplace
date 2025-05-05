@@ -1,8 +1,9 @@
 function updateInfluencer() {
-    const id = $("#editId").val();
+    const id = document.getElementById('editId').value;
     const formData = {
-        name: $("#editName").val(),
-        job: $("#editJob").val()
+        influencerName: document.getElementById('editName').value,
+        influencerImgUrl: document.getElementById('editImg').src,
+        influencerJob: document.getElementById('editJob').value,
     };
 
     $.ajax({
@@ -12,7 +13,7 @@ function updateInfluencer() {
         data: JSON.stringify(formData),
         success: function (response) {
             alert('인플루언서 정보가 수정되었습니다.');
-            $("#editModal").hide();
+            document.getElementById('editModal').style.display = 'none';
             location.reload();
         },
         error: function (xhr, status, error) {
