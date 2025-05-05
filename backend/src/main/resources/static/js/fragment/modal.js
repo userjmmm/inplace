@@ -3,7 +3,7 @@ let currentOpenModalId = null;
 function closeModal() {
     if (currentOpenModalId) {
         const modal = document.getElementById(currentOpenModalId);
-        const iframe = modal.querySelector("iframe");
+        const iframe = modal.querySelectorAll("iframe");
         if (modal) {
             modal.style.display = "none";
         }
