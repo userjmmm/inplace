@@ -1,40 +1,23 @@
-// 모달 열기 함수
-function openModal(element) {
-  const videoUrl = element.getAttribute("data-video-url");
-  const videoId = element.getAttribute("data-video-id");
-  window.selectedVideoId = videoId;
-  window.selectedVideoUrl = videoUrl;
-  document.getElementById("placeSearchModal").style.display = "block";
-  const videoIframe = document.getElementById("videoIframe");
-  videoIframe.src = `https://www.youtube.com/embed/${videoUrl}`;
-}
-
-function openGoogleModal() {
-  document.getElementById("placeGoogleSearchModal").style.display = "block";
-  const videoIframe = document.getElementById("videoIframe2");
-  videoIframe.src = `https://www.youtube.com/embed/${window.selectedVideoUrl}`;
-}
-
-// 모달 닫기 함수
-function closeModal() {
-  document.getElementById("placeGoogleSearchModal").style.display = "none";
-  document.getElementById("placeSearchModal").style.display = "none";
-  document.getElementById("videoIframe").src = ""; // 비디오 정지
-}
-
-// 모달 외부 클릭 시 닫기
-window.onclick = function (event) {
-  const modal = document.getElementById("placeSearchModal");
-  if (event.target === modal) {
-    closeModal();
+function openPlaceSearchModal(mapProvider, element=null) {
+  console.log(mapProvider + " open");
+  if (element) {
+    window.selectedVideoId = element.getAttribute("data-video-id");
+    window.selectedVideoUrl = element.getAttribute("data-video-url");
   }
-};
+
+  const modalId = `placeSearchModal-${mapProvider}`;
+  document.getElementById(modalId).style.display = "block";
+  const videoIFrame = `videoIFrame-${mapProvider}`;
+  document.getElementById(videoIFrame).src = `https://www.youtube.com/embed/${window.selectedVideoUrl}`;
+
+  currentOpenModalId = modalId;
+}
 
 let placeInfo = null;
 
 function searchKakaoPlaces() {
-
-  const keyword = document.getElementById('keyword').value;
+  console.log("searchKakaoPlaces");
+  const keyword = document.getElementById('keyword-kakao').value;
   if (!keyword.trim()) {
     alert("검색어를 입력하세요.");
     return;
@@ -43,7 +26,7 @@ function searchKakaoPlaces() {
   const ps = new kakao.maps.services.Places();
   // Kakao Maps API를 통해 장소 검색
   ps.keywordSearch(keyword, function (data, status) {
-    const tbody = $('#search-tbody');
+    const tbody = $('#search-tbody-kakao');
     tbody.empty();
 
     if (status === kakao.maps.services.Status.OK) {
@@ -64,6 +47,7 @@ function searchKakaoPlaces() {
 }
 
 function setPlaceInfo(place) {
+  console.log("setPlaceInfo");
   const videoId = window.selectedVideoId;
   const category = document.getElementById('category').value;
   if (!category) {
@@ -83,12 +67,13 @@ function setPlaceInfo(place) {
     kakaoPlaceId: place.id
   };
 
-  closeModal();
-  openGoogleModal();
+  closeModal('placeSearchModal-kakao');
+  openPlaceSearchModal('google');
 }
 
 function searchGooglePlaces() {
-  const keyword = document.getElementById('keyword2').value;
+  console.log("searchGooglePlaces");
+  const keyword = document.getElementById('keyword-google').value;
   if (!keyword.trim()) {
     alert("검색어를 입력하세요.");
     return;
@@ -106,7 +91,7 @@ function searchGooglePlaces() {
       textQuery: keyword
     }),
     success: function (res) {
-      const tbody = $('#search-tbody2');
+      const tbody = $('#search-tbody-google');
       tbody.empty();
 
       res.places.forEach(place => {
@@ -121,8 +106,8 @@ function searchGooglePlaces() {
 
       // 이벤트 리스너 등록
       $(".register-btn").off("click").on("click", function () {
-        const placeId = $(this).data("place-id");  // 버튼의 data-place-id 값 가져오기
-        registerPlace(placeId);
+        placeInfo.googlePlaceId = $(this).data("place-id");  // 버튼의 data-place-id 값 가져오기
+        registerPlace();
       });
     },
     error: function () {
@@ -131,9 +116,8 @@ function searchGooglePlaces() {
   });
 }
 
-function registerPlace(googlePlaceId) {
-  placeInfo.googlePlaceId = googlePlaceId;
-
+function registerPlace() {
+  console.log("registerPlace");
   $.ajax({
     url: `/places`,
     method: 'POST',
@@ -168,15 +152,3 @@ function deleteVideo(element) {
   });
 }
 
-function updateMainVideo() {
-  $.ajax({
-    url: '/videos/update',
-    method: 'GET',
-    success: function() {
-      alert("Main Video가 업데이트 되었습니다.");
-    },
-    error: function () {
-      alert("Main Video 업데이트에 실패하였습니다.");
-    }
-  });
-}
