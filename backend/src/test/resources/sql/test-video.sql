@@ -1,24 +1,31 @@
-INSERT INTO places (id, name, latitude, longitude, address1, address2, address3, category)
-VALUES (1, 'testPlace1', 36.90, 126.90, 'add1', 'add2', 'add3', 'RESTAURANT'),
-       (2, 'testPlace2', 36.91, 126.91, 'add1', 'add2', 'add3', 'CAFE'),
-       (3, 'testPlace3', 36.92, 126.92, 'add1', 'add2', 'add3', 'WESTERN'),
-       (4, 'testPlace4', 36.93, 126.93, 'add1', 'add2', 'add3', 'JAPANESE'),
-       (5, 'testPlace5', 36.94, 126.94, 'add1', 'add2', 'add3', 'KOREAN'),
-       (6, 'testPlace6', 36.95, 126.95, 'add1', 'add2', 'add3', 'RESTAURANT'),
-       (7, 'testPlace7', 36.96, 126.96, 'add1', 'add2', 'add3', 'CAFE'),
-       (8, 'testPlace8', 36.97, 126.97, 'add1', 'add2', 'add3', 'WESTERN'),
-       (9, 'testPlace9', 36.98, 126.98, 'add1', 'add2', 'add3', 'JAPANESE'),
-       (10, 'testPlace10', 36.99, 126.99, 'add1', 'add2', 'add3', 'KOREAN'),
-       (11, 'testPlace11', 37.00, 127.00, 'add1', 'add2', 'add3', 'RESTAURANT'),
-       (12, 'testPlace12', 37.01, 127.01, 'add1', 'add2', 'add3', 'CAFE'),
-       (13, 'testPlace13', 37.02, 127.02, 'add1', 'add2', 'add3', 'WESTERN'),
-       (14, 'testPlace14', 37.03, 127.03, 'add1', 'add2', 'add3', 'JAPANESE'),
-       (15, 'testPlace15', 37.04, 127.04, 'add1', 'add2', 'add3', 'KOREAN'),
-       (16, 'testPlace16', 37.05, 127.05, 'add1', 'add2', 'add3', 'RESTAURANT'),
-       (17, 'testPlace17', 37.06, 127.06, 'add1', 'add2', 'add3', 'CAFE'),
-       (18, 'testPlace18', 37.07, 127.07, 'add1', 'add2', 'add3', 'WESTERN'),
-       (19, 'testPlace19', 37.08, 127.08, 'add1', 'add2', 'add3', 'JAPANESE'),
-       (20, 'testPlace20', 37.09, 127.09, 'add1', 'add2', 'add3', 'KOREAN');
+INSERT INTO categories(id, name, parent_id)
+VALUES (1, '맛집', null),
+       (2, '카페', 1),
+       (3, '양식', 1),
+       (4, '일식', 1),
+       (5, '한식', 1);
+
+INSERT INTO places (id, name, latitude, longitude, address1, address2, address3, category_id)
+VALUES (1, 'testPlace1', 36.90, 126.90, 'add1', 'add2', 'add3', 1),
+       (2, 'testPlace2', 36.91, 126.91, 'add1', 'add2', 'add3', 2),
+       (3, 'testPlace3', 36.92, 126.92, 'add1', 'add2', 'add3', 3),
+       (4, 'testPlace4', 36.93, 126.93, 'add1', 'add2', 'add3', 4),
+       (5, 'testPlace5', 36.94, 126.94, 'add1', 'add2', 'add3', 5),
+       (6, 'testPlace6', 36.95, 126.95, 'add1', 'add2', 'add3', 1),
+       (7, 'testPlace7', 36.96, 126.96, 'add1', 'add2', 'add3', 2),
+       (8, 'testPlace8', 36.97, 126.97, 'add1', 'add2', 'add3', 3),
+       (9, 'testPlace9', 36.98, 126.98, 'add1', 'add2', 'add3', 4),
+       (10, 'testPlace10', 36.99, 126.99, 'add1', 'add2', 'add3', 5),
+       (11, 'testPlace11', 37.00, 127.00, 'add1', 'add2', 'add3', 1),
+       (12, 'testPlace12', 37.01, 127.01, 'add1', 'add2', 'add3', 2),
+       (13, 'testPlace13', 37.02, 127.02, 'add1', 'add2', 'add3', 3),
+       (14, 'testPlace14', 37.03, 127.03, 'add1', 'add2', 'add3', 4),
+       (15, 'testPlace15', 37.04, 127.04, 'add1', 'add2', 'add3', 5),
+       (16, 'testPlace16', 37.05, 127.05, 'add1', 'add2', 'add3', 1),
+       (17, 'testPlace17', 37.06, 127.06, 'add1', 'add2', 'add3', 2),
+       (18, 'testPlace18', 37.07, 127.07, 'add1', 'add2', 'add3', 3),
+       (19, 'testPlace19', 37.08, 127.08, 'add1', 'add2', 'add3', 4),
+       (20, 'testPlace20', 37.09, 127.09, 'add1', 'add2', 'add3', 5);
 
 INSERT INTO influencers (id, name, job, channel_id, img_url)
 VALUES (1, 'influencer1', 'job1', 'channel1', 'img1'),
