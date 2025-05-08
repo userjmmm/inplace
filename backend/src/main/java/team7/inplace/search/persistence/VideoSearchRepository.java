@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import team7.inplace.influencer.domain.QInfluencer;
+import team7.inplace.place.domain.QCategory;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.domain.QPlaceVideo;
 import team7.inplace.video.domain.QVideo;
@@ -33,11 +34,12 @@ public class VideoSearchRepository implements SearchRepository<VideoQueryResult.
                 QInfluencer.influencer.name,
                 QPlace.place.id,
                 QPlace.place.name,
-                QPlace.place.category
+                QCategory.category.name
             ))
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .leftJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
+            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
             .leftJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
             .where(getPlaceMatchScore(keyword).gt(0)

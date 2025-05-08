@@ -1,6 +1,5 @@
 package team7.inplace.place.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,7 +24,6 @@ import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.client.GooglePlaceClient;
 import team7.inplace.place.client.GooglePlaceClientResponse.Place;
-import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.PlaceVideo;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
@@ -98,7 +96,7 @@ public class PlaceService {
     private Page<PlaceQueryResult.DetailedPlace> getPlacesByDistance(
         Coordinate placesCoordinateCommand,
         List<RegionParam> regionParams,
-        List<Category> categoryFilters,
+        List<Long> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
         Long userId
@@ -174,10 +172,9 @@ public class PlaceService {
         return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
     }
 
+
     public List<PlaceInfo.Category> getCategories() {
-        return Arrays.stream(Category.values())
-            .map(category -> new PlaceInfo.Category(category.name()))
-            .toList();
+        return null;
     }
 
     public List<Marker> getPlaceLocationsByName(String name, FilterParams command) {

@@ -46,7 +46,7 @@ public class PlacesResponse {
                     placeInfo.place().address2(),
                     placeInfo.place().address3()
                 ),
-                placeInfo.place().category().getName(),
+                placeInfo.place().category(),
                 "",
                 placeInfo.place().longitude().toString(),
                 placeInfo.place().latitude().toString(),
@@ -97,7 +97,7 @@ public class PlacesResponse {
                     place.place().address2(),
                     place.place().address3()
                 ),
-                place.place().category().getName(),
+                place.place().category(),
                 place.place().longitude(),
                 place.place().latitude(),
                 null,
@@ -131,7 +131,7 @@ public class PlacesResponse {
                     place.place().address2(),
                     place.place().address3()
                 ),
-                place.place().category().getName(),
+                place.place().category(),
                 place.place().longitude(),
                 place.place().latitude(),
                 PlacesResponse.Facility.of(
@@ -294,7 +294,7 @@ public class PlacesResponse {
             return new MarkerDetail(
                 marker.place().placeId(),
                 marker.place().placeName(),
-                marker.place().category().getName(),
+                marker.place().category(),
                 new Address(
                     marker.place().address1(),
                     marker.place().address2(),
