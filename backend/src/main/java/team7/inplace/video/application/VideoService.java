@@ -75,9 +75,9 @@ public class VideoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<VideoQueryResult.SimpleVideo> getOneInfluencerVideos(
+    public Page<VideoQueryResult.DetailedVideo> getOneInfluencerVideos(
         Long influencerId, Pageable pageable) {
-        var videos = videoReadRepository.findSimpleVideosWithOneInfluencerId(influencerId,
+        var videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(influencerId,
             pageable);
         return videos;
     }

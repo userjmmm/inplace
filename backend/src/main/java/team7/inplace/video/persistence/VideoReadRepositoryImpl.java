@@ -145,7 +145,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     }
 
     @Override
-    public Page<SimpleVideo> findSimpleVideosWithOneInfluencerId(
+    public Page<DetailedVideo> findDetailedVideosWithOneInfluencerId(
         Long influencerId, Pageable pageable
     ) {
         Long total = queryFactory
@@ -160,13 +160,13 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             return new PageImpl<>(Collections.emptyList(), pageable, total);
         }
 
-        var query = buildSimpleVideoQuery()
+        var query = buildDetailedVideoQuery()
             .where(QVideo.video.influencerId.eq(influencerId),
                 commonWhere().and(QPlaceVideo.placeVideo.isNotNull()));
 
         applySorting(query, pageable);
 
-        List<SimpleVideo> videos = query
+        List<DetailedVideo> videos = query
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -221,7 +221,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             .and(QInfluencer.influencer.deleteAt.isNull());
     }
 
-    private void applySorting(JPAQuery<SimpleVideo> query, Pageable pageable) {
+    private void applySorting(JPAQuery<DetailedVideo> query, Pageable pageable) {
         pageable.getSort().stream()
             .findFirst()
             .ifPresentOrElse(order -> {
