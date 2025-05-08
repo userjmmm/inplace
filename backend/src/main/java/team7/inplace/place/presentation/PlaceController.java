@@ -26,6 +26,7 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlaceRequest.Create;
 import team7.inplace.place.presentation.dto.PlacesResponse;
+import team7.inplace.place.presentation.dto.PlacesResponse.Categories;
 import team7.inplace.place.presentation.dto.PlacesResponse.Marker;
 import team7.inplace.place.presentation.dto.PlacesResponse.MarkerDetail;
 import team7.inplace.place.presentation.dto.PlacesResponse.Simple;
@@ -144,9 +145,9 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     @Override
     @GetMapping("/categories")
-    public ResponseEntity<PlacesResponse.Category> getCategories() {
+    public ResponseEntity<Categories> getCategories() {
         List<PlaceInfo.Category> categories = placeFacade.getCategories();
-        var response = PlacesResponse.Category.from(categories);
+        var response = Categories.from(categories);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

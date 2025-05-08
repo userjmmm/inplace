@@ -22,9 +22,11 @@ import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.application.dto.PlaceInfo;
+import team7.inplace.place.application.dto.PlaceInfo.Category;
 import team7.inplace.place.client.GooglePlaceClient;
 import team7.inplace.place.client.GooglePlaceClientResponse.Place;
 import team7.inplace.place.domain.PlaceVideo;
+import team7.inplace.place.persistence.CategoryRepository;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
 import team7.inplace.place.persistence.PlaceVideoJpaRepository;
@@ -40,10 +42,11 @@ public class PlaceService {
 
     private final PlaceReadRepository placeReadRepository;
     private final PlaceJpaRepository placeJpaRepository;
+    private final CategoryRepository categoryRepository;
     private final PlaceVideoJpaRepository placeVideoJpaRepository;
     private final LikedPlaceRepository likedPlaceRepository;
-    private final GooglePlaceClient googlePlaceClient;
     private final VideoReadRepository videoReadRepository;
+    private final GooglePlaceClient googlePlaceClient;
 
     @Transactional
     public void createPlace(Create placeCommand) {
@@ -174,7 +177,10 @@ public class PlaceService {
 
 
     public List<PlaceInfo.Category> getCategories() {
-        return null;
+        var categories = categoryRepository.findAll();
+        return categories.stream()
+            .map(Category::from)
+            .toList();
     }
 
     public List<Marker> getPlaceLocationsByName(String name, FilterParams command) {
