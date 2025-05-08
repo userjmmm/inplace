@@ -26,8 +26,10 @@ import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.client.GooglePlaceClient;
 import team7.inplace.place.client.GooglePlaceClientResponse.Place;
 import team7.inplace.place.domain.Category;
+import team7.inplace.place.domain.PlaceVideo;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
+import team7.inplace.place.persistence.PlaceVideoJpaRepository;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
@@ -38,20 +40,23 @@ import team7.inplace.video.persistence.VideoReadRepository;
 @RequiredArgsConstructor
 public class PlaceService {
 
-    private final LikedPlaceRepository likedPlaceRepository;
     private final PlaceReadRepository placeReadRepository;
     private final PlaceJpaRepository placeJpaRepository;
+    private final PlaceVideoJpaRepository placeVideoJpaRepository;
+    private final LikedPlaceRepository likedPlaceRepository;
     private final GooglePlaceClient googlePlaceClient;
     private final VideoReadRepository videoReadRepository;
 
-    public Long createPlace(Create placeCommand) {
-        var existPlace = placeJpaRepository.findPlaceByKakaoPlaceId(placeCommand.kakaoPlaceId());
-        if (existPlace.isPresent()) {
-            return existPlace.get().getId();
-        }
-        var placeBulk = placeCommand.toEntity();
-        placeJpaRepository.save(placeBulk);
-        return placeBulk.getId();
+    @Transactional
+    public void createPlace(Create placeCommand) {
+        var place = placeJpaRepository.findPlaceByKakaoPlaceId(placeCommand.kakaoPlaceId())
+            .orElseGet(() -> {
+                var newPlace = placeCommand.toEntity();
+                return placeJpaRepository.save(newPlace);
+            });
+
+        var placeVideo = new PlaceVideo(place.getId(), placeCommand.videoId());
+        placeVideoJpaRepository.save(placeVideo);
     }
 
     @Transactional
