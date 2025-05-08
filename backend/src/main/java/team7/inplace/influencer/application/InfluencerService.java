@@ -77,7 +77,8 @@ public class InfluencerService {
 
     @Transactional
     public Long updateInfluencer(Long id, InfluencerCommand command) {
-        Influencer influencer = influencerRepository.findById(id).orElseThrow();
+        Influencer influencer = influencerRepository.findById(id)
+                .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));
         influencer.update(command.influencerName(), command.influencerImgUrl(),
             command.influencerJob());
 
@@ -86,8 +87,8 @@ public class InfluencerService {
 
     @Transactional
     public Long updateVisibility(Long id) {
-        var influencer = influencerRepository.findById(id)
-            .orElseThrow();
+        Influencer influencer = influencerRepository.findById(id)
+                .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));
         influencer.changeVisibility();
 
         return influencer.getId();
@@ -95,7 +96,8 @@ public class InfluencerService {
 
     @Transactional
     public void deleteInfluencer(Long id) {
-        Influencer influencer = influencerRepository.findById(id).orElseThrow();
+        Influencer influencer = influencerRepository.findById(id)
+                .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));
 
         influencerRepository.delete(influencer);
     }
@@ -132,15 +134,15 @@ public class InfluencerService {
 
     @Transactional()
     public void updateLastMediumVideo(Long influencerId, String lastVideo) {
-        var influencer = influencerRepository.findById(influencerId)
-            .orElseThrow();
+        Influencer influencer = influencerRepository.findById(influencerId)
+                .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));
         influencer.updateLastMediumVideo(lastVideo);
     }
 
     @Transactional()
     public void updateLastLongVideo(Long influencerId, String lastLongVideo) {
-        var influencer = influencerRepository.findById(influencerId)
-            .orElseThrow();
+        Influencer influencer = influencerRepository.findById(influencerId)
+                .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));
         influencer.updateLastLongVideo(lastLongVideo);
     }
 
