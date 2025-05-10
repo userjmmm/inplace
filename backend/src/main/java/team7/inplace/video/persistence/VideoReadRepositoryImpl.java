@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import team7.inplace.influencer.domain.QInfluencer;
 import team7.inplace.liked.likedInfluencer.domain.QLikedInfluencer;
 import team7.inplace.liked.likedPlace.domain.QLikedPlace;
+import team7.inplace.place.domain.QCategory;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.domain.QPlaceVideo;
 import team7.inplace.video.domain.QVideo;
@@ -182,10 +183,11 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                 QInfluencer.influencer.name,
                 QPlace.place.id,
                 QPlace.place.name,
-                QPlace.place.category))
+                QCategory.category.name))
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .leftJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
+            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
             .leftJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id));
     }
@@ -198,7 +200,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                 QInfluencer.influencer.name,
                 QPlace.place.id,
                 QPlace.place.name,
-                QPlace.place.category,
+                QCategory.category.name,
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
                 QPlace.place.address.address3
@@ -206,6 +208,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .leftJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
+            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
             .leftJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id));
     }
