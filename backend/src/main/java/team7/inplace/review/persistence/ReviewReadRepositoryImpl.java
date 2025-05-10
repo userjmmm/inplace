@@ -17,6 +17,7 @@ import team7.inplace.review.persistence.dto.QReviewQueryResult_LikeRate;
 import team7.inplace.review.persistence.dto.QReviewQueryResult_Simple;
 import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.user.domain.QUser;
+import team7.inplace.video.domain.QVideo;
 
 @Repository
 @RequiredArgsConstructor
@@ -51,14 +52,18 @@ public class ReviewReadRepositoryImpl implements ReviewReadRepository {
                 QPlace.place.name,
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
-                QPlace.place.address.address3
+                QPlace.place.address.address3,
+                QVideo.video.uuid
             ))
             .from(QReview.review)
             .innerJoin(QPlace.place).on(QReview.review.placeId.eq(QPlace.place.id))
+            .innerJoin(QVideo.video).on(QReview.review.placeId.eq(QVideo.video.placeId))
             .where(
                 QReview.review.userId.eq(userId),
                 QReview.review.deleteAt.isNull(),
-                QPlace.place.deleteAt.isNull()
+                QPlace.place.deleteAt.isNull(),
+                QVideo.video.updateAt.eq(QVideo.video.updateAt.max()),
+                QVideo.video.deleteAt.isNull()
             ).fetch();
         return new PageImpl<>(contents, pageable, total);
     }

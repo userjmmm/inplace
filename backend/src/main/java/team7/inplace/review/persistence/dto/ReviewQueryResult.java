@@ -28,7 +28,8 @@ public class ReviewQueryResult {
         String placeName,
         String placeAddress1,
         String placeAddress2,
-        String placeAddress3
+        String placeAddress3,
+        String videoUrl
     ) {
 
         @QueryProjection

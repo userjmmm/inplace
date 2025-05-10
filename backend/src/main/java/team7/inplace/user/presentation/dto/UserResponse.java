@@ -25,7 +25,8 @@ public class UserResponse {
         boolean likes,
         String comment,
         LocalDate createdDate,
-        ReviewPlace place
+        ReviewPlace place,
+        String videoUrl
     ) {
 
         public static Review from(
@@ -47,7 +48,8 @@ public class UserResponse {
                 review.likes(),
                 review.comment(),
                 review.createdAt(),
-                reviewPlace
+                reviewPlace,
+                review.videoUrl()
             );
         }
     }
