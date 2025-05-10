@@ -29,11 +29,15 @@ public class ReviewQueryResult {
         String placeAddress1,
         String placeAddress2,
         String placeAddress3,
-        String videoUrl
+        String videoUUID
     ) {
 
         @QueryProjection
         public Detail {
+        }
+
+        public String videoUrl() {
+            return "https://www.youtube.com/watch?v=" + videoUUID;
         }
     }
 
