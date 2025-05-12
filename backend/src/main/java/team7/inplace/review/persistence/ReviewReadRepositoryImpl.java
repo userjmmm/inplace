@@ -5,6 +5,8 @@ import static com.querydsl.core.types.ExpressionUtils.count;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collections;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -42,8 +44,8 @@ public class ReviewReadRepositoryImpl implements ReviewReadRepository {
         if (total == null || total == 0) {
             return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
-        var contents = jpaQueryFactory
-            .select(new QReviewQueryResult_Detail(
+        var reviews = jpaQueryFactory
+            .select(
                 QReview.review.id,
                 QReview.review.isLiked,
                 QReview.review.comment,
@@ -52,23 +54,61 @@ public class ReviewReadRepositoryImpl implements ReviewReadRepository {
                 QPlace.place.name,
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
-                QPlace.place.address.address3,
-                QVideo.video.uuid
-            ))
+                QPlace.place.address.address3
+            )
             .from(QReview.review)
             .innerJoin(QPlace.place).on(QReview.review.placeId.eq(QPlace.place.id))
-            .innerJoin(QVideo.video).on(QReview.review.placeId.eq(QVideo.video.placeId))
             .where(
                 QReview.review.userId.eq(userId),
                 QReview.review.deleteAt.isNull(),
-                QPlace.place.deleteAt.isNull(),
-                QVideo.video.updateAt.eq(
-                    jpaQueryFactory.select(QVideo.video.updateAt.max())
-                        .from(QVideo.video)
-                        .where(QVideo.video.placeId.eq(QReview.review.placeId))
-                ),
-                QVideo.video.deleteAt.isNull()
-            ).fetch();
+                QPlace.place.deleteAt.isNull()
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        var uuids = jpaQueryFactory
+            .select(
+                QVideo.video.uuid,
+                QVideo.video.view.viewCount,
+                QReview.review.id
+            )
+            .from(QReview.review)
+            .innerJoin(QPlace.place).on(QReview.review.placeId.eq(QPlace.place.id))
+            .innerJoin(QVideo.video).on(QPlace.place.id.eq(QVideo.video.placeId))
+            .where(QReview.review.userId.eq(userId))
+            .orderBy(QVideo.video.view.viewCount.desc())
+            .distinct()
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch()
+            .stream()
+                .collect(Collectors.toMap(
+                tuple -> tuple.get(QReview.review.id),
+                tuple -> tuple.get(QVideo.video.uuid)
+                ));
+
+        var contents = reviews.stream()
+            .map(tuple -> {
+                Long reviewId = tuple.get(QReview.review.id);
+                String uuid = uuids.get(reviewId);  // UUID 매핑
+
+                return new ReviewQueryResult.Detail(
+                        reviewId,
+                        tuple.get(QReview.review.isLiked),
+                        tuple.get(QReview.review.comment),
+                        tuple.get(QReview.review.createdDate),
+                        tuple.get(QPlace.place.id),
+                        tuple.get(QPlace.place.name),
+                        tuple.get(QPlace.place.address.address1),
+                        tuple.get(QPlace.place.address.address2),
+                        tuple.get(QPlace.place.address.address3),
+                        uuid // 비디오 UUID 추가
+                );
+            })
+            .toList();
+
+
         return new PageImpl<>(contents, pageable, total);
     }
 
