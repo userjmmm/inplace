@@ -62,7 +62,11 @@ public class ReviewReadRepositoryImpl implements ReviewReadRepository {
                 QReview.review.userId.eq(userId),
                 QReview.review.deleteAt.isNull(),
                 QPlace.place.deleteAt.isNull(),
-                QVideo.video.updateAt.eq(QVideo.video.updateAt.max()),
+                QVideo.video.updateAt.eq(
+                    jpaQueryFactory.select(QVideo.video.updateAt.max())
+                        .from(QVideo.video)
+                        .where(QVideo.video.placeId.eq(QReview.review.placeId))
+                ),
                 QVideo.video.deleteAt.isNull()
             ).fetch();
         return new PageImpl<>(contents, pageable, total);
