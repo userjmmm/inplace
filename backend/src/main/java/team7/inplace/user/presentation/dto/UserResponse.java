@@ -15,8 +15,8 @@ public class UserResponse {
         String imgUrl
     ) {
 
-        public static Info from(UserInfo userInfo) {
-            return new Info(userInfo.nickname(), userInfo.profileImageUrl());
+        public static Info from(UserInfo.Profile profile) {
+            return new Info(profile.nickname(), profile.profileImageUrl());
         }
     }
 
@@ -30,26 +30,15 @@ public class UserResponse {
     ) {
 
         public static Review from(
-            ReviewQueryResult.Detail review, String videoUrl
+            UserInfo.Review review
         ) {
-            var reviewPlaceAddress = new ReviewPlaceAddress(
-                review.placeAddress1(),
-                review.placeAddress2(),
-                review.placeAddress3()
-            );
-            var reviewPlace = new ReviewPlace(
-                review.placeId(),
-                review.placeName(),
-                "",
-                reviewPlaceAddress
-            );
             return new Review(
-                review.reviewId(),
-                review.likes(),
-                review.comment(),
-                review.createdAt(),
-                reviewPlace,
-                videoUrl
+                    review.reviewId(),
+                    review.likes(),
+                    review.comment(),
+                    review.createdDate(),
+                    ReviewPlace.from(review.place()),
+                    review.videoUrl()
             );
         }
     }
@@ -60,7 +49,14 @@ public class UserResponse {
         String imgUrl,
         ReviewPlaceAddress address
     ) {
-
+        public static ReviewPlace from(UserInfo.ReviewPlace reviewPlace) {
+            return new ReviewPlace(
+                    reviewPlace.placeId(),
+                    reviewPlace.placeName(),
+                    reviewPlace.imgUrl(),
+                    ReviewPlaceAddress.from(reviewPlace.address())
+            );
+        }
     }
 
     public record ReviewPlaceAddress(
@@ -68,7 +64,13 @@ public class UserResponse {
         String address2,
         String address3
     ) {
-
+        public static ReviewPlaceAddress from(UserInfo.ReviewPlaceAddress reviewPlaceAddress) {
+            return new ReviewPlaceAddress(
+                    reviewPlaceAddress.address1(),
+                    reviewPlaceAddress.address2(),
+                    reviewPlaceAddress.address3()
+            );
+        }
     }
 
     public record LikedPlace(

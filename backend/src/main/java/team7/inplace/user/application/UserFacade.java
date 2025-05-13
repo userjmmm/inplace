@@ -53,7 +53,7 @@ public class UserFacade {
             place -> PlaceInfo.Simple.of(place, videoInfos.get(place.placeId())));
     }
 
-    public Page<UserResponse.Review> getMyReviews(Pageable pageable) {
+    public Page<UserInfo.Review> getMyReviews(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         var details = reviewService.getUserReviews(userId, pageable);
         var placeIds = details.stream().map(ReviewQueryResult.Detail::placeId).toList();
@@ -65,7 +65,7 @@ public class UserFacade {
             );
 
         return details
-                .map((detail) -> UserResponse.Review.from(detail, videoUrls.get(detail.placeId())));
+                .map((detail) -> UserInfo.Review.from(detail, videoUrls.get(detail.placeId())));
     }
 
     public void updateNickname(String nickname) {
@@ -73,7 +73,7 @@ public class UserFacade {
         userService.updateNickname(userId, nickname);
     }
 
-    public UserInfo getUserInfo() {
+    public UserInfo.Profile getUserInfo() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         return userService.getUserInfo(userId);
     }
