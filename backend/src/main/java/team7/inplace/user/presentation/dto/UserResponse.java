@@ -30,7 +30,7 @@ public class UserResponse {
     ) {
 
         public static Review from(
-            ReviewQueryResult.Detail review
+            ReviewQueryResult.Detail review, String videoUrl
         ) {
             var reviewPlaceAddress = new ReviewPlaceAddress(
                 review.placeAddress1(),
@@ -49,7 +49,7 @@ public class UserResponse {
                 review.comment(),
                 review.createdAt(),
                 reviewPlace,
-                review.videoUrl()
+                videoUrl
             );
         }
     }

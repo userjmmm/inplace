@@ -56,8 +56,7 @@ public class UserController implements UserControllerApiSpec {
     public ResponseEntity<Page<UserResponse.Review>> getMyReviews(
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        var responses = userFacade.getMyReviews(pageable)
-            .map(UserResponse.Review::from);
+        var responses = userFacade.getMyReviews(pageable);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
