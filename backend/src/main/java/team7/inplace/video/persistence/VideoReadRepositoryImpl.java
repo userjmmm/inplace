@@ -69,9 +69,12 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     }
 
     @Override
-    public List<DetailedVideo> findTop10ByViewCountIncrement() {
+    public List<DetailedVideo> findTop10ByViewCountIncrement(Long parentCategoryId) {
         return buildDetailedVideoQuery()
-            .where(commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
+            .where(commonWhere()
+                .and(QPlaceVideo.placeVideo.isNotNull())
+                .and(QCategory.category.parentId.eq(parentCategoryId)) // 상위 카테고리 ID로 필터링
+            )
             .orderBy(QVideo.video.view.viewCountIncrease.desc())
             .limit(10)
             .fetch();
@@ -193,6 +196,8 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     }
 
     private JPAQuery<DetailedVideo> buildDetailedVideoQuery() {
+        QCategory selfCategory = new QCategory("selfCategory");
+
         return queryFactory
             .select(new QVideoQueryResult_DetailedVideo(
                 QVideo.video.id,
@@ -200,7 +205,8 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                 QInfluencer.influencer.name,
                 QPlace.place.id,
                 QPlace.place.name,
-                QCategory.category.name,
+                selfCategory.engName, // 상위 카테고리 영어 이름
+                QCategory.category.parentId,
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
                 QPlace.place.address.address3
@@ -209,6 +215,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .leftJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
             .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
+            .leftJoin(selfCategory).on(QCategory.category.parentId.eq(selfCategory.id))
             .leftJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id));
     }
