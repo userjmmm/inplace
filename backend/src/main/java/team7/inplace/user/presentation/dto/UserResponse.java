@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.stream.Collectors;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.user.application.dto.UserInfo;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
 
@@ -33,12 +32,12 @@ public class UserResponse {
             UserInfo.Review review
         ) {
             return new Review(
-                    review.reviewId(),
-                    review.likes(),
-                    review.comment(),
-                    review.createdDate(),
-                    ReviewPlace.from(review.place()),
-                    review.videoUrl()
+                review.reviewId(),
+                review.likes(),
+                review.comment(),
+                review.createdDate(),
+                ReviewPlace.from(review.place()),
+                review.videoUrl()
             );
         }
     }
@@ -49,12 +48,13 @@ public class UserResponse {
         String imgUrl,
         ReviewPlaceAddress address
     ) {
+
         public static ReviewPlace from(UserInfo.ReviewPlace reviewPlace) {
             return new ReviewPlace(
-                    reviewPlace.placeId(),
-                    reviewPlace.placeName(),
-                    reviewPlace.imgUrl(),
-                    ReviewPlaceAddress.from(reviewPlace.address())
+                reviewPlace.placeId(),
+                reviewPlace.placeName(),
+                reviewPlace.imgUrl(),
+                ReviewPlaceAddress.from(reviewPlace.address())
             );
         }
     }
@@ -64,11 +64,12 @@ public class UserResponse {
         String address2,
         String address3
     ) {
+
         public static ReviewPlaceAddress from(UserInfo.ReviewPlaceAddress reviewPlaceAddress) {
             return new ReviewPlaceAddress(
-                    reviewPlaceAddress.address1(),
-                    reviewPlaceAddress.address2(),
-                    reviewPlaceAddress.address3()
+                reviewPlaceAddress.address1(),
+                reviewPlaceAddress.address2(),
+                reviewPlaceAddress.address3()
             );
         }
     }
@@ -79,6 +80,7 @@ public class UserResponse {
         String imageUrl,
         String influencerName,
         ReviewPlaceAddress address,
+        String videoUrl,
         boolean likes
     ) {
 
@@ -97,6 +99,11 @@ public class UserResponse {
                     likedPlaceInfo.place().address2(),
                     likedPlaceInfo.place().address3()
                 ),
+                likedPlaceInfo.video()
+                    .stream()
+                    .map(VideoQueryResult.SimpleVideo::videoUrl)
+                    .findFirst()
+                    .orElse(""),
                 likedPlaceInfo.place().isLiked()
             );
         }
