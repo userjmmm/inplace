@@ -71,10 +71,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     @Override
     public List<DetailedVideo> findTop10ByViewCountIncrement(Long parentCategoryId) {
         return buildDetailedVideoQuery()
-            .where(commonWhere()
-                .and(QPlaceVideo.placeVideo.isNotNull())
-                .and(QCategory.category.parentId.eq(parentCategoryId)) // 상위 카테고리 ID로 필터링
-            )
+            .where(commonWhere().and(QCategory.category.parentId.eq(parentCategoryId)))
             .orderBy(QVideo.video.view.viewCountIncrease.desc())
             .limit(10)
             .fetch();
@@ -83,7 +80,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     @Override
     public List<DetailedVideo> findTop10ByLatestUploadDate() {
         return buildDetailedVideoQuery()
-            .where(commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
+            .where(commonWhere())
             .orderBy(QVideo.video.publishTime.desc())
             .limit(10)
             .fetch();
@@ -98,7 +95,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                         .from(QLikedInfluencer.likedInfluencer)
                         .where(QLikedInfluencer.likedInfluencer.userId.eq(userId)
                             .and(QLikedInfluencer.likedInfluencer.isLiked.isTrue()))),
-                commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
+                commonWhere())
             .orderBy(QVideo.video.publishTime.desc())
             .limit(10)
             .fetch();
@@ -171,9 +168,10 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         Long total = queryFactory
             .select(QVideo.video.countDistinct())
             .from(QVideo.video)
-            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .innerJoin(QPlaceVideo.placeVideo)
+            .on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .where(QVideo.video.influencerId.eq(influencerId),
-                QVideo.video.deleteAt.isNull(), QPlaceVideo.placeVideo.isNotNull())
+                QVideo.video.deleteAt.isNull())
             .fetchOne();
 
         if (total == 0) {
@@ -181,8 +179,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         }
 
         var query = buildDetailedVideoQuery()
-            .where(QVideo.video.influencerId.eq(influencerId),
-                commonWhere().and(QPlaceVideo.placeVideo.isNotNull()));
+            .where(QVideo.video.influencerId.eq(influencerId), commonWhere());
 
         applySorting(query, pageable);
 
