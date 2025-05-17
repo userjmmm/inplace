@@ -188,10 +188,11 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                 QPlace.place.name,
                 QCategory.category.name))
             .from(QVideo.video)
-            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
-            .leftJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
-            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
-            .leftJoin(QInfluencer.influencer)
+            .innerJoin(QPlaceVideo.placeVideo)
+            .on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .innerJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
+            .innerJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
+            .innerJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id));
     }
 
@@ -212,12 +213,13 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                 QPlace.place.address.address3
             ))
             .from(QVideo.video)
-            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
-            .leftJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
-            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
-            .leftJoin(selfCategory).on(QCategory.category.parentId.eq(selfCategory.id))
-            .leftJoin(QInfluencer.influencer)
-            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id));
+            .innerJoin(QInfluencer.influencer)
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
+            .innerJoin(QPlaceVideo.placeVideo)
+            .on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .innerJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
+            .innerJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
+            .leftJoin(selfCategory).on(QCategory.category.parentId.eq(selfCategory.id));
     }
 
     private BooleanExpression locationCondition(double longitude, double latitude) {
@@ -227,7 +229,6 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
 
     private BooleanExpression commonWhere() {
         return QVideo.video.deleteAt.isNull()
-            .and(QPlaceVideo.placeVideo.isNotNull())
             .and(QPlace.place.deleteAt.isNull())
             .and(QInfluencer.influencer.deleteAt.isNull());
     }
