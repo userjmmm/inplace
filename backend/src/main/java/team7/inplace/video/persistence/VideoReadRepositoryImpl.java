@@ -128,24 +128,40 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
 
     @Override
     public Page<SimpleVideo> findVideoWithNoPlace(Pageable pageable) {
-        Long total = queryFactory
-            .select(QVideo.video.count())
+        List<Long> videoIds = queryFactory
+            .select(QVideo.video.id).distinct()
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .where(QPlaceVideo.placeVideo.isNull(),
                 QVideo.video.deleteAt.isNull())
-            .fetchOne();
+            .fetch();
 
-        if (total == 0) {
-            return new PageImpl<>(Collections.emptyList(), pageable, total);
+        if (videoIds.isEmpty()) {
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
-        List<SimpleVideo> videos = buildSimpleVideoQuery()
-            .where(QPlaceVideo.placeVideo.isNull(), commonWhere())
+
+        List<SimpleVideo> videos = queryFactory
+            .select(new QVideoQueryResult_SimpleVideo(
+                QVideo.video.id,
+                QVideo.video.uuid,
+                QInfluencer.influencer.name,
+                QPlace.place.id,
+                QPlace.place.name,
+                QCategory.category.name))
+            .from(QVideo.video)
+            .leftJoin(QPlaceVideo.placeVideo)
+            .on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .leftJoin(QPlace.place).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
+            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
+            .leftJoin(QInfluencer.influencer)
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
+            .where(QVideo.video.id.in(videoIds),
+                commonWhere())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
 
-        return new PageImpl<>(videos, pageable, total);
+        return new PageImpl<>(videos, pageable, videoIds.size());
     }
 
     @Override
