@@ -227,6 +227,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
 
     private BooleanExpression commonWhere() {
         return QVideo.video.deleteAt.isNull()
+            .and(QPlaceVideo.placeVideo.isNotNull())
             .and(QPlace.place.deleteAt.isNull())
             .and(QInfluencer.influencer.deleteAt.isNull());
     }

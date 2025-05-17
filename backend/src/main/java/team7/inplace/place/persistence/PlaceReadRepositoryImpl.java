@@ -260,7 +260,8 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     private BooleanExpression commonWhere() {
         return QPlace.place.deleteAt.isNull()
             .and(QVideo.video.deleteAt.isNull())
-            .and(QInfluencer.influencer.deleteAt.isNull());
+            .and(QInfluencer.influencer.deleteAt.isNull())
+            .and(QPlaceVideo.placeVideo.isNotNull());
     }
 
     private BooleanBuilder buildFilterCondition(
