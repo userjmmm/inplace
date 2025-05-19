@@ -44,7 +44,7 @@ public class ReviewServiceTest {
         idField.setAccessible(true);
         idField.set(review, reviewId);
 
-        given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId2);
+        given(AuthorizationUtil.getUserId()).willReturn(userId2);
         given(reviewJPARepository.findById(reviewId)).willReturn(Optional.of(review));
 
         // when then
@@ -63,7 +63,7 @@ public class ReviewServiceTest {
         Long userId = 1L;
         Long reviewId = 1L;
 
-        given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
+        given(AuthorizationUtil.getUserId()).willReturn(userId);
         given(reviewJPARepository.findById(reviewId)).willReturn(Optional.empty());
 
         // when then

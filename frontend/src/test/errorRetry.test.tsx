@@ -29,35 +29,11 @@ describe('메인페이지 ErrorBoundary 테스트', () => {
           data: [
             {
               videoId: 1,
-              influencerName: 'Cool Eats Video',
+              videoAlias: 'Cool Video',
               videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
               place: {
                 placeId: 1,
                 placeName: '이선장네',
-                address: {
-                  address1: '대구',
-                  address2: '북구',
-                  address3: '대현동 119-11',
-                },
-              },
-            },
-          ],
-          error: null,
-        },
-        {
-          data: [
-            {
-              videoId: 1,
-              influencerName: 'Cool Plays Video',
-              videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
-              place: {
-                placeId: 1,
-                placeName: '이선장네',
-                address: {
-                  address1: '대구',
-                  address2: '북구',
-                  address3: '대현동 119-11',
-                },
               },
             },
           ],
@@ -67,16 +43,11 @@ describe('메인페이지 ErrorBoundary 테스트', () => {
           data: [
             {
               videoId: 2,
-              influencerName: 'New Video',
+              videoAlias: 'New Video',
               videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
               place: {
                 placeId: 1,
                 placeName: '이선장네',
-                address: {
-                  address1: '대구',
-                  address2: '북구',
-                  address3: '대현동 119-11',
-                },
               },
             },
           ],
@@ -111,12 +82,11 @@ describe('세부페이지 ErrorBoundary 테스트', () => {
           latitude: '37.5665',
           openingHours: ['월~금 10:00 - 12:00', '월~금 10:00 - 12:00', '월~금 10:00 - 12:00'],
           rating: 4.1,
-          reviewLikes: {
+          likes: true,
+          placeLikes: {
             like: 0,
             dislike: 0,
           },
-          likedCount: 100,
-          likes: true,
           googleReviews: [
             {
               like: true,

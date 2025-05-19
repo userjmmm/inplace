@@ -1,6 +1,7 @@
 package team7.inplace.place.persistence.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import team7.inplace.place.domain.Category;
 
 public class PlaceQueryResult {
 
@@ -12,15 +13,18 @@ public class PlaceQueryResult {
         String address3,
         Double longitude,
         Double latitude,
-        String category,
+        Category category,
         String googlePlaceId,
         Long kakaoPlaceId,
-        Long likeCount,
         Boolean isLiked
     ) {
 
         @QueryProjection
         public DetailedPlace {
+        }
+
+        public boolean haveNoGooglePlaceId() {
+            return googlePlaceId == null;
         }
     }
 
@@ -37,28 +41,28 @@ public class PlaceQueryResult {
         }
     }
 
-    public record Marker(
+    public record Location(
         Long placeId,
         Double longitude,
         Double latitude
     ) {
 
         @QueryProjection
-        public Marker {
+        public Location {
         }
     }
 
-    public record MarkerDetail(
+    public record Marker(
         Long placeId,
         String placeName,
-        String category,
+        Category category,
         String address1,
         String address2,
         String address3
     ) {
 
         @QueryProjection
-        public MarkerDetail {
+        public Marker {
         }
     }
 }

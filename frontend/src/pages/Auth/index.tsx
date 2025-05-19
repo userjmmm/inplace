@@ -12,7 +12,7 @@ export default function AuthPage() {
     const processAuth = async () => {
       if (!isAuthenticated && userInfo?.nickname) {
         try {
-          await handleLoginSuccess(userInfo);
+          await handleLoginSuccess(userInfo?.nickname);
 
           const redirectPath = localStorage.getItem('redirectPath');
           if (redirectPath) {

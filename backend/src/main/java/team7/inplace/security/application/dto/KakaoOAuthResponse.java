@@ -18,7 +18,4 @@ public record KakaoOAuthResponse(
         return ((Map<String, Object>) attribute.get("profile")).get("nickname").toString();
     }
 
-    public String getProfileImageUrl() {
-        return ((Map<String, Object>) attribute.get("profile")).get("profile_image_url").toString();
-    }
 }

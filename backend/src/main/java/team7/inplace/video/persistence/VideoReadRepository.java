@@ -4,11 +4,10 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import team7.inplace.video.persistence.dto.VideoFilterCondition;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
 
 public interface VideoReadRepository {
-    Page<VideoQueryResult.DetailedVideo> findSimpleVideosInSurround(
+    Page<VideoQueryResult.SimpleVideo> findSimpleVideosInSurround(
             Double topLeftLongitude,
             Double topLeftLatitude,
             Double bottomRightLongitude,
@@ -18,11 +17,11 @@ public interface VideoReadRepository {
             Pageable pageable
     );
 
-    List<VideoQueryResult.DetailedVideo> findTop10ByViewCountIncrement(Long parentCategoryId);
+    List<VideoQueryResult.SimpleVideo> findTop10ByViewCountIncrement();
 
-    List<VideoQueryResult.DetailedVideo> findTop10ByLatestUploadDate();
+    List<VideoQueryResult.SimpleVideo> findTop10ByLatestUploadDate();
 
-    List<VideoQueryResult.DetailedVideo> findTop10ByLikedInfluencer(Long userId);
+    List<VideoQueryResult.SimpleVideo> findTop10ByLikedInfluencer(Long userId);
 
     List<VideoQueryResult.SimpleVideo> findSimpleVideosByPlaceId(Long placeId);
 
@@ -30,7 +29,5 @@ public interface VideoReadRepository {
 
     Page<VideoQueryResult.SimpleVideo> findVideoWithNoPlace(Pageable pageable);
 
-    Page<VideoQueryResult.DetailedVideo> findDetailedVideosWithOneInfluencerId(Long influencerId, Pageable pageable);
-
-    Page<VideoQueryResult.AdminVideo> findAdminVideoByCondition(VideoFilterCondition condition, Pageable pageable);
+    Page<VideoQueryResult.SimpleVideo> findSimpleVideosWithOneInfluencerId(Long influencerId, Pageable pageable);
 }

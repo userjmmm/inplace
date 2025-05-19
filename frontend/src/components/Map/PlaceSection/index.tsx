@@ -12,7 +12,7 @@ import { useGetInfiniteSearchPlaceList } from '@/api/hooks/useGetInfiniteSearchP
 interface PlaceSectionProps {
   mapBounds: LocationData;
   filters: {
-    categories: number[];
+    categories: string[];
     influencers: string[];
   };
   filtersWithPlaceName: FilterParams;

@@ -3,7 +3,6 @@ package team7.inplace.video.persistence;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import team7.inplace.video.persistence.dto.VideoFilterCondition;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
 
 @DataJpaTest
@@ -55,7 +53,7 @@ public class VideoReadRepositoryTest {
         final int expectedContentSize = 5;
 
         // when
-        Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findSimpleVideosInSurround(
+        Page<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findSimpleVideosInSurround(
                 topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude, pageable
         );
 
@@ -65,19 +63,18 @@ public class VideoReadRepositoryTest {
     }
 
     @Test
-    @DisplayName("비디오 조회 테스트 - 조회수 증가량 순으로 비디오 10개 조회 (상위 카테고리 적용)")
+    @DisplayName("비디오 조회 테스트 - 조회수 증가량 순으로 비디오 10개 조회")
     void findVideo_ViewCountDesc() {
         // given
         final int expectedTotalContent = 10;
-        final List<Long> expectedVideoIds = List.of(20L, 19L, 18L, 17L, 15L, 14L, 13L, 12L, 10L, 9L);
-        Long parentCategoryId = 1L;
+        final List<Long> expectedVideoIds = List.of(20L, 19L, 18L, 17L, 16L, 15L, 14L, 13L, 12L, 11L);
 
         // when
-        List<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findTop10ByViewCountIncrement(parentCategoryId);
+        List<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findTop10ByViewCountIncrement();
 
         // then
         assertThat(videos.size()).isEqualTo(expectedTotalContent);
-        assertThat(videos.stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
+        assertThat(videos.stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
                 .isEqualTo(expectedVideoIds);
     }
 
@@ -89,11 +86,11 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(20L, 19L, 18L, 17L, 16L, 15L, 14L, 13L, 12L, 11L);
 
         // when
-        List<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findTop10ByLatestUploadDate();
+        List<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findTop10ByLatestUploadDate();
 
         // then
         assertThat(videos.size()).isEqualTo(expectedTotalContent);
-        assertThat(videos.stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
+        assertThat(videos.stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
                 .isEqualTo(expectedVideoIds);
     }
 
@@ -105,11 +102,11 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(20L, 19L, 18L, 17L, 8L, 7L, 6L, 5L, 4L, 3L);
 
         // when
-        List<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findTop10ByLikedInfluencer(1L);
+        List<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findTop10ByLikedInfluencer(1L);
 
         // then
         assertThat(videos.size()).isEqualTo(expectedTotalContent);
-        assertThat(videos.stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
+        assertThat(videos.stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
                 .isEqualTo(expectedVideoIds);
     }
 
@@ -181,13 +178,13 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(4L, 3L, 2L, 1L);
 
         // when
-        Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(
+        Page<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findSimpleVideosWithOneInfluencerId(
                 1L, pageable);
 
         // then
         assertThat(videos.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(videos.getContent().size()).isEqualTo(expectedContentSize);
-        assertThat(videos.getContent().stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
+        assertThat(videos.getContent().stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
                 .isEqualTo(expectedVideoIds);
     }
 
@@ -202,13 +199,13 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(4L, 3L, 2L, 1L);
 
         // when
-        Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(
-                1L, pageable);
+        Page<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findSimpleVideosWithOneInfluencerId(
+            1L, pageable);
 
         // then
         assertThat(videos.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(videos.getContent().size()).isEqualTo(expectedContentSize);
-        assertThat(videos.getContent().stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
+        assertThat(videos.getContent().stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
             .isEqualTo(expectedVideoIds);
     }
 
@@ -223,67 +220,13 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(3L, 2L, 1L, 4L);
 
         // when
-        Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(
-                1L, pageable);
+        Page<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findSimpleVideosWithOneInfluencerId(
+            1L, pageable);
 
         // then
         assertThat(videos.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(videos.getContent().size()).isEqualTo(expectedContentSize);
-        assertThat(videos.getContent().stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
+        assertThat(videos.getContent().stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
             .isEqualTo(expectedVideoIds);
-    }
-
-    @Test
-    @DisplayName("비디오 조회 테스트 - 비디오 등록 여부 null, Influencer null 인 경우")
-    void findAdminVideoByCondition_With_RegistrationNull_And_InfluencerNull() {
-        //given
-        Pageable pageable = PageRequest.of(0, 5);
-        VideoFilterCondition videoFilterCondition = new VideoFilterCondition(null, null);
-        final int expectedTotalElements = 5;
-        final int expectedContentSize = 5;
-        final List<Long> expectedVideoIds = List.of(21L, 22L, 23L ,24L, 25L);
-        //when
-        Page<VideoQueryResult.AdminVideo> videos = videoReadRepository.findAdminVideoByCondition(videoFilterCondition, pageable);
-
-        //then
-        assertThat(videos.getTotalElements()).isEqualTo(expectedTotalElements);
-        assertThat(videos.getContent().size()).isEqualTo(expectedContentSize);
-        assertThat(videos.getContent().stream().map(VideoQueryResult.AdminVideo::videoId).toList()).isEqualTo(expectedVideoIds);
-    }
-
-    @Test
-    @DisplayName("비디오 조회 테스트 - 비디오 등록 여부 true, Influencer 존재인 경우")
-    void findAdminVideoByCondition_With_RegistrationTrue_And_InfluencerExist() {
-        //given
-        Pageable pageable = PageRequest.of(0, 5);
-        VideoFilterCondition videoFilterCondition = new VideoFilterCondition(true, 5L);
-        final int expectedTotalElements = 4;
-        final int expectedContentSize = 4;
-        final List<Long> expectedVideoIds = List.of(17L, 18L, 19L, 20L);
-        //when
-        Page<VideoQueryResult.AdminVideo> videos = videoReadRepository.findAdminVideoByCondition(videoFilterCondition, pageable);
-
-        //then
-        assertThat(videos.getTotalElements()).isEqualTo(expectedTotalElements);
-        assertThat(videos.getContent().size()).isEqualTo(expectedContentSize);
-        assertThat(videos.getContent().stream().map(VideoQueryResult.AdminVideo::videoId).toList()).isEqualTo(expectedVideoIds);
-    }
-
-    @Test
-    @DisplayName("비디오 조회 테스트 - 비디오 등록 여부 false, Influencer 존재인 경우")
-    void findAdminVideoByCondition_With_RegistrationFalse_And_InfluencerExist() {
-        //given
-        Pageable pageable = PageRequest.of(0, 5);
-        VideoFilterCondition videoFilterCondition = new VideoFilterCondition(false, 5L);
-        final int expectedTotalElements = 5;
-        final int expectedContentSize = 5;
-        final List<Long> expectedVideoIds = List.of(21L, 22L, 23L ,24L, 25L);
-        //when
-        Page<VideoQueryResult.AdminVideo> videos = videoReadRepository.findAdminVideoByCondition(videoFilterCondition, pageable);
-
-        //then
-        assertThat(videos.getTotalElements()).isEqualTo(expectedTotalElements);
-        assertThat(videos.getContent().size()).isEqualTo(expectedContentSize);
-        assertThat(videos.getContent().stream().map(VideoQueryResult.AdminVideo::videoId).toList()).isEqualTo(expectedVideoIds);
     }
 }

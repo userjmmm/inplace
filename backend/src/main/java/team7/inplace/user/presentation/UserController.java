@@ -7,13 +7,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.user.application.UserFacade;
+import team7.inplace.user.application.UserService;
 import team7.inplace.user.presentation.dto.UserRequest;
 import team7.inplace.user.presentation.dto.UserResponse;
 
@@ -21,15 +21,16 @@ import team7.inplace.user.presentation.dto.UserResponse;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @PreAuthorize("isAuthenticated()")
-public class UserController implements UserControllerApiSpec {
+public class UserController implements UserControllerApiSepc {
 
+    public final UserService userService;
     public final UserFacade userFacade;
 
     @PatchMapping("/nickname")
     public ResponseEntity<Void> updateNickname(
         @RequestBody UserRequest.UpdateNickname request
     ) {
-        userFacade.updateNickname(request.nickname());
+        userService.updateNickname(request.nickname());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -57,23 +58,16 @@ public class UserController implements UserControllerApiSpec {
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
         var responses = userFacade.getMyReviews(pageable)
-                .map(UserResponse.Review::from);
+            .map(UserResponse.Review::from);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     @GetMapping("/info")
     public ResponseEntity<UserResponse.Info> getUserInfo() {
-        var userInfo = userFacade.getUserInfo();
+        var userInfo = userService.getUserInfo();
 
         var response = UserResponse.Info.from(userInfo);
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @Override
-    @DeleteMapping()
-    public ResponseEntity<Void> deleteUser() {
-        userFacade.deleteUser();
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

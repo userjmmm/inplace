@@ -3,16 +3,11 @@ import { useQueries } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
 import { SpotData } from '@/types';
 
-export const getCoolEatsVideoPath = () => `/videos/cool/eats`;
-export const getCoolPlaysVideoPath = () => `/videos/cool/plays`;
+export const getCoolVideoPath = () => `/videos/cool`;
 export const getNewVideoPath = () => `/videos/new`;
 
-export const getCoolEatsVideo = async () => {
-  const response = await fetchInstance.get<SpotData[]>(getCoolEatsVideoPath());
-  return response.data;
-};
-export const getCoolPlaysVideo = async () => {
-  const response = await fetchInstance.get<SpotData[]>(getCoolPlaysVideoPath());
+export const getCoolVideo = async () => {
+  const response = await fetchInstance.get<SpotData[]>(getCoolVideoPath());
   return response.data;
 };
 export const getNewVideo = async () => {
@@ -22,8 +17,7 @@ export const getNewVideo = async () => {
 export const useGetLogoutVideo = (enabled: boolean) => {
   return useQueries({
     queries: [
-      { queryKey: ['coolEatsVideo'], queryFn: getCoolEatsVideo, staleTime: 1000 * 60 * 5, enabled },
-      { queryKey: ['coolPlaysVideo'], queryFn: getCoolPlaysVideo, staleTime: 1000 * 60 * 5, enabled },
+      { queryKey: ['coolVideo'], queryFn: getCoolVideo, staleTime: 1000 * 60 * 5, enabled },
       { queryKey: ['newVideo'], queryFn: getNewVideo, staleTime: 1000 * 60 * 5, enabled },
     ],
   });

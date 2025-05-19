@@ -25,16 +25,11 @@ jest.mock('@/api/hooks/useGetSearchData', () => {
     data: [
       {
         videoId: 1,
-        influencerName: '풍자 이(가) Video',
+        videoAlias: '풍자 이(가) Video',
         videoUrl: '',
         place: {
           placeId: 1,
           placeName: '풍쟈',
-          address: {
-            address1: '대구',
-            address2: '북구',
-            address3: '대현동 119-11',
-          },
         },
       },
     ],
@@ -159,7 +154,7 @@ describe('인플루언서 페이지 페이지네이션 기능 테스트', () => 
 
     expect(screen.getByText('Influencer 1')).toBeInTheDocument();
 
-    const nextPageButton = screen.getByRole('button', { name: '2_페이지' });
+    const nextPageButton = screen.getByRole('button', { name: 'page_number_2' });
     fireEvent.click(nextPageButton);
 
     expect(screen.getByText('Influencer 11')).toBeInTheDocument();

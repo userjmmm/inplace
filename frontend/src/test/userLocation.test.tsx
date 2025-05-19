@@ -20,16 +20,11 @@ test('사용자 위치 기반 내주변 비디오 호출 확인', async () => {
     data: [
       {
         videoId: 1,
-        influencerName: 'Test Video',
+        videoAlias: 'Test Video',
         videoUrl: 'https://example.com',
         place: {
           placeId: 0,
           placeName: 'Test Place',
-          address: {
-            address1: '대구',
-            address2: '북구',
-            address3: '대현동 119-11',
-          },
         },
       },
     ],
@@ -60,7 +55,7 @@ test('사용자 위치 기반 내주변 비디오 호출 확인', async () => {
 
   await waitFor(() => {
     expect(screen.getByText('주변')).toBeInTheDocument();
-    expect(screen.getByText(/Test Video/)).toBeInTheDocument();
+    expect(screen.getByText('Test Video')).toBeInTheDocument();
   });
 
   expect(api.useGetAroundVideo).toHaveBeenCalledWith(mockLocation.lat, mockLocation.lng, true);

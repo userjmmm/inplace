@@ -3,8 +3,8 @@ package team7.inplace.influencer.presentation.dto;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.application.dto.InfluencerNameInfo;
 import team7.inplace.influencer.persistence.dto.InfluencerQueryResult;
+import team7.inplace.video.application.AliasUtil;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
-import team7.inplace.video.presentation.dto.VideoResponse;
 
 public class InfluencerResponse {
 
@@ -72,24 +72,19 @@ public class InfluencerResponse {
 
     public record Video(
         Long videoId,
-        String influencerName,
+        String videoAlias,
         String videoUrl,
         InfluencerResponse.Place place
     ) {
 
-        public static InfluencerResponse.Video from(VideoQueryResult.DetailedVideo videoInfo) {
+        public static InfluencerResponse.Video from(VideoQueryResult.SimpleVideo videoInfo) {
             var place = new InfluencerResponse.Place(
                 videoInfo.placeId(),
-                videoInfo.placeName(),
-                new Address(
-                        videoInfo.address1(),
-                        videoInfo.address2(),
-                        videoInfo.address3()
-                )
+                videoInfo.placeName()
             );
             return new InfluencerResponse.Video(
                 videoInfo.videoId(),
-                videoInfo.influencerName(),
+                AliasUtil.makeAlias(videoInfo.influencerName(), videoInfo.placeCategory()),
                 videoInfo.videoUrl(),
                 place
             );
@@ -98,15 +93,7 @@ public class InfluencerResponse {
 
     public record Place(
         Long placeId,
-        String placeName,
-        Address address
-    ) {
-    }
-
-    public record Address(
-            String address1,
-            String address2,
-            String address3
+        String placeName
     ) {
 
     }

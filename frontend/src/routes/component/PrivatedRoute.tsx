@@ -42,13 +42,13 @@ export default function PrivateRoute({ children }: PrivateRouteProps) {
   const handleModalSuccess = async () => {
     setShouldShowModal(false);
     if (userInfo?.nickname) {
-      await handleLoginSuccess(userInfo);
+      await handleLoginSuccess(userInfo.nickname);
     }
   };
 
   useEffect(() => {
     if (userInfo?.nickname && !isAuthenticated) {
-      handleLoginSuccess(userInfo);
+      handleLoginSuccess(userInfo.nickname);
     }
   }, [userInfo, isAuthenticated, handleLoginSuccess]);
 
