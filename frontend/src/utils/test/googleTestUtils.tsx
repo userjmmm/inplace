@@ -21,7 +21,7 @@ export const setCookie = (name: string, value: string, days: number): void => {
   document.cookie = `${name}=${value};${expires};path=/`;
 };
 
-interface DataLayerEvent {
+export interface DataLayerEvent {
   event: string;
   [key: string]: unknown;
 }
