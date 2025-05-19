@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.application.dto.PlaceInfo.Category;
-import team7.inplace.place.application.dto.PlaceInfo.Simple;
 import team7.inplace.place.client.GooglePlaceClientResponse;
 import team7.inplace.place.client.GooglePlaceClientResponse.AccessibilityOptions;
 import team7.inplace.place.client.GooglePlaceClientResponse.ParkingOptions;
@@ -267,6 +265,7 @@ public class PlacesResponse {
 
     public record Marker(
         Long placeId,
+        String type,
         Double longitude,
         Double latitude
     ) {
@@ -280,6 +279,7 @@ public class PlacesResponse {
         private static Marker from(PlaceQueryResult.Marker marker) {
             return new Marker(
                 marker.placeId(),
+                marker.parentsCategory(),
                 marker.longitude(),
                 marker.latitude()
             );
@@ -364,7 +364,8 @@ public class PlacesResponse {
                 simple.place().placeId(),
                 simple.place().placeName(),
                 simple.place().category().toString(),
-                simple.place().address1() + " " + simple.place().address2()+ " " + simple.place().address3(),
+                simple.place().address1() + " " + simple.place().address2() + " " + simple.place()
+                    .address3(),
                 simple.place().longitude(),
                 simple.place().latitude(),
                 simple.place().kakaoPlaceId(),

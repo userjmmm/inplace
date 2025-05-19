@@ -144,7 +144,9 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         List<String> influencers
     ) {
         List<Long> ids = getFilteredPlaceIdsByName(name, regionParams, categories, influencers);
-        return buildMarkerQuery().where(QPlace.place.id.in(ids)).fetch();
+        return buildMarkerQuery()
+            .where(QPlace.place.id.in(ids))
+            .fetch();
     }
 
     @Override
@@ -230,13 +232,19 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     private JPAQuery<Marker> buildMarkerQuery() {
+        QCategory category = new QCategory("category");
+        QCategory parentCategory = new QCategory("parentCategory");
         return jpaQueryFactory
             .select(new QPlaceQueryResult_Marker(
                 QPlace.place.id,
+                parentCategory.engName,
                 QPlace.place.coordinate.longitude,
                 QPlace.place.coordinate.latitude
             ))
-            .from(QPlace.place);
+            .from(QPlace.place)
+            .leftJoin(category).on(QPlace.place.categoryId.eq(category.id))
+            .leftJoin(parentCategory).on(QCategory.category.parentId.eq(parentCategory.id));
+
     }
 
     // ====================== 필터 처리 =========================
