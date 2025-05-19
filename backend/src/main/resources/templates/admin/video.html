@@ -3,6 +3,7 @@
 <head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
   <title>Video List</title>
   <link href="/css/video.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <th:block th:fragment="scripts">
     <script th:src="'https://code.jquery.com/jquery-3.6.0.min.js'" type="text/javascript"></script>
     <script
@@ -12,6 +13,7 @@
     <script th:inline="javascript">
       let mapProviderKakao = [[#{video.search.mapProvider.kakao}]];
       let mapProviderGoogle = [[#{video.search.mapProvider.google}]];
+      let categories = [[${categories}]];
     </script>
     <script src="/js/video.js"></script>
   </th:block>
@@ -34,6 +36,11 @@
             th:value="${influencer.id}">
     </option>
   </select>
+  <label for="videoRegistration">videoType:</label>
+  <select id="videoRegistration" name="videoRegistration">
+    <option th:selected="${!videoRegistration}" value="false">미등록</option>
+    <option th:selected="${videoRegistration}" value="true">등록</option>
+  </select>
   <button type="submit">필터 적용</button>
 </form>
 <table>
@@ -51,13 +58,13 @@
     <td>
       <img alt="Video Thumbnail"
            onclick="openPlaceSearchModal(this)" style="cursor:pointer;width:100px;"
-           th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}"
+           th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}, data-video-registered=${video.registered}"
            th:src="|https://img.youtube.com/vi/${video.uuid}/0.jpg|"/>
     </td>
     <td>
       <button
           onclick="openPlaceSearchModal(this)"
-          th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}">
+          th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}, data-video-registered=${video.registered}">
         장소 등록
       </button>
     </td>
@@ -99,9 +106,16 @@
               width="560">
       </iframe>
       <div class="table-wrapper">
+        <div class="place-register-controller">
+          <button onclick="addPlaceRow()"><i class="fa-solid fa-plus" style="font-size: 1em; color: #dc3545;"></i></button>
+          <button onclick="deletePlaceRow()"><i class="fa-solid fa-minus" style="font-size: 1em; color: #1976d2"></i></button>
+          <button onclick="registerSelectedPlace()">저장</button>
+          <button onclick="registerAllPlaces()">전체 저장</button>
+        </div>
         <table class="place-register-table">
           <thead>
           <th>비디오 ID</th>
+          <th>장소 ID</th>
           <th>장소 이름</th>
           <th>카테고리</th>
           <th>주소 정보</th>
@@ -109,31 +123,8 @@
           <th>y 좌표 (latitude)</th>
           <th th:text="|장소 ID (${kakao})|">장소 ID ([[${kakao}]])</th>
           <th th:text="|장소 ID (${google})|">장소 ID ([[${google}]])</th>
-          <th>등록</th>
           </thead>
-          <tbody>
-          <tr>
-            <form onsubmit="registerPlace(); return false;">
-              <td><input id="videoId" name="videoId" disabled></td>
-              <td><input id="placeName" name="placeName"></td>
-              <td>
-                <label for="category">
-                              <select id="category" required>
-                                <option disabled selected value="">카테고리</option>
-                                <th:block th:each="category : ${categories}">
-                                  <option th:text="${category.name}" th:value="${category}"/>
-                                </th:block>
-                              </select>
-                            </label>
-              </td>
-              <td><input id="address" name="address"></td>
-              <td><input id="x" name="x"></td>
-              <td><input id="y" name="y"></td>
-              <td><input th:id="|place-id-${kakao}|" name="kakaoPlaceId"></td>
-              <td><input th:id="|place-id-${google}|" name="googlePlaceId"></td>
-              <td><button type="submit">등록</button></td>
-            </form>
-          </tr>
+          <tbody id="place-register-tbody">
           </tbody>
         </table>
       </div>

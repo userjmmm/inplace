@@ -86,4 +86,16 @@ public class VideoQueryResult {
                 placeCategoryParentName, address1, address2, address3);
         }
     }
+
+    public record AdminVideo(
+        Long videoId,
+        String videoUUID,
+        Boolean registered
+    ) {
+
+        @QueryProjection
+        public AdminVideo {
+        }
+
+    }
 }
