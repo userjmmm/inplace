@@ -7,9 +7,9 @@ import InfluencerList from '@/components/Influencer/InfluencerList';
 import SpotSection from '@/components/Main/SpotSection';
 import { InfluencerData, SpotData, UserPlaceData } from '@/types';
 import ChoiceList from '@/components/Choice/ChoiceList';
+import UserPlaceSection from '../My/UserPlaceSection';
 import { Paragraph } from './typography/Paragraph';
 import useTheme from '@/hooks/useTheme';
-import UserPlaceSection from '../My/UserPlaceSection';
 
 type Props = {
   type: string;
@@ -58,7 +58,7 @@ export default function BaseLayout({
           />
         );
       }
-      return <InfluencerList items={items as InfluencerData[]} />;
+      return <InfluencerList items={items as InfluencerData[]} useBackCard={false} />;
     }
     if (type === 'influencer') {
       return <InfluencerSection items={items as InfluencerData[]} />;
@@ -68,7 +68,6 @@ export default function BaseLayout({
     }
     return <UserPlaceSection items={items as UserPlaceData[]} />;
   };
-
   return (
     <Container>
       <TitleContainer>
@@ -80,7 +79,7 @@ export default function BaseLayout({
           {SubText}
         </Paragraph>
         {type === 'influencer' && showMoreButton ? (
-          <MoreBtn aria-label="더보기 버튼" onClick={() => navigate('/influencer')}>
+          <MoreBtn aria-label="more_btn" onClick={() => navigate('/influencer')}>
             더보기
           </MoreBtn>
         ) : null}

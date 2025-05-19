@@ -12,7 +12,7 @@ import usePlaceList from '@/hooks/Map/usePlaceList';
 export interface PlaceSectionProps {
   mapBounds: LocationData;
   filters: {
-    categories: number[];
+    categories: string[];
     influencers: string[];
     placeName?: string;
   };
@@ -22,7 +22,6 @@ export interface PlaceSectionProps {
   onGetPlaceData: (data: PlaceData[]) => void;
   onPlaceSelect: (placeId: number) => void;
   selectedPlaceId: number | null;
-  isInitialLoad: boolean;
   isListExpanded?: boolean;
   onListExpand?: (value: boolean) => void;
   onSearchNearby?: () => void;
@@ -38,7 +37,6 @@ export default function InfluencerPlaceSection({
   onPlaceSelect,
   selectedPlaceId,
   isListExpanded,
-  isInitialLoad,
   onListExpand,
   onSearchNearby,
 }: PlaceSectionProps) {
@@ -58,7 +56,7 @@ export default function InfluencerPlaceSection({
       center,
       size: 10,
     },
-    shouldFetchPlaces || isInitialLoad,
+    shouldFetchPlaces,
   );
 
   const { filteredPlaces } = usePlaceList({ data, onGetPlaceData });

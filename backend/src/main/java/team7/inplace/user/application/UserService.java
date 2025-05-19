@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
+import team7.inplace.security.application.CurrentUserProvider;
+import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.application.dto.UserCommand;
 import team7.inplace.user.application.dto.UserCommand.Info;
 import team7.inplace.user.application.dto.UserInfo;
@@ -17,6 +19,7 @@ import team7.inplace.user.persistence.UserRepository;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CurrentUserProvider currentUserProvider;
 
     @Transactional
     public UserCommand.Info registerUser(UserCommand.Create userCreate) {
@@ -38,32 +41,18 @@ public class UserService {
     }
 
     @Transactional
-    public void updateNickname(Long userId, String nickname) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+    public void updateNickname(String nickname) {
+        User user = userRepository.findByUsername(AuthorizationUtil.getUsername()).orElseThrow(
+            () -> InplaceException.of(UserErrorCode.NOT_FOUND)
+        );
 
-        user.updateNickname(nickname);
+        user.updateInfo(nickname);
     }
 
     @Transactional(readOnly = true)
-    public UserInfo.Profile getUserInfo(Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        return UserInfo.Profile.from(user);
+    public UserInfo getUserInfo() {
+        User user = currentUserProvider.getCurrentUser();
+        return UserInfo.from(user);
     }
 
-    @Transactional()
-    public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        userRepository.delete(user);
-    }
-
-    @Transactional
-    public void updateProfileImageUrl(Long userId, String profileImageUrl) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-
-        user.updateProfileImageUrl(profileImageUrl);
-    }
 }

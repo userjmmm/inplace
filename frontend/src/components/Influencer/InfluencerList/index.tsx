@@ -6,9 +6,11 @@ import useIsMobile from '@/hooks/useIsMobile';
 
 interface InfluencerListProps {
   items: InfluencerData[];
+  useBackCard?: boolean;
+  useNav?: boolean;
 }
 
-export default function InfluencerList({ items }: InfluencerListProps) {
+export default function InfluencerList({ items, useBackCard = true, useNav = true }: InfluencerListProps) {
   const MOBILE_INFLUENCER_LIMIT = 9;
   const isMobile = useIsMobile();
 
@@ -27,6 +29,8 @@ export default function InfluencerList({ items }: InfluencerListProps) {
             influencerImgUrl={influencer.influencerImgUrl}
             influencerJob={influencer.influencerJob}
             likes={influencer.likes}
+            useBackCard={useBackCard}
+            useNav={useNav}
           />
         );
       })}

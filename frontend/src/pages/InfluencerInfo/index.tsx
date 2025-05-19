@@ -116,7 +116,7 @@ export default function InfluencerInfoPage() {
           </Text>
         </TextInfo>
         <LikeIcon
-          aria-label="인플루언서 전용 좋아요"
+          aria-label="like_btn"
           role="button"
           onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
         >
@@ -128,19 +128,19 @@ export default function InfluencerInfoPage() {
         </LikeIcon>
       </InfluencerInfoSection>
       <TapContainer>
-        <Tap aria-label="인플루언서 전용 쿨그" $active={activeTab === 'video'} onClick={() => setActiveTab('video')}>
+        <Tap aria-label="spot_tap" $active={activeTab === 'video'} onClick={() => setActiveTab('video')}>
           쿨한 그곳
         </Tap>
-        <Tap aria-label="인플루언서 전용 쿨플" $active={activeTab === 'map'} onClick={() => setActiveTab('map')}>
+        <Tap aria-label="place_tap" $active={activeTab === 'map'} onClick={() => setActiveTab('map')}>
           쿨 플레이스
         </Tap>
       </TapContainer>
       <InfoContainer>
         {activeTab === 'video' ? (
           <>
-            <SortSection ref={dropdownRef}>
+            <SortSection>
               <StyledButton
-                aria-label="인플루언서 전용 정렬"
+                aria-label="sort_btn"
                 variant="white"
                 size="small"
                 onClick={() => setShowSortOptions(!showSortOptions)}
@@ -149,7 +149,7 @@ export default function InfluencerInfoPage() {
                 <IoIosArrowDown size={16} />
               </StyledButton>
               {showSortOptions && (
-                <SortDropdown>
+                <SortDropdown ref={dropdownRef}>
                   <SortItem onClick={() => handleSortChange('publishTime')}>
                     최신순 {sortOption === 'publishTime'}
                   </SortItem>
@@ -162,7 +162,6 @@ export default function InfluencerInfoPage() {
             </SortSection>
             <InfluencerVideoTap
               influencerId={id}
-              influencerName={influencerInfoData.influencerName}
               sortOption={sortOption}
               onSortChange={(newSort) => setSortOption(newSort)}
             />

@@ -3,14 +3,21 @@ import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 
 import styled from 'styled-components';
 
+import { MdLocationOn } from 'react-icons/md';
 import { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
+import backCard from '@/assets/images/back-card.webp';
 import { InfluencerData } from '@/types';
 import { usePostInfluencerLike } from '@/api/hooks/usePostInfluencerLike';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 import FallbackImage from './FallbackImage';
+
+interface InfluencerItemProps extends InfluencerData {
+  useBackCard?: boolean;
+  useNav?: boolean;
+}
 
 export default function InfluencerItem({
   influencerId,
@@ -18,7 +25,9 @@ export default function InfluencerItem({
   influencerImgUrl,
   influencerJob,
   likes,
-}: InfluencerData) {
+  useBackCard = false,
+  useNav = false,
+}: InfluencerItemProps) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const [isLike, setIsLike] = useState(likes);
@@ -62,21 +71,24 @@ export default function InfluencerItem({
         <ImageContainer>
           <LikeIcon
             role="button"
-            aria-label="인플루언서 좋아요"
+            aria-label="like_btn"
             onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
           >
             {isLike ? (
               <PiHeartFill color="#fe7373" size={32} data-testid="PiHeartFill" />
             ) : (
-              <PiHeartLight
-                color="white"
-                size={32}
-                data-testid="PiHeartLight"
-                style={{ filter: 'drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.3))' }}
-              />
+              <PiHeartLight color="white" size={32} data-testid="PiHeartLight" />
             )}
           </LikeIcon>
           <FallbackImage src={influencerImgUrl} alt={influencerName} />
+          {useBackCard && useNav && (
+            <BackImageWrapper>
+              <MdLocationOn size={50} color="#55EBFF" />
+              <Paragraph size="m" weight="bold" variant="white">
+                지도 보기
+              </Paragraph>
+            </BackImageWrapper>
+          )}
         </ImageContainer>
         <TextWrapper>
           <Paragraph size="m" weight="bold">
@@ -119,8 +131,14 @@ const ImageContainer = styled.div`
   overflow: hidden;
   margin-bottom: 4px;
 
-  &:hover img {
-    transform: scale(1.06);
+  &:hover {
+    & > div:nth-child(2) {
+      opacity: 0;
+    }
+
+    & > div:last-child {
+      opacity: 1;
+    }
   }
 
   @media screen and (max-width: 768px) {
@@ -128,13 +146,29 @@ const ImageContainer = styled.div`
   }
 `;
 
+const BackImageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: url(${backCard});
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+`;
 const LikeIcon = styled.div`
   position: absolute;
   width: 30px;
   height: 30px;
   right: 10px;
   top: 12px;
-  z-index: 20;
+  z-index: 100;
   cursor: pointer;
 
   @media screen and (max-width: 768px) {

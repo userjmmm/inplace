@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
 import Chip from '@/components/common/Chip';
-import useGetDropdownCategory from '@/api/hooks/useGetDropdownCategory';
-import useGetDropdownInfluencer from '@/api/hooks/useGetDropdownName';
+import categoryOptions from '@/utils/constants/CategoryOptions';
+import useGetDropdownName from '@/api/hooks/useGetDropdownName';
 import useTouchDrag from '@/hooks/Map/useTouchDrag';
 import useMapState from '@/hooks/Map/useMapState';
 import DropdownFilterBar, { FilterBarItem } from '@/components/Map/DropdownFilterBar';
@@ -12,10 +12,9 @@ import MapSearchBar from '@/components/Map/MapSearchBar';
 import useClickOutside from '@/hooks/useClickOutside';
 
 export default function MapPage() {
-  const { data: influencerOptions } = useGetDropdownInfluencer();
-  const { data: categoryOptions = [] } = useGetDropdownCategory();
+  const { data: influencerOptions } = useGetDropdownName();
   const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<{ id: number; label: string }[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
   const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -42,7 +41,7 @@ export default function MapPage() {
 
   const filters = useMemo(
     () => ({
-      categories: selectedCategories.map((cat) => cat.id),
+      categories: selectedCategories,
       influencers: selectedInfluencers,
     }),
     [selectedCategories, selectedInfluencers],
@@ -50,7 +49,7 @@ export default function MapPage() {
 
   const filtersWithPlaceName = useMemo(
     () => ({
-      categories: selectedCategories.map((cat) => cat.id),
+      categories: selectedCategories,
       influencers: selectedInfluencers,
       placeName: selectedPlaceName,
     }),
@@ -65,21 +64,19 @@ export default function MapPage() {
     });
   }, []);
 
-  const handleCategoryChange = useCallback((value: { main: string; id?: number }) => {
-    if (typeof value.id === 'number') {
-      setSelectedCategories((prev) => {
-        if (prev.some((category) => category.id === value.id)) return prev;
-        return [...prev, { id: value.id!, label: value.main }];
-      });
-    }
+  const handleCategoryChange = useCallback((value: { main: string }) => {
+    setSelectedCategories((prev) => {
+      if (prev.includes(value.main)) return prev;
+      return [...prev, value.main];
+    });
   }, []);
 
   const handleInfluencerClear = useCallback((influencerToRemove: string) => {
     setSelectedInfluencers((prev) => prev.filter((influencer) => influencer !== influencerToRemove));
   }, []);
 
-  const handleCategoryClear = useCallback((categoryToRemove: number) => {
-    setSelectedCategories((prev) => prev.filter((category) => category.id !== categoryToRemove));
+  const handleCategoryClear = useCallback((categoryToRemove: string) => {
+    setSelectedCategories((prev) => prev.filter((category) => category !== categoryToRemove));
   }, []);
 
   const handleListExpand = useCallback(() => {
@@ -93,20 +90,6 @@ export default function MapPage() {
   const dropdownItems: FilterBarItem[] = [
     {
       type: 'dropdown',
-      id: 'category',
-      props: {
-        options: categoryOptions,
-        onChange: handleCategoryChange,
-        isMobileOpen: false,
-        placeholder: '카테고리',
-        type: 'category',
-        width: 140,
-        selectedOptions: selectedCategories.map((cat) => cat.id),
-      },
-    },
-    { type: 'separator', id: 'sep2' },
-    {
-      type: 'dropdown',
       id: 'influencer',
       props: {
         options: influencerOptions,
@@ -118,6 +101,20 @@ export default function MapPage() {
         selectedOptions: selectedInfluencers,
       },
     },
+    { type: 'separator', id: 'sep2' },
+    {
+      type: 'dropdown',
+      id: 'category',
+      props: {
+        options: categoryOptions,
+        onChange: handleCategoryChange,
+        isMobileOpen: false,
+        placeholder: '카테고리',
+        type: 'category',
+        width: 120,
+        selectedOptions: selectedCategories,
+      },
+    },
   ];
 
   return (
@@ -125,7 +122,7 @@ export default function MapPage() {
       <Wrapper>
         <FilterContainer>
           <MobileFilterContainer>
-            <FilterButtonContainer aria-label="모바일 지도 필터" onClick={() => setIsFilterBarOpened((prev) => !prev)}>
+            <FilterButtonContainer aria-label="filterbar_btn" onClick={() => setIsFilterBarOpened((prev) => !prev)}>
               필터
             </FilterButtonContainer>
             <MapSearchBar setIsChangedLocation={setIsChangedLocation} setSelectedPlaceName={setSelectedPlaceName} />

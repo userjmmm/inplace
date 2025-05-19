@@ -2,6 +2,7 @@ package team7.inplace.kakao.application.command;
 
 import java.util.stream.Collectors;
 import team7.inplace.place.application.dto.PlaceInfo;
+import team7.inplace.video.application.AliasUtil;
 import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
 
 public record PlaceMessageCommand(
@@ -24,7 +25,10 @@ public record PlaceMessageCommand(
             place.place().address1() + " " + place.place().address2() + " " + place.place()
                 .address3(),
             String.format("https://img.youtube.com/vi/%s/maxresdefault.jpg", videoUUID),
-            influencerName + "|" + place.place().placeName()
+            AliasUtil.makeAlias(
+                influencerName,
+                place.place().category()
+            )
         );
     }
 }

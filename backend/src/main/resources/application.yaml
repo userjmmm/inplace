@@ -14,11 +14,6 @@ spring:
   config:
     activate:
       on-profile: local
-  jpa:
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
 logging:
   level:
     root: INFO
@@ -35,11 +30,6 @@ spring:
   config:
     activate:
       on-profile: dev
-  jpa:
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
 logging:
   level:
     root: INFO
@@ -56,11 +46,6 @@ spring:
   config:
     activate:
       on-profile: prod
-  jpa:
-    properties:
-      hibernate:
-        format_sql: false
-        show_sql: false
 logging:
   level:
     root: ERROR

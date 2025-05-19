@@ -113,11 +113,11 @@ export default function DetailPage() {
         <GradientOverlay />
         {infoData?.videos && infoData.videos.length > 1 && (
           <>
-            <PrevBtn aria-label="썸네일 왼쪽" onClick={handleBtnPrevClick} disabled={currentVideoIndex === 0}>
+            <PrevBtn aria-label="prev_btn" onClick={handleBtnPrevClick} disabled={currentVideoIndex === 0}>
               <GrPrevious size={40} color="white" />
             </PrevBtn>
             <NextBtn
-              aria-label="썸네일 오른쪽"
+              aria-label="next_btn"
               onClick={handleBtnNextClick}
               disabled={currentVideoIndex === infoData.videos.length - 1}
             >
@@ -127,29 +127,20 @@ export default function DetailPage() {
         )}
         <TitleContainer>
           <TitleWrapper>
-            <AlignWrapper>
-              <Text size="ll" weight="bold" variant="white">
-                {infoData.placeName}
-              </Text>
-            </AlignWrapper>
-            <AlignWrapper>
-              <LikeContainer>
-                <LikeIcon
-                  role="button"
-                  aria-label="디테일 좋아요"
-                  onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
-                >
-                  {isLike ? (
-                    <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />
-                  ) : (
-                    <PiHeartLight color="white" size={30} data-testid="PiHeartLight" />
-                  )}
-                </LikeIcon>
-                <Text size="xs" weight="normal" variant="white">
-                  {infoData.likedCount}
-                </Text>
-              </LikeContainer>
-            </AlignWrapper>
+            <Text size="ll" weight="bold" variant="white">
+              {infoData.placeName}
+            </Text>
+            <LikeIcon
+              role="button"
+              aria-label="like_btn"
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
+            >
+              {isLike ? (
+                <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />
+              ) : (
+                <PiHeartLight color="white" size={30} data-testid="PiHeartLight" />
+              )}
+            </LikeIcon>
           </TitleWrapper>
           <ButtonWrapper>
             {/* <StyledButton aria-label="visit_btn" variant="visit" onClick={() => setVisitModal(!visitModal)}>
@@ -157,10 +148,10 @@ export default function DetailPage() {
               방문할래요
             </StyledButton> */}
             <StyledButton
-              aria-label="영상보기"
+              aria-label="youtube_btn"
               variant="outline"
               onClick={() => {
-                window.open(currentVideoUrl, '_blank');
+                window.location.href = currentVideoUrl;
               }}
             >
               <FaYoutube size={24} color="red" />
@@ -170,9 +161,7 @@ export default function DetailPage() {
         </TitleContainer>
       </ImageContainer>
       <TapContainer>
-        <Tap aria-label="디테일 정보탭" /* $active={activeTab === 'info'} onClick={() => setActiveTab('info')} */>
-          정보
-        </Tap>
+        <Tap aria-label="info_tap" /* $active={activeTab === 'info'} onClick={() => setActiveTab('info')} */>정보</Tap>
         {/* <Tap aria-label="review_tap" $active={activeTab === 'review'} onClick={() => setActiveTab('review')}>
           리뷰
         </Tap> */}
@@ -259,27 +248,15 @@ const ImageWrapper = styled.div`
   }
 `;
 
-const AlignWrapper = styled.div`
-  display: flex;
-  align-items: flex-end;
-`;
-
 const TitleWrapper = styled.div`
   display: flex;
   width: 50%;
   gap: 10px;
-  align-items: flex-end;
+  align-items: end;
   @media screen and (max-width: 768px) {
     gap: 4px;
   }
 `;
-
-const LikeContainer = styled.div`
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
-`;
-
 const TitleContainer = styled.div`
   position: absolute;
   width: 90%;
@@ -288,9 +265,9 @@ const TitleContainer = styled.div`
   transform: translateX(-50%);
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   @media screen and (max-width: 768px) {
-    bottom: 12px;
+    bottom: 8px;
   }
 `;
 
@@ -304,7 +281,7 @@ const Tap = styled.button`
   border: none;
   border-bottom: 3px solid ${({ theme }) => (theme.textColor === '#ffffff' ? '#55ebff' : '#333333')};
   background: none;
-  /* cursor: pointer; */
+  cursor: pointer;
   transition:
     color 0.3s ease,
     border-bottom 0.3s ease;
@@ -328,7 +305,7 @@ const TapContainer = styled.div`
 const ButtonWrapper = styled.div`
   display: flex;
   gap: 20px;
-  align-items: flex-end;
+  align-items: center;
   @media screen and (max-width: 768px) {
     a > svg {
       width: 30px;
@@ -388,14 +365,11 @@ const NextBtn = styled.button`
     cursor: not-allowed;
   }
 `;
-
 const LikeIcon = styled.div`
   width: 30px;
-  height: 30px;
+  height: 32px;
   z-index: 100;
   cursor: pointer;
-  display: flex;
-  align-items: flex-end;
 
   @media screen and (max-width: 768px) {
     width: 24px;
@@ -407,6 +381,23 @@ const LikeIcon = styled.div`
     }
   }
 `;
+// const StyledButton = styled(Button)`
+//   padding: 0px 16px;
+//   height: 30px;
+//   font-size: 14px;
+//   gap: 4px;
+//   font-weight: bold;
+
+//   @media screen and (max-width: 768px) {
+//     svg {
+//       width: 18px;
+//     }
+//     padding: 2px 10px;
+//     height: 28px;
+//     font-size: 12px;
+//     gap: 4px;
+//   }
+// `;
 
 const StyledButton = styled(Button)`
   padding: 4px 16px;

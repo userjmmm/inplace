@@ -2,6 +2,7 @@ package team7.inplace.place.application.command;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
 
@@ -40,16 +41,15 @@ public class PlacesCommand {
 
     public record FilterParams(
         List<RegionParam> regions,
-        List<Long> categories,
+        List<Category> categories,
         List<String> influencers
     ) {
 
     }
 
-    public record Upsert(
-        Long videoId,
+    public record Create(
         String placeName,
-        Long category,
+        String category,
         String address,
         String x,
         String y,

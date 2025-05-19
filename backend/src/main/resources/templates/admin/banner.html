@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
-    <title>Banner</title>
+<head>
+    <meta charset="UTF-8">
+    <title>이미지 관리</title>
+    <link href="/css/style.css" rel="stylesheet">
     <link href="/css/banner.css" rel="stylesheet">
-    <th:block th:fragment="scripts">
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="/js/fragment/modal.js"></script>
-        <script src="/js/banner.js"></script>
-    </th:block>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-
-
 <body>
-<header th:replace="fragment/header :: navigation_bar"></header>
+<div class="header">
+    <a class="header-link" href="/admin/main">홈</a>
+</div>
 
 <h1>이미지 관리</h1>
 
@@ -22,7 +20,7 @@
         <form enctype="multipart/form-data" id="imageUploadForm" method="post">
             <div class="form-group">
                 <div class="preview-area">
-                    <img alt="미리보기" id="imagePreview" onclick="openBannerPreviewModal(this.src)" src="">
+                    <img alt="미리보기" id="imagePreview" onclick="openPreviewModal(this.src)" src="">
                 </div>
 
                 <div class="upload-btn-wrapper">
@@ -93,7 +91,7 @@
             <tr th:each="banner : ${banners}">
                 <td>
                     <img alt="이미지 미리보기"
-                         onclick="openBannerPreviewModal(this.src)"
+                         onclick="openPreviewModal(this.src)"
                          th:src="${banner.imgPath}">
                 </td>
                 <td th:text="${banner.imgName}"></td>
@@ -122,11 +120,13 @@
     </div>
 </div>
 
-<div th:replace="fragment/modal :: modal('previewModal', '이미지 미리보기', ~{::contents})">
-    <th:block th:fragment="contents">
+<div class="modal" id="previewModal">
+    <div class="modal-content">
+        <span class="close" onclick="closePreviewModal()">&times;</span>
         <img alt="이미지 미리보기" id="modalImage" src="">
-    </th:block>
+    </div>
 </div>
 
+<script src="/js/banner.js"></script>
 </body>
 </html>
