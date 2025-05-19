@@ -39,6 +39,7 @@ public class PlaceQueryResult {
 
     public record Marker(
         Long placeId,
+        String parentsCategory,
         Double longitude,
         Double latitude
     ) {
