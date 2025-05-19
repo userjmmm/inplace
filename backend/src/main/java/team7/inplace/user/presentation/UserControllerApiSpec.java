@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import team7.inplace.user.presentation.dto.UserRequest;
 import team7.inplace.user.presentation.dto.UserResponse;
 
-public interface UserControllerApiSepc {
+public interface UserControllerApiSpec {
 
     @Operation(
         summary = "유저 닉네임 변경",
@@ -36,4 +36,7 @@ public interface UserControllerApiSepc {
 
     @Operation(summary = "유저 정보 반환", description = "유저 정보를 반환합니다.")
     ResponseEntity<UserResponse.Info> getUserInfo();
+
+    @Operation(summary = "회원탈퇴", description = "회원탈퇴를 진행합니다.")
+    ResponseEntity<Void> deleteUser();
 }

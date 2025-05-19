@@ -11,10 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,9 +26,12 @@ import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.presentation.dto.PlaceRequest;
-import team7.inplace.place.presentation.dto.PlaceRequest.Create;
+import team7.inplace.place.presentation.dto.PlaceRequest.Upsert;
 import team7.inplace.place.presentation.dto.PlacesResponse;
-import team7.inplace.place.presentation.dto.PlacesResponse.Location;
+import team7.inplace.place.presentation.dto.PlacesResponse.Admin;
+import team7.inplace.place.presentation.dto.PlacesResponse.Categories;
+import team7.inplace.place.presentation.dto.PlacesResponse.Marker;
+import team7.inplace.place.presentation.dto.PlacesResponse.MarkerDetail;
 import team7.inplace.place.presentation.dto.PlacesResponse.Simple;
 import team7.inplace.place.presentation.dto.ReviewResponse;
 import team7.inplace.review.application.ReviewService;
@@ -43,9 +48,9 @@ public class PlaceController implements PlaceControllerApiSpec {
     @Override
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
-    public ResponseEntity<Void> savePlace(@RequestBody Create request) {
+    public ResponseEntity<Void> savePlace(@RequestBody Upsert request) {
         var command = request.toCommand();
-        placeFacade.createPlace(request.videoId(), command);
+        placeFacade.createPlace(command);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -88,34 +93,34 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     @Override
     @GetMapping("/all")
-    public ResponseEntity<List<PlacesResponse.Location>> getPlaceLocations(
+    public ResponseEntity<List<Marker>> getPlaceLocations(
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
         @ModelAttribute PlaceRequest.Filter filterParams
     ) {
-        List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocations(
+        List<PlaceQueryResult.Marker> placeMarkerInfos = placeFacade.getPlaceLocations(
             coordinateParams.toCommand(),
             filterParams.toCommand()
         );
 
         return new ResponseEntity<>(
-            PlacesResponse.Location.from(placeLocationInfos),
+            Marker.from(placeMarkerInfos),
             HttpStatus.OK
         );
     }
 
     @Override
     @GetMapping("/all/search")
-    public ResponseEntity<List<Location>> getPlaceLocationsByName(
+    public ResponseEntity<List<Marker>> getPlaceLocationsByName(
         @RequestParam(required = true) String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams
     ) {
-        List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocationsByName(
+        List<PlaceQueryResult.Marker> placeMarkerInfos = placeFacade.getPlaceLocationsByName(
             placeName,
             filterParams.toCommand()
         );
 
         return new ResponseEntity<>(
-            PlacesResponse.Location.from(placeLocationInfos),
+            Marker.from(placeMarkerInfos),
             HttpStatus.OK
         );
     }
@@ -131,20 +136,21 @@ public class PlaceController implements PlaceControllerApiSpec {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Override
     @GetMapping("/{id}/marker")
-    public ResponseEntity<PlacesResponse.Marker> getPlaceForMarker(
+    public ResponseEntity<MarkerDetail> getMarkerDetail(
         @PathVariable("id") Long placeId
     ) {
         PlaceInfo.Marker marker = placeFacade.getMarkerInfo(placeId);
-        PlacesResponse.Marker markerResponse = PlacesResponse.Marker.from(marker);
-        return new ResponseEntity<>(markerResponse, HttpStatus.OK);
+        MarkerDetail markerDetailResponse = MarkerDetail.from(marker);
+        return new ResponseEntity<>(markerDetailResponse, HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/categories")
-    public ResponseEntity<PlacesResponse.Category> getCategories() {
+    public ResponseEntity<Categories> getCategories() {
         List<PlaceInfo.Category> categories = placeFacade.getCategories();
-        var response = PlacesResponse.Category.from(categories);
+        var response = Categories.from(categories);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -167,5 +173,42 @@ public class PlaceController implements PlaceControllerApiSpec {
             .map(ReviewResponse.Simple::from);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/videos/{videoId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Admin>> getAdminPlacesByVideoId(
+        @PathVariable Long videoId
+    ) {
+        List<Admin> responses =  placeFacade.getAdminPlacesByVideoId(videoId)
+            .stream()
+            .map(Admin::of)
+            .toList();
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    @Override
+    @DeleteMapping("/{placeId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deletePlaceById(
+        @PathVariable Long placeId
+    ) {
+        placeFacade.deletePlaceById(placeId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    @PutMapping("/{placeId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Long> updatePlaceInfo(
+        @PathVariable Long placeId,
+        @RequestBody Upsert update
+    ) {
+        Long updatedPlaceId = placeFacade.updatePlaceInfo(placeId, update.toCommand());
+
+        return new ResponseEntity<>(updatedPlaceId, HttpStatus.OK);
     }
 }

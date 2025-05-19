@@ -3,11 +3,15 @@ package team7.inplace.place.presentation.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import team7.inplace.place.application.dto.PlaceInfo;
+import team7.inplace.place.application.dto.PlaceInfo.Category;
+import team7.inplace.place.application.dto.PlaceInfo.Simple;
 import team7.inplace.place.client.GooglePlaceClientResponse;
 import team7.inplace.place.client.GooglePlaceClientResponse.AccessibilityOptions;
 import team7.inplace.place.client.GooglePlaceClientResponse.ParkingOptions;
@@ -27,6 +31,7 @@ public class PlacesResponse {
         String menuImgUrl,
         String longitude,
         String latitude,
+        Long likeCount,
         Boolean likes,
         List<PlacesResponse.Video> videos
     ) {
@@ -46,10 +51,11 @@ public class PlacesResponse {
                     placeInfo.place().address2(),
                     placeInfo.place().address3()
                 ),
-                placeInfo.place().category().getName(),
+                placeInfo.place().category(),
                 "",
                 placeInfo.place().longitude().toString(),
                 placeInfo.place().latitude().toString(),
+                placeInfo.place().likeCount(),
                 placeInfo.place().isLiked(),
                 placeInfo.video().stream()
                     .map(PlacesResponse.Video::from)
@@ -73,7 +79,8 @@ public class PlacesResponse {
         String googlePlaceUrl,
         String naverPlaceUrl,
         List<String> openingHours,
-        PlacesResponse.PlaceLike placeLikes,
+        ReviewLike reviewLikes,
+        Long likeCount,
         Boolean likes
     ) {
 
@@ -95,7 +102,7 @@ public class PlacesResponse {
                     place.place().address2(),
                     place.place().address3()
                 ),
-                place.place().category().getName(),
+                place.place().category(),
                 place.place().longitude(),
                 place.place().latitude(),
                 null,
@@ -114,7 +121,8 @@ public class PlacesResponse {
                     place.place().placeName()
                 ),
                 List.of(),
-                PlacesResponse.PlaceLike.from(place.reviewLikeRate()),
+                ReviewLike.from(place.reviewLikeRate()),
+                place.place().likeCount(),
                 place.place().isLiked()
             );
         }
@@ -128,7 +136,7 @@ public class PlacesResponse {
                     place.place().address2(),
                     place.place().address3()
                 ),
-                place.place().category().getName(),
+                place.place().category(),
                 place.place().longitude(),
                 place.place().latitude(),
                 PlacesResponse.Facility.of(
@@ -148,15 +156,16 @@ public class PlacesResponse {
                 place.googlePlace().googleMapsUri(),
                 "https://map.naver.com/p/search/"
                     + convertParamsForNaverSearch(
-                        place.place().address1(),
-                        place.place().address2(),
-                        place.place().address3(),
-                        place.place().placeName()
-                    ),
+                    place.place().address1(),
+                    place.place().address2(),
+                    place.place().address3(),
+                    place.place().placeName()
+                ),
                 place.googlePlace().regularOpeningHours()
                     .map(RegularOpeningHours::weekdayDescriptions)
                     .orElse(List.of()),
-                PlacesResponse.PlaceLike.from(place.reviewLikeRate()),
+                ReviewLike.from(place.reviewLikeRate()),
+                place.place().likeCount(),
                 place.place().isLiked()
             );
         }
@@ -217,7 +226,7 @@ public class PlacesResponse {
 
         public static PlacesResponse.GoogleReview from(GooglePlaceClientResponse.Review review) {
             return new PlacesResponse.GoogleReview(
-                review.rating() >= 3,
+                review.rating() >= 4,
                 review.text().isEmpty() ? "" : review.text().get().text().orElse(""),
                 review.authorAttribution().displayName(),
                 review.publishTime().toString()
@@ -236,13 +245,13 @@ public class PlacesResponse {
 
     }
 
-    public record PlaceLike(
+    public record ReviewLike(
         Long like,
         Long dislike
     ) {
 
-        public static PlacesResponse.PlaceLike from(ReviewQueryResult.LikeRate placeLike) {
-            return new PlacesResponse.PlaceLike(placeLike.likes(), placeLike.dislikes());
+        public static ReviewLike from(ReviewQueryResult.LikeRate placeLike) {
+            return new ReviewLike(placeLike.likes(), placeLike.dislikes());
         }
     }
 
@@ -256,28 +265,28 @@ public class PlacesResponse {
         }
     }
 
-    public record Location(
+    public record Marker(
         Long placeId,
         Double longitude,
         Double latitude
     ) {
 
-        public static List<Location> from(List<PlaceQueryResult.Location> locations) {
-            return locations.stream()
-                .map(PlacesResponse.Location::from)
+        public static List<Marker> from(List<PlaceQueryResult.Marker> markers) {
+            return markers.stream()
+                .map(Marker::from)
                 .toList();
         }
 
-        private static Location from(PlaceQueryResult.Location location) {
-            return new Location(
-                location.placeId(),
-                location.longitude(),
-                location.latitude()
+        private static Marker from(PlaceQueryResult.Marker marker) {
+            return new Marker(
+                marker.placeId(),
+                marker.longitude(),
+                marker.latitude()
             );
         }
     }
 
-    public record Marker(
+    public record MarkerDetail(
         Long placeId,
         String placeName,
         String category,
@@ -286,11 +295,11 @@ public class PlacesResponse {
         List<Video> videos
     ) {
 
-        public static Marker from(PlaceInfo.Marker marker) {
-            return new Marker(
+        public static MarkerDetail from(PlaceInfo.Marker marker) {
+            return new MarkerDetail(
                 marker.place().placeId(),
                 marker.place().placeName(),
-                marker.place().category().getName(),
+                marker.place().category(),
                 new Address(
                     marker.place().address1(),
                     marker.place().address2(),
@@ -304,14 +313,63 @@ public class PlacesResponse {
         }
     }
 
-    public record Category(
-        List<String> categories
+    public record Categories(
+        List<Category> categories
     ) {
 
-        public static Category from(List<PlaceInfo.Category> categories) {
-            return new Category(categories.stream()
-                .map(PlaceInfo.Category::name)
-                .toList());
+        public static Categories from(List<PlaceInfo.Category> categories) {
+            Map<Long, Category> categoryMap = new HashMap<>();
+            categories.stream()
+                .filter(category -> category.parentId() == null)
+                .forEach(category -> {
+                    Category categoryResponse = Category.from(category);
+                    categoryMap.put(category.id(), categoryResponse);
+                });
+            categories.stream()
+                .filter(category -> category.parentId() != null)
+                .forEach(category -> {
+                    Category parentCategory = categoryMap.get(category.parentId());
+                    if (parentCategory != null) {
+                        parentCategory.subCategories().add(Category.from(category));
+                    }
+                });
+            return new Categories(new ArrayList<>(categoryMap.values()));
+        }
+    }
+
+    public record Category(
+        Long id,
+        String name,
+        @JsonInclude(Include.NON_EMPTY) List<Category> subCategories
+    ) {
+
+        public static Category from(PlaceInfo.Category category) {
+            return new Category(category.id(), category.name(), new ArrayList<>());
+        }
+    }
+
+    public record Admin(
+        Long placeId,
+        String placeName,
+        String category,
+        String address,
+        Double x,
+        Double y,
+        Long kakaoPlaceId,
+        String googlePlaceId
+    ) {
+
+        public static Admin of(PlaceInfo.Simple simple) {
+            return new PlacesResponse.Admin(
+                simple.place().placeId(),
+                simple.place().placeName(),
+                simple.place().category().toString(),
+                simple.place().address1() + " " + simple.place().address2()+ " " + simple.place().address3(),
+                simple.place().longitude(),
+                simple.place().latitude(),
+                simple.place().kakaoPlaceId(),
+                simple.place().googlePlaceId()
+            );
         }
     }
 }
