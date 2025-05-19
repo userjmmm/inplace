@@ -2,7 +2,7 @@ INSERT INTO categories(id, name, eng_name, parent_id)
 VALUES (1, '맛집', 'eats', null),
        (2, '카페', 'cafe', 1),
        (3, '양식', 'western', 1),
-       (4, '일식', 'japanese',1),
+       (4, '일식', 'japanese', 1),
        (5, '한식', 'korean', 1);
 
 INSERT INTO places (id, name, latitude, longitude, address1, address2, address3, category_id)
@@ -108,10 +108,4 @@ VALUES (1, 1, 1),
        (17, 17, 17),
        (18, 18, 18),
        (19, 19, 19),
-       (20, 20, 20),
-       (21, 2, 1),
-       (22, 1, 2),
-       (23, 1, 3),
-       (24, 2, 3),
-       (25, 3, 1),
-       (26, 3, 2);
+       (20, 20, 20)
