@@ -300,7 +300,7 @@ export default function MapWindow({
                 lng: place.longitude,
               }}
               image={{
-                src: place.type === 'Eats' ? EatsMarker : PlaysMarker,
+                src: place.type === 'eats' ? EatsMarker : PlaysMarker,
                 size: {
                   width: selectedPlaceId === place.placeId ? originSize + 14 : originSize,
                   height: selectedPlaceId === place.placeId ? originSize + 14 : originSize,
