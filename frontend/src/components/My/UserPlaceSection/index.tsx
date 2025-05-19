@@ -28,8 +28,13 @@ export default function UserPlaceSection({ items = [] }: { items: UserPlaceData[
         <NoItem message="장소 정보가 없어요!" height={180} />
       ) : (
         <>
-          <ArrowButton aria-label="left_btn" onClick={() => scrollList('left')} className="left-arrow" direction="left">
-            <GrPrevious size={40} />
+          <ArrowButton
+            aria-label="마이 장소 왼쪽"
+            onClick={() => scrollList('left')}
+            className="left-arrow"
+            direction="left"
+          >
+            <GrPrevious size={30} />
           </ArrowButton>
           <ListContainer ref={listRef}>
             {items.map((place) => {
@@ -38,6 +43,7 @@ export default function UserPlaceSection({ items = [] }: { items: UserPlaceData[
                   key={place.placeId}
                   placeId={place.placeId}
                   placeName={place.placeName}
+                  videoUrl={place.videoUrl}
                   influencerName={place.influencerName}
                   address={place.address}
                   likes={place.likes}
@@ -47,12 +53,12 @@ export default function UserPlaceSection({ items = [] }: { items: UserPlaceData[
           </ListContainer>
           {items.length > 5 && (
             <ArrowButton
-              aria-label="right_btn"
+              aria-label="마이 장소 오른쪽"
               onClick={() => scrollList('right')}
               className="right-arrow"
               direction="right"
             >
-              <GrNext size={40} />
+              <GrNext size={30} />
             </ArrowButton>
           )}
         </>
@@ -106,8 +112,8 @@ const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
     color: white;
     background: ${({ direction }) =>
       direction === 'left'
-        ? 'linear-gradient(to right, rgba(0, 0, 0, 0.6), transparent 90%)'
-        : 'linear-gradient(to left, rgba(0, 0, 0, 0.6), transparent 90%)'};
+        ? 'linear-gradient(to right, rgba(0, 0, 0, 0.7), transparent 90%)'
+        : 'linear-gradient(to left, rgba(0, 0, 0, 0.7), transparent 90%)'};
   }
 
   &.left-arrow {
@@ -116,6 +122,9 @@ const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
 
   &.right-arrow {
     right: 0;
+  }
+  svg {
+    ${({ direction }) => (direction === 'left' ? 'padding-right: 20px' : 'padding-left: 20px')};
   }
 
   @media screen and (max-width: 768px) {

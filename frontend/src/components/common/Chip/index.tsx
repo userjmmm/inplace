@@ -4,9 +4,9 @@ import { Text } from '@/components/common/typography/Text';
 
 type Props = {
   selectedInfluencers: string[];
-  selectedCategories: string[];
+  selectedCategories: { id: number; label: string }[];
   onClearInfluencer: (influencer: string) => void;
-  onClearCategory: (category: string) => void;
+  onClearCategory: (category: number) => void;
 };
 
 export default function Chip({ selectedInfluencers, selectedCategories, onClearInfluencer, onClearCategory }: Props) {
@@ -17,18 +17,18 @@ export default function Chip({ selectedInfluencers, selectedCategories, onClearI
           <Text size="xxs" weight="normal" variant="#36617f">
             {influencer}
           </Text>
-          <ClearButton aria-label="infl-clear_btn" onClick={() => onClearInfluencer(influencer)}>
+          <ClearButton aria-label="인플루언서 칩 제거" onClick={() => onClearInfluencer(influencer)}>
             <IoClose size={14} />
           </ClearButton>
         </FilterChip>
       ))}
 
       {selectedCategories.map((category) => (
-        <FilterChip key={category}>
+        <FilterChip key={category.id}>
           <Text size="xxs" weight="normal" variant="#36617f">
-            {category}
+            {category.label}
           </Text>
-          <ClearButton aria-label="cate-clear_btn" onClick={() => onClearCategory(category)}>
+          <ClearButton aria-label="카테고리 칩 제거" onClick={() => onClearCategory(category.id)}>
             <IoClose size={14} />
           </ClearButton>
         </FilterChip>

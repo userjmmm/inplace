@@ -15,11 +15,12 @@ export type InfluencerData = {
 
 export type SpotData = {
   videoId: number;
-  videoAlias: string;
+  influencerName: string;
   videoUrl: string;
   place: {
     placeId: number;
     placeName: string;
+    address: AddressInfo;
   };
 };
 export type PageableData<T> = {
@@ -70,6 +71,7 @@ export type PlaceData = {
   longitude: string;
   latitude: string;
   likes: boolean;
+  likedCount: number;
 };
 
 export type LocationData = {
@@ -80,7 +82,7 @@ export type LocationData = {
 };
 
 export type FilterParams = {
-  categories: string[];
+  categories: number[];
   influencers: string[];
   placeName?: string;
 };
@@ -107,7 +109,8 @@ export type PlaceInfo = {
   longitude: string;
   latitude: string;
   facility: FacilityInfo;
-  placeLikes: PlaceLikes;
+  reviewLikes: PlaceLikes;
+  likedCount: number;
   likes: boolean;
 };
 export type GoogleReview = {
@@ -144,11 +147,13 @@ export type RequestInfluencerLike = {
 };
 export type UserInfoData = {
   nickname: string;
+  imgUrl: string;
 };
 export type UserPlaceData = {
   placeId: number;
   placeName: string;
   imageUrl?: string | null;
+  videoUrl: string;
   influencerName: string;
   address: AddressInfo;
   likes: boolean;
@@ -201,6 +206,7 @@ export type MarkerData = {
   placeId: number;
   longitude: number;
   latitude: number;
+  type: string;
 };
 export type MarkerInfo = {
   placeId: number;
@@ -222,11 +228,25 @@ export interface ReviewInfo {
   userNickname: string;
 }
 
-export type AllMarkerWithCenter = {
-  marker: MarkerData[];
-  map: {
-    longitude: number;
-    latitude: number;
-    level: number;
-  };
+export type SubCategory = {
+  id: number;
+  name: string;
+  mainId?: number;
+};
+
+export type Category = {
+  id: number;
+  name: string;
+  subCategories: SubCategory[];
+};
+
+export type CategoryData = {
+  categories: Category[];
+};
+
+export type CategoryOption = {
+  label: string;
+  id: number;
+  isMain: boolean;
+  mainId?: number;
 };

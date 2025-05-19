@@ -1,6 +1,5 @@
 package team7.inplace.place.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,17 +18,21 @@ import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
-import team7.inplace.place.application.command.PlacesCommand.Create;
+import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.application.dto.PlaceInfo;
+import team7.inplace.place.application.dto.PlaceInfo.Category;
 import team7.inplace.place.client.GooglePlaceClient;
 import team7.inplace.place.client.GooglePlaceClientResponse.Place;
-import team7.inplace.place.domain.Category;
+import team7.inplace.place.domain.PlaceVideo;
+import team7.inplace.place.persistence.CategoryRepository;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
+import team7.inplace.place.persistence.PlaceVideoJpaRepository;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
 import team7.inplace.video.persistence.VideoReadRepository;
 
 @Slf4j
@@ -37,20 +40,24 @@ import team7.inplace.video.persistence.VideoReadRepository;
 @RequiredArgsConstructor
 public class PlaceService {
 
-    private final LikedPlaceRepository likedPlaceRepository;
     private final PlaceReadRepository placeReadRepository;
     private final PlaceJpaRepository placeJpaRepository;
-    private final GooglePlaceClient googlePlaceClient;
+    private final CategoryRepository categoryRepository;
+    private final PlaceVideoJpaRepository placeVideoJpaRepository;
+    private final LikedPlaceRepository likedPlaceRepository;
     private final VideoReadRepository videoReadRepository;
+    private final GooglePlaceClient googlePlaceClient;
 
-    public Long createPlace(Create placeCommand) {
-        var existPlace = placeJpaRepository.findPlaceByKakaoPlaceId(placeCommand.kakaoPlaceId());
-        if (existPlace.isPresent()) {
-            return existPlace.get().getId();
-        }
-        var placeBulk = placeCommand.toEntity();
-        placeJpaRepository.save(placeBulk);
-        return placeBulk.getId();
+    @Transactional
+    public void createPlace(Upsert placeCommand) {
+        var place = placeJpaRepository.findPlaceByKakaoPlaceId(placeCommand.kakaoPlaceId())
+            .orElseGet(() -> {
+                var newPlace = placeCommand.toEntity();
+                return placeJpaRepository.save(newPlace);
+            });
+
+        var placeVideo = new PlaceVideo(place.getId(), placeCommand.videoId());
+        placeVideoJpaRepository.save(placeVideo);
     }
 
     @Transactional
@@ -92,7 +99,7 @@ public class PlaceService {
     private Page<PlaceQueryResult.DetailedPlace> getPlacesByDistance(
         Coordinate placesCoordinateCommand,
         List<RegionParam> regionParams,
-        List<Category> categoryFilters,
+        List<Long> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
         Long userId
@@ -129,7 +136,7 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public List<PlaceQueryResult.Location> getPlaceLocations(
+    public List<Marker> getPlaceLocations(
         Coordinate coordinateCommand,
         FilterParams filterParamsCommand
     ) {
@@ -149,7 +156,7 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public PlaceQueryResult.Marker getMarkerInfo(Long placeId) {
+    public MarkerDetail getMarkerInfo(Long placeId) {
         return placeReadRepository.findPlaceMarkerById(placeId);
     }
 
@@ -168,13 +175,20 @@ public class PlaceService {
         return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
     }
 
+
     public List<PlaceInfo.Category> getCategories() {
-        return Arrays.stream(Category.values())
-            .map(category -> new PlaceInfo.Category(category.name()))
+        var categories = categoryRepository.findAll();
+        return categories.stream()
+            .map(Category::from)
             .toList();
     }
 
-    public List<Location> getPlaceLocationsByName(String name, FilterParams command) {
+    @Transactional(readOnly = true)
+    public List<Long> getParentCategoryIds() {
+        return categoryRepository.findParentCategoryIds();
+    }
+
+    public List<Marker> getPlaceLocationsByName(String name, FilterParams command) {
         return placeReadRepository.findPlaceLocationsByName(
             name,
             command.regions(),
@@ -194,5 +208,24 @@ public class PlaceService {
             command.influencers(),
             pageable
         );
+    }
+
+    public List<PlaceQueryResult.DetailedPlace> getSimplePlacesByVideoId(Long videoId) {
+        return placeReadRepository.getDetailedPlacesByVideoId(videoId);
+    }
+
+    @Transactional
+    public void deletePlaceById(Long placeId) {
+        placeJpaRepository.deleteById(placeId);
+    }
+
+    @Transactional
+    public Long updatePlaceInfo(Long placeId, Upsert command) {
+        team7.inplace.place.domain.Place place = placeJpaRepository.findById(placeId)
+            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+
+        place.updateInfo(command);
+
+        return place.getId();
     }
 }

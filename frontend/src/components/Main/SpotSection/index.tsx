@@ -27,7 +27,12 @@ export default function SpotSection({ items = [] }: { items: SpotData[] }) {
         <NoItem message="그곳 정보가 없어요!" height={200} />
       ) : (
         <>
-          <ArrowButton aria-label="left_btn" onClick={() => scrollList('left')} className="left-arrow" direction="left">
+          <ArrowButton
+            aria-label="그곳 스크롤 왼쪽"
+            onClick={() => scrollList('left')}
+            className="left-arrow"
+            direction="left"
+          >
             <GrPrevious size={40} />
           </ArrowButton>
           <ListContainer ref={listRef}>
@@ -36,7 +41,7 @@ export default function SpotSection({ items = [] }: { items: SpotData[] }) {
                 <SpotItem
                   key={spot.videoId}
                   videoId={spot.videoId}
-                  videoAlias={spot.videoAlias}
+                  influencerName={spot.influencerName}
                   videoUrl={spot.videoUrl}
                   place={spot.place}
                 />
@@ -45,7 +50,7 @@ export default function SpotSection({ items = [] }: { items: SpotData[] }) {
           </ListContainer>
           {items.length > 3 && (
             <ArrowButton
-              aria-label="right_btn"
+              aria-label="그곳 스크롤 오른쪽"
               onClick={() => scrollList('right')}
               className="right-arrow"
               direction="right"
@@ -84,7 +89,6 @@ const ListContainer = styled.div`
 `;
 const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
   position: absolute;
-  font-size: 24px;
   height: 100%;
   color: transparent;
   background: none;
@@ -100,8 +104,8 @@ const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
     color: white;
     background: ${({ direction, theme }) =>
       direction === 'left'
-        ? `linear-gradient(to right, ${theme.backgroundColor === '#292929' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(50, 50, 50, 0.3)'}, transparent 90%)`
-        : `linear-gradient(to left, ${theme.backgroundColor === '#292929' ? 'rgba(0, 0, 0, 0.6)' : 'rgba(50, 50, 50, 0.3)'}, transparent 90%)`};
+        ? `linear-gradient(to right, ${theme.backgroundColor === '#292929' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(50, 50, 50, 0.5)'}, transparent 90%)`
+        : `linear-gradient(to left, ${theme.backgroundColor === '#292929' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(50, 50, 50, 0.5)'}, transparent 90%)`};
   }
 
   &.left-arrow {
@@ -110,6 +114,10 @@ const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
 
   &.right-arrow {
     right: 0;
+  }
+
+  svg {
+    ${({ direction }) => (direction === 'left' ? 'padding-right: 20px' : 'padding-left: 20px')};
   }
 
   @media screen and (max-width: 768px) {

@@ -8,8 +8,8 @@ import Button from '@/components/common/Button';
 import { FilterParams, LocationData, PlaceData } from '@/types';
 import { useGetAllMarkers } from '@/api/hooks/useGetAllMarkers';
 import InfoWindow from '@/components/InfluencerInfo/InfluencerMapTap/InfoWindow';
-import OriginMarker from '@/assets/images/OriginMarker.png';
-import SelectedMarker from '@/assets/images/InplaceMarker.png';
+import PlaysMarker from '@/assets/images/PlaysMarker.webp';
+import EatsMarker from '@/assets/images/EatsMarker.webp';
 import { Text } from '@/components/common/typography/Text';
 import nowLocation from '@/assets/images/now_location.webp';
 import Loading from '@/components/common/layouts/Loading';
@@ -26,7 +26,7 @@ interface MapWindowProps {
   isInitialLoad: boolean;
   setIsInitialLoad: React.Dispatch<React.SetStateAction<boolean>>;
   filters: {
-    categories: string[];
+    categories: number[];
     influencers: string[];
   };
   filtersWithPlaceName: FilterParams;
@@ -249,7 +249,7 @@ export default function MapWindow({
       {showSearchButton && (
         <ButtonContainer>
           <Button
-            aria-label="around_btn"
+            aria-label="지도 리프레시"
             onClick={handleNearbyClick}
             variant="white"
             size="small"
@@ -300,7 +300,7 @@ export default function MapWindow({
                 lng: place.longitude,
               }}
               image={{
-                src: selectedPlaceId === place.placeId ? SelectedMarker : OriginMarker,
+                src: place.type === 'Eats' ? EatsMarker : PlaysMarker,
                 size: {
                   width: selectedPlaceId === place.placeId ? originSize + 14 : originSize,
                   height: selectedPlaceId === place.placeId ? originSize + 14 : originSize,
@@ -324,7 +324,7 @@ export default function MapWindow({
       </Map>
       <ResetButtonContainer>
         <StyledBtn
-          aria-label="reset_btn"
+          aria-label="지도 내위치"
           onClick={() => userLocation && handleCenterReset(userLocation)}
           variant="white"
           size="small"
@@ -333,7 +333,7 @@ export default function MapWindow({
         </StyledBtn>
       </ResetButtonContainer>
       {!isListExpanded && (
-        <ListViewButton onClick={onListExpand}>
+        <ListViewButton aria-label="지도 목록보기" onClick={onListExpand}>
           <Text size="xs" weight="normal" variant="white">
             목록 보기
           </Text>
@@ -480,7 +480,7 @@ const fadeOut = keyframes`
 
 const NoItemMarker = styled.div`
   position: absolute;
-  top: 5%;
+  top: 13%;
   width: 30%;
   display: flex;
   align-items: center;

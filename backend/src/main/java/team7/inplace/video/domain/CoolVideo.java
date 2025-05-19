@@ -2,8 +2,6 @@ package team7.inplace.video.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,7 +9,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team7.inplace.place.domain.Category;
 
 @Getter
 @Entity
@@ -35,25 +32,72 @@ public class CoolVideo {
     @Column(name = "place_id")
     private Long placeId;
 
+    @Column(name = "place_category_parent_name")
+    private String placeCategoryParentName;
+
+    @Column(name = "place_category_parent_id")
+    private Long placeCategoryParentId;
+
     @Column(name = "place_name")
     private String placeName;
 
-    @Column(name = "place_category")
-    @Enumerated(value = EnumType.STRING)
-    private Category placeCategory;
+    @Column(name = "address1")
+    private String address1;
 
-    private CoolVideo(Long videoId, String videoUUID, String influencerName, Long placeId, String placeName,
-        Category placeCategory) {
+    @Column(name = "address2")
+    private String address2;
+
+    @Column(name = "address3")
+    private String address3;
+
+    private CoolVideo(
+        Long videoId,
+        String videoUUID,
+        String influencerName,
+        Long placeId,
+        String placeName,
+        String placeCategoryParentName,
+        Long placeCategoryParentId,
+        String address1,
+        String address2,
+        String address3
+    ) {
         this.videoId = videoId;
         this.videoUUID = videoUUID;
         this.influencerName = influencerName;
         this.placeId = placeId;
         this.placeName = placeName;
-        this.placeCategory = placeCategory;
+        this.placeCategoryParentName = placeCategoryParentName;
+        this.placeCategoryParentId = placeCategoryParentId;
+        this.address1 = address1;
+        this.address2 = address2;
+        this.address3 = address3;
     }
 
-    public static CoolVideo from(Long videoId, String videoUUID, String influencerName, Long placeId, String placeName, Category placeCategory) {
-        return new CoolVideo(videoId, videoUUID, influencerName, placeId, placeName, placeCategory);
+    public static CoolVideo from(
+        Long videoId,
+        String videoUUID,
+        String influencerName,
+        Long placeId,
+        String placeName,
+        String placeCategoryParentName,
+        Long placeCategoryParentId,
+        String address1,
+        String address2,
+        String address3
+    ) {
+        return new CoolVideo(
+            videoId,
+            videoUUID,
+            influencerName,
+            placeId,
+            placeName,
+            placeCategoryParentName,
+            placeCategoryParentId,
+            address1,
+            address2,
+            address3
+        );
     }
 
 }
