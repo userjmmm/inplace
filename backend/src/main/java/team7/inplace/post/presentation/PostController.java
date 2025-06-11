@@ -17,7 +17,7 @@ import team7.inplace.post.application.PostFacade;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
 import team7.inplace.post.presentation.dto.PostResponse.DetailedList;
-import team7.inplace.post.presentation.dto.PostResponse.DetailedPost;
+import team7.inplace.post.presentation.dto.PostResponse.SimplePost;
 
 @RestController
 @Slf4j
@@ -71,10 +71,10 @@ public class PostController implements PostControllerApiSpec {
 
     @Override
     @GetMapping("/{postId}")
-    public ResponseEntity<DetailedPost> getPostById(@PathVariable Long postId) {
+    public ResponseEntity<SimplePost> getPostById(@PathVariable Long postId) {
         var post = postFacade.getPostById(postId);
 
-        var response = DetailedPost.from(post);
+        var response = SimplePost.from(post);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -1,6 +1,6 @@
 package team7.inplace.post.presentation;
 
-import static team7.inplace.post.presentation.dto.PostResponse.DetailedPost;
+import static team7.inplace.post.presentation.dto.PostResponse.SimplePost;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,10 +55,10 @@ public interface PostControllerApiSpec {
         description = "게시글 상세 조회 성공",
         content = @io.swagger.v3.oas.annotations.media.Content(
             mediaType = "application/json",
-            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DetailedPost.class)
+            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = SimplePost.class)
         )
     )
-    ResponseEntity<DetailedPost> getPostById(@PathVariable(value = "postId") Long postId);
+    ResponseEntity<SimplePost> getPostById(@PathVariable(value = "postId") Long postId);
 
     @PostMapping("/{postId}/comments")
     ResponseEntity<Void> createComment(

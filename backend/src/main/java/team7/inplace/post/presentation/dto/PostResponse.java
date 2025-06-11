@@ -1,5 +1,8 @@
 package team7.inplace.post.presentation.dto;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,27 +15,28 @@ import team7.inplace.user.presentation.dto.UserResponse;
 public class PostResponse {
 
     public record DetailedList(
-        List<DetailedPost> posts,
+        List<SimplePost> posts,
         CursorResponse cursor
     ) {
 
         public static DetailedList from(
             CursorResult<PostQueryResult.DetailedPost> postQueryResult
         ) {
-            List<DetailedPost> posts = postQueryResult.value().stream()
-                .map(DetailedPost::from)
+            List<SimplePost> posts = postQueryResult.value().stream()
+                .map(SimplePost::from)
                 .toList();
             return new DetailedList(posts,
                 new CursorResponse(postQueryResult.hasNext(), postQueryResult.nextCursorId()));
         }
     }
 
-    public record DetailedPost(
+    public record SimplePost(
         Long postId,
         UserResponse.Info author,
         String title,
         String content,
-        List<String> photoUrls,
+        @JsonInclude(NON_NULL)
+        String imageUrl,
         Boolean selfLike,
         Integer totalLikeCount,
         Integer totalCommentCount,
@@ -40,14 +44,16 @@ public class PostResponse {
         String createdAt
     ) {
 
-        public static DetailedPost from(PostQueryResult.DetailedPost postQueryResult) {
-            return new DetailedPost(
+        public static SimplePost from(PostQueryResult.DetailedPost postQueryResult) {
+            return new SimplePost(
                 postQueryResult.postId(),
                 new UserResponse.Info(postQueryResult.userNickname(),
                     postQueryResult.userImageUrl()),
                 postQueryResult.title(),
                 postQueryResult.content(),
-                postQueryResult.getImageUrls(),
+                postQueryResult.getImageUrls().isEmpty()
+                    ? null
+                    : postQueryResult.getImageUrls().get(0),
                 postQueryResult.selfLike(),
                 postQueryResult.totalLikeCount(),
                 postQueryResult.totalCommentCount(),
