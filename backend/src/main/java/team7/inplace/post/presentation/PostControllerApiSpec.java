@@ -1,6 +1,7 @@
 package team7.inplace.post.presentation;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +33,14 @@ public interface PostControllerApiSpec {
     ResponseEntity<Void> deletePost(@PathVariable(value = "postId") Long postId);
 
     @GetMapping()
+    @ApiResponse(
+        responseCode = "200",
+        description = "게시글 목록 조회 성공",
+        content = @io.swagger.v3.oas.annotations.media.Content(
+            mediaType = "application/json",
+            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PostResponse.SimpleList.class)
+        )
+    )
     ResponseEntity<PostResponse.SimpleList> getPosts(
         @RequestParam(value = "cursorId") Long cursorId,
         @RequestParam(value = "size", defaultValue = "5") int size,
