@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Transient;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,21 +22,24 @@ import team7.inplace.global.exception.code.PostErrorCode;
 public class PostPhoto {
 
     @Convert(converter = JsonNodeConverter.class)
-    private JsonNode imageUrls;
+    private JsonNode imageInfos;
 
-    public PostPhoto(List<String> imageUrls, List<String> imgHashes) {
-        validatePhoto(imageUrls, imgHashes);
-        this.imageUrls = photosToJsonNode(imageUrls, imgHashes);
+    public PostPhoto(List<String> imageInfos, List<String> imgHashes) {
+        validatePhoto(imageInfos, imgHashes);
+        this.imageInfos = photosToJsonNode(imageInfos, imgHashes);
     }
 
+    @Transient
     public List<String> getImageUrls() {
-        return imageUrls.findValuesAsText("imageUrl").stream().toList();
+        return imageInfos.findValuesAsText("imageUrl").stream().toList();
     }
 
+    @Transient
     public List<String> getImgHashes() {
-        return imageUrls.findValuesAsText("imgHash").stream().toList();
+        return imageInfos.findValuesAsText("imgHash").stream().toList();
     }
 
+    @Transient
     public Map<String, String> getImageUrlMap() {
         Map<String, String> imageUrlMap = new HashMap<>();
         List<String> imageUrls = getImageUrls();
