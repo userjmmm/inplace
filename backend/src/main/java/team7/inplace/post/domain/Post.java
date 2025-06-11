@@ -1,5 +1,6 @@
 package team7.inplace.post.domain;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import java.util.List;
@@ -14,8 +15,11 @@ import team7.inplace.global.exception.code.PostErrorCode;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
 
+    @Embedded
     private PostTitle title;
+    @Embedded
     private PostContent content;
+    @Embedded
     private PostPhoto photos;
     private Integer totalLikeCount;
     private Integer totalCommentCount;
@@ -46,14 +50,12 @@ public class Post extends BaseEntity {
         return photos.getImageUrls();
     }
 
-    public List<String> getImgHashes() {
-        return photos.getImgHashes();
-    }
-
     public void update(
         Long userId,
-        String title, String content,
-        List<String> imageUrls, List<String> imgHashes
+        String title,
+        String content,
+        List<String> imageUrls,
+        List<String> imgHashes
     ) {
         validateAuthor(userId);
         this.title = this.title.update(title);
