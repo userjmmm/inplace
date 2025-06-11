@@ -1,6 +1,7 @@
 package team7.inplace.post.persistence;
 
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -31,7 +32,7 @@ public class PostReadRepositoryImpl implements PostReadRepository {
         String orderBy
     ) {
         var cursorPosts = buildCursorDetailedPostsQuery(userId, orderBy)
-            .where(cursorId == null ? null : QPost.post.id.lt(cursorId))
+            .where(cursorId == null ? null : getCursorWhere(cursorId, orderBy))
             .orderBy(getOrderSpecifier(orderBy))
             .limit(size + 1)
             .fetch();
@@ -109,6 +110,10 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             .where(QPost.post.id.eq(postId));
     }
 
+    /*
+     * 추천수 기준 정렬 추가 예정입니다.
+     */
+
     private OrderSpecifier<?> getOrderSpecifier(String orderBy) {
         return switch (orderBy) {
             default -> QPost.post.id.desc();
@@ -118,6 +123,12 @@ public class PostReadRepositoryImpl implements PostReadRepository {
     private NumberPath<Long> getCursorPath(String orderBy) {
         return switch (orderBy) {
             default -> QPost.post.id;
+        };
+    }
+
+    private BooleanExpression getCursorWhere(Long cursorId, String orderBy) {
+        return switch (orderBy) {
+            default -> QPost.post.id.lt(cursorId);
         };
     }
 }
