@@ -1,19 +1,25 @@
 package team7.inplace.post.presentation;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.post.application.PostFacade;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
+import team7.inplace.post.presentation.dto.PostResponse;
+import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
 
 @RestController
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/posts")
 public class PostController implements PostControllerApiSpec {
@@ -47,6 +53,19 @@ public class PostController implements PostControllerApiSpec {
         postFacade.deletePost(postId);
 
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @GetMapping
+    public ResponseEntity<SimpleList> getPosts(
+        @RequestParam Long cursorId,
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "") String orderBy
+    ) {
+        var posts = postFacade.getPosts(cursorId, size, orderBy);
+
+        var response = PostResponse.SimpleList.from(posts);
+        return ResponseEntity.ok(response);
     }
 
     @Override
