@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import team7.inplace.global.cursor.CursorResponse;
 import team7.inplace.global.cursor.CursorResult;
@@ -14,18 +15,41 @@ import team7.inplace.user.presentation.dto.UserResponse;
 
 public class PostResponse {
 
-    public record DetailedList(
+    private static String formatCreatedAt(LocalDateTime createdAt) {
+        var now = LocalDateTime.now();
+        var duration = Duration.between(createdAt, now);
+
+        long minutes = duration.toMinutes();
+        long hours = duration.toHours();
+        long days = duration.toDays();
+
+        if (minutes < 1) {
+            return "방금 전";
+        }
+        if (minutes < 60) {
+            return minutes + "분 전";
+        }
+        if (hours < 24) {
+            return hours + "시간 전";
+        }
+        if (days < 7) {
+            return days + "일 전";
+        }
+        return createdAt.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+    }
+
+    public record SimpleList(
         List<SimplePost> posts,
         CursorResponse cursor
     ) {
 
-        public static DetailedList from(
+        public static SimpleList from(
             CursorResult<PostQueryResult.DetailedPost> postQueryResult
         ) {
             List<SimplePost> posts = postQueryResult.value().stream()
                 .map(SimplePost::from)
                 .toList();
-            return new DetailedList(posts,
+            return new SimpleList(posts,
                 new CursorResponse(postQueryResult.hasNext(), postQueryResult.nextCursorId()));
         }
     }
@@ -61,28 +85,52 @@ public class PostResponse {
                 formatCreatedAt(postQueryResult.createdAt())
             );
         }
+    }
 
-        private static String formatCreatedAt(LocalDateTime createdAt) {
-            var now = LocalDateTime.now();
-            var duration = Duration.between(createdAt, now);
+    public record DetailedPost(
+        Long postId,
+        UserResponse.Info author,
+        String title,
+        String content,
+        List<PostImage> imageUrls,
+        Boolean selfLike,
+        Integer totalLikeCount,
+        Integer totalCommentCount,
+        Boolean isMine,
+        String createdAt
+    ) {
 
-            long minutes = duration.toMinutes();
-            long hours = duration.toHours();
-            long days = duration.toDays();
-
-            if (minutes < 1) {
-                return "방금 전";
+        public static DetailedPost from(PostQueryResult.DetailedPost postQueryResult) {
+            List<PostImage> images = new ArrayList<>();
+            for (int i = 0; i < postQueryResult.getImageUrls().size(); i++) {
+                images.add(
+                    new PostImage(postQueryResult.getImageUrls().get(i),
+                        postQueryResult.getImgHashes().get(i)
+                    )
+                );
             }
-            if (minutes < 60) {
-                return minutes + "분 전";
-            }
-            if (hours < 24) {
-                return hours + "시간 전";
-            }
-            if (days < 7) {
-                return days + "일 전";
-            }
-            return createdAt.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+            return new DetailedPost(
+                postQueryResult.postId(),
+                new UserResponse.Info(
+                    postQueryResult.userNickname(),
+                    postQueryResult.userImageUrl()
+                ),
+                postQueryResult.title(),
+                postQueryResult.content(),
+                images,
+                postQueryResult.selfLike(),
+                postQueryResult.totalLikeCount(),
+                postQueryResult.totalCommentCount(),
+                postQueryResult.isMine(),
+                formatCreatedAt(postQueryResult.createdAt())
+            );
         }
+    }
+
+    public record PostImage(
+        String imageUrl,
+        String imageHash
+    ) {
+
     }
 }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.post.presentation.dto.PostRequest;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
-import team7.inplace.post.presentation.dto.PostResponse.DetailedList;
+import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
 
 @RequestMapping("/posts")
 @Tag(name = "게시글 관련 API", description = "게시글 관련 API입니다.")
@@ -40,10 +40,10 @@ public interface PostControllerApiSpec {
         description = "게시글 목록 조회 성공",
         content = @io.swagger.v3.oas.annotations.media.Content(
             mediaType = "application/json",
-            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DetailedList.class)
+            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = SimpleList.class)
         )
     )
-    ResponseEntity<DetailedList> getPosts(
+    ResponseEntity<SimpleList> getPosts(
         @RequestParam(value = "cursorId") Long cursorId,
         @RequestParam(value = "size", defaultValue = "5") int size,
         @RequestParam(value = "sort", defaultValue = "createAt") String sort

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.post.application.PostFacade;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
-import team7.inplace.post.presentation.dto.PostResponse.DetailedList;
+import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
 import team7.inplace.post.presentation.dto.PostResponse.SimplePost;
 
 @RestController
@@ -58,14 +58,14 @@ public class PostController implements PostControllerApiSpec {
 
     @Override
     @GetMapping
-    public ResponseEntity<DetailedList> getPosts(
+    public ResponseEntity<SimpleList> getPosts(
         @RequestParam Long cursorId,
         @RequestParam(defaultValue = "5") int size,
         @RequestParam(defaultValue = "") String sort
     ) {
         var posts = postFacade.getPosts(cursorId, size, sort);
 
-        var response = DetailedList.from(posts);
+        var response = SimpleList.from(posts);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
