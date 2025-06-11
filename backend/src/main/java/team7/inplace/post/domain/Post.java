@@ -17,6 +17,8 @@ public class Post extends BaseEntity {
     private PostTitle title;
     private PostContent content;
     private PostPhoto photos;
+    private Integer totalLikeCount;
+    private Integer totalCommentCount;
     private Long authorId;
 
     public Post(
@@ -28,6 +30,8 @@ public class Post extends BaseEntity {
         this.content = new PostContent(content);
         this.photos = new PostPhoto(imageUrls, imgHashes);
         this.authorId = authorId;
+        this.totalLikeCount = 0;
+        this.totalCommentCount = 0;
     }
 
     public String getTitle() {
