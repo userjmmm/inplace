@@ -88,7 +88,7 @@ public class PostService {
     public CursorResult<DetailedPost> getPosts(
         Long userId, Long cursorId, int size, String orderBy
     ) {
-        return postReadRepository.findPostsOrderByCreatedDate(userId, cursorId, size, orderBy);
+        return postReadRepository.findPostsOrderBy(userId, cursorId, size, orderBy);
     }
 
     @Transactional(readOnly = true)

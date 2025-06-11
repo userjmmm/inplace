@@ -39,14 +39,14 @@ class PostReadRepositoryImplTest extends AbstractMySQLContainerTest {
 
     @Test
     @DisplayName("게시글 조회 테스트 / 커서기반 페이징 / 다음페이지 있음")
-    void findPostsOrderByCreatedDate_withNextPage() {
+    void findPostsOrderBy_withNextPage() {
         // given
         Long userId = 1L;
         Long cursorId = null;
         int size = 5;
 
         // when
-        var posts = postReadRepository.findPostsOrderByCreatedDate(
+        var posts = postReadRepository.findPostsOrderBy(
             userId,
             cursorId,
             size,
@@ -61,14 +61,14 @@ class PostReadRepositoryImplTest extends AbstractMySQLContainerTest {
 
     @Test
     @DisplayName("게시글 조회 테스트 / 커서기반 페이징 / 다음페이지 없음")
-    void findPostsOrderByCreatedDate_withoutNextPage() {
+    void findPostsOrderBy_withoutNextPage() {
         // given
         Long userId = null;
         Long cursorId = 4L;
         int size = 5;
 
         // when
-        var posts = postReadRepository.findPostsOrderByCreatedDate(
+        var posts = postReadRepository.findPostsOrderBy(
             userId,
             cursorId,
             size,
@@ -91,7 +91,7 @@ class PostReadRepositoryImplTest extends AbstractMySQLContainerTest {
         int photoSize = 1;
 
         // when
-        var posts = postReadRepository.findPostsOrderByCreatedDate(
+        var posts = postReadRepository.findPostsOrderBy(
             userId,
             cursorId,
             size,

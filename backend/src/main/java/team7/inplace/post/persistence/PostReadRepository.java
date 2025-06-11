@@ -6,7 +6,7 @@ import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
 
 public interface PostReadRepository {
 
-    CursorResult<DetailedPost> findPostsOrderByCreatedDate(
+    CursorResult<DetailedPost> findPostsOrderBy(
         Long userId,
         Long cursorId,
         int size,

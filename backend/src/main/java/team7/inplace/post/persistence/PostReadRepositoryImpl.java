@@ -24,7 +24,7 @@ public class PostReadRepositoryImpl implements PostReadRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public CursorResult<DetailedPost> findPostsOrderByCreatedDate(
+    public CursorResult<DetailedPost> findPostsOrderBy(
         Long userId,
         Long cursorId,
         int size,
