@@ -71,7 +71,7 @@ public class PostController implements PostControllerApiSpec {
 
     @Override
     @GetMapping("/{postId}")
-    public ResponseEntity<DetailedPost> getPostById(Long postId) {
+    public ResponseEntity<DetailedPost> getPostById(@PathVariable Long postId) {
         var post = postFacade.getPostById(postId);
 
         var response = DetailedPost.from(post);
