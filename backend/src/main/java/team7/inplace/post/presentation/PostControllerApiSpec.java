@@ -1,5 +1,7 @@
 package team7.inplace.post.presentation;
 
+import static team7.inplace.post.presentation.dto.PostResponse.DetailedPost;
+
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.post.presentation.dto.PostRequest;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
-import team7.inplace.post.presentation.dto.PostResponse;
+import team7.inplace.post.presentation.dto.PostResponse.DetailedList;
 
 @RequestMapping("/posts")
 @Tag(name = "게시글 관련 API", description = "게시글 관련 API입니다.")
@@ -38,14 +40,25 @@ public interface PostControllerApiSpec {
         description = "게시글 목록 조회 성공",
         content = @io.swagger.v3.oas.annotations.media.Content(
             mediaType = "application/json",
-            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = PostResponse.SimpleList.class)
+            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DetailedList.class)
         )
     )
-    ResponseEntity<PostResponse.SimpleList> getPosts(
+    ResponseEntity<DetailedList> getPosts(
         @RequestParam(value = "cursorId") Long cursorId,
         @RequestParam(value = "size", defaultValue = "5") int size,
         @RequestParam(value = "sort", defaultValue = "createAt") String sort
     );
+
+    @GetMapping("/{postId}")
+    @ApiResponse(
+        responseCode = "200",
+        description = "게시글 상세 조회 성공",
+        content = @io.swagger.v3.oas.annotations.media.Content(
+            mediaType = "application/json",
+            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DetailedPost.class)
+        )
+    )
+    ResponseEntity<DetailedPost> getPostById(@PathVariable(value = "postId") Long postId);
 
     @PostMapping("/{postId}/comments")
     ResponseEntity<Void> createComment(

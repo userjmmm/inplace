@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import team7.inplace.global.cursor.CursorResult;
@@ -45,6 +46,11 @@ public class PostReadRepositoryImpl implements PostReadRepository {
 
     }
 
+    @Override
+    public Optional<DetailedPost> findPostById(Long postId, Long userId) {
+        return Optional.ofNullable(buildDetailedPostsQuery(postId, userId).fetchOne());
+    }
+
     private JPAQuery<CursorDetailedPost> buildCursorDetailedPostsQuery(
         Long userId,
         String orderBy
@@ -74,6 +80,33 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .leftJoin(QLikedPost.likedPost).on(likedJoinCondition);
+    }
+
+    private JPAQuery<DetailedPost> buildDetailedPostsQuery(Long postId, Long userId) {
+        var likedJoinCondition = QLikedPost.likedPost.postId.eq(QPost.post.id);
+        if (userId != null) {
+            likedJoinCondition = likedJoinCondition.and(QLikedPost.likedPost.userId.eq(userId));
+        }
+        return queryFactory
+            .select(
+                new QPostQueryResult_DetailedPost(
+                    QPost.post.id,
+                    QUser.user.nickname,
+                    QUser.user.profileImageUrl,
+                    QPost.post.title.title,
+                    QPost.post.content.content,
+                    QPost.post.photos.imageInfos,
+                    QLikedPost.likedPost.id.isNotNull(),
+                    QPost.post.totalLikeCount,
+                    QPost.post.totalCommentCount,
+                    userId == null ? Expressions.FALSE : QPost.post.authorId.eq(userId),
+                    QPost.post.createdAt
+                )
+            )
+            .from(QPost.post)
+            .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
+            .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
+            .where(QPost.post.id.eq(postId));
     }
 
     private OrderSpecifier<?> getOrderSpecifier(String orderBy) {

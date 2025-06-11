@@ -86,16 +86,14 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public CursorResult<DetailedPost> getPosts(
-        Long userId,
-        Long cursorId,
-        int size,
-        String orderBy
+        Long userId, Long cursorId, int size, String orderBy
     ) {
-        return postReadRepository.findPostsOrderByCreatedDate(
-            userId,
-            cursorId,
-            size,
-            orderBy
-        );
+        return postReadRepository.findPostsOrderByCreatedDate(userId, cursorId, size, orderBy);
+    }
+
+    @Transactional(readOnly = true)
+    public DetailedPost getPostById(Long postId, Long userId) {
+        return postReadRepository.findPostById(postId, userId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
     }
 }

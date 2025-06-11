@@ -50,4 +50,9 @@ public class PostFacade {
 
         return postService.getPosts(userId, cursorId, size, orderBy);
     }
+
+    public DetailedPost getPostById(Long postId) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        return postService.getPostById(postId, userId);
+    }
 }

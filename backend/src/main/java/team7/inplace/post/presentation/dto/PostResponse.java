@@ -11,23 +11,23 @@ import team7.inplace.user.presentation.dto.UserResponse;
 
 public class PostResponse {
 
-    public record SimpleList(
-        List<Simple> posts,
+    public record DetailedList(
+        List<DetailedPost> posts,
         CursorResponse cursor
     ) {
 
-        public static PostResponse.SimpleList from(
+        public static DetailedList from(
             CursorResult<PostQueryResult.DetailedPost> postQueryResult
         ) {
-            List<Simple> posts = postQueryResult.value().stream()
-                .map(PostResponse.Simple::from)
+            List<DetailedPost> posts = postQueryResult.value().stream()
+                .map(DetailedPost::from)
                 .toList();
-            return new SimpleList(posts,
+            return new DetailedList(posts,
                 new CursorResponse(postQueryResult.hasNext(), postQueryResult.nextCursorId()));
         }
     }
 
-    public record Simple(
+    public record DetailedPost(
         Long postId,
         UserResponse.Info author,
         String title,
@@ -40,8 +40,8 @@ public class PostResponse {
         String createdAt
     ) {
 
-        public static PostResponse.Simple from(PostQueryResult.DetailedPost postQueryResult) {
-            return new Simple(
+        public static DetailedPost from(PostQueryResult.DetailedPost postQueryResult) {
+            return new DetailedPost(
                 postQueryResult.postId(),
                 new UserResponse.Info(postQueryResult.userNickname(),
                     postQueryResult.userImageUrl()),
