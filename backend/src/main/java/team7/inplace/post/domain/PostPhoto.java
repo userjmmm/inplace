@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Transient;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,17 +29,30 @@ public class PostPhoto {
         this.imageInfos = photosToJsonNode(imageInfos, imgHashes);
     }
 
-    @Transient
     public List<String> getImageUrls() {
-        return imageInfos.findValuesAsText("imageUrl").stream().toList();
+        if (imageInfos == null || !imageInfos.isArray()) {
+            return List.of();
+        }
+
+        return StreamSupport.stream(imageInfos.spliterator(), false)
+            .map(node -> node.get("imageUrl"))
+            .filter(urlNode -> urlNode != null && urlNode.isTextual())
+            .map(JsonNode::asText)
+            .toList();
     }
 
-    @Transient
     public List<String> getImgHashes() {
-        return imageInfos.findValuesAsText("imgHash").stream().toList();
+        if (imageInfos == null || !imageInfos.isArray()) {
+            return List.of();
+        }
+
+        return StreamSupport.stream(imageInfos.spliterator(), false)
+            .map(node -> node.get("imgHash"))
+            .filter(urlNode -> urlNode != null && urlNode.isTextual())
+            .map(JsonNode::asText)
+            .toList();
     }
 
-    @Transient
     public Map<String, String> getImageUrlMap() {
         Map<String, String> imageUrlMap = new HashMap<>();
         List<String> imageUrls = getImageUrls();
