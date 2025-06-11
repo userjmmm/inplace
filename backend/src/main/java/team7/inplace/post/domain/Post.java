@@ -50,6 +50,10 @@ public class Post extends BaseEntity {
         return photos.getImageUrls();
     }
 
+    public List<String> getImgHashes() {
+        return photos.getImgHashes();
+    }
+
     public void update(
         Long userId,
         String title,

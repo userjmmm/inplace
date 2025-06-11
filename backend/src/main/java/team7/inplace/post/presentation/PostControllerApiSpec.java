@@ -44,7 +44,7 @@ public interface PostControllerApiSpec {
     ResponseEntity<PostResponse.SimpleList> getPosts(
         @RequestParam(value = "cursorId") Long cursorId,
         @RequestParam(value = "size", defaultValue = "5") int size,
-        @RequestParam(value = "orderBy", defaultValue = "createAt") String orderBy
+        @RequestParam(value = "sort", defaultValue = "createAt") String sort
     );
 
     @PostMapping("/{postId}/comments")

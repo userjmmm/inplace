@@ -10,7 +10,9 @@ import org.springframework.stereotype.Repository;
 import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.liked.likedPost.domain.QLikedPost;
 import team7.inplace.post.domain.QPost;
+import team7.inplace.post.persistence.dto.PostQueryResult.CursorDetailedPost;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
+import team7.inplace.post.persistence.dto.QPostQueryResult_CursorDetailedPost;
 import team7.inplace.post.persistence.dto.QPostQueryResult_DetailedPost;
 import team7.inplace.user.domain.QUser;
 
@@ -27,39 +29,45 @@ public class PostReadRepositoryImpl implements PostReadRepository {
         int size,
         String orderBy
     ) {
-        var posts = buildDetailedPostQuery(userId, orderBy)
+        var cursorPosts = buildCursorDetailedPostsQuery(userId, orderBy)
             .where(cursorId == null ? null : QPost.post.id.lt(cursorId))
             .orderBy(getOrderSpecifier(orderBy))
             .limit(size + 1)
             .fetch();
 
-        boolean hasNext = posts.size() > size;
+        boolean hasNext = cursorPosts.size() > size;
+        var posts = cursorPosts.stream().map(CursorDetailedPost::detailedPost).toList();
         return new CursorResult<>(
             posts.subList(0, Math.min(size, posts.size())),
             hasNext,
-            hasNext ? posts.get(size - 1).cursorId() : null
+            hasNext ? cursorPosts.get(size - 1).cursorId() : null
         );
 
     }
 
-    private JPAQuery<DetailedPost> buildDetailedPostQuery(Long userId, String orderBy) {
+    private JPAQuery<CursorDetailedPost> buildCursorDetailedPostsQuery(
+        Long userId,
+        String orderBy
+    ) {
         var likedJoinCondition = QLikedPost.likedPost.postId.eq(QPost.post.id);
         if (userId != null) {
             likedJoinCondition = likedJoinCondition.and(QLikedPost.likedPost.userId.eq(userId));
         }
         return queryFactory
-            .select(new QPostQueryResult_DetailedPost(
-                    QPost.post.id,
-                    QUser.user.nickname,
-                    QUser.user.profileImageUrl,
-                    QPost.post.title.title,
-                    QPost.post.content.content,
-                    QPost.post.photos.imageInfos,
-                    QLikedPost.likedPost.id.isNotNull(),
-                    QPost.post.totalLikeCount,
-                    QPost.post.totalCommentCount,
-                    Expressions.FALSE,
-                    QPost.post.createdAt,
+            .select(new QPostQueryResult_CursorDetailedPost(
+                    new QPostQueryResult_DetailedPost(
+                        QPost.post.id,
+                        QUser.user.nickname,
+                        QUser.user.profileImageUrl,
+                        QPost.post.title.title,
+                        QPost.post.content.content.substring(0, 120),
+                        QPost.post.photos.imageInfos,
+                        QLikedPost.likedPost.id.isNotNull(),
+                        QPost.post.totalLikeCount,
+                        QPost.post.totalCommentCount,
+                        userId == null ? Expressions.FALSE : QPost.post.authorId.eq(userId),
+                        QPost.post.createdAt
+                    ),
                     getCursorPath(orderBy)
                 )
             )

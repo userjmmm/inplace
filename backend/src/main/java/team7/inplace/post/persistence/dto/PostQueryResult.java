@@ -19,8 +19,7 @@ public class PostQueryResult {
         Integer totalLikeCount,
         Integer totalCommentCount,
         Boolean isMine,
-        LocalDateTime createdAt,
-        Long cursorId
+        LocalDateTime createdAt
     ) {
 
         @QueryProjection
@@ -41,6 +40,16 @@ public class PostQueryResult {
 
         public List<String> getImgHashes() {
             return imageInfos.findValuesAsText("imgHash").stream().toList();
+        }
+    }
+
+    public record CursorDetailedPost(
+        DetailedPost detailedPost,
+        Long cursorId
+    ) {
+
+        @QueryProjection
+        public CursorDetailedPost {
         }
     }
 }

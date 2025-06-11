@@ -60,9 +60,9 @@ public class PostController implements PostControllerApiSpec {
     public ResponseEntity<SimpleList> getPosts(
         @RequestParam Long cursorId,
         @RequestParam(defaultValue = "5") int size,
-        @RequestParam(defaultValue = "") String orderBy
+        @RequestParam(defaultValue = "") String sort
     ) {
-        var posts = postFacade.getPosts(cursorId, size, orderBy);
+        var posts = postFacade.getPosts(cursorId, size, sort);
 
         var response = PostResponse.SimpleList.from(posts);
         return ResponseEntity.ok(response);
