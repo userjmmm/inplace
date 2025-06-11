@@ -39,7 +39,7 @@ public class PostQueryResult {
         }
 
         public List<String> getImgHashes() {
-            return imageInfos.findValuesAsText("imgHash").stream().toList();
+            return imageInfos.findValuesAsText("imageHash").stream().toList();
         }
     }
 

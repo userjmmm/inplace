@@ -47,7 +47,7 @@ public class PostPhoto {
         }
 
         return StreamSupport.stream(imageInfos.spliterator(), false)
-            .map(node -> node.get("imgHash"))
+            .map(node -> node.get("imageHash"))
             .filter(urlNode -> urlNode != null && urlNode.isTextual())
             .map(JsonNode::asText)
             .toList();
@@ -91,7 +91,7 @@ public class PostPhoto {
         for (int i = 0; i < imageUrls.size(); i++) {
             photosArray[i] = JsonNodeFactory.instance.objectNode()
                 .put("imageUrl", imageUrls.get(i))
-                .put("imgHash", imgHashes.get(i));
+                .put("imageHash", imgHashes.get(i));
         }
         return JsonNodeFactory.instance.arrayNode().addAll(Arrays.asList(photosArray));
     }
