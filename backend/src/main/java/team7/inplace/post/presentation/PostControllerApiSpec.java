@@ -86,6 +86,6 @@ public interface PostControllerApiSpec {
     @GetMapping("/{postId}/comments")
     ResponseEntity<Page<DetailedComment>> getCommentsByPostId(
         @PathVariable(value = "postId") Long postId,
-        @PageableDefault(size = 5) Pageable pageable
+        @PageableDefault(size = 10) Pageable pageable
     );
 }
