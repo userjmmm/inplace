@@ -1,7 +1,6 @@
 package team7.inplace.post.presentation;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,7 +23,6 @@ import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
 import team7.inplace.post.presentation.dto.PostResponse.SimplePost;
 
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/posts")
 public class PostController implements PostControllerApiSpec {
@@ -117,8 +115,9 @@ public class PostController implements PostControllerApiSpec {
     }
 
     @Override
+    @GetMapping("/{postId}/comments")
     public ResponseEntity<Page<DetailedComment>> getCommentsByPostId(
-        Long postId,
+        @PathVariable("postId") Long postId,
         @PageableDefault(size = 10) Pageable pageable
     ) {
         var comments = postFacade.getCommentsByPostId(postId, pageable);
