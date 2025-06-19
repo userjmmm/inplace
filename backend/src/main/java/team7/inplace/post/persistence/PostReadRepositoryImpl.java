@@ -151,7 +151,9 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .where(
                 QPost.post.id.eq(postId),
-                keyword == null ? null : QUser.user.nickname.containsIgnoreCase(keyword)
+                keyword == null || keyword.isEmpty()
+                    ? null
+                    : QUser.user.nickname.containsIgnoreCase(keyword)
             )
             .fetch();
 
@@ -165,10 +167,12 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             .innerJoin(QUser.user).on(QComment.comment.authorId.eq(QUser.user.id))
             .where(
                 QComment.comment.postId.eq(postId),
-                keyword == null ? null : QUser.user.nickname.containsIgnoreCase(keyword)
+                keyword == null || keyword.isEmpty()
+                    ? null
+                    : QUser.user.nickname.containsIgnoreCase(keyword)
             )
             .fetch();
 
-        return Stream.concat(postUser.stream(), commentUser.stream()).toList();
+        return Stream.concat(postUser.stream(), commentUser.stream()).distinct().toList();
     }
 }
