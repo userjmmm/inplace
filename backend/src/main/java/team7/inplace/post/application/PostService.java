@@ -37,16 +37,6 @@ public class PostService {
     }
 
     @Transactional
-    public void createComment(CreateComment command, Long userId) {
-        if (postJpaRepository.existsById(command.postId())) {
-            var comment = command.toEntity(userId);
-            commentJpaRepository.save(comment);
-            return;
-        }
-        throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
-    }
-
-    @Transactional
     public void updatePost(UpdatePost updateCommand, Long userId) {
         var post = postJpaRepository.findById(updateCommand.postId())
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
@@ -65,6 +55,17 @@ public class PostService {
         var post = postJpaRepository.findById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
         post.deleteSoftly(userId);
+    }
+
+    @Transactional
+    public void createComment(CreateComment command, Long userId) {
+        if (postJpaRepository.existsById(command.postId())) {
+            var comment = command.toEntity(userId);
+            commentJpaRepository.save(comment);
+            postJpaRepository.increaseCommentCount(command.postId());
+            return;
+        }
+        throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
     }
 
     @Transactional
@@ -87,6 +88,7 @@ public class PostService {
             .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
 
         comment.deleteSoftly(userId);
+        postJpaRepository.decreaseCommentCount(postId);
     }
 
     @Transactional(readOnly = true)
