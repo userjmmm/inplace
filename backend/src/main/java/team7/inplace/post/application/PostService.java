@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
+import team7.inplace.liked.likedComment.domain.LikedComment;
+import team7.inplace.liked.likedComment.persistence.LikedCommentRepository;
 import team7.inplace.liked.likedPost.domain.LikedPost;
 import team7.inplace.liked.likedPost.persistence.LikedPostRepository;
 import team7.inplace.post.application.dto.PostCommand.CreateComment;
@@ -33,6 +35,7 @@ public class PostService {
 
     private final CommentJpaRepository commentJpaRepository;
     private final CommentReadRepository commentReadRepository;
+    private final LikedCommentRepository likedCommentRepository;
 
 
     @Transactional(readOnly = true)
@@ -135,5 +138,25 @@ public class PostService {
 
         comment.deleteSoftly(userId);
         postJpaRepository.decreaseCommentCount(postId);
+    }
+
+    @Transactional
+    public void likeComment(Long postId, Long commentId, Long userId) {
+        if (!commentJpaRepository.existsById(commentId)) {
+            throw InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND);
+        }
+
+        var likedComment = likedCommentRepository.findByUserIdAndCommentId(userId, commentId)
+            .orElseGet(() -> {
+                var newLikedComment = LikedComment.from(userId, commentId);
+                return likedCommentRepository.save(newLikedComment);
+            });
+
+        var isLiked = likedComment.updateLike();
+        if (isLiked) {
+            commentJpaRepository.increaseLikeCount(commentId);
+            return;
+        }
+        commentJpaRepository.decreaseLikeCount(commentId);
     }
 }
