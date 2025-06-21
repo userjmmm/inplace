@@ -17,7 +17,7 @@ public class LikedComment extends BaseEntity {
     private Long commentId;
     private Boolean isLiked;
 
-    public LikedComment(Long userId, Long commentId) {
+    private LikedComment(Long userId, Long commentId) {
         this.userId = userId;
         this.commentId = commentId;
         this.isLiked = false;
