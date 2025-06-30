@@ -19,6 +19,7 @@ public class Comment extends BaseEntity {
     private Long authorId;
     private String content;
     private Integer totalLikeCount = 0;
+    private Boolean isReported = false;
 
     public Comment(Long postId, Long authorId, String content) {
         validateContent(content);
@@ -54,6 +55,10 @@ public class Comment extends BaseEntity {
             return;
         }
         throw InplaceException.of(PostErrorCode.COMMENT_CAN_NOT_BE_MODIFIED);
+    }
+
+    public void report() {
+        this.isReported = true;
     }
 
 }
