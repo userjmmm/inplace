@@ -58,7 +58,9 @@ public class Comment extends BaseEntity {
     }
 
     public void report() {
-        this.isReported = true;
+        if (!Boolean.TRUE.equals(this.isReported)) {
+            this.isReported = true;
+        }
     }
 
 }
