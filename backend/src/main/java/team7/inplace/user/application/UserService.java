@@ -66,4 +66,9 @@ public class UserService {
 
         user.updateProfileImageUrl(profileImageUrl);
     }
+    
+    @Transactional(readOnly = true)
+    public boolean isExistUserName(String userName) {
+        return userRepository.existsByUsername(userName);
+    }
 }
