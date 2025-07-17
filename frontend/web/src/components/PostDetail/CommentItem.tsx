@@ -177,10 +177,7 @@ export default function CommentItem({
           <ProfileImg>
             <FallbackImage src={item.author.imgUrl} alt="profile" />
           </ProfileImg>
-          <UserName
-            userNickname={item.author.nickname}
-            tierImageUrl="https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff"
-          />
+          <UserName userNickname={item.author.nickname} tierImageUrl={item.author.tierImageUrl} />
         </UserInfo>
         {!isEditing && (
           <EditMenu
