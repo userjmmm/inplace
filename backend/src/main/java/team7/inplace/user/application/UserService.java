@@ -71,4 +71,20 @@ public class UserService {
     public boolean isExistUserName(String userName) {
         return userRepository.existsByUsername(userName);
     }
+    
+    @Transactional
+    public void updateFcmToken(Long userId, String fcmToken) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        user.updateFcmToken(fcmToken);
+    }
+    
+    @Transactional(readOnly = true)
+    public String getFcmTokenByUsername(String userName) {
+        User user = userRepository.findByUsername(userName)
+                        .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        return user.getFcmToken();
+    }
 }

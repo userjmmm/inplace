@@ -34,6 +34,9 @@ public class User extends BaseEntity {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+    
+    @Column(name = "fcm_token")
+    private String fcmToken;
 
     public User(String username, String password, String nickname, String profileImageUrl, UserType userType, Role role) {
         this.username = username;
@@ -42,6 +45,7 @@ public class User extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
         this.userType = userType;
         this.role = role;
+        this.fcmToken = "";
     }
 
     public void updateNickname(String nickname) {
@@ -50,5 +54,9 @@ public class User extends BaseEntity {
 
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+    
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }
