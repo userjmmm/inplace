@@ -109,12 +109,12 @@ public class PostService {
     }
 
     @Transactional
-    public void createComment(CreateComment command, Long userId) {
+    public Long createComment(CreateComment command, Long userId) {
         if (postJpaRepository.existsById(command.postId())) {
             var comment = command.toEntity(userId);
             commentJpaRepository.save(comment);
             postJpaRepository.increaseCommentCount(command.postId());
-            return;
+            return comment.getId();
         }
         throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
     }

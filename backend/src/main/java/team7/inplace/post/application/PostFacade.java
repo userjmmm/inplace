@@ -45,10 +45,10 @@ public class PostFacade {
 
     public void createComment(PostCommand.CreateComment command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
-        postService.createComment(command, userId);
+        var commentId = postService.createComment(command, userId);
         
         List<String> mentionedUsers = parseMentionedUser(command.comment());
-        processMentionAlarm(command.postId(), mentionedUsers);
+        processMentionAlarm(command.postId(), commentId, mentionedUsers);
     }
 
     public void updateComment(PostCommand.UpdateComment updateCommand) {
@@ -56,7 +56,7 @@ public class PostFacade {
         postService.updateComment(updateCommand, userId);
         
         List<String> mentionedUsers = parseMentionedUser(updateCommand.comment());
-        processMentionAlarm(updateCommand.postId(), mentionedUsers);
+        processMentionAlarm(updateCommand.postId(), updateCommand.commentId(), mentionedUsers);
     }
     
     private List<String> parseMentionedUser(String comment) {
@@ -73,9 +73,9 @@ public class PostFacade {
                    .toList();
     }
     
-    private void processMentionAlarm(Long postId, List<String> mentionedUsers) {
+    private void processMentionAlarm(Long postId, Long commentId, List<String> mentionedUsers) {
         for (String mentionedUser : mentionedUsers) {
-            eventPublisher.publishEvent(new MentionAlarmEvent(postId, mentionedUser));
+            eventPublisher.publishEvent(new MentionAlarmEvent(postId, commentId, mentionedUser));
         }
     }
 
