@@ -81,8 +81,8 @@ public class UserService {
     }
     
     @Transactional(readOnly = true)
-    public String getFcmTokenByUsername(String userName) {
-        User user = userRepository.findByUsername(userName)
+    public String getFcmTokenByUser(Long userId) {
+        User user = userRepository.findById(userId)
                         .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         
         return user.getFcmToken();
