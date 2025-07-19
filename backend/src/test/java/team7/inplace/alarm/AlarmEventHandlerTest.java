@@ -48,8 +48,8 @@ public class AlarmEventHandlerTest {
         
         MentionAlarmEvent alarmEvent = new MentionAlarmEvent(postId, commentId, receiver);
         
-        given(userService.getFcmTokenByUsername(receiver)).willReturn(fcmToken);
         given(userService.getUserByUsername(receiver)).willReturn(info);
+        given(userService.getFcmTokenByUser(userId)).willReturn(fcmToken);
         willDoNothing().given(fcmClient).sendMessageByToken(anyString(), anyString(), eq(fcmToken));
         willDoNothing().given(alarmService).saveAlarm(
             userId, postId, commentId, postId + "번 게시물에서 회원님을 언급했습니다!", AlarmType.MENTION
@@ -59,7 +59,7 @@ public class AlarmEventHandlerTest {
         eventPublisher.publishEvent(alarmEvent);
         
         // then
-        verify(userService).getFcmTokenByUsername(receiver);
+        verify(userService).getFcmTokenByUser(userId);
         verify(userService).getUserByUsername(receiver);
         verify(fcmClient).sendMessageByToken("새로운 언급 알림", "1번 게시물에서 회원님을 언급했습니다!", fcmToken);
         verify(alarmService).saveAlarm(
