@@ -10,6 +10,7 @@ import team7.inplace.alarm.domain.AlarmType;
 import team7.inplace.alarm.event.AlarmEvent.PostReportAlarmEvent;
 import team7.inplace.alarm.event.AlarmEvent.CommentReportAlarmEvent;
 import team7.inplace.alarm.event.AlarmEvent.MentionAlarmEvent;
+import team7.inplace.post.application.PostService;
 import team7.inplace.user.application.UserService;
 
 @Slf4j
@@ -17,25 +18,24 @@ import team7.inplace.user.application.UserService;
 @RequiredArgsConstructor
 public class AlarmEventHandler {
     private static final String MENTION_CONTENT_TEMPLATE = "번 게시물에서 회원님을 언급했습니다!";
+    private static final String REPORT_POST_CONTENT_TEMPLATE = "번 게시물이 신고로 인하여 삭제되었습니다!";
+    private static final String REPORT_COMMENT_CONTENT_TEMPLATE = "번 댓글이 신고로 인하여 삭제되었습니다!";
     
     private final FcmClient fcmClient;
     private final AlarmService alarmService;
     private final UserService userService;
+    private final PostService postService;
     
     @Async
     @EventListener
     public void processMentionAlarm(MentionAlarmEvent mentionAlarmEvent) {
-        String fcmToken = userService.getFcmTokenByUsername(mentionAlarmEvent.receiver());
-        String title = "새로운 언급 알림";
+        Long userId = userService.getUserByUsername(mentionAlarmEvent.receiver()).id();
+        
         String content = mentionAlarmEvent.postId() + MENTION_CONTENT_TEMPLATE;
         
-        Long userId = userService.getUserByUsername(mentionAlarmEvent.receiver()).id();
-        try {
-            fcmClient.sendMessageByToken(title, content, fcmToken);
-        } catch (FirebaseMessagingException e) {
-            // todo 에러 로직 어떻게?
-            log.error(e.getMessage());
-        }
+        sendFcmMessage(
+            "새로운 언급 알림", content, userService.getFcmTokenByUser(userId)
+        );
         
         alarmService.saveAlarm(
             userId,
@@ -49,12 +49,52 @@ public class AlarmEventHandler {
     @Async
     @EventListener
     public void processPostReportAlarm(PostReportAlarmEvent postReportAlarmEvent) {
-        // todo 통신 로직 정하고 구현하기
+        Long postId = postReportAlarmEvent.postId();
+        Long userId = postService.getPostAuthorIdById(postId);
+        
+        String content = postId + REPORT_POST_CONTENT_TEMPLATE;
+        
+        sendFcmMessage(
+            "게시글 신고로 인한 삭제 알림", content, userService.getFcmTokenByUser(userId)
+        );
+        
+        alarmService.saveAlarm(
+            userId,
+            postReportAlarmEvent.postId(),
+            null,
+            content,
+            AlarmType.REPORT
+        );
     }
     
     @Async
     @EventListener
     public void processPostReportAlarm(CommentReportAlarmEvent commentReportAlarmEvent) {
-        // todo 통신 로직 정하고 구현하기
+        Long commentId = commentReportAlarmEvent.commentId();
+        Long postId = postService.getPostIdById(commentId);
+        Long userId = postService.getCommentAuthorIdById(commentId);
+        
+        String content = postId + "번 게시물의 " + commentId + REPORT_COMMENT_CONTENT_TEMPLATE;
+        
+        sendFcmMessage(
+            "댓글 신고로 인한 삭제 알림", content, userService.getFcmTokenByUser(userId)
+        );
+        
+        alarmService.saveAlarm(
+            userId,
+            postId,
+            commentId,
+            content,
+            AlarmType.REPORT
+        );
+    }
+    
+    private void sendFcmMessage(String title, String content, String fcmToken) {
+        try {
+            fcmClient.sendMessageByToken(title, content, fcmToken);
+        } catch (FirebaseMessagingException e) {
+            // todo 에러 로직 어떻게?
+            log.error(e.getMessage());
+        }
     }
 }
