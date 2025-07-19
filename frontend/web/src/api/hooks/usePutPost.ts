@@ -9,7 +9,7 @@ interface PutPostProps {
 export const putPostPath = (postId: string) => `/posts/${postId}`;
 
 const putPost = async ({ postId, formData }: PutPostProps) => {
-  const response = await fetchInstance.put(putPostPath(postId), { formData }, { withCredentials: true });
+  const response = await fetchInstance.put(putPostPath(postId), formData, { withCredentials: true });
   return response.data;
 };
 
