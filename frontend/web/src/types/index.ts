@@ -280,7 +280,7 @@ export type PostListData = {
   };
   title: string;
   content: string;
-  photoUrls?: string;
+  imageUrl?: string;
   totalLikeCount: number;
   totalCommentCount: number;
   createdAt: string;
