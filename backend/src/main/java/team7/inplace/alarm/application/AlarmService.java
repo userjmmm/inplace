@@ -32,6 +32,6 @@ public class AlarmService {
     @Transactional
     public void readAlarm(Long id) {
         Alarm alarm = alarmRepository.findById(id).orElseThrow();
-        alarm.read();
+        alarm.checked();
     }
 }
