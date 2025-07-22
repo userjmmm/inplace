@@ -26,7 +26,7 @@ public class AlarmEventHandler {
     private final UserService userService;
     private final PostService postService;
     
-    @Async
+    @Async("fcmExecutor")
     @EventListener
     public void processMentionAlarm(MentionAlarmEvent mentionAlarmEvent) {
         Long userId = userService.getUserByUsername(mentionAlarmEvent.receiver()).id();
@@ -46,7 +46,7 @@ public class AlarmEventHandler {
         );
     }
     
-    @Async
+    @Async("fcmExecutor")
     @EventListener
     public void processPostReportAlarm(PostReportAlarmEvent postReportAlarmEvent) {
         Long postId = postReportAlarmEvent.postId();
@@ -67,7 +67,7 @@ public class AlarmEventHandler {
         );
     }
     
-    @Async
+    @Async("fcmExecutor")
     @EventListener
     public void processPostReportAlarm(CommentReportAlarmEvent commentReportAlarmEvent) {
         Long commentId = commentReportAlarmEvent.commentId();
