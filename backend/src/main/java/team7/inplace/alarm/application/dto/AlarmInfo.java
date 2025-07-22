@@ -7,7 +7,7 @@ public record AlarmInfo(
     Long postId,
     Long commentId,
     String content,
-    Boolean isReading,
+    Boolean checked,
     String type
 ) {
     public static AlarmInfo from(Alarm alarm) {
@@ -16,7 +16,7 @@ public record AlarmInfo(
             alarm.getPostId(),
             alarm.getCommentId(),
             alarm.getContent(),
-            alarm.isReading(),
+            alarm.isChecked(),
             alarm.getAlarmType().name()
         );
     }

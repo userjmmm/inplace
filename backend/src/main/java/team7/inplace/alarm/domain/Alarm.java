@@ -19,7 +19,7 @@ public class Alarm extends BaseEntity {
     private Long postId;
     private Long commentId;
     private String content;
-    private boolean reading;
+    private boolean checked;
     
     @Enumerated(EnumType.STRING)
     private AlarmType alarmType;
@@ -32,7 +32,7 @@ public class Alarm extends BaseEntity {
         this.alarmType = alarmType;
     }
     
-    public void read() {
-        this.reading = true;
+    public void checked() {
+        this.checked = true;
     }
 }
