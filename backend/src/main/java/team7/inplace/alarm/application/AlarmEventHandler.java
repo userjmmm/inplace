@@ -70,7 +70,7 @@ public class AlarmEventHandler {
         Long postId = postService.getPostIdById(commentId);
         Long userId = postService.getCommentAuthorIdById(commentId);
         
-        String content = postId + "번 게시물의 " + commentId + AlarmType.REPORT.content();
+        String content = postId + "번 게시물의 " + commentId + "번 댓글" + AlarmType.REPORT.content();
         
         sendFcmMessage(
             "댓글 신고로 인한 삭제 알림", content, userService.getFcmTokenByUser(userId)
@@ -89,7 +89,6 @@ public class AlarmEventHandler {
         try {
             fcmClient.sendMessageByToken(title, content, fcmToken);
         } catch (FirebaseMessagingException e) {
-            // todo 에러 로직 어떻게?
             log.error(e.getMessage());
         }
     }

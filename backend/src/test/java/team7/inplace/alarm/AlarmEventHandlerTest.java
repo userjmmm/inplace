@@ -97,7 +97,7 @@ public class AlarmEventHandlerTest {
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             verify(fcmClient).sendMessageByToken(
                 eq("게시글 신고로 인한 삭제 알림"),
-                contains("번 게시물이 신고로 인하여 삭제되었습니다!"),
+                contains("게시글이 신고로 인하여 삭제되었습니다!"),
                 eq("fcm-token")
             );
             
