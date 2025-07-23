@@ -8,6 +8,8 @@ import team7.inplace.alarm.application.AlarmFacade;
 import team7.inplace.alarm.presentation.dto.AlarmRequest;
 import team7.inplace.alarm.presentation.dto.AlarmResponse;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/alarms")
@@ -16,7 +18,7 @@ public class AlarmController {
     
     // 로그인 순간에 FCM 토큰 받기
     @PostMapping
-    public ResponseEntity<?> upsertFcmToken(
+    public ResponseEntity<Void> upsertFcmToken(
         @RequestBody AlarmRequest alarmRequest
     ) {
         alarmFacade.updateFcmToken(alarmRequest.token());
@@ -25,7 +27,7 @@ public class AlarmController {
     }
     
     @GetMapping
-    public ResponseEntity<?> getAlarmList() {
+    public ResponseEntity<List<AlarmResponse>> getAlarmList() {
         var response = alarmFacade.getAlarmInfos().stream()
             .map(AlarmResponse::from)
             .toList();
@@ -34,7 +36,7 @@ public class AlarmController {
     }
     
     @PostMapping("/{id}")
-    public ResponseEntity<?> processOneAlarm(
+    public ResponseEntity<Void> processOneAlarm(
         @PathVariable Long id
     ) {
         alarmFacade.processAlarm(id);
