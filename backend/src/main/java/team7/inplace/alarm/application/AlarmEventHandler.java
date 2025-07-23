@@ -17,10 +17,6 @@ import team7.inplace.user.application.UserService;
 @Component
 @RequiredArgsConstructor
 public class AlarmEventHandler {
-    private static final String MENTION_CONTENT_TEMPLATE = "번 게시물에서 회원님을 언급했습니다!";
-    private static final String REPORT_POST_CONTENT_TEMPLATE = "번 게시물이 신고로 인하여 삭제되었습니다!";
-    private static final String REPORT_COMMENT_CONTENT_TEMPLATE = "번 댓글이 신고로 인하여 삭제되었습니다!";
-    
     private final FcmClient fcmClient;
     private final AlarmService alarmService;
     private final UserService userService;
@@ -31,7 +27,7 @@ public class AlarmEventHandler {
     public void processMentionAlarm(MentionAlarmEvent mentionAlarmEvent) {
         Long userId = userService.getUserByUsername(mentionAlarmEvent.receiver()).id();
         
-        String content = mentionAlarmEvent.postId() + MENTION_CONTENT_TEMPLATE;
+        String content = mentionAlarmEvent.postId() + AlarmType.MENTION.content();
         
         sendFcmMessage(
             "새로운 언급 알림", content, userService.getFcmTokenByUser(userId)
@@ -52,7 +48,7 @@ public class AlarmEventHandler {
         Long postId = postReportAlarmEvent.postId();
         Long userId = postService.getPostAuthorIdById(postId);
         
-        String content = postId + REPORT_POST_CONTENT_TEMPLATE;
+        String content = postId + "번 게시글" + AlarmType.REPORT.content();
         
         sendFcmMessage(
             "게시글 신고로 인한 삭제 알림", content, userService.getFcmTokenByUser(userId)
@@ -74,7 +70,7 @@ public class AlarmEventHandler {
         Long postId = postService.getPostIdById(commentId);
         Long userId = postService.getCommentAuthorIdById(commentId);
         
-        String content = postId + "번 게시물의 " + commentId + REPORT_COMMENT_CONTENT_TEMPLATE;
+        String content = postId + "번 게시물의 " + commentId + AlarmType.REPORT.content();
         
         sendFcmMessage(
             "댓글 신고로 인한 삭제 알림", content, userService.getFcmTokenByUser(userId)
