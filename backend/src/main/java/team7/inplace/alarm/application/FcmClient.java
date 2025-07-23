@@ -29,17 +29,14 @@ public class FcmClient {
     
     @PostConstruct
     public void initialize() throws IOException {
-        //Firebase 프로젝트 정보를 FireBaseOptions에 입력해준다.
         FirebaseOptions options = FirebaseOptions.builder()
             .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(serviceAccountFilePath).getInputStream()))
             .setProjectId(projectId)
             .build();
         
-        //입력한 정보를 이용하여 initialze 해준다.
         FirebaseApp.initializeApp(options);
     }
     
-    // 받은 token을 이용하여 fcm를 보내는 메서드
     public void sendMessageByToken(String title, String body, String token) throws FirebaseMessagingException{
         FirebaseMessaging.getInstance().send(Message.builder()
             .setNotification(Notification.builder()
@@ -48,8 +45,6 @@ public class FcmClient {
                 .build())
             .setToken(token)
             .build());
-        
-        log.info("메세지 전송 성공");
     }
     
 }
