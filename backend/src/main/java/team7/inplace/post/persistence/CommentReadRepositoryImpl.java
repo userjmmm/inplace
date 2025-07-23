@@ -80,6 +80,6 @@ public class CommentReadRepositoryImpl implements CommentReadRepository {
             .join(QUser.user).on(QComment.comment.authorId.eq(QUser.user.id))
             .leftJoin(QLikedComment.likedComment)
             .on(userId == null ? Expressions.FALSE : likedJoinCondition)
-            .where(QComment.comment.postId.eq(postId));
+            .where(QComment.comment.postId.eq(postId).and(QComment.comment.deleteAt.isNull()));
     }
 }
