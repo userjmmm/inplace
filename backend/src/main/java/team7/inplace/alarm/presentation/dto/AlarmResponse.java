@@ -8,7 +8,8 @@ public record AlarmResponse(
     Long commentId,
     String content,
     Boolean checked,
-    String type
+    String type,
+    String createdAt
 ) {
     public static AlarmResponse from(AlarmInfo alarmInfo) {
         return new AlarmResponse(
@@ -17,7 +18,8 @@ public record AlarmResponse(
             alarmInfo.commentId(),
             alarmInfo.content(),
             alarmInfo.checked(),
-            alarmInfo.type()
+            alarmInfo.type(),
+            alarmInfo.createdAt()
         );
     }
 }

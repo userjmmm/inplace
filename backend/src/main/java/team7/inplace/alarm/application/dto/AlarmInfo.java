@@ -1,6 +1,7 @@
 package team7.inplace.alarm.application.dto;
 
 import team7.inplace.alarm.domain.Alarm;
+import team7.inplace.alarm.util.TimeUtil;
 
 public record AlarmInfo(
     Long alarmId,
@@ -8,7 +9,8 @@ public record AlarmInfo(
     Long commentId,
     String content,
     Boolean checked,
-    String type
+    String type,
+    String createdAt
 ) {
     public static AlarmInfo from(Alarm alarm) {
         return new AlarmInfo(
@@ -17,7 +19,8 @@ public record AlarmInfo(
             alarm.getCommentId(),
             alarm.getContent(),
             alarm.isChecked(),
-            alarm.getAlarmType().name()
+            alarm.getAlarmType().name(),
+            TimeUtil.betweenTime(alarm.getCreatedAt())
         );
     }
 }
