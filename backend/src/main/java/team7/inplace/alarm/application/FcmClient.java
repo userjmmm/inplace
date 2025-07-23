@@ -10,9 +10,9 @@ import com.google.firebase.messaging.Notification;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import team7.inplace.global.annotation.Client;
+import team7.inplace.global.properties.FcmProperties;
 
 import java.io.IOException;
 
@@ -20,18 +20,13 @@ import java.io.IOException;
 @Client
 @RequiredArgsConstructor
 public class FcmClient {
-    @Value("${fcm.service-account-file}")
-    private String serviceAccountFilePath;
-    
-    // 프로젝트 아이디 환경 변수
-    @Value("${fcm.project-id}")
-    private String projectId;
+    private final FcmProperties fcmProperties;
     
     @PostConstruct
     public void initialize() throws IOException {
         FirebaseOptions options = FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(serviceAccountFilePath).getInputStream()))
-            .setProjectId(projectId)
+            .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(fcmProperties.serviceAccountFile()).getInputStream()))
+            .setProjectId(fcmProperties.projectId())
             .build();
         
         FirebaseApp.initializeApp(options);
