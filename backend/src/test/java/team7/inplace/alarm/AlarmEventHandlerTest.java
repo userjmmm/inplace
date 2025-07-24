@@ -44,6 +44,7 @@ public class AlarmEventHandlerTest {
     @DisplayName("멘션 이벤트 테스트")
     void test1() {
         // given
+        String sender = "유저1";
         String username = "유저2";
         Long userId = 1L;
         Long postId = 1L;
@@ -52,10 +53,11 @@ public class AlarmEventHandlerTest {
         User user = new User(username, "", "유저2", "", UserType.KAKAO, Role.USER);
         ReflectionTestUtils.setField(user, "id", 1L);
         UserCommand.Info info = UserCommand.Info.of(user);
+        given(postService.getPostTitleById(postId)).willReturn("제목");
         given(userService.getUserByUsername(username)).willReturn(info);
         given(userService.getFcmTokenByUser(userId)).willReturn("fcm-token");
         
-        MentionAlarmEvent event = new MentionAlarmEvent(postId, commentId, username);
+        MentionAlarmEvent event = new MentionAlarmEvent(postId, commentId, sender, username);
         
         // when
         eventPublisher.publishEvent(event);
@@ -64,7 +66,7 @@ public class AlarmEventHandlerTest {
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             verify(fcmClient).sendMessageByToken(
                 eq("새로운 언급 알림"),
-                contains("번 게시물에서 회원님을 언급했습니다!"),
+                contains("제목 게시글에서 유저1 님이 언급했습니다."),
                 eq("fcm-token")
             );
             
@@ -85,6 +87,7 @@ public class AlarmEventHandlerTest {
         Long postId = 1L;
         Long userId = 2L;
         
+        given(postService.getPostTitleById(postId)).willReturn("제목");
         given(postService.getPostAuthorIdById(postId)).willReturn(userId);
         given(userService.getFcmTokenByUser(userId)).willReturn("fcm-token");
         
@@ -97,7 +100,7 @@ public class AlarmEventHandlerTest {
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             verify(fcmClient).sendMessageByToken(
                 eq("게시글 신고로 인한 삭제 알림"),
-                contains("게시글이 신고로 인하여 삭제되었습니다!"),
+                contains("제목 게시글이 신고로 인하여 삭제되었습니다."),
                 eq("fcm-token")
             );
             
@@ -118,6 +121,7 @@ public class AlarmEventHandlerTest {
         Long postId = 1L;
         Long userId = 2L;
         
+        given(postService.getPostTitleById(postId)).willReturn("제목");
         given(postService.getPostIdById(commentId)).willReturn(postId);
         given(postService.getCommentAuthorIdById(commentId)).willReturn(userId);
         given(userService.getFcmTokenByUser(userId)).willReturn("fcm-token");
@@ -131,7 +135,7 @@ public class AlarmEventHandlerTest {
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             verify(fcmClient).sendMessageByToken(
                 eq("댓글 신고로 인한 삭제 알림"),
-                contains("번 게시물의 " + commentId),
+                contains("제목 게시글에 작성한 댓글이 신고로 인하여 삭제되었습니다"),
                 eq("fcm-token")
             );
             

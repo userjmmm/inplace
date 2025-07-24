@@ -26,8 +26,9 @@ public class AlarmEventHandler {
     @EventListener
     public void processMentionAlarm(MentionAlarmEvent mentionAlarmEvent) {
         Long userId = userService.getUserByUsername(mentionAlarmEvent.receiver()).id();
+        String title = postService.getPostTitleById(mentionAlarmEvent.postId());
         
-        String content = mentionAlarmEvent.postId() + AlarmType.MENTION.content();
+        String content = title + " 게시글에서 " + mentionAlarmEvent.sender() + " 님이 언급했습니다.";
         
         sendFcmMessage(
             "새로운 언급 알림", content, userService.getFcmTokenByUser(userId)
@@ -47,8 +48,9 @@ public class AlarmEventHandler {
     public void processPostReportAlarm(PostReportAlarmEvent postReportAlarmEvent) {
         Long postId = postReportAlarmEvent.postId();
         Long userId = postService.getPostAuthorIdById(postId);
+        String title = postService.getPostTitleById(postId);
         
-        String content = postId + "번 게시글" + AlarmType.REPORT.content();
+        String content = title + " 게시글이 신고로 인하여 삭제되었습니다.";
         
         sendFcmMessage(
             "게시글 신고로 인한 삭제 알림", content, userService.getFcmTokenByUser(userId)
@@ -69,8 +71,9 @@ public class AlarmEventHandler {
         Long commentId = commentReportAlarmEvent.commentId();
         Long postId = postService.getPostIdById(commentId);
         Long userId = postService.getCommentAuthorIdById(commentId);
+        String title = postService.getPostTitleById(postId);
         
-        String content = postId + "번 게시물의 " + commentId + "번 댓글" + AlarmType.REPORT.content();
+        String content = title + " 게시글에 작성한 댓글이 신고로 인하여 삭제되었습니다";
         
         sendFcmMessage(
             "댓글 신고로 인한 삭제 알림", content, userService.getFcmTokenByUser(userId)

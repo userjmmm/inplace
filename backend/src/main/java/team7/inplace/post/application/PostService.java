@@ -194,6 +194,12 @@ public class PostService {
     }
     
     @Transactional(readOnly = true)
+    public String getPostTitleById(Long postId) {
+        return postJpaRepository.findTitleById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+    }
+    
+    @Transactional(readOnly = true)
     public Long getPostIdById(Long commentId) {
         return commentJpaRepository.findPostIdById(commentId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));

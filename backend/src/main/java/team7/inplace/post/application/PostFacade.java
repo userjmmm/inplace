@@ -47,16 +47,18 @@ public class PostFacade {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         var commentId = postService.createComment(command, userId);
         
+        String mentioningUser = userService.getUserInfo(userId).nickname();
         List<String> mentionedUsers = parseMentionedUser(command.comment());
-        processMentionAlarm(command.postId(), commentId, mentionedUsers);
+        processMentionAlarm(command.postId(), commentId, mentioningUser, mentionedUsers);
     }
 
     public void updateComment(PostCommand.UpdateComment updateCommand) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.updateComment(updateCommand, userId);
         
+        String mentioningUser = userService.getUserInfo(userId).nickname();
         List<String> mentionedUsers = parseMentionedUser(updateCommand.comment());
-        processMentionAlarm(updateCommand.postId(), updateCommand.commentId(), mentionedUsers);
+        processMentionAlarm(updateCommand.postId(), updateCommand.commentId(), mentioningUser, mentionedUsers);
     }
     
     private List<String> parseMentionedUser(String comment) {
@@ -73,9 +75,9 @@ public class PostFacade {
                    .toList();
     }
     
-    private void processMentionAlarm(Long postId, Long commentId, List<String> mentionedUsers) {
+    private void processMentionAlarm(Long postId, Long commentId, String mentioningUser, List<String> mentionedUsers) {
         for (String mentionedUser : mentionedUsers) {
-            eventPublisher.publishEvent(new MentionAlarmEvent(postId, commentId, mentionedUser));
+            eventPublisher.publishEvent(new MentionAlarmEvent(postId, commentId, mentioningUser, mentionedUser));
         }
     }
 
