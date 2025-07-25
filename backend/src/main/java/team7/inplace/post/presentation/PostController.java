@@ -21,6 +21,7 @@ import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
 import team7.inplace.post.presentation.dto.PostResponse.DetailedComment;
 import team7.inplace.post.presentation.dto.PostResponse.DetailedPost;
+import team7.inplace.post.presentation.dto.PostResponse.DetailedPostImages;
 import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
 import team7.inplace.post.presentation.dto.PostResponse.UserSuggestion;
 
@@ -79,6 +80,17 @@ public class PostController implements PostControllerApiSpec {
         var post = postFacade.getPostById(postId);
 
         var response = DetailedPost.from(post);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/{postId}/images/details")
+    public ResponseEntity<DetailedPostImages> getPostImageDetails(
+        @PathVariable Long postId
+    ) {
+        var postImage = postFacade.getPostImageDetails(postId);
+
+        var response = DetailedPostImages.from(postImage);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import team7.inplace.global.cursor.CursorResponse;
 import team7.inplace.global.cursor.CursorResult;
+import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.PostQueryResult;
 import team7.inplace.user.presentation.dto.UserResponse;
@@ -126,6 +127,18 @@ public class PostResponse {
         String imageUrl
     ) {
 
+    }
+
+    public record DetailedPostImages(
+        List<DetailedPostImage> images
+    ) {
+
+        public static DetailedPostImages from(PostInfo.PostImages images) {
+            List<DetailedPostImage> detailedImages = images.images().stream()
+                .map(image -> new DetailedPostImage(image.imageUrl(), image.imageHash()))
+                .toList();
+            return new DetailedPostImages(detailedImages);
+        }
     }
 
     public record DetailedPostImage(

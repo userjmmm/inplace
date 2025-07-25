@@ -20,6 +20,7 @@ import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
 import team7.inplace.post.presentation.dto.PostResponse.DetailedComment;
 import team7.inplace.post.presentation.dto.PostResponse.DetailedPost;
+import team7.inplace.post.presentation.dto.PostResponse.DetailedPostImages;
 import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
 import team7.inplace.post.presentation.dto.PostResponse.UserSuggestion;
 
@@ -64,6 +65,19 @@ public interface PostControllerApiSpec {
         )
     )
     ResponseEntity<DetailedPost> getPostById(@PathVariable(value = "postId") Long postId);
+
+    @GetMapping("/{postId}/images/details")
+    @ApiResponse(
+        responseCode = "200",
+        description = "게시글 이미지 상세 조회 성공",
+        content = @io.swagger.v3.oas.annotations.media.Content(
+            mediaType = "application/json",
+            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DetailedPostImages.class)
+        )
+    )
+    ResponseEntity<DetailedPostImages> getPostImageDetails(
+        @PathVariable(value = "postId") Long postId
+    );
 
     @PostMapping("/{postId}/comments")
     ResponseEntity<Void> createComment(
