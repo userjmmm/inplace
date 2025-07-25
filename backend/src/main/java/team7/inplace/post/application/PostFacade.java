@@ -26,6 +26,11 @@ public class PostFacade {
         postService.createPost(command, userId);
     }
 
+    public void likePost(Long postId) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        postService.likePost(postId, userId);
+    }
+
     public void updatePost(UpdatePost updateCommand) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.updatePost(updateCommand, userId);
@@ -39,6 +44,11 @@ public class PostFacade {
     public void createComment(PostCommand.CreateComment command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createComment(command, userId);
+    }
+
+    public void likeComment(Long postId, Long commentId) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        postService.likeComment(postId, commentId, userId);
     }
 
     public void updateComment(PostCommand.UpdateComment updateCommand) {
