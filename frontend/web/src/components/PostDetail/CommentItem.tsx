@@ -164,7 +164,7 @@ export default function CommentItem({
       }
       const newLikeStatus = !isLike;
       postLike(
-        { commentId: Number(item.commentId), likes: newLikeStatus },
+        { postId, commentId: Number(item.commentId), likes: newLikeStatus },
         {
           onSuccess: () => {
             setIsLike(newLikeStatus);
@@ -346,6 +346,7 @@ const Count = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 4px;
+  cursor: pointer;
   svg {
     color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#bbbbbb' : '#717171')};
   }

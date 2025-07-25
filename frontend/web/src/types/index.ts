@@ -346,6 +346,7 @@ export type UploadedImageObj = {
   hash: string;
 };
 export type RequestCommentLike = {
+  postId: string;
   commentId: number;
   likes: boolean;
 };
