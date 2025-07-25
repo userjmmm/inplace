@@ -5,6 +5,8 @@ import { PostingData } from '@/types';
 import { getPostDataPath } from '@/api/hooks/useGetPostData';
 import { postPostPath } from '@/api/hooks/usePostPost';
 import TestImg from '@/assets/images/titletest.png';
+import { postReportCommentPath } from '@/api/hooks/usePostReportComment';
+import { postReportPostPath } from '@/api/hooks/usePostReportPost';
 
 const postListDummy = [
   {
@@ -439,7 +441,6 @@ export const postHandlers = [
   }),
   rest.post(`${BASE_URL}${postPostPath()}`, async (req, res, ctx) => {
     const { title, content } = req.body as PostingData;
-    console.log('req.body:', req.body);
     const newPost = {
       postId: 9,
       author: {
@@ -458,6 +459,13 @@ export const postHandlers = [
     };
     postListDummy.push(newPost);
     return res(ctx.status(200), ctx.json(newPost));
+  }),
+
+  rest.post(`${BASE_URL}${postReportCommentPath()}`, async (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json('success.'));
+  }),
+  rest.post(`${BASE_URL}${postReportPostPath()}`, async (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json('success.'));
   }),
 
   rest.put(`${BASE_URL}/posts/1/comments/:commentId`, async (req, res, ctx) => {

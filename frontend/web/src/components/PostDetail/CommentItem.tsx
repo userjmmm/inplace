@@ -42,6 +42,7 @@ export default function CommentItem({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(item.content);
+  const [reportStatus, setReportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { mutate: deleteComment } = useDeleteComment();
@@ -125,17 +126,34 @@ export default function CommentItem({
     );
   };
 
-  const handleReportSubmit = (type: string, content: string) => {
+  const handleReportSubmit = async (type: string, content: string) => {
     const reason = content ? `${type} : ${content}` : type;
-    reportComment(
-      { id: Number(item.commentId), reason },
-      {
-        onError: () => {
-          alert('댓글 신고에 실패했어요. 다시 시도해주세요!');
-        },
-      },
-    );
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        reportComment(
+          { id: Number(item.commentId), reason },
+          {
+            onSuccess: () => {
+              setReportStatus('success');
+              resolve();
+            },
+            onError: (err) => {
+              setReportStatus('error');
+              reject(err);
+            },
+          },
+        );
+      });
+    } catch (e) {
+      console.error('신고 실패');
+    }
   };
+  const handleReportClose = () => {
+    setIsReportModalOpen(false);
+    setReportStatus('idle');
+  };
+
   const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
@@ -254,7 +272,9 @@ export default function CommentItem({
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
-      {isReportModalOpen && <ReportModal onClose={() => setIsReportModalOpen(false)} onSubmit={handleReportSubmit} />}
+      {isReportModalOpen && (
+        <ReportModal onClose={handleReportClose} onSubmit={handleReportSubmit} status={reportStatus} />
+      )}
     </Wrapper>
   );
 }
