@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import team7.inplace.global.cursor.CursorResponse;
 import team7.inplace.global.cursor.CursorResult;
@@ -93,7 +92,7 @@ public class PostResponse {
         UserResponse.Info author,
         String title,
         String content,
-        List<PostImage> imageUrls,
+        List<SimplePostImage> imageUrls,
         Boolean selfLike,
         Integer totalLikeCount,
         Integer totalCommentCount,
@@ -102,14 +101,9 @@ public class PostResponse {
     ) {
 
         public static DetailedPost from(PostQueryResult.DetailedPost postQueryResult) {
-            List<PostImage> images = new ArrayList<>();
-            for (int i = 0; i < postQueryResult.getImageUrls().size(); i++) {
-                images.add(
-                    new PostImage(postQueryResult.getImageUrls().get(i),
-                        postQueryResult.getImgHashes().get(i)
-                    )
-                );
-            }
+            List<SimplePostImage> images = postQueryResult.getImageUrls().stream()
+                .map(SimplePostImage::new)
+                .toList();
             return new DetailedPost(
                 postQueryResult.postId(),
                 new UserResponse.Info(
@@ -128,7 +122,13 @@ public class PostResponse {
         }
     }
 
-    public record PostImage(
+    public record SimplePostImage(
+        String imageUrl
+    ) {
+
+    }
+
+    public record DetailedPostImage(
         String imageUrl,
         String imageHash
     ) {
