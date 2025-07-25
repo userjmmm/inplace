@@ -18,6 +18,8 @@ import team7.inplace.post.application.dto.PostCommand.CreateComment;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdateComment;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
+import team7.inplace.post.application.dto.PostInfo;
+import team7.inplace.post.application.dto.PostInfo.PostImages;
 import team7.inplace.post.persistence.CommentJpaRepository;
 import team7.inplace.post.persistence.CommentReadRepository;
 import team7.inplace.post.persistence.PostJpaRepository;
@@ -199,7 +201,7 @@ public class PostService {
     public void unreportPost(Long postId) {
         var post = postJpaRepository.findById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
-        post.unreport();
+        post.unreported();
     }
 
     @Transactional(readOnly = true)
@@ -232,4 +234,12 @@ public class PostService {
         comment.unreport();
     }
 
+    public PostInfo.PostImages getPostImageDetails(Long postId, Long userId) {
+        var post = postJpaRepository.findById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+
+        post.checkAuthor(userId);
+
+        return PostImages.from(post);
+    }
 }

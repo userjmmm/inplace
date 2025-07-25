@@ -9,6 +9,7 @@ import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.post.application.dto.PostCommand;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
+import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
 import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
@@ -59,6 +60,11 @@ public class PostFacade {
     public DetailedPost getPostById(Long postId) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         return postService.getPostById(postId, userId);
+    }
+
+    public PostInfo.PostImages getPostImageDetails(Long postId) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        return postService.getPostImageDetails(postId, userId);
     }
 
     public Page<CommentQueryResult.DetailedComment> getCommentsByPostId(
