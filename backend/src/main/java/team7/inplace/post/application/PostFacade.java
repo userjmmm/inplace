@@ -26,9 +26,9 @@ public class PostFacade {
         postService.createPost(command, userId);
     }
 
-    public void likePost(Long postId) {
+    public void likePost(PostCommand.PostLike command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
-        postService.likePost(postId, userId);
+        postService.likePost(command, userId);
     }
 
     public void updatePost(UpdatePost updateCommand) {
@@ -46,9 +46,9 @@ public class PostFacade {
         postService.createComment(command, userId);
     }
 
-    public void likeComment(Long postId, Long commentId) {
+    public void likeComment(PostCommand.CommentLike command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
-        postService.likeComment(postId, commentId, userId);
+        postService.likeComment(command, userId);
     }
 
     public void updateComment(PostCommand.UpdateComment updateCommand) {

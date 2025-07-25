@@ -14,6 +14,7 @@ import team7.inplace.liked.likedComment.domain.LikedComment;
 import team7.inplace.liked.likedComment.persistence.LikedCommentRepository;
 import team7.inplace.liked.likedPost.domain.LikedPost;
 import team7.inplace.liked.likedPost.persistence.LikedPostRepository;
+import team7.inplace.post.application.dto.PostCommand;
 import team7.inplace.post.application.dto.PostCommand.CreateComment;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdateComment;
@@ -83,7 +84,8 @@ public class PostService {
     }
 
     @Transactional
-    public void likePost(Long postId, Long userId) {
+    public void likePost(PostCommand.PostLike command, Long userId) {
+        var postId = command.postId();
         if (!postJpaRepository.existsById(postId)) {
             throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
         }
@@ -94,7 +96,7 @@ public class PostService {
                 return likedPostRepository.save(newLikedPost);
             });
 
-        var isLiked = likedPost.updateLike();
+        var isLiked = likedPost.updateLike(command.likes());
         if (isLiked) {
             postJpaRepository.increaseLikeCount(postId);
             return;
@@ -145,8 +147,10 @@ public class PostService {
     }
 
     @Transactional
-    public void likeComment(Long postId, Long commentId, Long userId) {
-        if (!commentJpaRepository.existsById(commentId)) {
+    public void likeComment(PostCommand.CommentLike command, Long userId) {
+        var commentId = command.commentId();
+        var postId = command.postId();
+        if (!commentJpaRepository.existsCommentByPostIdAndId(postId, commentId)) {
             throw InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND);
         }
 
@@ -156,7 +160,7 @@ public class PostService {
                 return likedCommentRepository.save(newLikedComment);
             });
 
-        var isLiked = likedComment.updateLike();
+        var isLiked = likedComment.updateLike(command.likes());
         if (isLiked) {
             commentJpaRepository.increaseLikeCount(commentId);
             return;
