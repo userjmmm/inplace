@@ -83,10 +83,12 @@ jobs:
       - name: Stop and Rename Existing Container
         run: |
           ssh ubuntu@${{ secrets.EC2_HOST_PRODUCTION_SERVER }} "
-            if [ \$(sudo docker ps -q --filter name=inplace) ]; then
-              echo 'Stopping and renaming existing container to inplace-old'
-              sudo docker stop inplace
+            if [ \$(sudo docker ps -aq --filter name=inplace) ]; then
+              echo 'Found existing container. Stopping and renaming existing container to inplace-old'
+              sudo docker stop inplace || true
               sudo docker rename inplace inplace-old
+            else
+              echo 'No existing container found. Skipping stop/rename.'
             fi
           "
 
