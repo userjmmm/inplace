@@ -19,6 +19,7 @@ import team7.inplace.post.application.dto.PostCommand.CreateComment;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdateComment;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
+import team7.inplace.post.domain.Post;
 import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.post.application.dto.PostInfo.PostImages;
 import team7.inplace.post.persistence.CommentJpaRepository;
@@ -83,6 +84,7 @@ public class PostService {
         post.deleteSoftly(userId);
     }
 
+    // TODO : likeCount 업데이트 후 배치 업데이트 하는 과정 필요
     @Transactional
     public void likePost(PostCommand.PostLike command, Long userId) {
         var postId = command.postId();
@@ -238,6 +240,9 @@ public class PostService {
         comment.unreport();
     }
 
+    @Transactional(readOnly = true)
+    public Long getAuthorIdByPostId(Long postId) {
+        return postJpaRepository.findAuthorIdByPostId(postId);
     public PostInfo.PostImages getPostImageDetails(Long postId, Long userId) {
         var post = postJpaRepository.findById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
