@@ -115,12 +115,12 @@ public class PostService {
     }
 
     @Transactional
-    public void createComment(CreateComment command, Long userId) {
+    public Long createComment(CreateComment command, Long userId) {
         if (postJpaRepository.existsById(command.postId())) {
             var comment = command.toEntity(userId);
             commentJpaRepository.save(comment);
             postJpaRepository.increaseCommentCount(command.postId());
-            return;
+            return comment.getId();
         }
         throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
     }
@@ -188,7 +188,31 @@ public class PostService {
         return postJpaRepository.findContentById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
     }
-
+    
+    @Transactional(readOnly = true)
+    public Long getPostAuthorIdById(Long postId) {
+        return postJpaRepository.findUserIdById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+    }
+    
+    @Transactional(readOnly = true)
+    public Long getCommentAuthorIdById(Long commentId) {
+        return commentJpaRepository.findAuthorIdById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+    }
+    
+    @Transactional(readOnly = true)
+    public String getPostTitleById(Long postId) {
+        return postJpaRepository.findTitleById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+    }
+    
+    @Transactional(readOnly = true)
+    public Long getPostIdById(Long commentId) {
+        return commentJpaRepository.findPostIdById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+    }
+    
     @Transactional
     public void deletePostSoftly(Long postId) {
         var post = postJpaRepository.findById(postId)
@@ -243,6 +267,8 @@ public class PostService {
     @Transactional(readOnly = true)
     public Long getAuthorIdByPostId(Long postId) {
         return postJpaRepository.findAuthorIdByPostId(postId);
+    }
+    
     public PostInfo.PostImages getPostImageDetails(Long postId, Long userId) {
         var post = postJpaRepository.findById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));

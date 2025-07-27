@@ -136,4 +136,25 @@ public class UserService {
 
         return user.getReceivedLikeCount() + delta;
     }
+    
+    @Transactional(readOnly = true)
+    public boolean isExistUserName(String userName) {
+        return userJpaRepository.existsByUsername(userName);
+    }
+    
+    @Transactional
+    public void updateFcmToken(Long userId, String fcmToken) {
+        User user = userJpaRepository.findById(userId)
+                        .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        user.updateFcmToken(fcmToken);
+    }
+    
+    @Transactional(readOnly = true)
+    public String getFcmTokenByUser(Long userId) {
+        User user = userJpaRepository.findById(userId)
+                        .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        return user.getFcmToken();
+    }
 }

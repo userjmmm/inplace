@@ -35,6 +35,9 @@ public class User extends BaseEntity {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
+    
+    @Column(name = "fcm_token")
+    private String fcmToken;
 
     @Column(name = "tier_id")
     private Long tierId;
@@ -71,6 +74,10 @@ public class User extends BaseEntity {
 
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+    
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     public void updateMainBadge(Long badgeId) {

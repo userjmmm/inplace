@@ -1,10 +1,16 @@
 package team7.inplace.post.application;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
+import team7.inplace.alarm.event.AlarmEvent;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.post.application.dto.PostCommand;
@@ -20,11 +26,11 @@ import team7.inplace.user.application.UserService;
 @Facade
 @RequiredArgsConstructor
 public class PostFacade {
-
-    private final PostService postService;
+    
+    private final ApplicationEventPublisher eventPublisher;
     private final UserService userService;
+    private final PostService postService;
 
-    @Transactional
     public void createPost(CreatePost command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createPost(command, userId);
@@ -53,9 +59,13 @@ public class PostFacade {
     @Transactional
     public void createComment(PostCommand.CreateComment command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
-        postService.createComment(command, userId);
+        var commentId = postService.createComment(command, userId);
         Long authorId = postService.getAuthorIdByPostId(command.postId());
         userService.addToReceivedCommentByUserId(authorId, 1);
+        
+        String mentioningUser = userService.getUserInfo(userId).nickname();
+        List<String> mentionedUsers = parseMentionedUser(command.comment());
+        processMentionAlarm(command.postId(), commentId, mentioningUser, mentionedUsers);
     }
 
     public void likeComment(PostCommand.CommentLike command) {
@@ -66,6 +76,30 @@ public class PostFacade {
     public void updateComment(PostCommand.UpdateComment updateCommand) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.updateComment(updateCommand, userId);
+        
+        String mentioningUser = userService.getUserInfo(userId).nickname();
+        List<String> mentionedUsers = parseMentionedUser(updateCommand.comment());
+        processMentionAlarm(updateCommand.postId(), updateCommand.commentId(), mentioningUser, mentionedUsers);
+    }
+    
+    private List<String> parseMentionedUser(String comment) {
+        List<String> mentions = new ArrayList<>();
+        
+        Pattern pattern = Pattern.compile("@(\\w+)");
+        Matcher matcher = pattern.matcher(comment);
+        while (matcher.find()) {
+            mentions.add(matcher.group(1));
+        }
+        
+        return mentions.stream()
+                   .filter(userService::isExistUserName)
+                   .toList();
+    }
+    
+    private void processMentionAlarm(Long postId, Long commentId, String mentioningUser, List<String> mentionedUsers) {
+        for (String mentionedUser : mentionedUsers) {
+            eventPublisher.publishEvent(new AlarmEvent.MentionAlarmEvent(postId, commentId, mentioningUser, mentionedUser));
+        }
     }
 
     @Transactional
