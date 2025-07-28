@@ -14,7 +14,9 @@ import org.springframework.core.io.ClassPathResource;
 import team7.inplace.global.annotation.Client;
 import team7.inplace.global.properties.FcmProperties;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Client
@@ -24,12 +26,45 @@ public class FcmClient {
     
     @PostConstruct
     public void initialize() throws IOException {
-        FirebaseOptions options = FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(fcmProperties.serviceAccountFile()).getInputStream()))
-            .setProjectId(fcmProperties.projectId())
-            .build();
+        GoogleCredentials credentials = GoogleCredentials.fromStream(new ByteArrayInputStream(
+            createFirebaseConfigJson().getBytes(StandardCharsets.UTF_8)));
         
-        FirebaseApp.initializeApp(options);
+        FirebaseOptions options = FirebaseOptions.builder()
+                                      .setCredentials(credentials)
+                                      .setProjectId(fcmProperties.projectId())
+                                      .build();
+        
+        if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(options);
+        }
+    }
+    
+    private String createFirebaseConfigJson() {
+        return String.format(
+            "{\n" +
+                "  \"type\": \"%s\",\n" +
+                "  \"project_id\": \"%s\",\n" +
+                "  \"private_key_id\": \"%s\",\n" +
+                "  \"private_key\": \"%s\",\n" +
+                "  \"client_email\": \"%s\",\n" +
+                "  \"client_id\": \"%s\",\n" +
+                "  \"auth_uri\": \"%s\",\n" +
+                "  \"token_uri\": \"%s\",\n" +
+                "  \"auth_provider_x509_cert_url\": \"%s\",\n" +
+                "  \"client_x509_cert_url\": \"%s\"\n" +
+                "}",
+            fcmProperties.type(),
+            fcmProperties.projectId(),
+            fcmProperties.privateKeyId(),
+            fcmProperties.privateKey().replace("\\n", "\n"),
+            fcmProperties.clientEmail(),
+            fcmProperties.clientId(),
+            fcmProperties.authUri(),
+            fcmProperties.tokenUri(),
+            fcmProperties.authProviderX509CertUrl(),
+            fcmProperties.clientX509CertUrl()
+        );
+        
     }
     
     public void sendMessageByToken(String title, String body, String token) throws FirebaseMessagingException{
@@ -41,5 +76,4 @@ public class FcmClient {
             .setToken(token)
             .build());
     }
-    
 }
