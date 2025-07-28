@@ -10,7 +10,6 @@ import com.google.firebase.messaging.Notification;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import team7.inplace.global.annotation.Client;
 import team7.inplace.global.properties.FcmProperties;
 
