@@ -2,7 +2,7 @@ package team7.inplace.user.persistence;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
-import team7.inplace.user.domain.UserBadge;
+import user.UserBadge;
 
 public interface UserBadgeJpaRepository extends JpaRepository<UserBadge, Long> {
 

@@ -7,19 +7,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import post.LikedComment;
+import post.LikedPost;
 import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
-import team7.inplace.liked.likedComment.domain.LikedComment;
 import team7.inplace.liked.likedComment.persistence.LikedCommentRepository;
-import team7.inplace.liked.likedPost.domain.LikedPost;
 import team7.inplace.liked.likedPost.persistence.LikedPostRepository;
 import team7.inplace.post.application.dto.PostCommand;
 import team7.inplace.post.application.dto.PostCommand.CreateComment;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdateComment;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
-import team7.inplace.post.domain.Post;
 import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.post.application.dto.PostInfo.PostImages;
 import team7.inplace.post.persistence.CommentJpaRepository;
@@ -188,31 +187,31 @@ public class PostService {
         return postJpaRepository.findContentById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
     }
-    
+
     @Transactional(readOnly = true)
     public Long getPostAuthorIdById(Long postId) {
         return postJpaRepository.findUserIdById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
     }
-    
+
     @Transactional(readOnly = true)
     public Long getCommentAuthorIdById(Long commentId) {
         return commentJpaRepository.findAuthorIdById(commentId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
     }
-    
+
     @Transactional(readOnly = true)
     public String getPostTitleById(Long postId) {
         return postJpaRepository.findTitleById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
     }
-    
+
     @Transactional(readOnly = true)
     public Long getPostIdById(Long commentId) {
         return commentJpaRepository.findPostIdById(commentId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
     }
-    
+
     @Transactional
     public void deletePostSoftly(Long postId) {
         var post = postJpaRepository.findById(postId)
@@ -268,7 +267,7 @@ public class PostService {
     public Long getAuthorIdByPostId(Long postId) {
         return postJpaRepository.findAuthorIdByPostId(postId);
     }
-    
+
     public PostInfo.PostImages getPostImageDetails(Long postId, Long userId) {
         var post = postJpaRepository.findById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));

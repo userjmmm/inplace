@@ -6,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+import review.ReviewInvitation;
 import team7.inplace.global.redis.RedisRepository;
-import team7.inplace.review.domain.ReviewInvitation;
 
 @Repository
 @RequiredArgsConstructor

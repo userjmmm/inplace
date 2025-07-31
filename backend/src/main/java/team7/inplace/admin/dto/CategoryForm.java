@@ -5,11 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import team7.inplace.place.domain.Category;
+import place.Category;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class CategoryForm {
 
     private Long id;

@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import team7.inplace.post.domain.Comment;
+import post.Comment;
 
 @Repository
 public interface CommentJpaRepository extends JpaRepository<Comment, Long> {
@@ -22,13 +22,13 @@ public interface CommentJpaRepository extends JpaRepository<Comment, Long> {
 
     @Query("SELECT c.content FROM Comment c WHERE c.id = :commentId")
     Optional<String> findContentById(@Param("commentId") Long commentId);
-    
+
     @Query("SELECT c.authorId FROM Comment c WHERE c.id = :commentId")
     Optional<Long> findAuthorIdById(@Param("commentId") Long commentId);
-    
+
     @Query("SELECT c.postId FROM Comment c WHERE c.id = :commentId")
     Optional<Long> findPostIdById(@Param("commentId") Long commentId);
-    
+
     List<Comment> findAllByIsReportedTrueAndDeleteAtIsNull();
 
     Boolean existsCommentByPostIdAndId(Long postId, Long commentId);

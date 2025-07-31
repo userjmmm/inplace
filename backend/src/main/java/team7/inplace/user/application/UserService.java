@@ -13,14 +13,14 @@ import team7.inplace.user.application.dto.UserCommand.Create;
 import team7.inplace.user.application.dto.UserCommand.Info;
 import team7.inplace.user.application.dto.UserInfo.Detail;
 import team7.inplace.user.application.dto.UserInfo.Simple;
-import team7.inplace.user.domain.User;
-import team7.inplace.user.domain.UserBadge;
 import team7.inplace.user.persistence.UserBadgeJpaRepository;
 import team7.inplace.user.persistence.UserJpaRepository;
 import team7.inplace.user.persistence.UserReadRepository;
 import team7.inplace.user.persistence.UserTierJpaRepository;
 import team7.inplace.user.persistence.dto.UserQueryResult;
 import team7.inplace.user.persistence.dto.UserQueryResult.Badge;
+import user.User;
+import user.UserBadge;
 
 @Service
 @RequiredArgsConstructor
@@ -136,25 +136,25 @@ public class UserService {
 
         return user.getReceivedLikeCount() + delta;
     }
-    
+
     @Transactional(readOnly = true)
     public boolean isExistUserName(String userName) {
         return userJpaRepository.existsByUsername(userName);
     }
-    
+
     @Transactional
     public void updateFcmToken(Long userId, String fcmToken) {
         User user = userJpaRepository.findById(userId)
-                        .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+
         user.updateFcmToken(fcmToken);
     }
-    
+
     @Transactional(readOnly = true)
     public String getFcmTokenByUser(Long userId) {
         User user = userJpaRepository.findById(userId)
-                        .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+
         return user.getFcmToken();
     }
 }

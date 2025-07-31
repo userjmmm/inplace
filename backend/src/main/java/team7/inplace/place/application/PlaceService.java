@@ -1,5 +1,9 @@
 package team7.inplace.place.application;
 
+import exception.InplaceException;
+import exception.code.AuthorizationErrorCode;
+import exception.code.CategoryErrorCode;
+import exception.code.PlaceErrorCode;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -10,24 +14,21 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import place.LikedPlace;
+import place.Place;
+import place.PlaceVideo;
 import team7.inplace.admin.dto.CategoryForm;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
-import team7.inplace.global.exception.code.CategoryErrorCode;
-import team7.inplace.global.exception.code.PlaceErrorCode;
-import team7.inplace.liked.likedPlace.domain.LikedPlace;
 import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
-import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
+import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.application.dto.PlaceInfo.Category;
 import team7.inplace.place.client.GooglePlaceClient;
-import team7.inplace.place.client.GooglePlaceClientResponse.Place;
-import team7.inplace.place.domain.PlaceVideo;
+import team7.inplace.place.client.GooglePlaceClientResponse;
 import team7.inplace.place.persistence.CategoryRepository;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
@@ -173,10 +174,9 @@ public class PlaceService {
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
     }
 
-    public Place getGooglePlaceInfo(String googlePlaceId) {
+    public GooglePlaceClientResponse.Place getGooglePlaceInfo(String googlePlaceId) {
         return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
     }
-
 
     public List<PlaceInfo.Category> getCategories() {
         var categories = categoryRepository.findAll();
@@ -229,17 +229,18 @@ public class PlaceService {
 
     @Transactional
     public Long updatePlaceInfo(Long placeId, Upsert command) {
-        team7.inplace.place.domain.Place place = placeJpaRepository.findById(placeId)
+        Place place = placeJpaRepository.findById(placeId)
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
 
-        place.updateInfo(command);
+        // TODO : 종속성 해결
+//        place.updateInfo(command);
 
         return place.getId();
     }
 
     @Transactional
     public void updateCategory(Long categoryId, CategoryForm categoryForm) {
-        team7.inplace.place.domain.Category category = categoryRepository.findById(categoryId)
+        place.Category category = categoryRepository.findById(categoryId)
             .orElseThrow(() -> InplaceException.of(CategoryErrorCode.NOT_FOUND));
 
         category.updateInfo(

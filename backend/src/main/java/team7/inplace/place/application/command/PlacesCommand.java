@@ -2,7 +2,7 @@ package team7.inplace.place.application.command;
 
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import team7.inplace.place.domain.Place;
+import place.Place;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
 
 @Slf4j

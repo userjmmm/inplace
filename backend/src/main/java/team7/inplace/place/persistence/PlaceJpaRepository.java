@@ -3,7 +3,7 @@ package team7.inplace.place.persistence;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import team7.inplace.place.domain.Place;
+import place.Place;
 
 public interface PlaceJpaRepository extends JpaRepository<Place, Long> {
 

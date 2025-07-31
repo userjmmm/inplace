@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import team7.inplace.review.domain.Review;
+import review.Review;
 import team7.inplace.review.persistence.dto.ReviewQueryResult.LikeRate;
 
 public interface ReviewJPARepository extends JpaRepository<Review, Long> {

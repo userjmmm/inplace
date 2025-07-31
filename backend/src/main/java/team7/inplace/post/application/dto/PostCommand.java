@@ -1,8 +1,8 @@
 package team7.inplace.post.application.dto;
 
 import java.util.List;
-import team7.inplace.post.domain.Comment;
-import team7.inplace.post.domain.Post;
+import post.Comment;
+import post.Post;
 
 public class PostCommand {
 

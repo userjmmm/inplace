@@ -1,15 +1,17 @@
 package team7.inplace.admin.banner.application.dto;
 
-import team7.inplace.admin.banner.domain.Banner;
+import banner.Banner;
 
 public class BannerInfo {
+
     public record Detail(
-            Long id,
-            String imageUrl,
-            Boolean isMain,
-            Boolean isMobile,
-            Long influencerId
+        Long id,
+        String imageUrl,
+        Boolean isMain,
+        Boolean isMobile,
+        Long influencerId
     ) {
+
         public static Detail from(Banner banner) {
             return new Detail(
                 banner.getId(),

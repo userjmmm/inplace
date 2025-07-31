@@ -1,35 +1,37 @@
 package team7.inplace.user.application.dto;
 
 import team7.inplace.security.application.dto.KakaoOAuthResponse;
-import team7.inplace.admin.user.domain.AdminUser;
-import team7.inplace.user.domain.Role;
-import team7.inplace.user.domain.User;
-import team7.inplace.user.domain.UserType;
+import user.Role;
+import user.User;
+import user.UserType;
+
 
 public class UserCommand {
 
     public record Create(
-            String username,
-            String nickname,
-            String profileImageUrl,
-            UserType userType,
-            Role role
+        String username,
+        String nickname,
+        String profileImageUrl,
+        UserType userType,
+        Role role
     ) {
 
         public static UserCommand.Create of(KakaoOAuthResponse kakaoOAuthResponse) {
             return new UserCommand.Create(kakaoOAuthResponse.getEmail(),
-                    kakaoOAuthResponse.getNickname(), kakaoOAuthResponse.getProfileImageUrl(), UserType.KAKAO, Role.USER);
+                kakaoOAuthResponse.getNickname(), kakaoOAuthResponse.getProfileImageUrl(),
+                UserType.KAKAO, Role.USER);
         }
 
         public User toEntity() {
-            return new User(this.username, null, this.nickname, this.profileImageUrl, this.userType, this.role);
+            return new User(this.username, null, this.nickname, this.profileImageUrl, this.userType,
+                this.role);
         }
     }
 
     public record Info(
-            Long id,
-            String username,
-            Role role
+        Long id,
+        String username,
+        Role role
     ) {
 
         public static Info of(User user) {

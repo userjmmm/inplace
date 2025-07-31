@@ -13,10 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import review.Review;
 import team7.inplace.global.baseEntity.BaseEntity;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.ReviewErrorCode;
-import team7.inplace.review.domain.Review;
 import team7.inplace.review.persistence.ReviewJPARepository;
 import team7.inplace.security.util.AuthorizationUtil;
 

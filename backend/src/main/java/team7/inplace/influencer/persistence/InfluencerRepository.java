@@ -1,10 +1,10 @@
 package team7.inplace.influencer.persistence;
 
+import influencer.Influencer;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import team7.inplace.influencer.domain.Influencer;
 
 public interface InfluencerRepository extends JpaRepository<Influencer, Long> {
 

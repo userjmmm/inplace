@@ -1,14 +1,17 @@
 package team7.inplace.alarm;
 
-import com.google.firebase.messaging.FirebaseMessagingException;
+import static org.awaitility.Awaitility.await;
+import static org.mockito.BDDMockito.*;
+
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.test.util.ReflectionTestUtils;
 import team7.inplace.alarm.application.AlarmService;
 import team7.inplace.alarm.application.FcmClient;
 import team7.inplace.alarm.domain.AlarmType;
@@ -21,14 +24,10 @@ import team7.inplace.user.domain.Role;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.domain.UserType;
 
-import java.util.concurrent.TimeUnit;
-
-import static org.awaitility.Awaitility.await;
-import static org.mockito.BDDMockito.*;
-
 @SpringBootTest
 @EnableAsync
 public class AlarmEventHandlerTest {
+
     @Autowired
     private ApplicationEventPublisher eventPublisher;
     @MockBean
@@ -39,7 +38,7 @@ public class AlarmEventHandlerTest {
     private AlarmService alarmService;
     @MockBean
     private PostService postService;
-    
+
     @Test
     @DisplayName("멘션 이벤트 테스트")
     void test1() {
@@ -49,19 +48,19 @@ public class AlarmEventHandlerTest {
         Long userId = 1L;
         Long postId = 1L;
         Long commentId = 2L;
-        
+
         User user = new User(username, "", "유저2", "", UserType.KAKAO, Role.USER);
         ReflectionTestUtils.setField(user, "id", 1L);
         UserCommand.Info info = UserCommand.Info.of(user);
         given(postService.getPostTitleById(postId)).willReturn("제목");
         given(userService.getUserByUsername(username)).willReturn(info);
         given(userService.getFcmTokenByUser(userId)).willReturn("fcm-token");
-        
+
         MentionAlarmEvent event = new MentionAlarmEvent(postId, commentId, sender, username);
-        
+
         // when
         eventPublisher.publishEvent(event);
-        
+
         // then
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             verify(fcmClient).sendMessageByToken(
@@ -69,7 +68,7 @@ public class AlarmEventHandlerTest {
                 contains("제목 게시글에서 유저1 님이 언급했습니다."),
                 eq("fcm-token")
             );
-            
+
             verify(alarmService).saveAlarm(
                 eq(userId),
                 eq(postId),
@@ -79,23 +78,23 @@ public class AlarmEventHandlerTest {
             );
         });
     }
-    
+
     @Test
     @DisplayName("게시글 신고 삭제 이벤트 테스트")
     void test2() {
         // given
         Long postId = 1L;
         Long userId = 2L;
-        
+
         given(postService.getPostTitleById(postId)).willReturn("제목");
         given(postService.getPostAuthorIdById(postId)).willReturn(userId);
         given(userService.getFcmTokenByUser(userId)).willReturn("fcm-token");
-        
+
         AlarmEvent.PostReportAlarmEvent event = new AlarmEvent.PostReportAlarmEvent(postId);
-        
+
         // when
         eventPublisher.publishEvent(event);
-        
+
         // then
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             verify(fcmClient).sendMessageByToken(
@@ -103,7 +102,7 @@ public class AlarmEventHandlerTest {
                 contains("제목 게시글이 신고로 인하여 삭제되었습니다."),
                 eq("fcm-token")
             );
-            
+
             verify(alarmService).saveAlarm(
                 eq(userId),
                 eq(postId),
@@ -113,24 +112,25 @@ public class AlarmEventHandlerTest {
             );
         });
     }
-    
+
     @Test
     @DisplayName("댓글 신고 삭제 이벤트 테스트")
     void test3() {
         Long commentId = 1L;
         Long postId = 1L;
         Long userId = 2L;
-        
+
         given(postService.getPostTitleById(postId)).willReturn("제목");
         given(postService.getPostIdById(commentId)).willReturn(postId);
         given(postService.getCommentAuthorIdById(commentId)).willReturn(userId);
         given(userService.getFcmTokenByUser(userId)).willReturn("fcm-token");
-        
-        AlarmEvent.CommentReportAlarmEvent event = new AlarmEvent.CommentReportAlarmEvent(commentId);
-        
+
+        AlarmEvent.CommentReportAlarmEvent event = new AlarmEvent.CommentReportAlarmEvent(
+            commentId);
+
         // when
         eventPublisher.publishEvent(event);
-        
+
         // then
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             verify(fcmClient).sendMessageByToken(
@@ -138,7 +138,7 @@ public class AlarmEventHandlerTest {
                 contains("제목 게시글에 작성한 댓글이 신고로 인하여 삭제되었습니다"),
                 eq("fcm-token")
             );
-            
+
             verify(alarmService).saveAlarm(
                 eq(userId),
                 eq(postId),

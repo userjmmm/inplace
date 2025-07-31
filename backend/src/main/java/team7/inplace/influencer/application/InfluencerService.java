@@ -2,6 +2,10 @@ package team7.inplace.influencer.application;
 
 import static java.util.stream.Collectors.toMap;
 
+import exception.InplaceException;
+import exception.code.InfluencerErrorCode;
+import influencer.Influencer;
+import influencer.LikedInfluencer;
 import java.util.List;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -10,18 +14,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.InfluencerErrorCode;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.application.dto.InfluencerNameInfo;
 import team7.inplace.influencer.application.dto.LikedInfluencerCommand;
-import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerReadRepositoryImpl;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.influencer.persistence.dto.InfluencerQueryResult;
 import team7.inplace.influencer.persistence.dto.InfluencerQueryResult.Detail;
-import team7.inplace.liked.likedInfluencer.domain.LikedInfluencer;
 import team7.inplace.liked.likedInfluencer.persistent.LikedInfluencerRepository;
 import team7.inplace.security.util.AuthorizationUtil;
 

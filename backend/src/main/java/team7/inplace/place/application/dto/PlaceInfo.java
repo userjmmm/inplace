@@ -66,7 +66,7 @@ public class PlaceInfo {
         String engName
     ) {
 
-        public static Category from(team7.inplace.place.domain.Category category) {
+        public static Category from(place.Category category) {
             return new Category(
                 category.getId(),
                 category.getParentId(),

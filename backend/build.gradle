@@ -15,6 +15,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
 
     java {
@@ -113,8 +114,8 @@ dependencies {
     /*
      * 멀티 모듈로 마이그레이션 시 아래 주석을 해제하고 의존성을 추가하면 됩니다.
      */
-//    implementation project(':inplace-common')
-//    implementation project(':inplace-domain')
+    implementation project(':inplace-common')
+    implementation project(':inplace-domain')
 //    implementation project(':inplace-application')
 //    implementation project(':inplace-infra')
 //    implementation project(':inplace-api')

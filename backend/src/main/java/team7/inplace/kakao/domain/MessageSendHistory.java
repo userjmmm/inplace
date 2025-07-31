@@ -2,10 +2,10 @@ package team7.inplace.kakao.domain;
 
 import static lombok.AccessLevel.PROTECTED;
 
+import exception.InplaceException;
+import exception.code.KakaoMessageErrorCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.KakaoMessageErrorCode;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)

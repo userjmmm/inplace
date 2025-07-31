@@ -1,6 +1,6 @@
 package team7.inplace.alarm.application.dto;
 
-import team7.inplace.alarm.domain.Alarm;
+import alarm.Alarm;
 import team7.inplace.alarm.util.TimeUtil;
 
 public record AlarmInfo(
@@ -12,6 +12,7 @@ public record AlarmInfo(
     String type,
     String createdAt
 ) {
+
     public static AlarmInfo from(Alarm alarm) {
         return new AlarmInfo(
             alarm.getId(),

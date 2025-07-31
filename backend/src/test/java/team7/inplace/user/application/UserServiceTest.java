@@ -19,7 +19,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import team7.inplace.post.persistence.PostJpaRepository;
 import team7.inplace.user.domain.Role;
@@ -37,11 +36,16 @@ import team7.inplace.user.persistence.UserTierJpaRepository;
 @ActiveProfiles("test")
 class UserServiceTest {
 
-    @MockBean private UserJpaRepository userJpaRepository;
-    @MockBean private UserReadRepository userReadRepository;
-    @MockBean private UserBadgeJpaRepository userBadgeJpaRepository;
-    @MockBean private UserTierJpaRepository userTierJpaRepository;
-    @MockBean private PostJpaRepository postJpaRepository;
+    @MockBean
+    private UserJpaRepository userJpaRepository;
+    @MockBean
+    private UserReadRepository userReadRepository;
+    @MockBean
+    private UserBadgeJpaRepository userBadgeJpaRepository;
+    @MockBean
+    private UserTierJpaRepository userTierJpaRepository;
+    @MockBean
+    private PostJpaRepository postJpaRepository;
 
     @Autowired
     private UserService userService;
@@ -56,7 +60,8 @@ class UserServiceTest {
         Long userId = 1L;
         Integer delta = 3;
         Long expected = 5L;
-        User user = new User("username", "password", "nickname", "imgUrl", UserType.KAKAO, Role.USER);
+        User user = new User("username", "password", "nickname", "imgUrl", UserType.KAKAO,
+            Role.USER);
         user.updateReceivedCommentCount(2L);
         given(userJpaRepository.findById(userId)).willReturn(Optional.of(user));
         // when
@@ -76,7 +81,8 @@ class UserServiceTest {
         Long userId = 2L;
         Integer delta = 3;
         Long expected = 110004L;
-        User user = new User("username", "password", "nickname", "imgUrl", UserType.KAKAO, Role.USER);
+        User user = new User("username", "password", "nickname", "imgUrl", UserType.KAKAO,
+            Role.USER);
         user.updateReceivedLikeCount(110001L);
         given(userJpaRepository.findById(userId)).willReturn(Optional.of(user));
         // when

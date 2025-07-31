@@ -1,6 +1,6 @@
 package team7.inplace.review.application.dto;
 
-import team7.inplace.review.domain.Review;
+import review.Review;
 
 public class ReviewCommand {
 

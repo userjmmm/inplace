@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import place.Category;
 import team7.inplace.admin.banner.persistence.BannerRepository;
 import team7.inplace.admin.dto.CategoryForm;
 import team7.inplace.global.exception.InplaceException;
@@ -20,7 +21,6 @@ import team7.inplace.global.properties.GoogleApiProperties;
 import team7.inplace.global.properties.KakaoApiProperties;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.application.PlaceService;
-import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.CategoryRepository;
 import team7.inplace.post.application.PostService;
 import team7.inplace.post.persistence.CommentJpaRepository;
@@ -54,7 +54,8 @@ public class AdminPageController {
         @PageableDefault Pageable pageable, Model model
     ) {
         Page<VideoResponse.Admin> videoPage = videoService
-            .getAdminVideosByCondition(VideoFilterCondition.of(videoRegistration, influencerId), pageable)
+            .getAdminVideosByCondition(VideoFilterCondition.of(videoRegistration, influencerId),
+                pageable)
             .map(VideoResponse.Admin::from);
 
         model.addAttribute("videoPage", videoPage);
@@ -113,7 +114,8 @@ public class AdminPageController {
     }
 
     @PostMapping("/category/{categoryId}/edit")
-    public String editCategory(@PathVariable Long categoryId, @ModelAttribute CategoryForm categoryForm) {
+    public String editCategory(
+        @PathVariable Long categoryId, @ModelAttribute CategoryForm categoryForm) {
         placeService.updateCategory(categoryId, categoryForm);
         return "redirect:/admin/category";
     }
@@ -132,8 +134,10 @@ public class AdminPageController {
 
     @GetMapping("/report")
     public String getReportPage(Model model) {
-        model.addAttribute("reportedPosts", postJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull());
-        model.addAttribute("reportedComments", commentJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull());
+        model.addAttribute("reportedPosts",
+            postJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull());
+        model.addAttribute("reportedComments",
+            commentJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull());
         return "admin/report";
     }
 
@@ -160,7 +164,6 @@ public class AdminPageController {
         postService.unreportComment(commentId);
         return "redirect:/admin/report";
     }
-
 
 
 }

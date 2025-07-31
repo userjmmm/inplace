@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import team7.inplace.video.domain.Video;
+import video.Video;
 
 public interface VideoRepository extends JpaRepository<Video, Long> {
 

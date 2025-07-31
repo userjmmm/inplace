@@ -2,7 +2,7 @@ package team7.inplace.post.application.dto;
 
 import java.util.ArrayList;
 import java.util.List;
-import team7.inplace.post.domain.Post;
+import post.Post;
 
 public class PostInfo {
 

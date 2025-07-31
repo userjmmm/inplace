@@ -1,5 +1,7 @@
 package team7.inplace.kakao.application;
 
+import exception.InplaceException;
+import exception.code.KakaoMessageErrorCode;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
@@ -8,8 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.KakaoMessageErrorCode;
 import team7.inplace.global.properties.KakaoApiProperties;
 import team7.inplace.kakao.application.command.PlaceMessageCommand;
 import team7.inplace.kakao.domain.MessageSendHistory;
