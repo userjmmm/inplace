@@ -15,8 +15,8 @@ import team7.inplace.video.domain.CoolVideo;
 import team7.inplace.video.domain.RecentVideo;
 import team7.inplace.video.persistence.CoolVideoRepository;
 import team7.inplace.video.persistence.RecentVideoRepository;
-import team7.inplace.video.persistence.VideoReadRepository;
 import team7.inplace.video.persistence.VideoRepository;
+import video.query.VideoReadRepository;
 
 @SpringBootTest
 @Transactional
@@ -25,19 +25,15 @@ import team7.inplace.video.persistence.VideoRepository;
 class VideoServiceTest {
 
     @Autowired
+    VideoService videoService;
+    @Autowired
     private VideoRepository videoRepository;
-
     @Autowired
     private VideoReadRepository videoReadRepository;
-
     @Autowired
     private CoolVideoRepository coolVideoRepository;
-
     @Autowired
     private RecentVideoRepository recentVideoRepository;
-
-    @Autowired
-    VideoService videoService;
 
     @Test
     @DisplayName("Cool Video 업데이트 Test")
@@ -80,7 +76,7 @@ class VideoServiceTest {
                 tuple("Video12", "influencer3", "testPlace12"),
                 tuple("Video10", "influencer3", "testPlace10"),
                 tuple("Video9", "influencer3", "testPlace9")
-                );
+            );
     }
 
     @Test

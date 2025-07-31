@@ -9,9 +9,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import place.GooglePlaceClient;
-import place.GooglePlaceClientResponse;
-import place.GooglePlaceClientResponse.Place;
+import place.client.GooglePlaceClient;
+import place.client.GooglePlaceClientResponse;
+import place.client.GooglePlaceClientResponse.Place;
 import team7.inplace.global.annotation.Client;
 import team7.inplace.global.properties.GoogleApiProperties;
 

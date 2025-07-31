@@ -2,19 +2,17 @@ package team7.inplace.post.presentation.dto;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
+import base.CursorResult;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import post.query.CommentQueryResult;
+import post.query.PostQueryResult;
 import team7.inplace.global.cursor.CursorResponse;
-import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.post.application.dto.PostInfo;
-import team7.inplace.post.persistence.dto.CommentQueryResult;
-import team7.inplace.post.persistence.dto.PostQueryResult;
 import team7.inplace.user.presentation.dto.UserResponse;
-import team7.inplace.user.presentation.dto.UserResponse.Badge;
-import team7.inplace.user.presentation.dto.UserResponse.Tier;
 
 public class PostResponse {
 

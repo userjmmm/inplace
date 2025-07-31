@@ -1,6 +1,6 @@
 package team7.inplace.admin.user.application.dto;
 
-import team7.inplace.admin.user.domain.AdminUser;
+import user.AdminUser;
 import user.Role;
 
 public record AdminUserInfo(

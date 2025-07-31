@@ -5,21 +5,19 @@ import static com.querydsl.core.types.ExpressionUtils.count;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collections;
-import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import review.query.ReviewQueryResult;
+import review.query.ReviewReadRepository;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.review.domain.QReview;
 import team7.inplace.review.persistence.dto.QReviewQueryResult_Detail;
 import team7.inplace.review.persistence.dto.QReviewQueryResult_LikeRate;
 import team7.inplace.review.persistence.dto.QReviewQueryResult_Simple;
-import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.user.domain.QUser;
-import team7.inplace.video.domain.QVideo;
 
 @Repository
 @RequiredArgsConstructor

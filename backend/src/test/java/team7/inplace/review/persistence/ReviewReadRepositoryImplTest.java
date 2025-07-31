@@ -17,13 +17,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import team7.inplace.review.persistence.dto.ReviewQueryResult;
+import review.query.ReviewQueryResult;
+import review.query.ReviewReadRepository;
 
 @DataJpaTest
 @Import(ObjectMapper.class)
 @ActiveProfiles("test")
 @Sql("/sql/test-review.sql")
 public class ReviewReadRepositoryImplTest {
+
     @Autowired
     private TestEntityManager testEntityManager;
 
@@ -43,7 +45,8 @@ public class ReviewReadRepositoryImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        Page<ReviewQueryResult.Detail> reviews = reviewReadRepository.findDetailedReviewByUserId(userId, pageable);
+        Page<ReviewQueryResult.Detail> reviews = reviewReadRepository.findDetailedReviewByUserId(
+            userId, pageable);
 
         // then
         assertThat(reviews.getContent())
@@ -64,7 +67,8 @@ public class ReviewReadRepositoryImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        Page<ReviewQueryResult.Simple> reviews = reviewReadRepository.findSimpleReviewByUserIdAndPlaceId(placeId, userId, pageable);
+        Page<ReviewQueryResult.Simple> reviews = reviewReadRepository.findSimpleReviewByUserIdAndPlaceId(
+            placeId, userId, pageable);
         System.out.println("REVIEWS: " + reviews.getContent());
 
         // then
@@ -89,7 +93,8 @@ public class ReviewReadRepositoryImplTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        Page<ReviewQueryResult.Simple> reviews = reviewReadRepository.findSimpleReviewByUserIdAndPlaceId(placeId, userId, pageable);
+        Page<ReviewQueryResult.Simple> reviews = reviewReadRepository.findSimpleReviewByUserIdAndPlaceId(
+            placeId, userId, pageable);
 
         // then
         assertThat(reviews.getContent())

@@ -10,18 +10,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import search.SearchRepository;
 import team7.inplace.influencer.domain.QInfluencer;
 import team7.inplace.place.domain.QCategory;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.domain.QPlaceVideo;
 import team7.inplace.video.domain.QVideo;
 import team7.inplace.video.persistence.dto.QVideoQueryResult_DetailedVideo;
-import team7.inplace.video.persistence.dto.VideoQueryResult;
+import video.query.VideoQueryResult;
+import video.query.VideoQueryResult.DetailedVideo;
 
 @Repository
 @Slf4j
 @RequiredArgsConstructor
-public class VideoSearchRepository implements SearchRepository<VideoQueryResult.DetailedVideo> {
+public class VideoSearchRepository implements SearchRepository<DetailedVideo> {
 
     private final JPAQueryFactory queryFactory;
 
@@ -43,7 +45,7 @@ public class VideoSearchRepository implements SearchRepository<VideoQueryResult.
                     .and(QInfluencer.influencer.id.isNotNull())
                     .and(QPlaceVideo.placeVideo.isNotNull()))
             ).fetchOne();
-        
+
         if (count == null || count == 0) {
             return new PageImpl<>(List.of(), pageable, 0);
         }

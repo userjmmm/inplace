@@ -3,12 +3,12 @@ package team7.inplace.token.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import security.OauthToken;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.security.util.TokenEncryptionUtil;
 import team7.inplace.token.application.command.OauthTokenCommand;
 import team7.inplace.token.client.KakaoOauthClient;
-import team7.inplace.token.domain.OauthToken;
 import team7.inplace.token.persistence.OauthTokenRepository;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserJpaRepository;
@@ -58,7 +58,7 @@ public class OauthTokenService {
             .orElseThrow(() -> InplaceException.of(UserErrorCode.OAUTH_TOKEN_NOT_FOUND));
 
         var token = tokenEncryptionUtil.decrypt(oauthToken.getOauthToken());
-        kakaoOauthClient.unlink(token);
+        kakaoOauthClient.unLink(token);
         oauthTokenRepository.delete(oauthToken);
     }
 }

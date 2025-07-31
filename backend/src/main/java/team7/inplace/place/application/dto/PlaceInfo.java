@@ -1,12 +1,12 @@
 package team7.inplace.place.application.dto;
 
 import java.util.List;
-import place.GooglePlaceClientResponse;
-import team7.inplace.place.persistence.dto.PlaceQueryResult;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
-import team7.inplace.review.persistence.dto.ReviewQueryResult;
-import team7.inplace.video.persistence.dto.VideoQueryResult;
-import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
+import place.client.GooglePlaceClientResponse;
+import place.query.PlaceQueryResult;
+import place.query.PlaceQueryResult.MarkerDetail;
+import review.query.ReviewQueryResult;
+import video.query.VideoQueryResult;
+import video.query.VideoQueryResult.SimpleVideo;
 
 public class PlaceInfo {
 

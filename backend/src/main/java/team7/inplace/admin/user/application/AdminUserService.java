@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.admin.user.application.command.RegisterCommand;
 import team7.inplace.admin.user.application.dto.AdminUserInfo;
-import team7.inplace.admin.user.domain.AdminUser;
 import team7.inplace.admin.user.persistence.AdminUserRepository;
+import user.AdminUser;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,8 @@ public class AdminUserService {
 
     @Transactional
     public void registerAdminUser(RegisterCommand registerCommand) {
-        AdminUser adminUser = new AdminUser(registerCommand.username(), passwordEncoder.encode(registerCommand.password()));
+        AdminUser adminUser = new AdminUser(registerCommand.username(),
+            passwordEncoder.encode(registerCommand.password()));
         adminUserRepository.save(adminUser);
     }
 }

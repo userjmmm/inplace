@@ -9,15 +9,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import search.SearchQueryResult;
+import search.SearchQueryResult.AutoComplete;
+import search.SearchQueryResult.Place;
+import search.SearchRepository;
 import team7.inplace.liked.likedPlace.domain.QLikedPlace;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.search.persistence.dto.QSearchQueryResult_Place;
-import team7.inplace.search.persistence.dto.SearchQueryResult;
-import team7.inplace.search.persistence.dto.SearchQueryResult.AutoComplete;
 
 @Repository
 @RequiredArgsConstructor
-public class PlaceSearchRepository implements SearchRepository<SearchQueryResult.Place> {
+public class PlaceSearchRepository implements SearchRepository<Place> {
 
     private final JPAQueryFactory queryFactory;
 

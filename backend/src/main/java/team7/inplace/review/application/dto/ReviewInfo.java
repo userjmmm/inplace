@@ -3,10 +3,10 @@ package team7.inplace.review.application.dto;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import place.query.PlaceQueryResult;
 import review.Review;
-import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.user.domain.User;
-import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
+import video.query.VideoQueryResult.SimpleVideo;
 
 public class ReviewInfo {
 

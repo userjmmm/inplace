@@ -6,12 +6,13 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+import security.RefreshToken;
 import team7.inplace.global.redis.RedisRepository;
-import team7.inplace.token.domain.RefreshToken;
 
 @Repository
 @RequiredArgsConstructor
 public class RefreshTokenRepository implements RedisRepository<RefreshToken> {
+
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
 

@@ -1,10 +1,9 @@
 package team7.inplace.influencer.presentation.dto;
 
+import influencer.query.InfluencerQueryResult;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.application.dto.InfluencerNameInfo;
-import team7.inplace.influencer.persistence.dto.InfluencerQueryResult;
-import team7.inplace.video.persistence.dto.VideoQueryResult;
-import team7.inplace.video.presentation.dto.VideoResponse;
+import video.query.VideoQueryResult;
 
 public class InfluencerResponse {
 
@@ -82,9 +81,9 @@ public class InfluencerResponse {
                 videoInfo.placeId(),
                 videoInfo.placeName(),
                 new Address(
-                        videoInfo.address1(),
-                        videoInfo.address2(),
-                        videoInfo.address3()
+                    videoInfo.address1(),
+                    videoInfo.address2(),
+                    videoInfo.address3()
                 )
             );
             return new InfluencerResponse.Video(
@@ -101,12 +100,13 @@ public class InfluencerResponse {
         String placeName,
         Address address
     ) {
+
     }
 
     public record Address(
-            String address1,
-            String address2,
-            String address3
+        String address1,
+        String address2,
+        String address3
     ) {
 
     }

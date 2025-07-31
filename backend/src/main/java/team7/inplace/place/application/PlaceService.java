@@ -14,12 +14,15 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import place.GooglePlaceClientResponse;
 import place.LikedPlace;
 import place.Place;
 import place.PlaceVideo;
+import place.client.GooglePlaceClientResponse;
+import place.query.PlaceQueryResult;
+import place.query.PlaceQueryResult.Marker;
+import place.query.PlaceQueryResult.MarkerDetail;
+import place.query.PlaceReadRepository;
 import team7.inplace.admin.dto.CategoryForm;
-import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
@@ -30,13 +33,10 @@ import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.application.dto.PlaceInfo.Category;
 import team7.inplace.place.client.RestTemplateGooglePlaceClient;
 import team7.inplace.place.persistence.CategoryRepository;
+import team7.inplace.place.persistence.LikedPlaceRepository;
 import team7.inplace.place.persistence.PlaceJpaRepository;
-import team7.inplace.place.persistence.PlaceReadRepository;
 import team7.inplace.place.persistence.PlaceVideoJpaRepository;
-import team7.inplace.place.persistence.dto.PlaceQueryResult;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
-import team7.inplace.video.persistence.VideoReadRepository;
+import video.query.VideoReadRepository;
 
 @Slf4j
 @Service

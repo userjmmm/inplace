@@ -19,10 +19,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
+import place.query.PlaceQueryResult.DetailedPlace;
+import place.query.PlaceQueryResult.Marker;
+import place.query.PlaceReadRepository;
 import team7.inplace.container.AbstractMySQLContainerTest;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 
 @DataJpaTest
 @ActiveProfiles("test-mysql")
@@ -766,6 +767,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         // when
         List<DetailedPlace> places = placeReadRepository.getDetailedPlacesByVideoId(videoId);
         // then
-        assertThat(places.stream().map(DetailedPlace::placeId).toList()).isEqualTo(expectedPlaceIds);
+        assertThat(places.stream().map(DetailedPlace::placeId).toList()).isEqualTo(
+            expectedPlaceIds);
     }
 }

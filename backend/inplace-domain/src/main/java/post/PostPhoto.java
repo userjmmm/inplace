@@ -2,6 +2,8 @@ package post;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import exception.InplaceException;
+import exception.code.PostErrorCode;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Embeddable;
 import java.util.Arrays;
@@ -13,13 +15,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team7.inplace.global.converter.JsonNodeConverter;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.PostErrorCode;
 
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostPhoto {
+public class PostPhoto { //TODO PostQueryResult의 JsonNode -> List<PostPhoto> 변경에 따른 수정 필요
 
     @Convert(converter = JsonNodeConverter.class)
     private JsonNode imageInfos;

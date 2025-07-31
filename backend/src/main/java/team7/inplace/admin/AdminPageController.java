@@ -27,8 +27,8 @@ import team7.inplace.post.persistence.CommentJpaRepository;
 import team7.inplace.post.persistence.PostJpaRepository;
 import team7.inplace.video.application.VideoService;
 import team7.inplace.video.persistence.VideoRepository;
-import team7.inplace.video.persistence.dto.VideoFilterCondition;
 import team7.inplace.video.presentation.dto.VideoResponse;
+import video.query.VideoQueryParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -54,7 +54,7 @@ public class AdminPageController {
         @PageableDefault Pageable pageable, Model model
     ) {
         Page<VideoResponse.Admin> videoPage = videoService
-            .getAdminVideosByCondition(VideoFilterCondition.of(videoRegistration, influencerId),
+            .getAdminVideosByCondition(VideoQueryParam.of(videoRegistration, influencerId),
                 pageable)
             .map(VideoResponse.Admin::from);
 

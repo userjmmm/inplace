@@ -1,6 +1,6 @@
 package team7.inplace.search.presentation.dto;
 
-import team7.inplace.search.persistence.dto.SearchQueryResult;
+import search.SearchQueryResult;
 
 public class SearchResponse {
 

@@ -2,32 +2,35 @@ package team7.inplace.video.presentation.dto;
 
 import team7.inplace.video.domain.CoolVideo;
 import team7.inplace.video.domain.RecentVideo;
-import team7.inplace.video.persistence.dto.VideoQueryResult;
+import video.query.VideoQueryResult;
 
 // Video 엔티티의 Controller Response 정보 전달을 담당하는 클래스
 public class VideoResponse {
+
     public record Simple(
-            Long videoId,
-            String videoUrl,
-            VideoResponse.Place place
+        Long videoId,
+        String videoUrl,
+        VideoResponse.Place place
     ) {
+
         public static VideoResponse.Simple from(VideoQueryResult.SimpleVideo videoInfo) {
             var place = new VideoResponse.Place(
-                    videoInfo.placeId(),
-                    videoInfo.placeName()
+                videoInfo.placeId(),
+                videoInfo.placeName()
             );
             return new VideoResponse.Simple(
-                    videoInfo.videoId(),
-                    videoInfo.videoUrl(),
-                    place
+                videoInfo.videoId(),
+                videoInfo.videoUrl(),
+                place
             );
         }
     }
 
     public record Place(
-            Long placeId,
-            String placeName
+        Long placeId,
+        String placeName
     ) {
+
     }
 
     public record Detail(
@@ -36,6 +39,7 @@ public class VideoResponse {
         String videoUrl,
         VideoResponse.PlaceDetail place
     ) {
+
         public static VideoResponse.Detail from(VideoQueryResult.DetailedVideo videoInfo) {
             var place = new VideoResponse.PlaceDetail(
                 videoInfo.placeId(),
@@ -96,6 +100,7 @@ public class VideoResponse {
         String placeName,
         Address address
     ) {
+
     }
 
     public record Address(
@@ -103,6 +108,7 @@ public class VideoResponse {
         String address2,
         String address3
     ) {
+
     }
 
     public record Admin(
@@ -110,6 +116,7 @@ public class VideoResponse {
         String uuid,
         Boolean registered
     ) {
+
         public static Admin from(VideoQueryResult.AdminVideo videoInfo) {
             return new Admin(
                 videoInfo.videoId(),

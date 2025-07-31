@@ -18,14 +18,14 @@ import team7.inplace.video.domain.RecentVideo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.CoolVideoRepository;
 import team7.inplace.video.persistence.RecentVideoRepository;
-import team7.inplace.video.persistence.VideoReadRepository;
 import team7.inplace.video.persistence.VideoRepository;
-import team7.inplace.video.persistence.dto.VideoFilterCondition;
-import team7.inplace.video.persistence.dto.VideoQueryResult;
-import team7.inplace.video.persistence.dto.VideoQueryResult.AdminVideo;
-import team7.inplace.video.persistence.dto.VideoQueryResult.DetailedVideo;
-import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
+import video.query.VideoQueryParam;
+import video.query.VideoQueryResult;
+import video.query.VideoQueryResult.AdminVideo;
+import video.query.VideoQueryResult.DetailedVideo;
+import video.query.VideoQueryResult.SimpleVideo;
+import video.query.VideoReadRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -97,8 +97,8 @@ public class VideoService {
 
     @Transactional(readOnly = true)
     public Page<AdminVideo> getAdminVideosByCondition(
-        VideoFilterCondition videoFilterCondition, Pageable pageable) {
-        return videoReadRepository.findAdminVideoByCondition(videoFilterCondition, pageable);
+        VideoQueryParam videoQueryParam, Pageable pageable) {
+        return videoReadRepository.findAdminVideoByCondition(videoQueryParam, pageable);
     }
 
     @Transactional

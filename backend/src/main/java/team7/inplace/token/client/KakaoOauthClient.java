@@ -1,23 +1,24 @@
 package team7.inplace.token.client;
 
+import exception.InplaceException;
+import exception.code.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.web.client.RestTemplate;
+import security.OauthSecurityClient;
 import team7.inplace.global.annotation.Client;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.UserErrorCode;
 
 @Client
 @RequiredArgsConstructor
-public class KakaoOauthClient {
+public class KakaoOauthClient implements OauthSecurityClient {
 
     private final String UNLINK_URL = "https://kapi.kakao.com/v1/user/unlink";
     private final RestTemplate restTemplate;
 
-    public void unlink(String accessToken) {
+    public void unLink(String accessToken) {
         var header = new HttpHeaders();
         header.set("Authorization", "Bearer " + accessToken);
         header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

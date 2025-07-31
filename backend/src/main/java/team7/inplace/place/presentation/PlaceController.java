@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import place.query.PlaceQueryResult;
 import team7.inplace.place.application.PlaceFacade;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlaceRequest.Upsert;
 import team7.inplace.place.presentation.dto.PlacesResponse;
@@ -182,7 +182,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<List<Admin>> getAdminPlacesByVideoId(
         @PathVariable Long videoId
     ) {
-        List<Admin> responses =  placeFacade.getAdminPlacesByVideoId(videoId)
+        List<Admin> responses = placeFacade.getAdminPlacesByVideoId(videoId)
             .stream()
             .map(Admin::of)
             .toList();

@@ -14,8 +14,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import team7.inplace.user.persistence.dto.UserQueryResult.Badge;
-import team7.inplace.user.persistence.dto.UserQueryResult.Simple;
+import user.query.UserQueryResult.Badge;
+import user.query.UserQueryResult.Simple;
+import user.query.UserReadRepository;
 
 @DataJpaTest
 @Import({ObjectMapper.class})

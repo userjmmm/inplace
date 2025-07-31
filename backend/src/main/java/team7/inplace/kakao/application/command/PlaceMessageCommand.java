@@ -2,7 +2,7 @@ package team7.inplace.kakao.application.command;
 
 import java.util.stream.Collectors;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
+import video.query.VideoQueryResult.SimpleVideo;
 
 public record PlaceMessageCommand(
     Long placeId,

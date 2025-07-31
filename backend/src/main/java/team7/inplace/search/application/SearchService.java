@@ -1,5 +1,6 @@
 package team7.inplace.search.application;
 
+import influencer.query.InfluencerQueryResult;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -9,15 +10,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.influencer.persistence.dto.InfluencerQueryResult;
+import search.SearchQueryResult;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
 import team7.inplace.search.application.dto.SearchType;
 import team7.inplace.search.persistence.InfluencerSearchRepository;
 import team7.inplace.search.persistence.PlaceSearchRepository;
 import team7.inplace.search.persistence.VideoSearchRepository;
-import team7.inplace.search.persistence.dto.SearchQueryResult;
 import team7.inplace.security.util.AuthorizationUtil;
-import team7.inplace.video.persistence.dto.VideoQueryResult;
+import video.query.VideoQueryResult;
 
 @Service
 @Slf4j

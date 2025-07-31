@@ -2,8 +2,8 @@ package team7.inplace.user.application.dto;
 
 import java.time.LocalDate;
 import java.util.List;
-import team7.inplace.review.persistence.dto.ReviewQueryResult;
-import team7.inplace.user.persistence.dto.UserQueryResult;
+import review.query.ReviewQueryResult;
+import user.query.UserQueryResult;
 
 public class UserInfo {
 
@@ -35,7 +35,9 @@ public class UserInfo {
         String tierImageUrl,
         List<Badge> badges
     ) {
-        public static Detail from(UserQueryResult.Simple user, List<UserQueryResult.Badge> badgeQueryResults) {
+
+        public static Detail from(
+            UserQueryResult.Simple user, List<UserQueryResult.Badge> badgeQueryResults) {
             List<Badge> badges = badgeQueryResults.stream().map(Badge::from).toList();
             return new Detail(
                 user.nickname(),
@@ -53,56 +55,57 @@ public class UserInfo {
         String img_url,
         String condition
     ) {
+
         public static Badge from(UserQueryResult.Badge badge) {
             return new Badge(badge.id(), badge.name(), badge.imgUrl(), badge.condition());
         }
     }
 
     public record Review(
-            Long reviewId,
-            boolean likes,
-            String comment,
-            LocalDate createdDate,
-            UserInfo.ReviewPlace place,
-            String videoUrl
+        Long reviewId,
+        boolean likes,
+        String comment,
+        LocalDate createdDate,
+        UserInfo.ReviewPlace place,
+        String videoUrl
     ) {
 
         public static UserInfo.Review from(ReviewQueryResult.Detail review, String videoUrl) {
             var reviewPlaceAddress = new UserInfo.ReviewPlaceAddress(
-                    review.placeAddress1(),
-                    review.placeAddress2(),
-                    review.placeAddress3()
+                review.placeAddress1(),
+                review.placeAddress2(),
+                review.placeAddress3()
             );
             var reviewPlace = new UserInfo.ReviewPlace(
-                    review.placeId(),
-                    review.placeName(),
-                    "",
-                    reviewPlaceAddress
+                review.placeId(),
+                review.placeName(),
+                "",
+                reviewPlaceAddress
             );
             return new UserInfo.Review(
-                    review.reviewId(),
-                    review.likes(),
-                    review.comment(),
-                    review.createdAt(),
-                    reviewPlace,
-                    videoUrl
+                review.reviewId(),
+                review.likes(),
+                review.comment(),
+                review.createdAt(),
+                reviewPlace,
+                videoUrl
             );
         }
     }
 
     public record ReviewPlace(
-            Long placeId,
-            String placeName,
-            String imgUrl,
-            UserInfo.ReviewPlaceAddress address
+        Long placeId,
+        String placeName,
+        String imgUrl,
+        UserInfo.ReviewPlaceAddress address
     ) {
 
     }
 
     public record ReviewPlaceAddress(
-            String address1,
-            String address2,
-            String address3
+        String address1,
+        String address2,
+        String address3
     ) {
 
     }

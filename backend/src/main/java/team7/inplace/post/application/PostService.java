@@ -1,5 +1,6 @@
 package team7.inplace.post.application;
 
+import base.CursorResult;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,11 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import post.LikedComment;
 import post.LikedPost;
-import team7.inplace.global.cursor.CursorResult;
+import post.query.CommentQueryResult.DetailedComment;
+import post.query.CommentReadRepository;
+import post.query.PostQueryResult.DetailedPost;
+import post.query.PostQueryResult.UserSuggestion;
+import post.query.PostReadRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
-import team7.inplace.liked.likedComment.persistence.LikedCommentRepository;
-import team7.inplace.liked.likedPost.persistence.LikedPostRepository;
 import team7.inplace.post.application.dto.PostCommand;
 import team7.inplace.post.application.dto.PostCommand.CreateComment;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
@@ -22,12 +25,9 @@ import team7.inplace.post.application.dto.PostCommand.UpdatePost;
 import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.post.application.dto.PostInfo.PostImages;
 import team7.inplace.post.persistence.CommentJpaRepository;
-import team7.inplace.post.persistence.CommentReadRepository;
+import team7.inplace.post.persistence.LikedCommentJpaRepository;
+import team7.inplace.post.persistence.LikedPostJpaRepository;
 import team7.inplace.post.persistence.PostJpaRepository;
-import team7.inplace.post.persistence.PostReadRepository;
-import team7.inplace.post.persistence.dto.CommentQueryResult.DetailedComment;
-import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
-import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
 
 @Service
 @Slf4j
@@ -36,11 +36,11 @@ public class PostService {
 
     private final PostJpaRepository postJpaRepository;
     private final PostReadRepository postReadRepository;
-    private final LikedPostRepository likedPostRepository;
+    private final LikedPostJpaRepository likedPostJpaRepository;
 
     private final CommentJpaRepository commentJpaRepository;
     private final CommentReadRepository commentReadRepository;
-    private final LikedCommentRepository likedCommentRepository;
+    private final LikedCommentJpaRepository likedCommentJpaRepository;
 
 
     @Transactional(readOnly = true)
@@ -91,10 +91,10 @@ public class PostService {
             throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
         }
 
-        var likedPost = likedPostRepository.findByUserIdAndPostId(userId, postId)
+        var likedPost = likedPostJpaRepository.findByUserIdAndPostId(userId, postId)
             .orElseGet(() -> {
                 var newLikedPost = LikedPost.from(userId, postId);
-                return likedPostRepository.save(newLikedPost);
+                return likedPostJpaRepository.save(newLikedPost);
             });
 
         var isLiked = likedPost.updateLike(command.likes());
@@ -155,10 +155,10 @@ public class PostService {
             throw InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND);
         }
 
-        var likedComment = likedCommentRepository.findByUserIdAndCommentId(userId, commentId)
+        var likedComment = likedCommentJpaRepository.findByUserIdAndCommentId(userId, commentId)
             .orElseGet(() -> {
                 var newLikedComment = LikedComment.from(userId, commentId);
-                return likedCommentRepository.save(newLikedComment);
+                return likedCommentJpaRepository.save(newLikedComment);
             });
 
         var isLiked = likedComment.updateLike(command.likes());

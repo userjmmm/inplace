@@ -15,12 +15,12 @@ import team7.inplace.user.application.dto.UserInfo.Detail;
 import team7.inplace.user.application.dto.UserInfo.Simple;
 import team7.inplace.user.persistence.UserBadgeJpaRepository;
 import team7.inplace.user.persistence.UserJpaRepository;
-import team7.inplace.user.persistence.UserReadRepository;
 import team7.inplace.user.persistence.UserTierJpaRepository;
-import team7.inplace.user.persistence.dto.UserQueryResult;
-import team7.inplace.user.persistence.dto.UserQueryResult.Badge;
 import user.User;
 import user.UserBadge;
+import user.query.UserQueryResult;
+import user.query.UserQueryResult.Badge;
+import user.query.UserReadRepository;
 
 @Service
 @RequiredArgsConstructor

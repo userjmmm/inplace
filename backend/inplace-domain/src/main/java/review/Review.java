@@ -2,6 +2,7 @@ package review;
 
 import static lombok.AccessLevel.PROTECTED;
 
+import base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -9,7 +10,6 @@ import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team7.inplace.global.baseEntity.BaseEntity;
 
 @Getter
 @Entity

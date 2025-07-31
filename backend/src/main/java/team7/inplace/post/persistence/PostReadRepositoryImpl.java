@@ -1,5 +1,6 @@
 package team7.inplace.post.persistence;
 
+import base.CursorResult;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -11,20 +12,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import team7.inplace.global.cursor.CursorResult;
-import team7.inplace.liked.likedPost.domain.QLikedPost;
-import team7.inplace.post.domain.QComment;
-import team7.inplace.post.domain.QPost;
-import team7.inplace.post.persistence.dto.PostQueryResult.CursorDetailedPost;
-import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
-import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
-import team7.inplace.post.persistence.dto.QPostQueryResult_CursorDetailedPost;
-import team7.inplace.post.persistence.dto.QPostQueryResult_DetailedPost;
-import team7.inplace.post.persistence.dto.QPostQueryResult_UserSuggestion;
-import team7.inplace.user.domain.QBadge;
-import team7.inplace.user.domain.QUser;
-import team7.inplace.user.domain.QUserBadge;
-import team7.inplace.user.domain.QUserTier;
+import post.query.PostQueryResult;
+import post.query.PostQueryResult.CursorDetailedPost;
+import post.query.PostQueryResult.DetailedPost;
+import post.query.PostQueryResult.UserSuggestion;
+import post.query.PostReadRepository;
 
 @Repository
 @RequiredArgsConstructor
@@ -33,7 +25,7 @@ public class PostReadRepositoryImpl implements PostReadRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public CursorResult<DetailedPost> findPostsOrderBy(
+    public CursorResult<PostQueryResult.DetailedPost> findPostsOrderBy(
         Long userId,
         Long cursorId,
         int size,

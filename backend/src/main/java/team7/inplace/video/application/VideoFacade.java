@@ -11,7 +11,7 @@ import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.command.VideoCommand;
-import team7.inplace.video.persistence.dto.VideoQueryResult;
+import video.query.VideoQueryResult;
 
 @Facade
 @Slf4j

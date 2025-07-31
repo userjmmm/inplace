@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import place.GooglePlaceClientResponse;
-import place.GooglePlaceClientResponse.AccessibilityOptions;
-import place.GooglePlaceClientResponse.ParkingOptions;
-import place.GooglePlaceClientResponse.PaymentOptions;
-import place.GooglePlaceClientResponse.RegularOpeningHours;
+import place.client.GooglePlaceClientResponse;
+import place.client.GooglePlaceClientResponse.AccessibilityOptions;
+import place.client.GooglePlaceClientResponse.ParkingOptions;
+import place.client.GooglePlaceClientResponse.PaymentOptions;
+import place.client.GooglePlaceClientResponse.RegularOpeningHours;
+import place.query.PlaceQueryResult;
+import review.query.ReviewQueryResult;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.persistence.dto.PlaceQueryResult;
-import team7.inplace.review.persistence.dto.ReviewQueryResult;
-import team7.inplace.video.persistence.dto.VideoQueryResult;
+import video.query.VideoQueryResult;
 
 public class PlacesResponse {
 

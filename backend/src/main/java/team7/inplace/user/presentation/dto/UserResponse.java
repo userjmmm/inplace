@@ -6,10 +6,7 @@ import java.util.stream.Collectors;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.user.application.dto.UserInfo;
-import team7.inplace.user.application.dto.UserInfo.Badge;
-import team7.inplace.user.application.dto.UserInfo.Detail;
-import team7.inplace.user.application.dto.UserInfo.Simple;
-import team7.inplace.video.persistence.dto.VideoQueryResult;
+import video.query.VideoQueryResult;
 
 public class UserResponse {
 
@@ -52,6 +49,7 @@ public class UserResponse {
         String name,
         String imgUrl
     ) {
+
         public static Badge from(UserInfo.Badge badge) {
             return new Badge(
                 badge.id(),
@@ -65,6 +63,7 @@ public class UserResponse {
         String name,
         String imgUrl
     ) {
+
     }
 
     public record Review(

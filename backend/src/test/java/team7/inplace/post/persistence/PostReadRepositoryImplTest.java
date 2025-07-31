@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
+import post.query.PostReadRepository;
 import team7.inplace.container.AbstractMySQLContainerTest;
 import team7.inplace.global.converter.JsonNodeConverter;
 

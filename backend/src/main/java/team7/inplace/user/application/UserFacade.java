@@ -1,25 +1,23 @@
 package team7.inplace.user.application;
 
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import place.query.PlaceQueryResult;
+import review.query.ReviewQueryResult;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.review.application.ReviewService;
-import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.token.application.OauthTokenService;
 import team7.inplace.user.application.dto.UserInfo;
 import team7.inplace.user.application.dto.UserInfo.Detail;
-import team7.inplace.user.application.dto.UserInfo.Simple;
 import team7.inplace.video.application.VideoService;
-
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Facade
 @RequiredArgsConstructor
@@ -66,7 +64,7 @@ public class UserFacade {
             );
 
         return details
-                .map((detail) -> UserInfo.Review.from(detail, videoUrls.get(detail.placeId())));
+            .map((detail) -> UserInfo.Review.from(detail, videoUrls.get(detail.placeId())));
     }
 
     public void updateNickname(String nickname) {

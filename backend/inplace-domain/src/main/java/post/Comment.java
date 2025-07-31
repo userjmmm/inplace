@@ -1,13 +1,13 @@
 package post;
 
 import base.BaseEntity;
+import exception.InplaceException;
+import exception.code.PostErrorCode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.PostErrorCode;
 
 @Getter
 @Entity
