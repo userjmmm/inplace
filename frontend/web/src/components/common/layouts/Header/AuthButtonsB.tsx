@@ -24,6 +24,8 @@ export default function AuthButtons() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleClickProfile = () => {
     setIsOpen(!isOpen);
   };
@@ -32,7 +34,12 @@ export default function AuthButtons() {
     setIsOpen(false);
   };
 
-  useClickOutside([dropdownRef], () => setIsOpen(false));
+  // 모달이 열려 있을 때는 닫지 않도록 조건 추가
+  useClickOutside([dropdownRef], () => {
+    if (!isModalOpen) {
+      setIsOpen(false);
+    }
+  });
 
   const handleLoginIconClick = async () => {
     try {
@@ -78,11 +85,18 @@ export default function AuthButtons() {
               </>
             ) : (
               <>
-                <LoginModal currentPath={location.pathname}>
+                <LoginModal
+                  currentPath={location.pathname}
+                  onClose={() => {
+                    setIsModalOpen(false);
+                    setIsOpen(false);
+                  }}
+                >
                   {(openModal: () => void) => (
                     <DropdownItem
                       onClick={async () => {
-                        await handleLoginIconClick(); // 권한 요청 후 모달 열기
+                        await handleLoginIconClick();
+                        setIsModalOpen(true);
                         openModal();
                       }}
                     >

@@ -26,6 +26,9 @@ importers:
 
   mobile:
     dependencies:
+      '@babel/runtime':
+        specifier: ^7.28.2
+        version: 7.28.2
       '@inplace-frontend-monorepo/shared':
         specifier: workspace:*
         version: link:../shared
@@ -987,6 +990,10 @@ packages:
 
   '@babel/runtime@7.27.6':
     resolution: {integrity: sha512-vbavdySgbTTrmFE+EsiqUTzlOr5bzlnJtUv9PynGCAKvfQqjIXbvFdumPM/GxMDfyuGMJaJAU6TO4zc1Jf1i8Q==}
+    engines: {node: '>=6.9.0'}
+
+  '@babel/runtime@7.28.2':
+    resolution: {integrity: sha512-KHp2IflsnGywDjBWDkR9iEqiWSpc8GIi0lgTT3mOElT0PP1tG26P4tmFI2YvAdzgq9RGyoHZQEIEdZy6Ec5xCA==}
     engines: {node: '>=6.9.0'}
 
   '@babel/template@7.27.2':
@@ -6572,12 +6579,12 @@ packages:
   web-encoding@1.1.5:
     resolution: {integrity: sha512-HYLeVCdJ0+lBYV2FvNZmv3HJ2Nt0QYXqZojk3d9FJOLkwnuhzM9tmamh8d7HPM8QqjKH8DeHkFTx+CFlWpZZDA==}
 
-  web-vitals@4.2.4:
-    resolution: {integrity: sha512-r4DIlprAGwJ7YM11VZp4R884m0Vmgr6EAKe3P+kO0PPj3Unqyvv59rczf6UiGcb9Z8QxZVcqKNwv/g0WNdWwsw==}
-
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
+
+  web-vitals@4.2.4:
+    resolution: {integrity: sha512-r4DIlprAGwJ7YM11VZp4R884m0Vmgr6EAKe3P+kO0PPj3Unqyvv59rczf6UiGcb9Z8QxZVcqKNwv/g0WNdWwsw==}
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -7704,6 +7711,8 @@ snapshots:
 
   '@babel/runtime@7.27.6': {}
 
+  '@babel/runtime@7.28.2': {}
+
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -7986,7 +7995,7 @@ snapshots:
   '@expo/cli@0.22.26(graphql@16.11.0)':
     dependencies:
       '@0no-co/graphql.web': 1.1.2(graphql@16.11.0)
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.2
       '@expo/code-signing-certificates': 0.0.5
       '@expo/config': 10.0.11
       '@expo/config-plugins': 9.0.17
@@ -11280,7 +11289,7 @@ snapshots:
 
   expo@52.0.47(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(graphql@16.11.0)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.0)(@babel/preset-env@7.28.0(@babel/core@7.28.0))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.2
       '@expo/cli': 0.22.26(graphql@16.11.0)
       '@expo/config': 10.0.11
       '@expo/config-plugins': 9.0.17
@@ -12880,12 +12889,12 @@ snapshots:
 
   metro-runtime@0.81.5:
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.2
       flow-enums-runtime: 0.0.6
 
   metro-runtime@0.82.5:
     dependencies:
-      '@babel/runtime': 7.27.6
+      '@babel/runtime': 7.28.2
       flow-enums-runtime: 0.0.6
 
   metro-source-map@0.81.5:
@@ -14804,9 +14813,9 @@ snapshots:
     optionalDependencies:
       '@zxing/text-encoding': 0.9.0
 
-  web-vitals@4.2.4: {}
-  
   web-streams-polyfill@3.3.3: {}
+
+  web-vitals@4.2.4: {}
 
   webidl-conversions@3.0.1: {}
 
