@@ -1,4 +1,4 @@
-package team7.inplace.place.client;
+package place;
 
 import java.time.LocalDateTime;
 import java.util.List;

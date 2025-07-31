@@ -9,19 +9,17 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import place.GooglePlaceClient;
+import place.GooglePlaceClientResponse;
+import place.GooglePlaceClientResponse.Place;
 import team7.inplace.global.annotation.Client;
 import team7.inplace.global.properties.GoogleApiProperties;
-import team7.inplace.place.client.GooglePlaceClientResponse.Place;
 
 @Slf4j
 @Client("Google Place Client")
 @RequiredArgsConstructor
-public class GooglePlaceClient {
+public class RestTemplateGooglePlaceClient implements GooglePlaceClient {
 
-    private final String FIELD_HEADER = "X-Goog-FieldMask";
-    private final String API_KEY_HEADER = "X-Goog-Api-Key";
-    private final String PLACE_DETAIL_URL = "https://places.googleapis.com/v1/places/%s?languageCode=ko";
-    private final String FIELD = "id,rating,reservable,regularOpeningHours,reviews,googleMapsUri,accessibilityOptions,parkingOptions,paymentOptions";
     private final RestTemplate restTemplate;
     private final GoogleApiProperties googleApiProperties;
 

@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import place.GooglePlaceClientResponse;
+import place.GooglePlaceClientResponse.AccessibilityOptions;
+import place.GooglePlaceClientResponse.ParkingOptions;
+import place.GooglePlaceClientResponse.PaymentOptions;
+import place.GooglePlaceClientResponse.RegularOpeningHours;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.client.GooglePlaceClientResponse;
-import team7.inplace.place.client.GooglePlaceClientResponse.AccessibilityOptions;
-import team7.inplace.place.client.GooglePlaceClientResponse.ParkingOptions;
-import team7.inplace.place.client.GooglePlaceClientResponse.PaymentOptions;
-import team7.inplace.place.client.GooglePlaceClientResponse.RegularOpeningHours;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
@@ -185,6 +185,7 @@ public class PlacesResponse {
         String address2,
         String address3
     ) {
+
     }
 
     @JsonInclude(Include.NON_NULL)
@@ -275,6 +276,7 @@ public class PlacesResponse {
         String videoUrl,
         PlacesResponse.PlaceDetail place
     ) {
+
         public static SurroundVideo from(VideoQueryResult.DetailedVideo videoInfo) {
             var place = new PlacesResponse.PlaceDetail(
                 videoInfo.placeId(),
@@ -299,6 +301,7 @@ public class PlacesResponse {
         String placeName,
         PlacesResponse.Address address
     ) {
+
     }
 
 
@@ -419,6 +422,7 @@ public class PlacesResponse {
         String engName,
         Long parentId
     ) {
+
         public static AdminCategory of(PlaceInfo.Category category) {
             return new AdminCategory(
                 category.id(),

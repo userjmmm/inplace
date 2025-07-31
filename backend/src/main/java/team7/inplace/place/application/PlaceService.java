@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import place.GooglePlaceClientResponse;
 import place.LikedPlace;
 import place.Place;
 import place.PlaceVideo;
@@ -27,8 +28,7 @@ import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.application.dto.PlaceInfo.Category;
-import team7.inplace.place.client.GooglePlaceClient;
-import team7.inplace.place.client.GooglePlaceClientResponse;
+import team7.inplace.place.client.RestTemplateGooglePlaceClient;
 import team7.inplace.place.persistence.CategoryRepository;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
@@ -49,7 +49,7 @@ public class PlaceService {
     private final PlaceVideoJpaRepository placeVideoJpaRepository;
     private final LikedPlaceRepository likedPlaceRepository;
     private final VideoReadRepository videoReadRepository;
-    private final GooglePlaceClient googlePlaceClient;
+    private final RestTemplateGooglePlaceClient restTemplateGooglePlaceClient;
 
     @Transactional
     public void createPlace(Upsert placeCommand) {
@@ -175,7 +175,7 @@ public class PlaceService {
     }
 
     public GooglePlaceClientResponse.Place getGooglePlaceInfo(String googlePlaceId) {
-        return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
+        return restTemplateGooglePlaceClient.requestForPlaceDetail(googlePlaceId);
     }
 
     public List<PlaceInfo.Category> getCategories() {

@@ -1,7 +1,7 @@
 package team7.inplace.place.application.dto;
 
 import java.util.List;
-import team7.inplace.place.client.GooglePlaceClientResponse;
+import place.GooglePlaceClientResponse;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
 import team7.inplace.review.persistence.dto.ReviewQueryResult;
