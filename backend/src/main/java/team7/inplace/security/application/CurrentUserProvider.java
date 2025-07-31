@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.security.util.AuthorizationUtil;
-import team7.inplace.user.persistence.UserJpaRepository;
 import user.User;
+import user.jpa.UserJpaRepository;
 
 @Component
 @RequiredArgsConstructor

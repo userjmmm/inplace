@@ -6,11 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import review.Review;
+import review.ReviewJPARepository;
 import review.query.ReviewQueryResult;
 import review.query.ReviewReadRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.ReviewErrorCode;
-import team7.inplace.review.persistence.ReviewJPARepository;
 import team7.inplace.security.util.AuthorizationUtil;
 
 @RequiredArgsConstructor

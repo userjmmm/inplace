@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import user.UserReadQueryDslRepository;
 import user.query.UserQueryResult.Badge;
 import user.query.UserQueryResult.Simple;
 import user.query.UserReadRepository;
@@ -32,7 +33,7 @@ class UserReadRepositoryImplTest {
     @BeforeEach
     void setUp() {
         JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
-        userReadRepository = new UserReadRepositoryImpl(jpaQueryFactory);
+        userReadRepository = new UserReadQueryDslRepository(jpaQueryFactory);
     }
 
     @Test

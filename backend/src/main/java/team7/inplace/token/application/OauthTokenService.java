@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import security.OauthToken;
+import security.OauthTokenRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.security.util.TokenEncryptionUtil;
 import team7.inplace.token.application.command.OauthTokenCommand;
 import team7.inplace.token.client.KakaoOauthClient;
-import team7.inplace.token.persistence.OauthTokenRepository;
 import team7.inplace.user.domain.User;
-import team7.inplace.user.persistence.UserJpaRepository;
+import user.jpa.UserJpaRepository;
 
 @Service
 @RequiredArgsConstructor

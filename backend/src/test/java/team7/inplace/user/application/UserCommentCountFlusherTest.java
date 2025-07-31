@@ -20,16 +20,18 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import team7.inplace.user.application.UserCommentCountFlusherTest.TestCacheConfig;
-import team7.inplace.user.persistence.UserJpaRepository;
-import team7.inplace.user.persistence.UserWriteRepositoryImpl;
 import team7.inplace.user.util.UserCommentCountFlusher;
+import user.UserWriteQueryDslRepository;
+import user.jpa.UserJpaRepository;
 
 @DataJpaTest
-@Import({TestCacheConfig.class, UserCommentCountFlusher.class, UserWriteRepositoryImpl.class, ObjectMapper.class})
+@Import({TestCacheConfig.class, UserCommentCountFlusher.class, UserWriteQueryDslRepository.class,
+    ObjectMapper.class})
 @EnableCaching
 @ActiveProfiles("test")
 @Sql("/sql/test-user.sql")
 class UserCommentCountFlusherTest {
+
     @Autowired
     CacheManager cacheManager;
 

@@ -1,13 +1,13 @@
 package team7.inplace.alarm.application;
 
 import alarm.Alarm;
+import alarm.AlarmRepository;
 import alarm.AlarmType;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.alarm.application.dto.AlarmInfo;
-import team7.inplace.alarm.persistent.AlarmRepository;
 
 @Service
 @RequiredArgsConstructor

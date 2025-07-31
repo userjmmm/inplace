@@ -1,5 +1,6 @@
 package team7.inplace.admin.crawling.application;
 
+import influencer.jpa.InfluencerRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.admin.crawling.application.dto.CrawlingInfo;
 import team7.inplace.admin.crawling.application.dto.CrawlingInfo.ViewInfo;
 import team7.inplace.admin.crawling.client.YoutubeClient;
-import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.video.persistence.VideoRepository;
 
 @Slf4j

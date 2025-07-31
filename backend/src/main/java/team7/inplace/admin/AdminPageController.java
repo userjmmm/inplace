@@ -1,5 +1,6 @@
 package team7.inplace.admin;
 
+import influencer.jpa.InfluencerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,18 +14,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import place.Category;
+import post.jpa.CommentJpaRepository;
+import post.jpa.PostJpaRepository;
 import team7.inplace.admin.banner.persistence.BannerRepository;
 import team7.inplace.admin.dto.CategoryForm;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.CategoryErrorCode;
 import team7.inplace.global.properties.GoogleApiProperties;
 import team7.inplace.global.properties.KakaoApiProperties;
-import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.place.persistence.CategoryRepository;
 import team7.inplace.post.application.PostService;
-import team7.inplace.post.persistence.CommentJpaRepository;
-import team7.inplace.post.persistence.PostJpaRepository;
 import team7.inplace.video.application.VideoService;
 import team7.inplace.video.persistence.VideoRepository;
 import team7.inplace.video.presentation.dto.VideoResponse;

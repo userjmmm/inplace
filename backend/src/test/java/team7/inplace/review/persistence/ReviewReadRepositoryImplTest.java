@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import review.ReviewReadRepositoryImpl;
 import review.query.ReviewQueryResult;
 import review.query.ReviewReadRepository;
 

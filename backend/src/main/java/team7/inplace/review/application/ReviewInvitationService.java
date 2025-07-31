@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import place.query.PlaceReadRepository;
 import review.ReviewInvitation;
+import review.ReviewInvitationRepository;
+import review.ReviewJPARepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.ReviewErrorCode;
 import team7.inplace.review.application.dto.ReviewCommand;
 import team7.inplace.review.application.dto.ReviewInfo;
-import team7.inplace.review.persistence.ReviewInvitationRepository;
-import team7.inplace.review.persistence.ReviewJPARepository;
-import team7.inplace.user.persistence.UserJpaRepository;
+import user.jpa.UserJpaRepository;
 import video.query.VideoReadRepository;
 
 @Service

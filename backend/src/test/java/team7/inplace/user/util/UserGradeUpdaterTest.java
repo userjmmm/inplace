@@ -13,12 +13,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import team7.inplace.user.domain.User;
-import team7.inplace.user.persistence.UserJpaRepository;
-import team7.inplace.user.persistence.UserWriteRepositoryImpl;
+import user.UserWriteQueryDslRepository;
+import user.jpa.UserJpaRepository;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@Import({ObjectMapper.class, UserGradeUpdater.class, UserWriteRepositoryImpl.class})
+@Import({ObjectMapper.class, UserGradeUpdater.class, UserWriteQueryDslRepository.class})
 @Sql("/sql/test-user.sql")
 class UserGradeUpdaterTest {
 

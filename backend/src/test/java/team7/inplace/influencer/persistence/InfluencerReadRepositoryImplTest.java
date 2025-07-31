@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import influencer.InfluencerReadRepositoryImpl;
 import influencer.query.InfluencerQueryResult;
 import influencer.query.InfluencerReadRepository;
 import java.util.List;

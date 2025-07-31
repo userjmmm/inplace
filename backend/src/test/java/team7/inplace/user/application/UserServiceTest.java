@@ -20,13 +20,13 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import team7.inplace.post.persistence.PostJpaRepository;
+import post.jpa.PostJpaRepository;
 import team7.inplace.user.domain.Role;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.domain.UserType;
-import team7.inplace.user.persistence.UserBadgeJpaRepository;
-import team7.inplace.user.persistence.UserJpaRepository;
-import team7.inplace.user.persistence.UserTierJpaRepository;
+import user.jpa.UserBadgeJpaRepository;
+import user.jpa.UserJpaRepository;
+import user.jpa.UserTierJpaRepository;
 import user.query.UserReadRepository;
 
 @SpringJUnitConfig(classes = {

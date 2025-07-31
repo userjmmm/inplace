@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import video.QuerydslVideoRepository;
+import video.VideoReadQueryDslRepository;
 import video.query.VideoQueryParam;
 import video.query.VideoQueryResult;
 import video.query.VideoReadRepository;
@@ -41,7 +41,7 @@ public class VideoReadRepositoryTest {
     @BeforeEach
     void setUp() {
         JPAQueryFactory queryFactory = new JPAQueryFactory(testEntityManager.getEntityManager());
-        this.videoReadRepository = new QuerydslVideoRepository(queryFactory);
+        this.videoReadRepository = new VideoReadQueryDslRepository(queryFactory);
     }
 
     @Test

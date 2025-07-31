@@ -10,6 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import post.LikedComment;
 import post.LikedPost;
+import post.jpa.CommentJpaRepository;
+import post.jpa.LikedCommentJpaRepository;
+import post.jpa.LikedPostJpaRepository;
+import post.jpa.PostJpaRepository;
 import post.query.CommentQueryResult.DetailedComment;
 import post.query.CommentReadRepository;
 import post.query.PostQueryResult.DetailedPost;
@@ -24,10 +28,6 @@ import team7.inplace.post.application.dto.PostCommand.UpdateComment;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
 import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.post.application.dto.PostInfo.PostImages;
-import team7.inplace.post.persistence.CommentJpaRepository;
-import team7.inplace.post.persistence.LikedCommentJpaRepository;
-import team7.inplace.post.persistence.LikedPostJpaRepository;
-import team7.inplace.post.persistence.PostJpaRepository;
 
 @Service
 @Slf4j

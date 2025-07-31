@@ -5,8 +5,10 @@ import static java.util.stream.Collectors.toMap;
 import exception.InplaceException;
 import exception.code.InfluencerErrorCode;
 import influencer.Influencer;
+import influencer.InfluencerReadRepositoryImpl;
 import influencer.LikedInfluencer;
 import influencer.LikedInfluencerRepository;
+import influencer.jpa.InfluencerRepository;
 import influencer.query.InfluencerQueryResult;
 import influencer.query.InfluencerQueryResult.Detail;
 import java.util.List;
@@ -21,8 +23,6 @@ import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.application.dto.InfluencerNameInfo;
 import team7.inplace.influencer.application.dto.LikedInfluencerCommand;
-import team7.inplace.influencer.persistence.InfluencerReadRepositoryImpl;
-import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.security.util.AuthorizationUtil;
 
 @RequiredArgsConstructor

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import influencer.Influencer;
 import influencer.LikedInfluencer;
 import influencer.LikedInfluencerRepository;
+import influencer.jpa.InfluencerRepository;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,6 @@ import org.springframework.data.domain.Pageable;
 import team7.inplace.global.baseEntity.BaseEntity;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.application.dto.LikedInfluencerCommand;
-import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.security.util.AuthorizationUtil;
 
 @ExtendWith(MockitoExtension.class)

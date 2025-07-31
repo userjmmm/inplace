@@ -10,12 +10,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import search.InfluencerSearchRepository;
+import search.PlaceSearchRepository;
 import search.SearchQueryResult;
+import search.VideoSearchRepository;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
 import team7.inplace.search.application.dto.SearchType;
-import team7.inplace.search.persistence.InfluencerSearchRepository;
-import team7.inplace.search.persistence.PlaceSearchRepository;
-import team7.inplace.search.persistence.VideoSearchRepository;
 import team7.inplace.security.util.AuthorizationUtil;
 import video.query.VideoQueryResult;
 

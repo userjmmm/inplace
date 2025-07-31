@@ -1,5 +1,6 @@
 package team7.inplace.admin.banner.application;
 
+import influencer.jpa.InfluencerRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +12,11 @@ import team7.inplace.admin.banner.persistence.BannerRepository;
 import team7.inplace.admin.banner.persistence.BannerS3Repository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.BannerErrorCode;
-import team7.inplace.influencer.persistence.InfluencerRepository;
 
 @Service
 @RequiredArgsConstructor
 public class BannerService {
+
     private final BannerS3Repository bannerS3Repository;
     private final BannerRepository bannerRepository;
     private final InfluencerRepository influencerRepository;
@@ -36,14 +37,14 @@ public class BannerService {
         var banners = bannerRepository.findActiveBanner(now);
 
         return banners.stream()
-                .sorted((a, b) -> Boolean.compare(b.getIsFixed(), a.getIsFixed()))
-                .map(BannerInfo.Detail::from)
-                .toList();
+            .sorted((a, b) -> Boolean.compare(b.getIsFixed(), a.getIsFixed()))
+            .map(BannerInfo.Detail::from)
+            .toList();
     }
 
     public void deleteBanner(Long id) {
         var banner = bannerRepository.findById(id)
-                .orElseThrow(() -> InplaceException.of(BannerErrorCode.NOT_FOUND));
+            .orElseThrow(() -> InplaceException.of(BannerErrorCode.NOT_FOUND));
         bannerS3Repository.deleteBanner(banner.getImgPath());
         bannerRepository.delete(banner);
     }

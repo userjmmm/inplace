@@ -13,11 +13,11 @@ import team7.inplace.user.application.dto.UserCommand.Create;
 import team7.inplace.user.application.dto.UserCommand.Info;
 import team7.inplace.user.application.dto.UserInfo.Detail;
 import team7.inplace.user.application.dto.UserInfo.Simple;
-import team7.inplace.user.persistence.UserBadgeJpaRepository;
-import team7.inplace.user.persistence.UserJpaRepository;
-import team7.inplace.user.persistence.UserTierJpaRepository;
 import user.User;
 import user.UserBadge;
+import user.jpa.UserBadgeJpaRepository;
+import user.jpa.UserJpaRepository;
+import user.jpa.UserTierJpaRepository;
 import user.query.UserQueryResult;
 import user.query.UserQueryResult.Badge;
 import user.query.UserReadRepository;
@@ -121,6 +121,7 @@ public class UserService {
         user.updatePostCount(user.getPostCount() + delta);
     }
 
+    // TODO: 캐시 적용을 infra에서 처리하도록 관심사 분리
     @CachePut(cacheNames = {"receivedCommentCache"}, key = "#userId")
     public Long addToReceivedCommentByUserId(Long userId, Integer delta) {
         User user = userJpaRepository.findById(userId)
@@ -129,6 +130,7 @@ public class UserService {
         return user.getReceivedCommentCount() + delta;
     }
 
+    // TODO: 캐시 적용을 infra에서 처리하도록 관심사 분리
     @CachePut(cacheNames = {"receivedLikeCache"}, key = "#userId")
     public Long addToReceivedLikeByUserId(Long userId, Integer delta) {
         User user = userJpaRepository.findById(userId)

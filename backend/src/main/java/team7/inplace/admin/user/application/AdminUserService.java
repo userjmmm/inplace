@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.admin.user.application.command.RegisterCommand;
 import team7.inplace.admin.user.application.dto.AdminUserInfo;
-import team7.inplace.admin.user.persistence.AdminUserRepository;
 import user.AdminUser;
+import user.jpa.AdminUserJpaRepository;
 
 @Service
 @RequiredArgsConstructor
 public class AdminUserService {
 
-    private final AdminUserRepository adminUserRepository;
+    private final AdminUserJpaRepository adminUserRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)

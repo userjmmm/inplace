@@ -10,7 +10,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.user.persistence.UserWriteRepository;
+import user.UserWriteRepository;
 
 @Component
 @RequiredArgsConstructor

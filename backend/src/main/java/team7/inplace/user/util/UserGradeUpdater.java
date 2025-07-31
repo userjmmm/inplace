@@ -12,9 +12,9 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.user.application.dto.TierConditions;
 import team7.inplace.user.domain.User;
-import team7.inplace.user.persistence.UserJpaRepository;
-import team7.inplace.user.persistence.UserTierJpaRepository;
-import team7.inplace.user.persistence.UserWriteRepository;
+import user.UserWriteRepository;
+import user.jpa.UserJpaRepository;
+import user.jpa.UserTierJpaRepository;
 
 @Service
 @RequiredArgsConstructor

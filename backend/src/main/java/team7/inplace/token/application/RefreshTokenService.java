@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import security.RefreshToken;
+import security.RefreshTokenRedisRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.security.util.JwtUtil;
-import team7.inplace.token.persistence.RefreshTokenRepository;
 
 @Service
 @Slf4j
@@ -15,7 +15,7 @@ import team7.inplace.token.persistence.RefreshTokenRepository;
 public class RefreshTokenService {
 
     private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRedisRepository refreshTokenRepository;
 
     public void checkInvalidToken(String refreshToken) throws InplaceException {
         String username = jwtUtil.getUsername(refreshToken);
