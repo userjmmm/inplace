@@ -355,6 +355,16 @@ export type SearchUserComplete = {
   imageUrl: string;
 };
 
+export type AlarmData = {
+  alaemId: number;
+  postId: number;
+  commentId: number;
+  content: string;
+  checked: boolean;
+  type: string;
+  createdAt: string;
+};
+
 export type RequestReport = {
   id: number;
   reason: string;
