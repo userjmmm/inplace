@@ -42,6 +42,7 @@ export default function CommentItem({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(item.content);
+  const [reportStatus, setReportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { mutate: deleteComment } = useDeleteComment();
@@ -84,7 +85,7 @@ export default function CommentItem({
       {
         onSuccess: () => {
           alert('삭제되었습니다.');
-          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage, 10, postId] });
+          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage - 1, 10, postId] });
           queryClient.invalidateQueries({ queryKey: ['postData', postId] }); // 댓글 건수 갱신
         },
         onError: () => {
@@ -115,7 +116,7 @@ export default function CommentItem({
       { postId, commentId: item.commentId.toString(), comment: editValue },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage, 10, postId] });
+          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage - 1, 10, postId] });
           setIsEditing(false);
         },
         onError: () => {
@@ -125,17 +126,34 @@ export default function CommentItem({
     );
   };
 
-  const handleReportSubmit = (type: string, content: string) => {
+  const handleReportSubmit = async (type: string, content: string) => {
     const reason = content ? `${type} : ${content}` : type;
-    reportComment(
-      { id: Number(item.commentId), reason },
-      {
-        onError: () => {
-          alert('댓글 신고에 실패했어요. 다시 시도해주세요!');
-        },
-      },
-    );
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        reportComment(
+          { id: Number(item.commentId), reason },
+          {
+            onSuccess: () => {
+              setReportStatus('success');
+              resolve();
+            },
+            onError: (err) => {
+              setReportStatus('error');
+              reject(err);
+            },
+          },
+        );
+      });
+    } catch (e) {
+      console.error('신고 실패');
+    }
   };
+  const handleReportClose = () => {
+    setIsReportModalOpen(false);
+    setReportStatus('idle');
+  };
+
   const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
@@ -146,11 +164,11 @@ export default function CommentItem({
       }
       const newLikeStatus = !isLike;
       postLike(
-        { commentId: Number(item.commentId), likes: newLikeStatus },
+        { postId, commentId: Number(item.commentId), likes: newLikeStatus },
         {
           onSuccess: () => {
             setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['commentList', currentPage, 10, postId] });
+            queryClient.invalidateQueries({ queryKey: ['commentList', currentPage - 1, 10, postId] });
           },
           onError: () => {
             alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
@@ -254,7 +272,9 @@ export default function CommentItem({
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
-      {isReportModalOpen && <ReportModal onClose={() => setIsReportModalOpen(false)} onSubmit={handleReportSubmit} />}
+      {isReportModalOpen && (
+        <ReportModal onClose={handleReportClose} onSubmit={handleReportSubmit} status={reportStatus} />
+      )}
     </Wrapper>
   );
 }
@@ -326,6 +346,7 @@ const Count = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 4px;
+  cursor: pointer;
   svg {
     color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#bbbbbb' : '#717171')};
   }

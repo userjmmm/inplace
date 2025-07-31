@@ -5,6 +5,8 @@ import { PostingData } from '@/types';
 import { getPostDataPath } from '@/api/hooks/useGetPostData';
 import { postPostPath } from '@/api/hooks/usePostPost';
 import TestImg from '@/assets/images/titletest.png';
+import { postReportCommentPath } from '@/api/hooks/usePostReportComment';
+import { postReportPostPath } from '@/api/hooks/usePostReportPost';
 
 const postListDummy = [
   {
@@ -20,7 +22,7 @@ const postListDummy = [
     totalLikeCount: 2,
     totalCommentCount: 3,
     createdAt: '25.07.17',
-    photoUrls:
+    imageUrl:
       'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
 
     selfLike: false,
@@ -39,7 +41,7 @@ const postListDummy = [
     totalLikeCount: 20,
     totalCommentCount: 3,
     createdAt: '2025.07.17',
-    photoUrls:
+    imageUrl:
       'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
     isMine: false,
     selfLike: true,
@@ -57,7 +59,7 @@ const postListDummy = [
     totalLikeCount: 20,
     commentCount: 3,
     createdAt: '1분전',
-    photoUrls:
+    imageUrl:
       'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
 
     isMine: false,
@@ -439,7 +441,6 @@ export const postHandlers = [
   }),
   rest.post(`${BASE_URL}${postPostPath()}`, async (req, res, ctx) => {
     const { title, content } = req.body as PostingData;
-    console.log('req.body:', req.body);
     const newPost = {
       postId: 9,
       author: {
@@ -458,6 +459,13 @@ export const postHandlers = [
     };
     postListDummy.push(newPost);
     return res(ctx.status(200), ctx.json(newPost));
+  }),
+
+  rest.post(`${BASE_URL}${postReportCommentPath()}`, async (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json('success.'));
+  }),
+  rest.post(`${BASE_URL}${postReportPostPath()}`, async (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json('success.'));
   }),
 
   rest.put(`${BASE_URL}/posts/1/comments/:commentId`, async (req, res, ctx) => {
