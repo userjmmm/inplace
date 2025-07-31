@@ -304,6 +304,9 @@ export type PostData = {
   selfLike: boolean;
   isMine: boolean;
 };
+export type PostImgData = {
+  imageUrls: UploadedImageObj[];
+};
 export type PostingData = {
   title: string;
   content: string;
@@ -343,7 +346,7 @@ export type RequestPostLike = {
 
 export type UploadedImageObj = {
   imageUrl: string;
-  hash: string;
+  hash?: string;
 };
 export type RequestCommentLike = {
   postId: string;

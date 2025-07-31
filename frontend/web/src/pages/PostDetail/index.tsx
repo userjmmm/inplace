@@ -113,7 +113,6 @@ export default function PostDetailPage() {
   const formData = {
     title: postData.title,
     content: postData.content,
-    imageUrls: postData.imageUrls,
   };
 
   const imageUrls = postData.imageUrls ?? [];
@@ -178,7 +177,7 @@ export default function PostDetailPage() {
           <ImageList>
             {postData.imageUrls.map((imgUrl, index) => (
               <PostImg
-                key={imgUrl.hash}
+                key={imgUrl.imageUrl}
                 src={imgUrl.imageUrl}
                 alt={`게시글 이미지 ${index}`}
                 onClick={() => {
