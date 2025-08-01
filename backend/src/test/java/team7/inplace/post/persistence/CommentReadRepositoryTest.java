@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import post.query.CommentReadRepository;
-import review.CommentReadRepositoryImpl;
+import review.CommentReadQueryDslRepository;
 import team7.inplace.container.AbstractMySQLContainerTest;
 
 @DataJpaTest
@@ -33,7 +33,7 @@ class CommentReadRepositoryTest extends AbstractMySQLContainerTest {
     @BeforeEach
     void setUp() {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager.getEntityManager());
-        commentReadRepository = new CommentReadRepositoryImpl(queryFactory);
+        commentReadRepository = new CommentReadQueryDslRepository(queryFactory);
     }
 
     @Test

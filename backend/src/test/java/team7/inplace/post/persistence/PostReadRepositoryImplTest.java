@@ -18,7 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import post.query.PostReadRepository;
-import review.PostReadRepositoryImpl;
+import review.PostReadQueryDslRepository;
 import team7.inplace.container.AbstractMySQLContainerTest;
 import team7.inplace.global.converter.JsonNodeConverter;
 
@@ -36,7 +36,7 @@ class PostReadRepositoryImplTest extends AbstractMySQLContainerTest {
     @BeforeEach
     void setUp() {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager.getEntityManager());
-        postReadRepository = new PostReadRepositoryImpl(queryFactory);
+        postReadRepository = new PostReadQueryDslRepository(queryFactory);
     }
 
     @Test

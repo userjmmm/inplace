@@ -16,7 +16,7 @@ public class ExecutionTimeAspect {
         return measureExecutionTime(joinPoint);
     }
 
-    @Around("@within(team7.inplace.global.annotation.Facade)")
+    @Around("@within(annotation.Facade)")
     public Object facadeExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         return measureExecutionTime(joinPoint);
     }
@@ -31,7 +31,7 @@ public class ExecutionTimeAspect {
         return measureExecutionTime(joinPoint);
     }
 
-    @Around("@within(team7.inplace.global.annotation.Client)")
+    @Around("@within(annotation.Client)")
     public Object clientExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         return measureExecutionTime(joinPoint);
     }

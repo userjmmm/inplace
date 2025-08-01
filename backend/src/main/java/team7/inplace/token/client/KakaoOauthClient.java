@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.web.client.RestTemplate;
 import security.OauthSecurityClient;
-import team7.inplace.global.annotation.Client;
+import annotation.Client;
 
 @Client
 @RequiredArgsConstructor

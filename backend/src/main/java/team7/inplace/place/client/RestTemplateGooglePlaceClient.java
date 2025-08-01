@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import place.client.GooglePlaceClient;
 import place.client.GooglePlaceClientResponse;
 import place.client.GooglePlaceClientResponse.Place;
-import team7.inplace.global.annotation.Client;
+import annotation.Client;
 import team7.inplace.global.properties.GoogleApiProperties;
 
 @Slf4j
