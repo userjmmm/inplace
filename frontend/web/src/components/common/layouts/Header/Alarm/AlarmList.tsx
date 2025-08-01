@@ -61,6 +61,7 @@ const AlarmTitle = styled.h3`
 const AlarmScrollContainer = styled.div`
   max-height: 320px;
   overflow-y: auto;
+  padding: 0 10px;
 
   &::-webkit-scrollbar {
     width: 6px;
