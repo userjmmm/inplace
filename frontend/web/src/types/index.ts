@@ -356,7 +356,7 @@ export type SearchUserComplete = {
 };
 
 export type AlarmData = {
-  alaemId: number;
+  alarmId: number;
   postId: number;
   commentId: number;
   content: string;

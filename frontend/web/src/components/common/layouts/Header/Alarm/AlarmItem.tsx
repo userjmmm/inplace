@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { AiFillMessage } from 'react-icons/ai';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import useTheme from '@/hooks/useTheme';
 import { Text } from '@/components/common/typography/Text';
 import { AlarmData } from '@/types';
+import { usePostAlarmCheck } from '@/api/hooks/usePostAlarmCheck';
 
 const getIcon = (type: string) => {
   switch (type) {
@@ -27,9 +29,16 @@ const getTitle = (type: string) => {
   }
 };
 
-export default function AlarmItem({ content, checked, type, createdAt }: AlarmData) {
+export default function AlarmItem({ alarmId, content, checked, type, createdAt }: AlarmData) {
+  const { mutate: postAlarmCheck } = usePostAlarmCheck();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
+
+  const [isChecked, setIsChecked] = useState(checked);
+
+  useEffect(() => {
+    setIsChecked(checked);
+  }, [checked]);
 
   const renderIcon = () => {
     const icon = getIcon(type);
@@ -37,11 +46,11 @@ export default function AlarmItem({ content, checked, type, createdAt }: AlarmDa
       return (
         <IconContainer>
           {icon}
-          {!checked && <RedDot />}
+          {!isChecked && <RedDot />}
         </IconContainer>
       );
     }
-    return !checked ? <RedDot /> : null;
+    return !isChecked ? <RedDot /> : null;
   };
 
   const renderTitle = () => {
@@ -53,8 +62,24 @@ export default function AlarmItem({ content, checked, type, createdAt }: AlarmDa
     ) : null;
   };
 
+  const handleAlarmClick = () => {
+    if (!isChecked) {
+      postAlarmCheck(
+        { alarmId },
+        {
+          onSuccess: () => {
+            setIsChecked(true);
+          },
+          onError: () => {
+            alert('알림 읽음 처리에 실패했습니다. 다시 시도해주세요.');
+          },
+        },
+      );
+    }
+  };
+
   return (
-    <AlarmContainer $isDarkMode={isDarkMode}>
+    <AlarmContainer $isDarkMode={isDarkMode} onClick={handleAlarmClick}>
       {renderIcon()}
       <StyledText size="xxs" weight="normal">
         {renderTitle()}&nbsp;&nbsp;{content}{' '}

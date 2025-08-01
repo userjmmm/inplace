@@ -72,6 +72,15 @@ export const alarmHandlers = [
   rest.get(`${BASE_URL}${getAlarmsPath()}`, (_, res, ctx) => {
     return res(ctx.status(200), ctx.json(dummyAlarm));
   }),
+  rest.post(`${BASE_URL}/alarms/:alarmId`, (req, res, ctx) => {
+    const { alarmId } = req.params;
+    return res(
+      ctx.status(200),
+      ctx.json({
+        alarmId,
+      }),
+    );
+  }),
 ];
 
 export default alarmHandlers;

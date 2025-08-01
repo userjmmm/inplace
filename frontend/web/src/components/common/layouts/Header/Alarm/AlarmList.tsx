@@ -22,7 +22,7 @@ export default function AlarmList({ alarms, isVisible }: AlarmListProps) {
 
       <AlarmScrollContainer $isDarkMode={isDarkMode}>
         {alarms.length > 0 ? (
-          alarms.map((alarm) => <AlarmItem key={alarm.alaemId} {...alarm} />)
+          alarms.map((alarm) => <AlarmItem key={alarm.alarmId} {...alarm} />)
         ) : (
           <EmptyMessage $isDarkMode={isDarkMode}>알림이 없습니다.</EmptyMessage>
         )}
