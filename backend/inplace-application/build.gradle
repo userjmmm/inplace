@@ -1,5 +1,20 @@
 dependencies {
-    /*
-     * 각 모듈에 필요한 의존성을 추가합니다.
-     */
+    // 공통 모듈 의존성
+    implementation project(':inplace-common')
+
+    // 인프라 모듈 의존성
+    implementation project(':inplace-infra')
+
+    // 롬복 의존성
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 스프링부트 웹 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa' //TODO
+
+    // Firebase 의존성
+    implementation 'com.google.firebase:firebase-admin:9.1.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 }

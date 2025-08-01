@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import review.Review;
-import review.ReviewJPARepository;
+import review.jpa.ReviewJpaRepository;
 import team7.inplace.global.baseEntity.BaseEntity;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.ReviewErrorCode;
@@ -24,7 +24,7 @@ import team7.inplace.security.util.AuthorizationUtil;
 public class ReviewServiceTest {
 
     @Mock
-    private ReviewJPARepository reviewJPARepository;
+    private ReviewJpaRepository reviewJPARepository;
 
     @InjectMocks
     private ReviewService reviewService;

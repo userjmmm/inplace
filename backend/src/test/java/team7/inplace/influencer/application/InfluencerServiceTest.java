@@ -12,8 +12,8 @@ import static org.mockito.Mockito.verify;
 
 import influencer.Influencer;
 import influencer.LikedInfluencer;
-import influencer.LikedInfluencerRepository;
-import influencer.jpa.InfluencerRepository;
+import influencer.jpa.LikedInfluencerJpaRepository;
+import influencer.jpa.InfluencerJpaRepository;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +38,10 @@ import team7.inplace.security.util.AuthorizationUtil;
 public class InfluencerServiceTest {
 
     @Mock
-    private InfluencerRepository influencerRepository;
+    private InfluencerJpaRepository influencerRepository;
 
     @Mock
-    private LikedInfluencerRepository likedInfluencerRepository;
+    private LikedInfluencerJpaRepository likedInfluencerJpaRepository;
 
     @InjectMocks
     private InfluencerService influencerService;
@@ -66,7 +66,7 @@ public class InfluencerServiceTest {
         idField.set(influencer1, 1L);
         idField.set(influencer2, 2L);
 
-        given(likedInfluencerRepository.findByUserIdAndIsLikedTrue(userId, pageable))
+        given(likedInfluencerJpaRepository.findByUserIdAndIsLikedTrue(userId, pageable))
             .willReturn(likedInfluencerPage);
         given(influencerRepository.findAllById(List.of(1L, 2L)))
             .willReturn(List.of(influencer1, influencer2));
@@ -80,7 +80,7 @@ public class InfluencerServiceTest {
         assertThat(result.getContent().get(0).influencerName()).isEqualTo("influencer1");
         assertThat(result.getContent().get(1).influencerName()).isEqualTo("influencer2");
 
-        verify(likedInfluencerRepository).findByUserIdAndIsLikedTrue(userId, pageable);
+        verify(likedInfluencerJpaRepository).findByUserIdAndIsLikedTrue(userId, pageable);
         verify(influencerRepository).findAllById(List.of(1L, 2L));
     }
 
@@ -95,11 +95,11 @@ public class InfluencerServiceTest {
         var commandSingle = new LikedInfluencerCommand.Single(influencerId, true);
 
         given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
-        given(likedInfluencerRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
+        given(likedInfluencerJpaRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
             .willReturn(Optional.empty());  // 새 객체 생성되도록
 
         final LikedInfluencer[] savedInfluencer = {null};
-        given(likedInfluencerRepository.save(any(LikedInfluencer.class)))
+        given(likedInfluencerJpaRepository.save(any(LikedInfluencer.class)))
             .willAnswer(invocation -> {
                 savedInfluencer[0] = invocation.getArgument(0);
                 return savedInfluencer[0];
@@ -109,7 +109,7 @@ public class InfluencerServiceTest {
         influencerService.likeToInfluencer(commandSingle);
 
         // then
-        verify(likedInfluencerRepository, times(1)).save(
+        verify(likedInfluencerJpaRepository, times(1)).save(
             any(LikedInfluencer.class));  // LikedInfluencer가 저장되었는지 확인
         assertThat(savedInfluencer[0])
             .extracting(LikedInfluencer::getUserId, LikedInfluencer::getInfluencerId,
@@ -130,7 +130,7 @@ public class InfluencerServiceTest {
         var existinglikedInfluencer = new LikedInfluencer(userId, influencerId, true);
 
         given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
-        given(likedInfluencerRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
+        given(likedInfluencerJpaRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
             .willReturn(Optional.of(existinglikedInfluencer));
 
         // when
@@ -138,7 +138,7 @@ public class InfluencerServiceTest {
 
         // then
         assertThat(existinglikedInfluencer.isLiked()).isFalse();
-        verify(likedInfluencerRepository, never()).save(any(LikedInfluencer.class));
+        verify(likedInfluencerJpaRepository, never()).save(any(LikedInfluencer.class));
 
         authorizationUtil.close();
     }
@@ -157,11 +157,11 @@ public class InfluencerServiceTest {
             List.of(commandSingle1, commandSingle2));
 
         given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
-        given(likedInfluencerRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
+        given(likedInfluencerJpaRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
             .willReturn(Optional.empty()); // 새 객체 생성되도록
 
         List<LikedInfluencer> savedInfluencers = new ArrayList<>();
-        given(likedInfluencerRepository.save(any(LikedInfluencer.class)))
+        given(likedInfluencerJpaRepository.save(any(LikedInfluencer.class)))
             .willAnswer(invocation -> {
                 LikedInfluencer saved = invocation.getArgument(0);
                 savedInfluencers.add(saved);
@@ -172,7 +172,7 @@ public class InfluencerServiceTest {
         influencerService.likeToManyInfluencer(commandMultiple);
 
         // then
-        verify(likedInfluencerRepository, times(2)).save(any(LikedInfluencer.class));
+        verify(likedInfluencerJpaRepository, times(2)).save(any(LikedInfluencer.class));
         assertThat(savedInfluencers)
             .hasSize(2)
             .extracting(LikedInfluencer::getUserId, LikedInfluencer::getInfluencerId,

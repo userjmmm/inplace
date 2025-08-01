@@ -17,7 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import review.ReviewReadRepositoryImpl;
+import review.ReviewReadQueryDslRepository;
 import review.query.ReviewQueryResult;
 import review.query.ReviewReadRepository;
 
@@ -35,7 +35,7 @@ public class ReviewReadRepositoryImplTest {
     @BeforeEach
     void setUp() {
         JPAQueryFactory queryFactory = new JPAQueryFactory(testEntityManager.getEntityManager());
-        this.reviewReadRepository = new ReviewReadRepositoryImpl(queryFactory);
+        this.reviewReadRepository = new ReviewReadQueryDslRepository(queryFactory);
     }
 
     @Test

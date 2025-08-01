@@ -1,6 +1,6 @@
 package team7.inplace.admin;
 
-import influencer.jpa.InfluencerRepository;
+import influencer.jpa.InfluencerJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import place.Category;
 import post.jpa.CommentJpaRepository;
 import post.jpa.PostJpaRepository;
-import team7.inplace.admin.banner.persistence.BannerRepository;
+import banner.jpa.BannerJpaRepository;
 import team7.inplace.admin.dto.CategoryForm;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.CategoryErrorCode;
@@ -38,8 +38,8 @@ public class AdminPageController {
     private final KakaoApiProperties kakaoApiProperties;
     private final GoogleApiProperties googleApiProperties;
     private final VideoRepository videoRepository;
-    private final BannerRepository bannerRepository;
-    private final InfluencerRepository influencerRepository;
+    private final BannerJpaRepository bannerJpaRepository;
+    private final InfluencerJpaRepository influencerRepository;
     private final CategoryRepository categoryRepository;
     private final PostJpaRepository postJpaRepository;
     private final CommentJpaRepository commentJpaRepository;
@@ -70,7 +70,7 @@ public class AdminPageController {
 
     @GetMapping("/banner")
     public String getBanners(Model model) {
-        var banners = bannerRepository.findAll();
+        var banners = bannerJpaRepository.findAll();
 
         model.addAttribute("banners", banners);
         return "admin/banner.html";

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import influencer.InfluencerReadRepositoryImpl;
+import influencer.InfluencerReadQueryDslRepository;
 import influencer.query.InfluencerQueryResult;
 import influencer.query.InfluencerReadRepository;
 import java.util.List;
@@ -40,7 +40,7 @@ class InfluencerReadRepositoryImplTest {
     @BeforeEach
     void setUp() {
         JPAQueryFactory queryFactory = new JPAQueryFactory(testEntityManager.getEntityManager());
-        this.influencerReadRepository = new InfluencerReadRepositoryImpl(queryFactory);
+        this.influencerReadRepository = new InfluencerReadQueryDslRepository(queryFactory);
     }
 
     @Test

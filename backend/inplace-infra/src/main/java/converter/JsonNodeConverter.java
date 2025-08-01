@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Converter
 @Component
 @RequiredArgsConstructor
-public class JsonNodeConverter implements AttributeConverter<JsonNode, String> {
+public class JsonNodeConverter implements AttributeConverter<JsonNode, String> { // TODO
 
     private final ObjectMapper objectMapper;
 

@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-import team7.inplace.global.redis.RedisRepository;
+import redis.RedisRepository;
 
 @Repository
 @RequiredArgsConstructor

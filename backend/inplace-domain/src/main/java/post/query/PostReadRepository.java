@@ -2,7 +2,8 @@ package post.query;
 
 import java.util.List;
 import java.util.Optional;
-import team7.inplace.global.cursor.CursorResult;
+
+import base.CursorResult;
 
 public interface PostReadRepository {
 
