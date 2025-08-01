@@ -20,7 +20,7 @@ export default function AlarmList({ alarms, isVisible }: AlarmListProps) {
         <AlarmTitle>알림</AlarmTitle>
       </AlarmHeader>
 
-      <AlarmScrollContainer>
+      <AlarmScrollContainer $isDarkMode={isDarkMode}>
         {alarms.length > 0 ? (
           alarms.map((alarm) => <AlarmItem key={alarm.alaemId} {...alarm} />)
         ) : (
@@ -58,7 +58,7 @@ const AlarmTitle = styled.h3`
   color: inherit;
 `;
 
-const AlarmScrollContainer = styled.div`
+const AlarmScrollContainer = styled.div<{ $isDarkMode: boolean }>`
   max-height: 320px;
   overflow-y: auto;
   padding: 0 10px;
@@ -72,12 +72,8 @@ const AlarmScrollContainer = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: #ccc;
+    background: ${(props) => (props.$isDarkMode ? '#525252' : '#8e8e8e')};
     border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: #999;
   }
 `;
 
