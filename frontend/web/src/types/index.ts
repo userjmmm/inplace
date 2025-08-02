@@ -363,6 +363,7 @@ export type AlarmData = {
   checked: boolean;
   type: string;
   createdAt: string;
+  commentPage?: number;
 };
 
 export type RequestReport = {

@@ -171,7 +171,7 @@ export default function CommentItem({
   }, [isEditing, handleResizeHeight]);
 
   return (
-    <Wrapper>
+    <Wrapper data-comment-id={item.commentId}>
       <CommentTop>
         <UserInfo>
           <ProfileImg>

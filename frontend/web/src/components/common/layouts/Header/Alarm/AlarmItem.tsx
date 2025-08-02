@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { AiFillMessage } from 'react-icons/ai';
 import { RiErrorWarningFill } from 'react-icons/ri';
@@ -29,9 +30,19 @@ const getTitle = (type: string) => {
   }
 };
 
-export default function AlarmItem({ alarmId, content, checked, type, createdAt }: AlarmData) {
+export default function AlarmItem({
+  alarmId,
+  postId,
+  commentId,
+  content,
+  checked,
+  type,
+  createdAt,
+  commentPage,
+}: AlarmData) {
   const { mutate: postAlarmCheck } = usePostAlarmCheck();
   const { theme } = useTheme();
+  const navigate = useNavigate();
   const isDarkMode = theme === 'dark';
 
   const [isChecked, setIsChecked] = useState(checked);
@@ -64,6 +75,9 @@ export default function AlarmItem({ alarmId, content, checked, type, createdAt }
 
   const handleAlarmClick = () => {
     if (!isChecked) {
+      if (type === 'MENTION' && commentPage !== null) {
+        navigate(`/post/${postId}?commentPage=${commentPage}&commentId=${commentId}`);
+      }
       postAlarmCheck(
         { alarmId },
         {

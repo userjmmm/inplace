@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IoIosSend } from 'react-icons/io';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
@@ -25,13 +25,16 @@ import { convertMentionsToEntities, extractMentionQuery } from '@/libs/mention/m
 export default function Comment({ id }: { id: string }) {
   const location = useLocation();
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-
   const [showMentionList, setShowMentionList] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [mentionQuery, setMentionQuery] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const mentionListRef = useRef<HTMLDivElement>(null);
+
+  const searchParams = new URLSearchParams(location.search);
+  const commentPage = searchParams.get('commentPage');
+  const commentId = searchParams.get('commentId');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
@@ -45,6 +48,26 @@ export default function Comment({ id }: { id: string }) {
   const handleResizeHeight = useAutoResizeTextarea();
 
   const mentionableUsers = useMentionableUsers(searchResults);
+
+  useEffect(() => {
+    // 같은 post라도 commentPage가 다를 경우 해당 페이지로 변경
+    const newPage = commentPage ? Number(commentPage) + 1 : 1;
+    setCurrentPage(newPage);
+  }, [commentPage]);
+
+  useEffect(() => {
+    if (commentId && commentList) {
+      const idToScroll = Number(commentId);
+      // 댓글 위치 찾기 위해, 댓글 ID에 해당하는 DOM 요소를 브라우저에서 찾아서 js객체로 가져옴
+      const targetComment = document.querySelector(`[data-comment-id="${idToScroll}"]`) as HTMLElement;
+      if (targetComment) {
+        targetComment.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // 스크롤 이동 후 URL에서 쿼리 파라미터를 제거해서 새로고침 시 이동하지 않도록 처리
+        const newUrl = `${location.pathname}`;
+        window.history.replaceState({}, '', newUrl);
+      }
+    }
+  }, [commentList, commentId, location.pathname]);
 
   const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (!isAuthenticated) {

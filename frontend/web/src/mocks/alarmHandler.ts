@@ -5,12 +5,13 @@ import { getAlarmsPath } from '@/api/hooks/useGetAlarms';
 const dummyAlarm = [
   {
     alarmId: 1,
-    postId: 101,
-    commentId: null,
+    postId: 1,
+    commentId: 12,
     content: '"블루베리 스무디" 게시글에서 정민 님이 언급했습니다.',
     checked: false,
     type: 'MENTION',
     createdAt: '59초 전',
+    commentPage: 1,
   },
   {
     alarmId: 2,
@@ -50,12 +51,13 @@ const dummyAlarm = [
   },
   {
     alarmId: 6,
-    postId: 106,
-    commentId: null,
+    postId: 1,
+    commentId: 6,
     content: '"안녕" 게시글에서 나는 테스트용 알림입니다.',
     checked: false,
-    type: 'REPORT',
+    type: 'MENTION',
     createdAt: '10일 전',
+    commentPage: 0,
   },
   {
     alarmId: 7,
