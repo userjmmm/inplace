@@ -6,6 +6,7 @@ import { getUserPlacePath } from '@/api/hooks/useGetUserPlace';
 import { getUserReviewPath } from '@/api/hooks/useGetUserReview';
 import { postPlaceReviewPath } from '@/api/hooks/usePostPlaceReview';
 import { patchNicknamePath } from '@/api/hooks/usePatchNickname';
+import silver from '@/assets/images/tier_s.webp';
 
 const mockInfluencers = [
   {
@@ -412,8 +413,8 @@ export const myHandlers = [
         nickname: nickName,
         imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
         tier: {
-          name: 'GOLD',
-          imgUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+          name: 'SILVER',
+          imgUrl: silver,
         },
         badges: [
           {
