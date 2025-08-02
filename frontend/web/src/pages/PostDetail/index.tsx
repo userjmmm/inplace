@@ -25,7 +25,7 @@ export default function PostDetailPage() {
   const { id } = useParams() as { id: string };
   const location = useLocation();
   const navigate = useNavigate();
-  const { activeCategory } = location.state;
+  const { activeCategory = '전체 게시글' } = location.state || {};
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
 
