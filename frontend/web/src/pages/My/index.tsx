@@ -125,12 +125,12 @@ const Wrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 60px;
+  gap: 50px;
   padding: 30px 0px 60px;
 
   @media screen and (max-width: 768px) {
     width: 100%;
-    gap: 40px;
+    gap: 30px;
     align-items: center;
   }
 `;
@@ -200,7 +200,7 @@ const UserTier = styled.img`
 const Tap = styled.button<{ $active: boolean }>`
   width: 100%;
   height: 60px;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   color: ${(props) => {
     if (!props.$active) return props.theme.textColor === '#ffffff' ? '#8c8c8c' : '#a8a8a8';
@@ -220,7 +220,7 @@ const Tap = styled.button<{ $active: boolean }>`
 
   @media screen and (max-width: 768px) {
     height: 50px;
-    font-size: 16px;
+    font-size: 14px;
     border-bottom: 2px solid
       ${(props) => {
         if (!props.$active) return props.theme.textColor === '#ffffff' ? '#8c8c8c' : '#a8a8a8';

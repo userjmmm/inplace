@@ -7,6 +7,8 @@ import { getUserReviewPath } from '@/api/hooks/useGetUserReview';
 import { postPlaceReviewPath } from '@/api/hooks/usePostPlaceReview';
 import { patchNicknamePath } from '@/api/hooks/usePatchNickname';
 import silver from '@/assets/images/tier_s.webp';
+import title from '@/assets/images/titletest.png';
+import { getAllBadgePath } from '@/api/hooks/useGetAllBadge';
 
 const mockInfluencers = [
   {
@@ -552,6 +554,55 @@ export const myHandlers = [
         last: page === totalPages - 1,
         empty: paginatedContent.length === 0,
       }),
+    );
+  }),
+  rest.get(`${BASE_URL}${getAllBadgePath()}`, (_, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          id: 1,
+          name: '지금은임영웅시대',
+          imgUrl: title,
+          isOwned: false,
+          isSelected: false,
+        },
+        {
+          id: 2,
+          name: '성시경광팬',
+          imgUrl: title,
+          isOwned: true,
+          isSelected: true,
+        },
+        {
+          id: 3,
+          name: '파워인플러시안룰렛',
+          imgUrl: title,
+          isOwned: false,
+          isSelected: false,
+        },
+        {
+          id: 4,
+          name: '초보자',
+          imgUrl: title,
+          isOwned: false,
+          isSelected: false,
+        },
+        {
+          id: 5,
+          name: '베테랑',
+          imgUrl: title,
+          isOwned: true,
+          isSelected: false,
+        },
+        {
+          id: 6,
+          name: '리뷰왕',
+          imgUrl: title,
+          isOwned: false,
+          isSelected: false,
+        },
+      ]),
     );
   }),
   rest.post(`${BASE_URL}${postPlaceReviewPath('1')}`, async (_, res, ctx) => {

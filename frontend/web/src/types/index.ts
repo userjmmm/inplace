@@ -160,6 +160,14 @@ export type UserInfoData = {
     },
   ];
 };
+export type BadgeData = {
+  id: number;
+  name: string;
+  imgUrl: string;
+  description: string;
+  isOwned: boolean;
+  isSelected: boolean;
+};
 export type UserPlaceData = {
   placeId: number;
   placeName: string;
