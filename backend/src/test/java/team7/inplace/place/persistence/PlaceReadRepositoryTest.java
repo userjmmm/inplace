@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
+import place.PlaceReadRepositoryImpl;
 import place.query.PlaceQueryResult.DetailedPlace;
 import place.query.PlaceQueryResult.Marker;
 import place.query.PlaceReadRepository;

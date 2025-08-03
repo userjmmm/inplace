@@ -21,7 +21,7 @@ import team7.inplace.place.application.dto.PlaceInfo.Simple;
 import team7.inplace.review.application.ReviewService;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.VideoService;
-import team7.inplace.video.presentation.dto.VideoSearchParams;
+import video.dto.VideoSearchParams;
 
 @Slf4j
 @Facade

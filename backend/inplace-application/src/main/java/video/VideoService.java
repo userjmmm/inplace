@@ -19,7 +19,7 @@ import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.CoolVideoRepository;
 import team7.inplace.video.persistence.RecentVideoRepository;
 import team7.inplace.video.persistence.VideoRepository;
-import team7.inplace.video.presentation.dto.VideoSearchParams;
+import video.dto.VideoSearchParams;
 import video.query.VideoQueryParam;
 import video.query.VideoQueryResult;
 import video.query.VideoQueryResult.AdminVideo;
