@@ -14,7 +14,6 @@ import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team7.inplace.global.converter.JsonNodeConverter;
 
 @Getter
 @Embeddable

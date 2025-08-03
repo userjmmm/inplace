@@ -12,15 +12,8 @@ public interface PlaceReadRepository {
     Optional<PlaceQueryResult.SimplePlace> findSimplePlaceById(Long placeId);
 
     Page<PlaceQueryResult.DetailedPlace> findPlacesInMapRangeWithPaging(
-        Double topLeftLongitude,
-        Double topLeftLatitude,
-        Double bottomRightLongitude,
-        Double bottomRightLatitude,
-        Double longitude,
-        Double latitude,
-        List<PlaceQueryParam.Region> regionFilters,
-        List<Long> categoryFilters,
-        List<String> influencerFilters,
+        PlaceQueryParam.Coordinate coordinateParams,
+        PlaceQueryParam.Filter filterParams,
         Pageable pageable,
         Long userId
     );

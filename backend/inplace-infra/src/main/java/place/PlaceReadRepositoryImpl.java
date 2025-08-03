@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import place.query.PlaceQueryParam;
 import place.query.PlaceQueryResult.DetailedPlace;
 import place.query.PlaceQueryResult.Marker;
 import place.query.PlaceQueryResult.MarkerDetail;
@@ -47,11 +48,8 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
 
     @Override
     public Page<DetailedPlace> findPlacesInMapRangeWithPaging(
-        Double topLeftLongitude, Double topLeftLatitude,
-        Double bottomRightLongitude, Double bottomRightLatitude,
-        Double longitude, Double latitude,
-        List<RegionParam> regionFilters, List<Long> categoryFilters,
-        List<String> influencerFilters, Pageable pageable, Long userId
+        PlaceQueryParam.Coordinate coordinateParams, PlaceQueryParam.Filter filterParams,
+        Pageable pageable, Long userId
     ) {
         List<Long> placeIds = getFilteredPlaceIds(
             topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude,

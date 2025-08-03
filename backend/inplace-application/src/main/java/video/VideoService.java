@@ -16,10 +16,10 @@ import team7.inplace.video.application.command.VideoCommand.Create;
 import team7.inplace.video.domain.CoolVideo;
 import team7.inplace.video.domain.RecentVideo;
 import team7.inplace.video.domain.Video;
-import team7.inplace.video.persistence.CoolVideoRepository;
-import team7.inplace.video.persistence.RecentVideoRepository;
-import team7.inplace.video.persistence.VideoRepository;
 import video.dto.VideoSearchParams;
+import video.jpa.CoolVideoJpaRepository;
+import video.jpa.RecentVideoJpaRepository;
+import video.jpa.VideoJpaRepository;
 import video.query.VideoQueryParam;
 import video.query.VideoQueryResult;
 import video.query.VideoQueryResult.AdminVideo;
@@ -32,9 +32,9 @@ import video.query.VideoReadRepository;
 public class VideoService {
 
     private final VideoReadRepository videoReadRepository;
-    private final VideoRepository videoRepository;
-    private final CoolVideoRepository coolVideoRepository;
-    private final RecentVideoRepository recentVideoRepository;
+    private final VideoJpaRepository videoRepository;
+    private final CoolVideoJpaRepository coolVideoRepository;
+    private final RecentVideoJpaRepository recentVideoRepository;
 
     //TODO: Facade에서 호출로 변경해야함.
     @Transactional(readOnly = true)
