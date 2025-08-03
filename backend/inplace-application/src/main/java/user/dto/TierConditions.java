@@ -1,7 +1,7 @@
 package user.dto;
 
 import java.util.List;
-import team7.inplace.user.domain.UserTier;
+import user.Tier;
 
 public class TierConditions {
 
@@ -28,7 +28,7 @@ public class TierConditions {
         return tierConditions.get(calculatedIdx).id();
     }
 
-    public static TierConditions of(List<UserTier> userTiers) {
+    public static TierConditions of(List<Tier> userTiers) {
         return new TierConditions(userTiers
             .stream()
             .map(TierCondition::from)
@@ -46,7 +46,7 @@ public class TierConditions {
             return postCount >= requiredPosts && receivedCommentCount >= requiredComments && receivedLikeCount >= requiredLikes;
         }
 
-        private static TierCondition from(UserTier userTier) {
+        private static TierCondition from(Tier userTier) {
             return new TierCondition(userTier.getId(),
                 userTier.getRequiredPosts(),
                 userTier.getRequiredComments(),
