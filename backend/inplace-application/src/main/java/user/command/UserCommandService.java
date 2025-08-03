@@ -1,29 +1,25 @@
-package user;
+package user.command;
 
 import exception.InplaceException;
 import exception.code.UserErrorCode;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import user.User;
+import user.UserBadge;
 import user.dto.TierConditions;
 import user.dto.UserCommand.Create;
 import user.dto.UserCommand.Info;
-import user.dto.UserInfo.Detail;
-import user.dto.UserInfo.Simple;
 import user.jpa.UserBadgeJpaRepository;
 import user.jpa.UserJpaRepository;
 import user.jpa.UserTierJpaRepository;
-import user.query.UserQueryResult;
-import user.query.UserQueryResult.Badge;
 import user.query.UserReadRepository;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
-
+public class UserCommandService {
     private final UserJpaRepository userJpaRepository;
     private final UserReadRepository userReadRepository;
     private final UserBadgeJpaRepository userBadgeJpaRepository;
@@ -36,31 +32,12 @@ public class UserService {
         return Info.of(user);
     }
 
-    @Transactional(readOnly = true)
-    public Info getUserByUsername(String username) {
-        return Info.of(userJpaRepository.findByUsername(username)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND)));
-    }
-
-    @Transactional
-    public Optional<Info> findUserByUsername(String username) {
-        Optional<User> userOptional = userJpaRepository.findByUsername(username);
-        return userOptional.map(Info::of);
-    }
-
     @Transactional
     public void updateNickname(Long userId, String nickname) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         user.updateNickname(nickname);
-    }
-
-    @Transactional(readOnly = true)
-    public Simple getUserInfo(Long userId) {
-        UserQueryResult.Simple simpleUser = userReadRepository.findUserInfoById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        return Simple.from(simpleUser);
     }
 
     @Transactional()
@@ -78,14 +55,6 @@ public class UserService {
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         user.updateProfileImageUrl(profileImageUrl);
-    }
-
-    @Transactional
-    public Detail getUserDetail(Long userId) {
-        UserQueryResult.Simple simpleUser = userReadRepository.findUserInfoById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        List<Badge> badges = userReadRepository.findAllBadgeByUserId(userId);
-        return Detail.from(simpleUser, badges);
     }
 
     @Transactional
@@ -137,24 +106,11 @@ public class UserService {
         return user.getReceivedLikeCount() + delta;
     }
 
-    @Transactional(readOnly = true)
-    public boolean isExistUserName(String userName) {
-        return userJpaRepository.existsByUsername(userName);
-    }
-
     @Transactional
     public void updateFcmToken(Long userId, String fcmToken) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         user.updateFcmToken(fcmToken);
-    }
-
-    @Transactional(readOnly = true)
-    public String getFcmTokenByUser(Long userId) {
-        User user = userJpaRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-
-        return user.getFcmToken();
     }
 }
