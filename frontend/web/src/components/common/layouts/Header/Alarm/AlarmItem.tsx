@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
 import { AiFillMessage } from 'react-icons/ai';
 import { RiErrorWarningFill } from 'react-icons/ri';
@@ -43,6 +44,7 @@ export default function AlarmItem({
   const { mutate: postAlarmCheck } = usePostAlarmCheck();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const isDarkMode = theme === 'dark';
 
   const [isChecked, setIsChecked] = useState(checked);
@@ -83,6 +85,7 @@ export default function AlarmItem({
         {
           onSuccess: () => {
             setIsChecked(true);
+            queryClient.invalidateQueries({ queryKey: ['alarms'] });
           },
           onError: () => {
             alert('알림 읽음 처리에 실패했습니다. 다시 시도해주세요.');
