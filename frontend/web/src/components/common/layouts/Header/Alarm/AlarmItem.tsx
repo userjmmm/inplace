@@ -4,7 +4,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
 import { AiFillMessage } from 'react-icons/ai';
 import { RiErrorWarningFill } from 'react-icons/ri';
-import useTheme from '@/hooks/useTheme';
 import { Text } from '@/components/common/typography/Text';
 import { AlarmData } from '@/types';
 import { usePostAlarmCheck } from '@/api/hooks/usePostAlarmCheck';
@@ -42,10 +41,8 @@ export default function AlarmItem({
   commentPage,
 }: AlarmData) {
   const { mutate: postAlarmCheck } = usePostAlarmCheck();
-  const { theme } = useTheme();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const isDarkMode = theme === 'dark';
 
   const [isChecked, setIsChecked] = useState(checked);
 
@@ -96,7 +93,7 @@ export default function AlarmItem({
   };
 
   return (
-    <AlarmContainer $isDarkMode={isDarkMode} onClick={handleAlarmClick}>
+    <AlarmContainer onClick={handleAlarmClick}>
       {renderIcon()}
       <StyledText size="xxs" weight="normal">
         {renderTitle()}&nbsp;&nbsp;{content}{' '}
@@ -108,17 +105,17 @@ export default function AlarmItem({
   );
 }
 
-const AlarmContainer = styled.div<{ $isDarkMode: boolean }>`
+const AlarmContainer = styled.div`
   position: relative;
   display: flex;
   align-items: flex-start;
   padding: 12px 10px;
-  background-color: ${(props) => (props.$isDarkMode ? '#1a1a1a' : '#ffffff')};
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1a1a1a' : '#ffffff')};
   cursor: pointer;
   gap: 8px;
 
   &:hover {
-    background-color: ${(props) => (props.$isDarkMode ? '#2a2a2a' : '#f0f2f4')};
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#2a2a2a' : '#f0f2f4')};
   }
 
   &:last-child {
