@@ -34,7 +34,7 @@ export default function AlarmList({ alarms, isVisible }: AlarmListProps) {
 const AlarmListContainer = styled.div<{ $isDarkMode: boolean }>`
   position: absolute;
   top: calc(100% + 6px);
-  right: 0;
+  right: -50px;
   width: 330px;
   max-height: 400px;
   background-color: ${(props) => (props.$isDarkMode ? '#1a1a1a' : '#ffffff')};
