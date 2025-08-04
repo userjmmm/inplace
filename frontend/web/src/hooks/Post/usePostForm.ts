@@ -194,7 +194,8 @@ export default function usePostForm({
           { postId, formData: formDataWithURL },
           {
             onSuccess: () => {
-              navigate(`/detail/${postId}`);
+              navigate(`/post/${postId}`);
+              queryClient.invalidateQueries({ queryKey: ['postData', postId] });
               queryClient.invalidateQueries({ queryKey: ['infinitePostList'] });
             },
             onError: () => alert('게시글 수정을 실패했습니다. 다시 시도해주세요!'),

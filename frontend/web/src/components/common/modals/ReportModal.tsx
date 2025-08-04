@@ -1,10 +1,12 @@
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
+import { IoMdCheckmark } from 'react-icons/io';
 import Button from '../Button';
 import { Text } from '../typography/Text';
 import useClickOutside from '@/hooks/useClickOutside';
 
 interface ReportModalProps {
+  status: 'idle' | 'success' | 'error';
   onClose: () => void;
   onSubmit: (type: string, content: string) => void;
 }
@@ -17,16 +19,60 @@ const REPORT_TYPES = [
   '기타',
 ];
 
-export default function ReportModal({ onClose, onSubmit }: ReportModalProps) {
+export default function ReportModal({ onClose, onSubmit, status }: ReportModalProps) {
   const [selectedType, setSelectedType] = useState('');
   const [content, setContent] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
-
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleReportSubmit = () => {
+    if (!selectedType) {
+      alert('신고 유형을 선택해주세요.');
+      return;
+    }
+    onSubmit(selectedType, content);
+  };
 
   useClickOutside([dropdownRef], () => {
     setShowDropdown(false);
   });
+
+  if (status !== 'idle') {
+    return (
+      <Overlay onClick={onClose}>
+        <Modal onClick={(e) => e.stopPropagation()}>
+          <CompletedContent>
+            <CheckIcon>
+              <IoMdCheckmark size={50} />
+            </CheckIcon>
+            <StyledText size="m" weight="bold" variant="black">
+              {status === 'success' ? `신고가 완료되었습니다` : `오류가 발생했습니다`}
+            </StyledText>
+            <Text size="s" weight="normal" variant="grey">
+              {status === 'success' ? (
+                <>
+                  신고해 주셔서 감사합니다.
+                  <br />
+                  운영팀에서 검토 후 적절한 조치를 취하겠습니다.
+                </>
+              ) : (
+                <>
+                  네트워크 오류가 발생했습니다.
+                  <br />
+                  다시 시도해주세요.
+                </>
+              )}
+            </Text>
+          </CompletedContent>
+          <ModalButtons>
+            <Button size="small" variant="black" onClick={onClose}>
+              닫기
+            </Button>
+          </ModalButtons>
+        </Modal>
+      </Overlay>
+    );
+  }
 
   return (
     <Overlay onClick={onClose}>
@@ -78,18 +124,7 @@ export default function ReportModal({ onClose, onSubmit }: ReportModalProps) {
           <Button size="small" variant="blackOutline" onClick={onClose}>
             취소
           </Button>
-          <Button
-            size="small"
-            variant="black"
-            onClick={() => {
-              if (!selectedType) {
-                alert('신고 유형을 선택해주세요.');
-                return;
-              }
-              onSubmit(selectedType, content);
-              onClose();
-            }}
-          >
+          <Button size="small" variant="black" onClick={handleReportSubmit}>
             제출
           </Button>
         </ModalButtons>
@@ -119,6 +154,7 @@ const Modal = styled.div`
   max-width: 400px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 30px;
 `;
 const StyledText = styled(Text)`
@@ -183,4 +219,26 @@ const ModalButtons = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+`;
+
+const CompletedContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  text-align: center;
+  line-height: 140%;
+`;
+
+const CheckIcon = styled.div`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #4caf50;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: bold;
 `;
