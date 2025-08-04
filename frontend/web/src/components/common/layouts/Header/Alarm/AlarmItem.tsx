@@ -1,9 +1,12 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
 import { AiFillMessage } from 'react-icons/ai';
 import { RiErrorWarningFill } from 'react-icons/ri';
-import useTheme from '@/hooks/useTheme';
 import { Text } from '@/components/common/typography/Text';
 import { AlarmData } from '@/types';
+import { usePostAlarmCheck } from '@/api/hooks/usePostAlarmCheck';
 
 const getIcon = (type: string) => {
   switch (type) {
@@ -27,9 +30,25 @@ const getTitle = (type: string) => {
   }
 };
 
-export default function AlarmItem({ content, checked, type, createdAt }: AlarmData) {
-  const { theme } = useTheme();
-  const isDarkMode = theme === 'dark';
+export default function AlarmItem({
+  alarmId,
+  postId,
+  commentId,
+  content,
+  checked,
+  type,
+  createdAt,
+  commentPage,
+}: AlarmData) {
+  const { mutate: postAlarmCheck } = usePostAlarmCheck();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const [isChecked, setIsChecked] = useState(checked);
+
+  useEffect(() => {
+    setIsChecked(checked);
+  }, [checked]);
 
   const renderIcon = () => {
     const icon = getIcon(type);
@@ -37,11 +56,11 @@ export default function AlarmItem({ content, checked, type, createdAt }: AlarmDa
       return (
         <IconContainer>
           {icon}
-          {!checked && <RedDot />}
+          {!isChecked && <RedDot />}
         </IconContainer>
       );
     }
-    return !checked ? <RedDot /> : null;
+    return !isChecked ? <RedDot /> : null;
   };
 
   const renderTitle = () => {
@@ -53,8 +72,28 @@ export default function AlarmItem({ content, checked, type, createdAt }: AlarmDa
     ) : null;
   };
 
+  const handleAlarmClick = () => {
+    if (!isChecked) {
+      if (type === 'MENTION' && commentPage !== null) {
+        navigate(`/post/${postId}?commentPage=${commentPage}&commentId=${commentId}`);
+      }
+      postAlarmCheck(
+        { alarmId },
+        {
+          onSuccess: () => {
+            setIsChecked(true);
+            queryClient.invalidateQueries({ queryKey: ['alarms'] });
+          },
+          onError: () => {
+            alert('알림 읽음 처리에 실패했습니다. 다시 시도해주세요.');
+          },
+        },
+      );
+    }
+  };
+
   return (
-    <AlarmContainer $isDarkMode={isDarkMode}>
+    <AlarmContainer onClick={handleAlarmClick}>
       {renderIcon()}
       <StyledText size="xxs" weight="normal">
         {renderTitle()}&nbsp;&nbsp;{content}{' '}
@@ -66,17 +105,17 @@ export default function AlarmItem({ content, checked, type, createdAt }: AlarmDa
   );
 }
 
-const AlarmContainer = styled.div<{ $isDarkMode: boolean }>`
+const AlarmContainer = styled.div`
   position: relative;
   display: flex;
   align-items: flex-start;
   padding: 12px 10px;
-  background-color: ${(props) => (props.$isDarkMode ? '#1a1a1a' : '#ffffff')};
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1a1a1a' : '#ffffff')};
   cursor: pointer;
   gap: 8px;
 
   &:hover {
-    background-color: ${(props) => (props.$isDarkMode ? '#2a2a2a' : '#f0f2f4')};
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#2a2a2a' : '#f0f2f4')};
   }
 
   &:last-child {

@@ -85,7 +85,7 @@ export default function CommentItem({
       {
         onSuccess: () => {
           alert('삭제되었습니다.');
-          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage - 1, 10, postId] });
+          queryClient.invalidateQueries({ queryKey: ['commentList', postId, currentPage - 1, 10] });
           queryClient.invalidateQueries({ queryKey: ['postData', postId] }); // 댓글 건수 갱신
         },
         onError: () => {
@@ -116,7 +116,7 @@ export default function CommentItem({
       { postId, commentId: item.commentId.toString(), comment: editValue },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage - 1, 10, postId] });
+          queryClient.invalidateQueries({ queryKey: ['commentList', postId, currentPage - 1, 10] });
           setIsEditing(false);
         },
         onError: () => {
@@ -168,7 +168,7 @@ export default function CommentItem({
         {
           onSuccess: () => {
             setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['commentList', currentPage - 1, 10, postId] });
+            queryClient.invalidateQueries({ queryKey: ['commentList', postId, currentPage - 1, 10] });
           },
           onError: () => {
             alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
@@ -189,7 +189,7 @@ export default function CommentItem({
   }, [isEditing, handleResizeHeight]);
 
   return (
-    <Wrapper>
+    <Wrapper data-comment-id={item.commentId}>
       <CommentTop>
         <UserInfo>
           <ProfileImg>

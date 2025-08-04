@@ -360,13 +360,14 @@ export type SearchUserComplete = {
 };
 
 export type AlarmData = {
-  alaemId: number;
+  alarmId: number;
   postId: number;
   commentId: number;
   content: string;
   checked: boolean;
   type: string;
   createdAt: string;
+  commentPage?: number;
 };
 
 export type RequestReport = {
