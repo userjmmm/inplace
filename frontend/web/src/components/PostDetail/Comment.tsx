@@ -34,7 +34,7 @@ export default function Comment({ id }: { id: string }) {
   const searchParams = new URLSearchParams(location.search);
   const commentPage = searchParams.get('commentPage');
   const commentId = searchParams.get('commentId');
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(commentPage ? Number(commentPage) + 1 : 1);
 
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
