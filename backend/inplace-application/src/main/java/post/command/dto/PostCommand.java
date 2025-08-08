@@ -1,4 +1,4 @@
-package post.dto;
+package post.command.dto;
 
 import java.util.List;
 import post.Comment;

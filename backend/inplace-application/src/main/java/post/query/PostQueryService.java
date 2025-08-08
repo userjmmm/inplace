@@ -3,13 +3,15 @@ package post.query;
 import base.CursorResult;
 import exception.InplaceException;
 import java.util.List;
+
+import exception.code.PostErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import post.dto.PostInfo;
+import post.query.dto.PostResult;
 import post.jpa.CommentJpaRepository;
 import post.jpa.PostJpaRepository;
 import post.query.CommentQueryResult.DetailedComment;
@@ -104,12 +106,12 @@ public class PostQueryService {
         return postJpaRepository.findAuthorIdByPostId(postId);
     }
 
-    public PostInfo.PostImages getPostImageDetails(Long postId, Long userId) {
+    public PostResult.PostImages getPostImageDetails(Long postId, Long userId) {
         var post = postJpaRepository.findById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
 
         post.checkAuthor(userId);
 
-        return PostImages.from(post);
+        return PostResult.PostImages.from(post);
     }
 }

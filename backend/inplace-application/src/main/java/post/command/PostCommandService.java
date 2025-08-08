@@ -1,12 +1,14 @@
 package post.command;
 
+import exception.InplaceException;
+import exception.code.PostErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import post.LikedComment;
 import post.LikedPost;
-import post.dto.PostCommand;
+import post.command.dto.PostCommand;
 import post.jpa.CommentJpaRepository;
 import post.jpa.LikedCommentJpaRepository;
 import post.jpa.LikedPostJpaRepository;
