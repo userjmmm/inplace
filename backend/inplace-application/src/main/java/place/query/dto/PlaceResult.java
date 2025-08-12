@@ -9,7 +9,7 @@ import review.query.ReviewQueryResult;
 import video.query.VideoQueryResult;
 import video.query.VideoQueryResult.SimpleVideo;
 
-public class PlaceQueryInfo {
+public class PlaceResult {
 
     public record Detail(
         PlaceQueryResult.DetailedPlace place,

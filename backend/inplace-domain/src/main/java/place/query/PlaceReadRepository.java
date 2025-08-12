@@ -19,35 +19,30 @@ public interface PlaceReadRepository {
     );
 
     List<PlaceQueryResult.Marker> findPlaceLocationsInMapRange(
-        Double topLeftLongitude,
-        Double topLeftLatitude,
-        Double bottomRightLongitude,
-        Double bottomRightLatitude,
-        List<PlaceQueryParam.Region> regionParams,
-        List<Long> categoryFilters,
-        List<String> influencerFilters
+        PlaceQueryParam.Coordinate coordinateParams,
+        PlaceQueryParam.Filter filterParams
     );
 
     Page<PlaceQueryResult.DetailedPlace> findLikedPlacesByUserIdWithPaging(
-        Long userId, Pageable pageable);
+        Long userId,
+        Pageable pageable
+    );
 
     PlaceQueryResult.MarkerDetail findPlaceMarkerById(Long placeId);
 
     List<PlaceQueryResult.Marker> findPlaceLocationsByName(
         String name,
-        List<PlaceQueryParam.Region> regionParams,
-        List<Long> categoryFilters,
-        List<String> influencerFilters
+        PlaceQueryParam.Filter filterParams
     );
 
     Page<PlaceQueryResult.DetailedPlace> findPlacesByNameWithPaging(
         Long userId,
         String name,
-        List<PlaceQueryParam.Region> regions,
-        List<Long> categories,
-        List<String> influencers,
+        PlaceQueryParam.Filter filterParams,
         Pageable pageable
     );
 
-    List<PlaceQueryResult.DetailedPlace> getDetailedPlacesByVideoId(Long videoId);
+    List<PlaceQueryResult.DetailedPlace> getDetailedPlacesByVideoId(
+        Long videoId
+    );
 }
