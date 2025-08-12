@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import place.query.PlaceQueryParam;
+import place.query.PlaceQueryResult;
 import place.query.PlaceQueryResult.DetailedPlace;
 import place.query.PlaceQueryResult.Marker;
 import place.query.PlaceQueryResult.MarkerDetail;
@@ -21,14 +22,9 @@ import place.query.PlaceQueryResult.SimplePlace;
 import place.query.PlaceReadRepository;
 import team7.inplace.influencer.domain.QInfluencer;
 import team7.inplace.liked.likedPlace.domain.QLikedPlace;
-import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.domain.QCategory;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.domain.QPlaceVideo;
-import team7.inplace.place.persistence.dto.QPlaceQueryResult_DetailedPlace;
-import team7.inplace.place.persistence.dto.QPlaceQueryResult_Marker;
-import team7.inplace.place.persistence.dto.QPlaceQueryResult_MarkerDetail;
-import team7.inplace.place.persistence.dto.QPlaceQueryResult_SimplePlace;
 import team7.inplace.video.domain.QVideo;
 
 @Repository
@@ -48,9 +44,19 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
 
     @Override
     public Page<DetailedPlace> findPlacesInMapRangeWithPaging(
-        PlaceQueryParam.Coordinate coordinateParams, PlaceQueryParam.Filter filterParams,
-        Pageable pageable, Long userId
+        PlaceQueryParam.Coordinate coordinateParams,
+        PlaceQueryParam.Filter filterParams,
+        Pageable pageable,
+        Long userId
     ) {
+        var topLeftLongitude = coordinateParams.topLeftLongitude();
+        var topLeftLatitude = coordinateParams.topLeftLatitude();
+        var bottomRightLongitude = coordinateParams.bottomRightLongitude();
+        var bottomRightLatitude = coordinateParams.bottomRightLatitude();
+        var regionFilters = filterParams.regions();
+        var categoryFilters = filterParams.categories();
+        vaar influencerFilters = filterParams.influencers();
+
         List<Long> placeIds = getFilteredPlaceIds(
             topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude,
             regionFilters, categoryFilters, influencerFilters
@@ -71,16 +77,24 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     @Override
-    public List<Marker> findPlaceLocationsInMapRange(
-        Double topLeftLongitude, Double topLeftLatitude,
-        Double bottomRightLongitude, Double bottomRightLatitude,
-        List<RegionParam> regionParams, List<Long> categories, List<String> influencers
+    public List<PlaceQueryResult.Marker> findPlaceLocationsInMapRange(
+        PlaceQueryParam.Coordinate coordinateParams,
+        PlaceQueryParam.Filter filterParams
     ) {
-        List<Long> ids = getFilteredPlaceIds(
+        var topLeftLongitude = coordinateParams.topLeftLongitude();
+        var topLeftLatitude = coordinateParams.topLeftLatitude();
+        var bottomRightLongitude = coordinateParams.bottomRightLongitude();
+        var bottomRightLatitude = coordinateParams.bottomRightLatitude();
+        var regionParams = filterParams.regions();
+        var categories = filterParams.categories();
+        var influencers = filterParams.influencers();
+
+        var filteredIds = getFilteredPlaceIds(
             topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude,
             regionParams, categories, influencers
         );
-        return buildMarkerQuery().where(QPlace.place.id.in(ids)).fetch();
+
+        return buildMarkerQuery().where(QPlace.place.id.in(filteredIds)).fetch();
     }
 
     @Override
@@ -139,9 +153,12 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
 
     @Override
     public List<Marker> findPlaceLocationsByName(
-        String name, List<RegionParam> regionParams, List<Long> categories,
-        List<String> influencers
+        String name,
+        PlaceQueryParam.Filter filterParams
     ) {
+        var regionParams = filterParams.regions();
+        var categories = filterParams.categories();
+        var influencers = filterParams.influencers();
         List<Long> ids = getFilteredPlaceIdsByName(name, regionParams, categories, influencers);
         return buildMarkerQuery()
             .where(QPlace.place.id.in(ids))
@@ -150,10 +167,15 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
 
     @Override
     public Page<DetailedPlace> findPlacesByNameWithPaging(
-        Long userId, String name,
-        List<RegionParam> regionParams, List<Long> categories,
-        List<String> influencers, Pageable pageable
+        Long userId,
+        String name,
+        PlaceQueryParam.Filter filterParams,
+        Pageable pageable
     ) {
+        var regionParams = filterParams.regions();
+        var categories = filterParams.categories();
+        var influencers = filterParams.influencers();
+
         List<Long> ids = getFilteredPlaceIdsByName(name, regionParams, categories, influencers);
 
         if (ids.isEmpty()) {
@@ -251,7 +273,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     private List<Long> getFilteredPlaceIds(
         Double topLeftLng, Double topLeftLat,
         Double bottomRightLng, Double bottomRightLat,
-        List<RegionParam> regions, List<Long> categories, List<String> influencers
+        List<PlaceQueryParam.Region> regions, List<Long> categories, List<String> influencers
     ) {
         return jpaQueryFactory
             .select(QPlace.place.id)
@@ -273,7 +295,10 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     private List<Long> getFilteredPlaceIdsByName(
-        String name, List<RegionParam> regions, List<Long> categories, List<String> influencers
+        String name,
+        List<PlaceQueryParam.Region> regions,
+        List<Long> categories,
+        List<String> influencers
     ) {
         return jpaQueryFactory
             .select(QPlace.place.id)
@@ -318,13 +343,13 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     private BooleanBuilder buildLocationCondition(
-        List<RegionParam> regions,
+        List<PlaceQueryParam.Region> regions,
         Double topLeftLng, Double topLeftLat,
         Double bottomRightLng, Double bottomRightLat
     ) {
         BooleanBuilder builder = new BooleanBuilder();
         if (regions != null && !regions.isEmpty()) {
-            for (RegionParam region : regions) {
+            for (PlaceQueryParam.Region region : regions) {
                 BooleanExpression city = QPlace.place.address.address1.eq(region.city());
                 BooleanExpression district = region.district() == null
                     ? Expressions.TRUE

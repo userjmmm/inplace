@@ -3,24 +3,14 @@ package place;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import place.command.PlaceCommandService;
+import place.command.dto.PlaceCommand;
 import place.dto.PlaceRequest;
 import place.dto.PlaceRequest.Upsert;
 import place.dto.PlacesResponse;
@@ -31,19 +21,17 @@ import place.dto.PlacesResponse.Marker;
 import place.dto.PlacesResponse.MarkerDetail;
 import place.dto.PlacesResponse.Simple;
 import place.dto.ReviewResponse;
-import place.query.PlaceQueryResult;
-import team7.inplace.place.application.PlaceFacade;
-import team7.inplace.place.application.command.PlaceLikeCommand;
-import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.review.application.ReviewService;
+import place.query.PlaceQueryFacade;
+import review.ReviewService;
 
-@RestController
 @Slf4j
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/places")
 public class PlaceController implements PlaceControllerApiSpec {
 
-    private final PlaceFacade placeFacade;
+    private final PlaceQueryFacade placeQueryFacade;
+    private final PlaceCommandService placeCommandService;
     private final ReviewService reviewService;
 
     @Override
@@ -51,7 +39,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     @PostMapping()
     public ResponseEntity<Void> savePlace(@RequestBody Upsert request) {
         var command = request.toCommand();
-        placeFacade.createPlace(command);
+        placeCommandService.createPlace(command);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -63,7 +51,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        var placeSimpleInfos = placeFacade.getPlacesInMapRange(
+        var placeSimpleInfos = placeQueryFacade.getPlacesInMapRange(
             coordinateParams.toCommand(),
             filterParams.toCommand(),
             pageable
@@ -83,7 +71,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        var placeSimpleInfos = placeFacade.getPlacesByName(placeName, filterParams.toCommand(),
+        var placeSimpleInfos = placeQueryFacade.getPlacesByName(placeName, filterParams.toCommand(),
             pageable);
         var responses = PlacesResponse.Simple.from(placeSimpleInfos.getContent());
         return new ResponseEntity<>(
@@ -98,7 +86,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
         @ModelAttribute PlaceRequest.Filter filterParams
     ) {
-        List<PlaceQueryResult.Marker> placeMarkerInfos = placeFacade.getPlaceLocations(
+        List<PlaceQueryResult.Marker> placeMarkerInfos = placeQueryFacade.getPlaceLocations(
             coordinateParams.toCommand(),
             filterParams.toCommand()
         );
@@ -115,7 +103,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @RequestParam(required = true) String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams
     ) {
-        List<PlaceQueryResult.Marker> placeMarkerInfos = placeFacade.getPlaceLocationsByName(
+        List<PlaceQueryResult.Marker> placeMarkerInfos = placeQueryFacade.getPlaceLocationsByName(
             placeName,
             filterParams.toCommand()
         );
@@ -131,7 +119,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<PlacesResponse.Detail> getPlaceDetail(
         @PathVariable("id") Long placeId
     ) {
-        var placeDetail = placeFacade.getDetailedPlaces(placeId);
+        var placeDetail = placeQueryFacade.getDetailedPlaces(placeId);
 
         var response = PlacesResponse.Detail.from(placeDetail);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -142,7 +130,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<MarkerDetail> getMarkerDetail(
         @PathVariable("id") Long placeId
     ) {
-        PlaceInfo.Marker marker = placeFacade.getMarkerInfo(placeId);
+        PlaceInfo.Marker marker = placeQueryFacade.getMarkerInfo(placeId);
         MarkerDetail markerDetailResponse = MarkerDetail.from(marker);
         return new ResponseEntity<>(markerDetailResponse, HttpStatus.OK);
     }
@@ -150,7 +138,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     @Override
     @GetMapping("/categories")
     public ResponseEntity<Categories> getCategories() {
-        List<PlaceInfo.Category> categories = placeFacade.getCategories();
+        List<PlaceInfo.Category> categories = placeQueryFacade.getCategories();
         var response = Categories.from(categories);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -160,7 +148,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     @PostMapping("/likes")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> likeToPlace(@RequestBody PlaceRequest.Like param) {
-        placeFacade.updateLikedPlace(new PlaceLikeCommand(param.placeId(), param.likes()));
+        placeCommandService.updateLikedPlace(new PlaceCommand.Like(param.placeId(), param.likes()));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -196,7 +184,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<Void> deletePlaceById(
         @PathVariable Long placeId
     ) {
-        placeFacade.deletePlaceById(placeId);
+        placeCommandService.deletePlaceById(placeId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -208,7 +196,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @PathVariable Long placeId,
         @RequestBody Upsert update
     ) {
-        Long updatedPlaceId = placeFacade.updatePlaceInfo(placeId, update.toCommand());
+        Long updatedPlaceId = placeCommandService.updatePlaceInfo(placeId, update.toCommand());
 
         return new ResponseEntity<>(updatedPlaceId, HttpStatus.OK);
     }
@@ -219,7 +207,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<List<AdminCategory>> getSubCategoriesByParentId(
         @PathVariable Long parentId
     ) {
-        List<AdminCategory> subCategories = placeFacade.getSubCategoriesByParentId(parentId)
+        List<AdminCategory> subCategories = placeQueryFacade.getSubCategoriesByParentId(parentId)
             .stream()
             .map(AdminCategory::of)
             .toList();
@@ -233,7 +221,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<Void> deleteCategoryById(
         @PathVariable Long categoryId
     ) {
-        placeFacade.deleteCategoryById(categoryId);
+        placeCommandService.deleteCategoryById(categoryId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

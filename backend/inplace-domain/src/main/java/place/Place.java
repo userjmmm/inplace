@@ -39,12 +39,15 @@ public class Place extends BaseEntity {
         this.kakaoPlaceId = kakaoPlaceId;
     }
 
-//    public void updateInfo(Upsert command) {
-//        this.name = command.placeName();
-//        this.categoryId = command.category();
-//        this.address = Address.of(command.address());
-//        this.coordinate = Coordinate.of(command.x(), command.y());
-//        this.googlePlaceId = command.googlePlaceId();
-//        this.kakaoPlaceId = command.kakaoPlaceId();
-//    }
+    public void update(
+        String name, Long categoryId,
+        String address, String x, String y, String googlePlaceId, Long kakaoPlaceId
+    ) {
+        this.name = name;
+        this.categoryId = categoryId;
+        this.address = Address.of(address);
+        this.coordinate = Coordinate.of(x, y);
+        this.googlePlaceId = googlePlaceId;
+        this.kakaoPlaceId = kakaoPlaceId;
+    }
 }
