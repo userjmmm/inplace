@@ -16,7 +16,6 @@ import place.client.GooglePlaceClientResponse.PaymentOptions;
 import place.client.GooglePlaceClientResponse.RegularOpeningHours;
 import place.query.PlaceQueryResult;
 import review.query.ReviewQueryResult;
-import team7.inplace.place.application.dto.PlaceInfo;
 import video.query.VideoQueryResult;
 
 public class PlacesResponse {

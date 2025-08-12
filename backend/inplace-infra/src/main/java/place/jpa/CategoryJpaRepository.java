@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import place.Category;
 
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
 
     @Query("select c.id from categories c where c.parentId is null")
     List<Long> findParentCategoryIds();
