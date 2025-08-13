@@ -1,8 +1,8 @@
 package user;
 
 import annotation.Facade;
-import influencer.InfluencerService;
-import influencer.dto.InfluencerResult;
+import influencer.query.InfluencerQueryService;
+import influencer.query.dto.InfluencerResult;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import video.VideoService;
 @RequiredArgsConstructor
 public class UserFacade {
 
-    private final InfluencerService influencerService;
+    private final InfluencerQueryService influencerQueryService;
     private final PlaceService placeService;
     private final ReviewService reviewService;
     private final VideoService videoService;
@@ -33,9 +33,9 @@ public class UserFacade {
     private final OauthTokenService oauthTokenService;
 
     //TODO: Return 클래스 변경 필요
-    public Page<InfluencerResult> getMyFavoriteInfluencers(Pageable pageable) {
+    public Page<InfluencerResult.Detail> getMyFavoriteInfluencers(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        return influencerService.getFavoriteInfluencers(userId, pageable);
+        return influencerQueryService.getFavoriteInfluencers(userId, pageable);
     }
 
     //TODO: Return 클래스 변경 필요

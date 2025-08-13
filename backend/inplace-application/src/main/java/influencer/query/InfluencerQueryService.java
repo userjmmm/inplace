@@ -7,7 +7,6 @@ import exception.code.InfluencerErrorCode;
 import influencer.Influencer;
 import influencer.InfluencerReadQueryDslRepository;
 import influencer.LikedInfluencer;
-import influencer.dto.InfluencerResult;
 import influencer.jpa.InfluencerJpaRepository;
 import influencer.jpa.LikedInfluencerJpaRepository;
 import influencer.query.InfluencerQueryResult.Simple;
