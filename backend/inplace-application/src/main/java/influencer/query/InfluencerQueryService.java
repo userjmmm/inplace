@@ -8,10 +8,11 @@ import influencer.Influencer;
 import influencer.InfluencerReadQueryDslRepository;
 import influencer.LikedInfluencer;
 import influencer.dto.InfluencerResult;
-import influencer.dto.InfluencerNameInfo;
 import influencer.jpa.InfluencerJpaRepository;
 import influencer.jpa.LikedInfluencerJpaRepository;
 import influencer.query.InfluencerQueryResult.Simple;
+import influencer.query.dto.InfluencerResult.Detail;
+import influencer.query.dto.InfluencerResult.Name;
 import java.util.List;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -36,16 +37,16 @@ public class InfluencerQueryService {
     }
 
     @Transactional(readOnly = true)
-    public List<InfluencerNameInfo> getAllInfluencerNames() {
+    public List<Name> getAllInfluencerNames() {
         List<String> names = influencerRepository.findAllInfluencerNames();
         return names.stream()
-            .map(InfluencerNameInfo::new)
+            .map(Name::new)
             .toList();
     }
 
     //TODO: 추후 쿼리 한번으로 변경
     @Transactional(readOnly = true)
-    public Page<InfluencerResult> getFavoriteInfluencers(Long userId, Pageable pageable) {
+    public Page<Detail> getFavoriteInfluencers(Long userId, Pageable pageable) {
         Page<LikedInfluencer> influencerPage = likedInfluencerJpaRepository.findByUserIdAndIsLikedTrue(
             userId, pageable);
         var influencerIds = influencerPage.map(LikedInfluencer::getInfluencerId).toList();
@@ -55,7 +56,7 @@ public class InfluencerQueryService {
         var infos = influencerPage.stream()
             .map(likedInfluencer -> {
                 var influencer = influencers.get(likedInfluencer.getInfluencerId());
-                return InfluencerResult.from(influencer, true);
+                return Detail.from(influencer, true);
             })
             .toList();
         return new PageImpl<>(infos, pageable, influencerPage.getTotalElements());
