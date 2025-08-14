@@ -1,11 +1,13 @@
 package influencer;
 
+import influencer.command.InfluencerCommandService;
 import influencer.dto.InfluencerRequest;
 import influencer.dto.InfluencerRequest.Like;
 import influencer.dto.InfluencerRequest.Upsert;
 import influencer.dto.InfluencerResponse;
 import influencer.dto.InfluencerResponse.Detail;
 import influencer.dto.InfluencerResponse.Video;
+import influencer.query.InfluencerQueryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.video.application.VideoService;
 
@@ -32,7 +33,8 @@ import team7.inplace.video.application.VideoService;
 @RequestMapping("/influencers")
 public class InfluencerController implements InfluencerControllerApiSpec {
 
-    private final InfluencerService influencerService;
+    private final InfluencerQueryService influencerQueryService;
+    private final InfluencerCommandService influencerCommandService;
     private final VideoService videoService;
 
     @Override
@@ -40,7 +42,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     public ResponseEntity<Page<InfluencerResponse.Info>> getAllInfluencers(
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        var influencers = influencerService.getAllInfluencers(pageable)
+        var influencers = influencerQueryService.getAllInfluencers(pageable)
             .map(InfluencerResponse.Info::from);
 
         return new ResponseEntity<>(influencers, HttpStatus.OK);
@@ -49,7 +51,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     @Override
     @GetMapping("/names")
     public ResponseEntity<List<InfluencerResponse.Name>> getAllInfluencerNames() {
-        var names = influencerService.getAllInfluencerNames().stream()
+        var names = influencerQueryService.getAllInfluencerNames().stream()
             .map(InfluencerResponse.Name::from)
             .toList();
         return new ResponseEntity<>(names, HttpStatus.OK);
@@ -60,7 +62,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Long> createInfluencer(@RequestBody Upsert request) {
         var command = request.toCommand();
-        Long savedId = influencerService.createInfluencer(command);
+        Long savedId = influencerCommandService.createInfluencer(command);
 
         return new ResponseEntity<>(savedId, HttpStatus.OK);
     }
@@ -73,7 +75,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
         @RequestBody Upsert request
     ) {
         InfluencerCommand influencerCommand = request.toCommand();
-        Long updatedId = influencerService.updateInfluencer(id, influencerCommand);
+        Long updatedId = influencerCommandService.updateInfluencer(id, influencerCommand);
 
         return new ResponseEntity<>(updatedId, HttpStatus.OK);
     }
@@ -81,7 +83,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     @PatchMapping("/{id}/visibility")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Long> updateVisibility(@PathVariable Long id) {
-        Long updatedId = influencerService.updateVisibility(id);
+        Long updatedId = influencerCommandService.updateVisibility(id);
 
         return new ResponseEntity<>(updatedId, HttpStatus.OK);
     }
@@ -90,7 +92,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Long> deleteInfluencer(@PathVariable Long id) {
-        influencerService.deleteInfluencer(id);
+        influencerCommandService.deleteInfluencer(id);
 
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
@@ -100,7 +102,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> addLikeInfluencer(@RequestBody Like request) {
         var command = request.toCommand();
-        influencerService.likeToInfluencer(command);
+        influencerCommandService.likeToInfluencer(command);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -110,7 +112,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> addLikeInfluencers(@RequestBody InfluencerRequest.Likes request) {
         var command = request.toCommand();
-        influencerService.likeToManyInfluencer(command);
+        influencerCommandService.likeToManyInfluencer(command);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -118,7 +120,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<Detail> getInfluencer(@PathVariable Long id) {
-        var influencer = influencerService.getInfluencerDetail(id);
+        var influencer = influencerQueryService.getInfluencerDetail(id);
 
         var response = InfluencerResponse.Detail.from(influencer);
         return new ResponseEntity<>(response, HttpStatus.OK);

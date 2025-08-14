@@ -1,17 +1,21 @@
 package place.query;
 
-
+import exception.InplaceException;
+import exception.code.PlaceErrorCode;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import place.query.PlaceQueryResult.DetailedPlace;
-import place.query.dto.PlaceParam.Coordinate;
-import place.query.dto.PlaceParam.Filter;
-import place.query.dto.PlaceParam.Region;
+import place.dto.PlaceInfo;
+import place.jpa.CategoryJpaRepository;
+import place.jpa.PlaceJpaRepository;
+import place.query.PlaceQueryResult.Marker;
+import place.query.dto.PlaceParam;
+import video.query.VideoReadRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -19,62 +23,133 @@ import place.query.dto.PlaceParam.Region;
 public class PlaceQueryService {
 
     private final PlaceReadRepository placeReadRepository;
+    private final PlaceJpaRepository placeJpaRepository;
 
-    public Page<DetailedPlace> getPlacesInMapRange(
+    private final CategoryJpaRepository categoryRepository;
+
+    // 로직 부
+    private final VideoReadRepository videoReadRepository;
+
+    public PlaceQueryResult.DetailedPlace getPlaceInfo(final Long userId, final Long placeId) {
+        return placeReadRepository.findDetailedPlaceById(userId, placeId)
+            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+    }
+
+    public List<PlaceQueryResult.DetailedPlace> getSimplePlacesByVideoId(Long videoId) {
+        return placeReadRepository.getDetailedPlacesByVideoId(videoId);
+    }
+
+    public Page<PlaceQueryResult.DetailedPlace> getPlacesInMapRange(
         Long userId,
-        PlaceQueryParam.Coordinate coordinate,
-        Filter filterParamsCommand,
+        PlaceParam.Coordinate coordinateParam,
+        PlaceParam.Filter filterParam,
         Pageable pageable
     ) {
 
-        var coordinate = coordinateCommand.toQueryParam();
-        var filterQueryParam = filterParamsCommand.toQueryParam();
+        var coordinateQueryParam = coordinateParam.toQueryParam();
+        var filterQueryParam = filterParam.toQueryParam();
 
         var placeQueryResult = placeReadRepository.findPlacesInMapRangeWithPaging(
-            coordinate.topLeftLongitude(),
-            coordinate.topLeftLatitude(),
-            coordinate.bottomRightLongitude(),
-            coordinate.bottomRightLatitude(),
-            coordinate.longitude(),
-            coordinate.latitude(),
-            regionFilters,
-            categoryFilters,
-            influencerFilters,
+            coordinateQueryParam,
+            filterQueryParam,
             pageable,
             userId
         );
 
-        // 위치와 필터링으로 Place 조회
-        var placesPage = getPlacesByDistance(
-            coordinateCommand, regionFilters, categoryFilters, influencerFilters,
-            pageable, userId);
-        if (placesPage.isEmpty()) {
+        if (placeQueryResult.isEmpty()) {
             return new PageImpl<>(List.of(), pageable, 0);
         }
 
-        return placesPage;
+        return placeQueryResult;
     }
 
-    private Page<PlaceQueryResult.DetailedPlace> getPlacesByDistance(
-        Coordinate placesCoordinateCommand,
-        List<Region> regions,
-        List<Long> categoryFilters,
-        List<String> influencerFilters,
-        Pageable pageable,
-        Long userId
+    public Page<PlaceQueryResult.DetailedPlace> getPlacesByName(
+        Long userId, String name, PlaceParam.Filter filterParam, Pageable pageable
     ) {
-        return placeReadRepository.findPlacesInMapRangeWithPaging(
-            placesCoordinateCommand.topLeftLongitude(),
-            placesCoordinateCommand.topLeftLatitude(),
-            placesCoordinateCommand.bottomRightLongitude(),
-            placesCoordinateCommand.bottomRightLatitude(),
-            placesCoordinateCommand.longitude(),
-            placesCoordinateCommand.latitude(),
-            regions,
-            categoryFilters,
-            influencerFilters,
-            pageable,
-            userId
+        var filterQueryParam = filterParam.toQueryParam();
+
+        return placeReadRepository.findPlacesByNameWithPaging(
+            userId,
+            name,
+            filterQueryParam,
+            pageable
         );
+    }
+
+    public Optional<String> getGooglePlaceId(Long placeId) {
+        return placeJpaRepository.findGooglePlaceIdById(placeId);
+    }
+
+    public List<PlaceInfo.Category> getCategories() {
+        var categories = categoryRepository.findAll();
+        return categories.stream()
+            .map(Category::from)
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> getParentCategoryIds() {
+        return categoryRepository.findParentCategoryIds();
+    }
+
+    /*
+     *   TODO: 한 장소에 비디오가 여러개일 수 있으니 수정 필요 / Command를 Facade에서 만들도록 변경
+     */
+    @Transactional(readOnly = true)
+    public PlaceInfo.Simple getPlaceMessageCommand(Long placeId, Long userId) {
+        var place = placeReadRepository.findDetailedPlaceById(placeId, userId)
+            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+        var videos = videoReadRepository.findSimpleVideosByPlaceId(placeId);
+
+        return PlaceInfo.Simple.of(place, videos);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PlaceQueryResult.DetailedPlace> getLikedPlaceInfo(Long userId, Pageable pageable) {
+
+        return placeReadRepository.findLikedPlacesByUserIdWithPaging(userId, pageable);
+    }
+
+    /*
+     * Marker 관련 조회 매서드
+     */
+    public PlaceQueryResult.MarkerDetail getMarkerInfo(Long placeId) {
+        return placeReadRepository.findPlaceMarkerById(placeId);
+    }
+
+    public List<PlaceQueryResult.Marker> getPlaceLocations(
+        PlaceParam.Coordinate coordinatePrams,
+        PlaceParam.Filter filterParams
+    ) {
+        var coordinateQueryParam = coordinatePrams.toQueryParam();
+        var filterQueryParam = filterParams.toQueryParam();
+
+        return placeReadRepository.findPlaceLocationsInMapRange(
+            coordinateQueryParam,
+            filterQueryParam
+        );
+    }
+
+    public List<Marker> getPlaceLocationsByName(
+        String name,
+        PlaceParam.Filter filterParams
+    ) {
+        var filterQueryParam = filterParams.toQueryParam();
+        return placeReadRepository.findPlaceLocationsByName(
+            name,
+            filterQueryParam
+        );
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<Long> getParentCategoryIds() {
+        return categoryRepository.findParentCategoryIds();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PlaceInfo.Category> getSubCategoriesByParentId(Long parentId) {
+        return categoryRepository.findSubCategoriesByParentId(parentId)
+            .stream().map(PlaceInfo.Category::from).toList();
     }
 }
