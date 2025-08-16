@@ -1,10 +1,10 @@
-package post.dto;
+package post.query.dto;
 
 import java.util.ArrayList;
 import java.util.List;
 import post.Post;
 
-public class PostInfo {
+public class PostResult {
 
     public record PostImages(
         List<PostImage> images
