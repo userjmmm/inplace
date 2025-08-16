@@ -1,6 +1,6 @@
 package post.command;
 
-import alarm.dto.AlarmEvent;
+import alarm.event.dto.AlarmEvent;
 import annotation.Facade;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -105,5 +105,21 @@ public class PostCommandFacade {
         postCommandService.deleteComment(postId, commentId, userId);
         Long authorId = postQueryService.getAuthorIdByPostId(postId);
         userCommandService.addToReceivedCommentByUserId(authorId, -1);
+    }
+
+    public void deletePostSoftly(Long postId) {
+        postCommandService.deletePostSoftly(postId);
+    }
+
+    public void unreportPost(Long postId) {
+        postCommandService.unreportPost(postId);
+    }
+
+    public void deleteCommentSoftly(Long commentId) {
+        postCommandService.deleteCommentSoftly(commentId);
+    }
+
+    public void unreportComment(Long commentId) {
+        postCommandService.unreportComment(commentId);
     }
 }

@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import post.query.CommentQueryResult;
 import post.query.PostQueryResult;
+import post.query.dto.PostResult;
 import team7.inplace.global.cursor.CursorResponse;
 import team7.inplace.post.application.dto.PostInfo;
 import user.dto.UserResponse;
@@ -191,6 +192,44 @@ public class PostResponse {
                 userSuggestion.userId(),
                 userSuggestion.userNickname(),
                 userSuggestion.userImageUrl()
+            );
+        }
+    }
+
+    public record ReportedPost(
+        Long id,
+        Long authorId,
+        String content,
+        Boolean isReported,
+        LocalDateTime deleteAt
+    ) {
+
+        public static ReportedPost from(PostResult.ReportedPost reportedPost) {
+            return new ReportedPost(
+                reportedPost.id(),
+                reportedPost.authorId(),
+                reportedPost.content(),
+                reportedPost.isReported(),
+                reportedPost.deleteAt()
+            );
+        }
+    }
+
+    public record ReportedComment(
+        Long id,
+        Long authorId,
+        String content,
+        Boolean isReported,
+        LocalDateTime deleteAt
+    ) {
+
+        public static ReportedComment from(PostResult.ReportedComment reportedComment) {
+            return new ReportedComment(
+                reportedComment.id(),
+                reportedComment.authorId(),
+                reportedComment.content(),
+                reportedComment.isReported(),
+                reportedComment.deleteAt()
             );
         }
     }

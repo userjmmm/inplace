@@ -5,7 +5,6 @@ import exception.InplaceException;
 import exception.code.PostErrorCode;
 import java.util.List;
 
-import exception.code.PostErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,6 +17,7 @@ import post.jpa.PostJpaRepository;
 import post.query.CommentQueryResult.DetailedComment;
 import post.query.PostQueryResult.DetailedPost;
 import post.query.PostQueryResult.UserSuggestion;
+import post.query.dto.PostResult.ReportedPost;
 import review.CommentReadQueryDslRepository;
 import review.PostReadQueryDslRepository;
 
@@ -114,5 +114,19 @@ public class PostQueryService {
         post.checkAuthor(userId);
 
         return PostResult.PostImages.from(post);
+    }
+
+    public List<PostResult.ReportedPost> findReportedPost() {
+        return postJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull()
+            .stream()
+            .map(PostResult.ReportedPost::from)
+            .toList();
+    }
+
+    public List<PostResult.ReportedComment> findReportedComment() {
+        return commentJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull()
+            .stream()
+            .map(PostResult.ReportedComment::from)
+            .toList();
     }
 }

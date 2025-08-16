@@ -3,7 +3,10 @@ package admin;
 import banner.BannerResponse;
 import banner.jpa.BannerJpaRepository;
 import banner.query.BannerQueryService;
+import exception.InplaceException;
+import exception.code.CategoryErrorCode;
 import influencer.jpa.InfluencerJpaRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,13 +21,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import place.Category;
 import place.jpa.CategoryRepository;
+import post.command.PostCommandFacade;
+import post.dto.PostResponse;
 import post.jpa.CommentJpaRepository;
 import post.jpa.PostJpaRepository;
+import post.query.PostQueryFacade;
 import properties.GoogleApiProperties;
 import properties.KakaoApiProperties;
 import team7.inplace.admin.dto.CategoryForm;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.CategoryErrorCode;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.post.application.PostService;
 import team7.inplace.video.application.VideoService;
@@ -48,7 +52,8 @@ public class AdminPageController {
     private final CommentJpaRepository commentJpaRepository;
     private final VideoQueryFacade videoQueryFacade;
     private final PlaceService placeService;
-    private final PostService postService;
+    private final PostCommandFacade postCommandFacade;
+    private final PostQueryFacade postQueryFacade;
 
     @GetMapping("/video")
     public String getVideos(
@@ -132,7 +137,7 @@ public class AdminPageController {
         return "admin/category/add.html";
     }
 
-    @PostMapping("/category/add")
+    @PostMapping("/category/add") // TODO - place controller 로 옮기는게 어떨까
     public String saveCategory(@ModelAttribute CategoryForm categoryForm) {
         categoryRepository.save(categoryForm.toEntity());
         return "redirect:/admin/category";
@@ -140,34 +145,43 @@ public class AdminPageController {
 
     @GetMapping("/report")
     public String getReportPage(Model model) {
-        model.addAttribute("reportedPosts",
-            postJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull());
-        model.addAttribute("reportedComments",
-            commentJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull());
+        List<PostResponse.ReportedPost> reportedPosts = postQueryFacade.findReportedPosts()
+            .stream()
+            .map(PostResponse.ReportedPost::from)
+            .toList();
+
+        List<PostResponse.ReportedComment> reportedComments = postQueryFacade.findReportedComments()
+            .stream()
+            .map(PostResponse.ReportedComment::from)
+            .toList();
+
+        model.addAttribute("reportedPosts", reportedPosts);
+        model.addAttribute("reportedComments", reportedComments);
+
         return "admin/report";
     }
 
-    @PostMapping("/post/delete/{postId}")
+    @PostMapping("/post/delete/{postId}") // TODO - Post Controller 로 옮기는게 어떤가
     public String deletePost(@PathVariable Long postId) {
-        postService.deletePostSoftly(postId);
+        postCommandFacade.deletePostSoftly(postId);
         return "redirect:/admin/report";
     }
 
     @PostMapping("/post/unreport/{postId}")
     public String unreportPost(@PathVariable Long postId) {
-        postService.unreportPost(postId);
+        postCommandFacade.unreportPost(postId);
         return "redirect:/admin/report";
     }
 
     @PostMapping("/comment/delete/{commentId}")
     public String deleteComment(@PathVariable Long commentId) {
-        postService.deleteCommentSoftly(commentId);
+        postCommandFacade.deleteCommentSoftly(commentId);
         return "redirect:/admin/report";
     }
 
     @PostMapping("/comment/unreport/{commentId}")
     public String unreportComment(@PathVariable Long commentId) {
-        postService.unreportComment(commentId);
+        postCommandFacade.unreportComment(commentId);
         return "redirect:/admin/report";
     }
 

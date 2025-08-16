@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import post.Post;
 import post.query.dto.PostResult;
+import post.query.dto.PostResult.ReportedPost;
 import util.AuthorizationUtil;
 
 @Facade
@@ -43,5 +45,13 @@ public class PostQueryFacade {
     public List<PostResult.UserSuggestion> getCommentUserSuggestions(Long postId, String keyword) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         return postQueryService.getUserSuggestions(userId, postId, keyword);
+    }
+
+    public List<PostResult.ReportedPost> findReportedPosts() {
+        return postQueryService.findReportedPost();
+    }
+
+    public List<PostResult.ReportedComment> findReportedComments() {
+        return postQueryService.findReportedComment();
     }
 }

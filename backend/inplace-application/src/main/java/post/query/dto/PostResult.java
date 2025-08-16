@@ -1,7 +1,9 @@
 package post.query.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import post.Comment;
 import post.Post;
 
 public class PostResult {
@@ -23,6 +25,45 @@ public class PostResult {
         String imageUrl,
         String imageHash
     ) {
+
+    }
+
+    public record ReportedPost(
+        Long id,
+        Long authorId,
+        String content,
+        Boolean isReported,
+        LocalDateTime deleteAt
+    ) {
+
+        public static ReportedPost from(Post post) {
+            return new ReportedPost(
+                post.getId(),
+                post.getAuthorId(),
+                post.getContent(),
+                post.getIsReported(),
+                post.getDeleteAt()
+            );
+        }
+    }
+
+    public record ReportedComment(
+        Long id,
+        Long authorId,
+        String content,
+        Boolean isReported,
+        LocalDateTime deleteAt
+    ) {
+
+        public static ReportedComment from(Comment comment) {
+            return new ReportedComment(
+                comment.getId(),
+                comment.getAuthorId(),
+                comment.getContent(),
+                comment.getIsReported(),
+                comment.getDeleteAt()
+            );
+        }
 
     }
 }
