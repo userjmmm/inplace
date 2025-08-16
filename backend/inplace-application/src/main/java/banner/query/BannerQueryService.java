@@ -23,4 +23,11 @@ public class BannerQueryService {
             .map(BannerResult.Detail::from)
             .toList();
     }
+
+    public List<BannerResult.Admin> getAdminBanners() {
+        return bannerJpaRepository.findAll()
+            .stream()
+            .map(BannerResult.Admin::from)
+            .toList();
+    }
 }

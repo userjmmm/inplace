@@ -1,6 +1,8 @@
 package admin;
 
+import banner.BannerResponse;
 import banner.jpa.BannerJpaRepository;
+import banner.query.BannerQueryService;
 import influencer.jpa.InfluencerJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,8 +41,7 @@ public class AdminPageController {
 
     private final KakaoApiProperties kakaoApiProperties;
     private final GoogleApiProperties googleApiProperties;
-    private final VideoRepository videoRepository;
-    private final BannerJpaRepository bannerJpaRepository;
+    private final BannerQueryService bannerQueryService;
     private final InfluencerJpaRepository influencerRepository;
     private final CategoryRepository categoryRepository;
     private final PostJpaRepository postJpaRepository;
@@ -72,7 +73,10 @@ public class AdminPageController {
 
     @GetMapping("/banner")
     public String getBanners(Model model) {
-        var banners = bannerJpaRepository.findAll();
+        var banners = bannerQueryService.getAdminBanners()
+            .stream()
+            .map(BannerResponse.Admin::from)
+            .toList();
 
         model.addAttribute("banners", banners);
         return "admin/banner.html";

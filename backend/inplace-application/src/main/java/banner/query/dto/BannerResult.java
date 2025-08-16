@@ -2,6 +2,7 @@ package banner.query.dto;
 
 
 import banner.Banner;
+import java.time.LocalDateTime;
 
 public class BannerResult {
 
@@ -19,6 +20,30 @@ public class BannerResult {
                 banner.getIsMain(),
                 banner.getIsMobile(),
                 banner.getInfluencerId()
+            );
+        }
+    }
+
+    public record Admin(
+        Long id,
+        String imgPath,
+        String imgName,
+        Boolean isFixed,
+        Boolean isMain,
+        Boolean isMobile,
+        LocalDateTime startDate,
+        LocalDateTime endDate
+    ) {
+        public static Admin from(Banner banner) {
+            return new Admin(
+                banner.getId(),
+                banner.getImgPath(),
+                banner.getImgName(),
+                banner.getIsFixed(),
+                banner.getIsMain(),
+                banner.getIsMobile(),
+                banner.getStartDate(),
+                banner.getEndDate()
             );
         }
     }
