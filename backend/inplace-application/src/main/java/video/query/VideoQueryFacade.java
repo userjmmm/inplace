@@ -10,14 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import util.AuthorizationUtil;
 import video.query.VideoQueryResult.DetailedVideo;
 import video.query.VideoQueryResult.SimpleVideo;
+import video.query.dto.VideoParam;
+import video.query.dto.VideoResult;
 
 @Facade
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class VideoQueryFacade {
     private final VideoQueryService videoQueryService;
 
-    @Transactional(readOnly = true)
     public List<DetailedVideo> getMyInfluencerVideos() {
         // User 정보를 쿠키에서 추출
         Long userId = AuthorizationUtil.getUserIdOrThrow();
@@ -25,8 +27,11 @@ public class VideoQueryFacade {
         return videoQueryService.getMyInfluencerVideos(userId);
     }
 
-    @Transactional(readOnly = true)
     public Page<SimpleVideo> getVideoWithNoPlace(Pageable pageable) {
         return videoQueryService.getVideoWithNoPlace(pageable);
+    }
+
+    public Page<VideoResult.Admin> getAdminVideosByCondition(VideoParam.Condition condition, Pageable pageable) {
+        return videoQueryService.getAdminVideosByCondition(condition, pageable).map(VideoResult.Admin::from);
     }
 }

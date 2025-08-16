@@ -13,6 +13,7 @@ import place.query.dto.PlaceParam;
 import place.query.dto.PlaceResult;
 import util.AuthorizationUtil;
 import video.query.VideoQueryService;
+import video.query.dto.VideoParam;
 
 @Facade
 @RequiredArgsConstructor
@@ -51,7 +52,7 @@ public class PlaceQueryFacade {
 
         var placeInfo = placeQueryService.getPlaceInfo(userId, placeId);
         var surroundVideos = videoQueryService.getVideosBySurround(
-            VideoSearchParams.from(placeInfo.longitude().toString(),
+            VideoParam.LatAndLon.from(placeInfo.longitude().toString(),
                 placeInfo.latitude().toString()),
             PageRequest.of(0, 10),
             false

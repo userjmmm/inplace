@@ -3,6 +3,7 @@ package video;
 import team7.inplace.video.domain.CoolVideo;
 import team7.inplace.video.domain.RecentVideo;
 import video.query.VideoQueryResult;
+import video.query.dto.VideoResult;
 
 // Video 엔티티의 Controller Response 정보 전달을 담당하는 클래스
 public class VideoResponse {
@@ -117,11 +118,11 @@ public class VideoResponse {
         Boolean registered
     ) {
 
-        public static Admin from(VideoQueryResult.AdminVideo videoInfo) {
+        public static Admin from(VideoResult.Admin adminVideo) {
             return new Admin(
-                videoInfo.videoId(),
-                videoInfo.videoUUID(),
-                videoInfo.registered()
+                adminVideo.id(),
+                adminVideo.uuid(),
+                adminVideo.registered()
             );
         }
     }

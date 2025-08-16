@@ -30,7 +30,7 @@ public class VideoQueryService {
     //TODO: Facade에서 호출로 변경해야함.
     @Transactional(readOnly = true)
     public List<DetailedVideo> getVideosBySurround(
-        VideoParam videoSearchParams,
+        VideoParam.LatAndLon videoSearchParams,
         Pageable pageable,
         boolean authorizationRequired
     ) {
@@ -88,8 +88,8 @@ public class VideoQueryService {
 
     @Transactional(readOnly = true)
     public Page<AdminVideo> getAdminVideosByCondition(
-        VideoQueryParam videoQueryParam, Pageable pageable) {
-        return videoReadRepository.findAdminVideoByCondition(videoQueryParam, pageable);
+        VideoParam.Condition condition, Pageable pageable) {
+        return videoReadRepository.findAdminVideoByCondition(condition, pageable);
     }
 
     @Transactional(readOnly = true)

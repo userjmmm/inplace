@@ -18,17 +18,19 @@ import place.Category;
 import place.jpa.CategoryRepository;
 import post.jpa.CommentJpaRepository;
 import post.jpa.PostJpaRepository;
+import properties.GoogleApiProperties;
+import properties.KakaoApiProperties;
 import team7.inplace.admin.dto.CategoryForm;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.CategoryErrorCode;
-import team7.inplace.global.properties.GoogleApiProperties;
-import team7.inplace.global.properties.KakaoApiProperties;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.post.application.PostService;
 import team7.inplace.video.application.VideoService;
 import team7.inplace.video.persistence.VideoRepository;
-import video.dto.VideoResponse;
+import video.VideoResponse;
+import video.query.VideoQueryFacade;
 import video.query.VideoQueryParam;
+import video.query.dto.VideoParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -43,7 +45,7 @@ public class AdminPageController {
     private final CategoryRepository categoryRepository;
     private final PostJpaRepository postJpaRepository;
     private final CommentJpaRepository commentJpaRepository;
-    private final VideoService videoService;
+    private final VideoQueryFacade videoQueryFacade;
     private final PlaceService placeService;
     private final PostService postService;
 
@@ -53,8 +55,8 @@ public class AdminPageController {
         @RequestParam(required = false, defaultValue = "false") Boolean videoRegistration,
         @PageableDefault Pageable pageable, Model model
     ) {
-        Page<VideoResponse.Admin> videoPage = videoService
-            .getAdminVideosByCondition(VideoQueryParam.of(videoRegistration, influencerId),
+        Page<VideoResponse.Admin> videoPage = videoQueryFacade
+            .getAdminVideosByCondition(VideoParam.Condition.of(videoRegistration, influencerId),
                 pageable)
             .map(VideoResponse.Admin::from);
 

@@ -33,5 +33,5 @@ public interface VideoReadRepository {
         Long influencerId, Pageable pageable);
 
     Page<VideoQueryResult.AdminVideo> findAdminVideoByCondition(
-        VideoQueryParam condition, Pageable pageable);
+        VideoQueryParam.Condition condition, Pageable pageable);
 }

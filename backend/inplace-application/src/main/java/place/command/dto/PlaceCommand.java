@@ -27,7 +27,7 @@ public class PlaceCommand {
             );
         }
     }
-ㄴㄴㄴㄴㄴㄴ 날리지말고 거기에 
+
     public record Update(
         Long placeId,
         String placeName,

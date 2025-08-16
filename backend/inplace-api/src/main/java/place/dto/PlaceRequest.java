@@ -4,6 +4,7 @@ import io.micrometer.common.util.StringUtils;
 import jakarta.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
+import place.command.dto.PlaceCommand;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
@@ -28,7 +29,7 @@ public class PlaceRequest {
         String googlePlaceId
     ) {
 
-        public PlacesCommand.Upsert toCommand() {
+        public PlaceCommand.Create toCommand() {
             return new PlacesCommand.Upsert(
                 videoId, placeName, categoryId, address, x, y, googlePlaceId, kakaoPlaceId
             );

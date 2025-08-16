@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import video.VideoReadQueryDslRepository;
 import video.query.VideoQueryParam;
+import video.query.VideoQueryParam.Condition;
 import video.query.VideoQueryResult;
 import video.query.VideoReadRepository;
 
@@ -253,13 +254,13 @@ public class VideoReadRepositoryTest {
     void findAdminVideoByCondition_With_RegistrationNull_And_InfluencerNull() {
         //given
         Pageable pageable = PageRequest.of(0, 5);
-        VideoQueryParam videoQueryParam = new VideoQueryParam(null, null);
+        VideoQueryParam.Condition condition = new VideoQueryParam.Condition(null, null);
         final int expectedTotalElements = 5;
         final int expectedContentSize = 5;
         final List<Long> expectedVideoIds = List.of(21L, 22L, 23L, 24L, 25L);
         //when
         Page<VideoQueryResult.AdminVideo> videos = videoReadRepository.findAdminVideoByCondition(
-            videoQueryParam, pageable);
+            condition, pageable);
 
         //then
         assertThat(videos.getTotalElements()).isEqualTo(expectedTotalElements);
@@ -273,13 +274,13 @@ public class VideoReadRepositoryTest {
     void findAdminVideoByCondition_With_RegistrationTrue_And_InfluencerExist() {
         //given
         Pageable pageable = PageRequest.of(0, 5);
-        VideoQueryParam videoQueryParam = new VideoQueryParam(true, 5L);
+        Condition condition = new Condition(true, 5L);
         final int expectedTotalElements = 4;
         final int expectedContentSize = 4;
         final List<Long> expectedVideoIds = List.of(17L, 18L, 19L, 20L);
         //when
         Page<VideoQueryResult.AdminVideo> videos = videoReadRepository.findAdminVideoByCondition(
-            videoQueryParam, pageable);
+            condition, pageable);
 
         //then
         assertThat(videos.getTotalElements()).isEqualTo(expectedTotalElements);
@@ -293,13 +294,13 @@ public class VideoReadRepositoryTest {
     void findAdminVideoByCondition_With_RegistrationFalse_And_InfluencerExist() {
         //given
         Pageable pageable = PageRequest.of(0, 5);
-        VideoQueryParam videoQueryParam = new VideoQueryParam(false, 5L);
+        Condition condition = new Condition(false, 5L);
         final int expectedTotalElements = 5;
         final int expectedContentSize = 5;
         final List<Long> expectedVideoIds = List.of(21L, 22L, 23L, 24L, 25L);
         //when
         Page<VideoQueryResult.AdminVideo> videos = videoReadRepository.findAdminVideoByCondition(
-            videoQueryParam, pageable);
+            condition, pageable);
 
         //then
         assertThat(videos.getTotalElements()).isEqualTo(expectedTotalElements);

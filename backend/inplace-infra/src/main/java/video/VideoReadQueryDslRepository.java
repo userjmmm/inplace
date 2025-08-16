@@ -198,14 +198,14 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
 
     @Override
     public Page<AdminVideo> findAdminVideoByCondition(
-        VideoQueryParam condition, Pageable pageable) {
+        VideoQueryParam.Condition condition, Pageable pageable) {
         Long total = queryFactory
             .select(QVideo.video.countDistinct())
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .where(
                 eqInfluencerId(condition.influencerId()),
-                registrationCondition(condition.registered()),
+                registrationCondition(condition.placeRegistration()),
                 QVideo.video.deleteAt.isNull()
             )
             .fetchOne();
@@ -218,14 +218,14 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
             .select(new QVideoQueryResult_AdminVideo(
                 QVideo.video.id,
                 QVideo.video.uuid,
-                Expressions.constant(Boolean.TRUE.equals(condition.registered()))
+                Expressions.constant(Boolean.TRUE.equals(condition.placeRegistration()))
             ))
             .distinct()
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .where(
                 eqInfluencerId(condition.influencerId()),
-                registrationCondition(condition.registered()),
+                registrationCondition(condition.placeRegistration()),
                 QVideo.video.deleteAt.isNull()
             )
             .offset(pageable.getOffset())

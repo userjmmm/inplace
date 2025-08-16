@@ -1,11 +1,14 @@
 package video.query;
 
-public record VideoQueryParam(
-    Boolean registered,
-    Long influencerId
-) {
+public class VideoQueryParam {
+    public record Condition(
+        Boolean placeRegistration,
+        Long influencerId
+    ) {
 
-    public static VideoQueryParam of(Boolean registered, Long influencerId) {
-        return new VideoQueryParam(registered, influencerId);
+        public static Condition of(Boolean placeRegistration, Long influencerId) {
+            return new Condition(placeRegistration, influencerId);
+        }
     }
+
 }
