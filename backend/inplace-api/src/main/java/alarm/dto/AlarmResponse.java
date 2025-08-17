@@ -1,6 +1,6 @@
 package alarm.dto;
 
-import team7.inplace.alarm.application.dto.AlarmInfo;
+import alarm.query.dto.AlarmResult;
 
 public record AlarmResponse(
     Long alarmId,
@@ -12,15 +12,15 @@ public record AlarmResponse(
     String createdAt
 ) {
 
-    public static AlarmResponse from(AlarmInfo alarmInfo) {
+    public static AlarmResponse from(AlarmResult alarmResult) {
         return new AlarmResponse(
-            alarmInfo.alarmId(),
-            alarmInfo.postId(),
-            alarmInfo.commentId(),
-            alarmInfo.content(),
-            alarmInfo.checked(),
-            alarmInfo.type(),
-            alarmInfo.createdAt()
+            alarmResult.alarmId(),
+            alarmResult.postId(),
+            alarmResult.commentId(),
+            alarmResult.content(),
+            alarmResult.checked(),
+            alarmResult.type(),
+            alarmResult.createdAt()
         );
     }
 }
