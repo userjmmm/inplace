@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface InfluencerControllerApiSpec {
 
     @Operation(summary = "인플루언서들 반환", description = "토큰이 있는 경우 좋아요된 인플루언서가 먼저 반환됩니다.")
-    ResponseEntity<Page<InfluencerResponse.Info>> getAllInfluencers(Pageable pageable);
+    ResponseEntity<Page<InfluencerResponse.Simple>> getAllInfluencers(Pageable pageable);
 
     @Operation(summary = "인플루언서들 이름 리스트 반환", description = "인플루언서 이름이 반환됩니다.")
     ResponseEntity<List<Name>> getAllInfluencerNames();

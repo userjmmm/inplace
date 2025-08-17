@@ -1,14 +1,13 @@
 package influencer.dto;
 
 import influencer.query.InfluencerQueryResult;
-import team7.inplace.influencer.application.dto.InfluencerInfo;
-import team7.inplace.influencer.application.dto.InfluencerNameInfo;
+import influencer.query.dto.InfluencerResult;
 import video.query.VideoQueryResult;
 
 public class InfluencerResponse {
 
     //TODO: 클래스 이름 변경해야함
-    public record Info(
+    public record Simple(
         Long influencerId,
         String influencerName,
         String influencerImgUrl,
@@ -16,18 +15,8 @@ public class InfluencerResponse {
         boolean likes
     ) {
 
-        public static InfluencerResponse.Info from(InfluencerInfo influencerInfo) {
-            return new InfluencerResponse.Info(
-                influencerInfo.influencerId(),
-                influencerInfo.influencerName(),
-                influencerInfo.influencerImgUrl(),
-                influencerInfo.influencerJob(),
-                influencerInfo.likes()
-            );
-        }
-
-        public static InfluencerResponse.Info from(InfluencerQueryResult.Simple influencerInfo) {
-            return new InfluencerResponse.Info(
+        public static InfluencerResponse.Simple from(InfluencerResult.Simple influencerInfo) {
+            return new InfluencerResponse.Simple(
                 influencerInfo.id(),
                 influencerInfo.name(),
                 influencerInfo.imgUrl(),
@@ -41,7 +30,7 @@ public class InfluencerResponse {
         String influencerName
     ) {
 
-        public static Name from(InfluencerNameInfo influencerInfo) {
+        public static Name from(InfluencerResult.Name influencerInfo) {
             return new Name(influencerInfo.name());
         }
     }
@@ -56,7 +45,7 @@ public class InfluencerResponse {
         Long placeCount
     ) {
 
-        public static Detail from(InfluencerQueryResult.Detail influencerInfo) {
+        public static Detail from(InfluencerResult.Detail influencerInfo) {
             return new Detail(
                 influencerInfo.id(),
                 influencerInfo.name(),

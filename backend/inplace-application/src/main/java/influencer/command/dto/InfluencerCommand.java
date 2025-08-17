@@ -4,7 +4,7 @@ import influencer.Influencer;
 import influencer.LikedInfluencer;
 import java.util.List;
 
-public class  InfluencerCommand {
+public class InfluencerCommand {
 
     public record InfluencerCreate(
         String influencerName,

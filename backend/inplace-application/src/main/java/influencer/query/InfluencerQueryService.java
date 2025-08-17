@@ -5,13 +5,12 @@ import static java.util.stream.Collectors.toMap;
 import exception.InplaceException;
 import exception.code.InfluencerErrorCode;
 import influencer.Influencer;
-import influencer.InfluencerReadQueryDslRepository;
 import influencer.LikedInfluencer;
 import influencer.jpa.InfluencerJpaRepository;
 import influencer.jpa.LikedInfluencerJpaRepository;
-import influencer.query.InfluencerQueryResult.Simple;
 import influencer.query.dto.InfluencerResult.Detail;
 import influencer.query.dto.InfluencerResult.Name;
+import influencer.query.dto.InfluencerResult.Simple;
 import java.util.List;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +32,8 @@ public class InfluencerQueryService {
 
     public Page<Simple> getAllInfluencers(Pageable pageable) {
         var userId = AuthorizationUtil.getUserIdOrNull();
-        return influencerReadRepository.getInfluencerSortedByLikes(userId, pageable);
+        var influencers = influencerReadRepository.getInfluencerSortedByLikes(userId, pageable);
+        return influencers.map(Simple::from);
     }
 
     public List<Name> getAllInfluencerNames() {
@@ -44,7 +44,7 @@ public class InfluencerQueryService {
     }
 
     //TODO: 추후 쿼리 한번으로 변경
-    public Page<Detail> getFavoriteInfluencers(Long userId, Pageable pageable) {
+    public Page<Simple> getFavoriteInfluencers(Long userId, Pageable pageable) {
         Page<LikedInfluencer> influencerPage = likedInfluencerJpaRepository.findByUserIdAndIsLikedTrue(
             userId, pageable);
         var influencerIds = influencerPage.map(LikedInfluencer::getInfluencerId).toList();
@@ -54,17 +54,18 @@ public class InfluencerQueryService {
         var infos = influencerPage.stream()
             .map(likedInfluencer -> {
                 var influencer = influencers.get(likedInfluencer.getInfluencerId());
-                return Detail.from(influencer, true);
+                return Simple.from(influencer, true);
             })
             .toList();
         return new PageImpl<>(infos, pageable, influencerPage.getTotalElements());
     }
 
-    public InfluencerQueryResult.Detail getInfluencerDetail(Long influencerId) {
+    public Detail getInfluencerDetail(Long influencerId) {
         Long userId = AuthorizationUtil.getUserIdOrNull();
-
-        return influencerReadRepository.getInfluencerDetail(influencerId, userId)
+        var detail = influencerReadRepository.getInfluencerDetail(influencerId, userId)
             .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));
+
+        return Detail.from(detail);
     }
 
     public List<String> getInfluencerNamesByPlaceId(Long placeId) {
