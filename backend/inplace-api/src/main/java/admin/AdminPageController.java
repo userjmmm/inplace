@@ -33,7 +33,7 @@ import team7.inplace.place.application.PlaceService;
 import team7.inplace.post.application.PostService;
 import team7.inplace.video.application.VideoService;
 import team7.inplace.video.persistence.VideoRepository;
-import video.VideoResponse;
+import video.dto.VideoResponse;
 import video.query.VideoQueryFacade;
 import video.query.VideoQueryParam;
 import video.query.dto.VideoParam;

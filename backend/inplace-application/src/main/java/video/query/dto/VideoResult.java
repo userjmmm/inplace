@@ -18,4 +18,56 @@ public class VideoResult { // TODO: VideoQueryResult -> VideoResult 변환
             );
         }
     }
+
+    public record SimpleVideo(
+        Long videoId,
+        String videoUUID,
+        String influencerName,
+        Long placeId,
+        String placeName,
+        String placeCategory,
+        String videoUrl
+    ) {
+        public static SimpleVideo from(VideoQueryResult.SimpleVideo videoInfo) {
+            return new SimpleVideo(
+                videoInfo.videoId(),
+                videoInfo.videoUUID(),
+                videoInfo.influencerName(),
+                videoInfo.placeId(),
+                videoInfo.placeName(),
+                videoInfo.placeCategory(),
+                videoInfo.videoUrl()
+            );
+        }
+    }
+
+    public record DetailedVideo(
+        Long videoId,
+        String videoUUID,
+        String influencerName,
+        Long placeId,
+        String placeName,
+        String placeCategoryParentName,
+        Long placeCategoryParentId,
+        String address1,
+        String address2,
+        String address3,
+        String videoUrl
+    ) {
+        public static DetailedVideo from(VideoQueryResult.DetailedVideo videoInfo) {
+            return new DetailedVideo(
+                videoInfo.videoId(),
+                videoInfo.videoUUID(),
+                videoInfo.influencerName(),
+                videoInfo.placeId(),
+                videoInfo.placeName(),
+                videoInfo.placeCategoryParentName(),
+                videoInfo.placeCategoryParentId(),
+                videoInfo.address1(),
+                videoInfo.address2(),
+                videoInfo.address3(),
+                videoInfo.videoUrl()
+            );
+        }
+    }
 }

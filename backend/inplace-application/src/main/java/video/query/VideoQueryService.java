@@ -13,9 +13,10 @@ import video.RecentVideo;
 import video.jpa.CoolVideoJpaRepository;
 import video.jpa.RecentVideoJpaRepository;
 import video.jpa.VideoJpaRepository;
-import video.query.VideoQueryResult.AdminVideo;
-import video.query.VideoQueryResult.DetailedVideo;
-import video.query.VideoQueryResult.SimpleVideo;
+import video.query.dto.VideoResult;
+import video.query.dto.VideoResult.Admin;
+import video.query.dto.VideoResult.DetailedVideo;
+import video.query.dto.VideoResult.SimpleVideo;
 import video.query.dto.VideoParam;
 
 @Service
@@ -48,7 +49,7 @@ public class VideoQueryService {
             pageable
         );
 
-        return surroundVideos.getContent();
+        return surroundVideos.getContent().stream().map(DetailedVideo::from).toList();
     }
 
     @Transactional(readOnly = true)
@@ -62,10 +63,10 @@ public class VideoQueryService {
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.DetailedVideo> getMyInfluencerVideos(Long userId) {
+    public List<VideoResult.DetailedVideo> getMyInfluencerVideos(Long userId) {
         var top10Videos = videoReadRepository.findTop10ByLikedInfluencer(userId);
 
-        return top10Videos.stream().toList();
+        return top10Videos.stream().map(DetailedVideo::from).toList();
     }
 
     @Transactional(readOnly = true)
@@ -73,7 +74,7 @@ public class VideoQueryService {
         Long influencerId, Pageable pageable) {
         var videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(influencerId,
             pageable);
-        return videos;
+        return videos.map(DetailedVideo::from);
     }
 
     @Transactional(readOnly = true)
@@ -83,17 +84,17 @@ public class VideoQueryService {
 
     @Transactional(readOnly = true)
     public List<SimpleVideo> getVideosByPlaceId(Long placeId) {
-        return videoReadRepository.findSimpleVideosByPlaceId(placeId);
+        return videoReadRepository.findSimpleVideosByPlaceId(placeId).stream().map(SimpleVideo::from).toList();
     }
 
-    @Transactional(readOnly = true)
-    public Page<AdminVideo> getAdminVideosByCondition(
+    @Transactional(readOnly = true) // Todo videoQueryParam? videoParam?
+    public Page<Admin> getAdminVideosByCondition(
         VideoParam.Condition condition, Pageable pageable) {
-        return videoReadRepository.findAdminVideoByCondition(condition, pageable);
+        return videoReadRepository.findAdminVideoByCondition(condition, pageable).map(Admin::from);
     }
 
     @Transactional(readOnly = true)
     public Page<SimpleVideo> getVideoWithNoPlace(Pageable pageable) {
-        return videoReadRepository.findVideoWithNoPlace(pageable);
+        return videoReadRepository.findVideoWithNoPlace(pageable).map(SimpleVideo::from);
     }
 }

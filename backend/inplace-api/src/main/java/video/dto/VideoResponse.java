@@ -1,8 +1,7 @@
-package video;
+package video.dto;
 
 import team7.inplace.video.domain.CoolVideo;
 import team7.inplace.video.domain.RecentVideo;
-import video.query.VideoQueryResult;
 import video.query.dto.VideoResult;
 
 // Video 엔티티의 Controller Response 정보 전달을 담당하는 클래스
@@ -14,7 +13,7 @@ public class VideoResponse {
         VideoResponse.Place place
     ) {
 
-        public static VideoResponse.Simple from(VideoQueryResult.SimpleVideo videoInfo) {
+        public static VideoResponse.Simple from(VideoResult.SimpleVideo videoInfo) {
             var place = new VideoResponse.Place(
                 videoInfo.placeId(),
                 videoInfo.placeName()
@@ -41,7 +40,7 @@ public class VideoResponse {
         VideoResponse.PlaceDetail place
     ) {
 
-        public static VideoResponse.Detail from(VideoQueryResult.DetailedVideo videoInfo) {
+        public static VideoResponse.Detail from(VideoResult.DetailedVideo videoInfo) {
             var place = new VideoResponse.PlaceDetail(
                 videoInfo.placeId(),
                 videoInfo.placeName(),

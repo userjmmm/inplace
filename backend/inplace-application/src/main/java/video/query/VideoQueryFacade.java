@@ -8,8 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import util.AuthorizationUtil;
-import video.query.VideoQueryResult.DetailedVideo;
-import video.query.VideoQueryResult.SimpleVideo;
+import video.query.dto.VideoResult.DetailedVideo;
+import video.query.dto.VideoResult.SimpleVideo;
 import video.query.dto.VideoParam;
 import video.query.dto.VideoResult;
 
