@@ -34,28 +34,28 @@ public class PlaceResponse {
         List<PlaceResponse.Video> videos
     ) {
 
-        public static List<Simple> from(List<PlaceInfo.Simple> placeInfos) {
+        public static List<Simple> from(List<PlaceResult.Simple> placeInfos) {
             return placeInfos.stream()
                 .map(Simple::from)
                 .toList();
         }
 
-        public static Simple from(PlaceInfo.Simple placeInfo) {
+        public static Simple from(PlaceResult.Simple place) {
             return new Simple(
-                placeInfo.place().placeId(),
-                placeInfo.place().placeName(),
+                place.place().placeId(),
+                place.place().placeName(),
                 new Address(
-                    placeInfo.place().address1(),
-                    placeInfo.place().address2(),
-                    placeInfo.place().address3()
+                    place.place().address1(),
+                    place.place().address2(),
+                    place.place().address3()
                 ),
-                placeInfo.place().category(),
+                place.place().category(),
                 "",
-                placeInfo.place().longitude().toString(),
-                placeInfo.place().latitude().toString(),
-                placeInfo.place().likeCount(),
-                placeInfo.place().isLiked(),
-                placeInfo.video().stream()
+                place.place().longitude().toString(),
+                place.place().latitude().toString(),
+                place.place().likeCount(),
+                place.place().isLiked(),
+                place.video().stream()
                     .map(PlaceResponse.Video::from)
                     .collect(Collectors.toList())
             );
@@ -83,7 +83,7 @@ public class PlaceResponse {
         Boolean likes
     ) {
 
-        public static PlaceResponse.Detail from(PlaceInfo.Detail place) {
+        public static PlaceResponse.Detail from(PlaceResult.Detail place) {
             if (place.googlePlace() == null) {
                 return createDetailWithoutGooglePlace(place);
             }
@@ -91,7 +91,7 @@ public class PlaceResponse {
         }
 
         private static PlaceResponse.Detail createDetailWithoutGooglePlace(
-            PlaceInfo.Detail place
+            PlaceResult.Detail place
         ) {
             return new PlaceResponse.Detail(
                 place.place().placeId(),
@@ -129,7 +129,7 @@ public class PlaceResponse {
             );
         }
 
-        private static PlaceResponse.Detail createDetailWithGooglePlace(PlaceInfo.Detail place) {
+        private static PlaceResponse.Detail createDetailWithGooglePlace(PlaceResult.Detail place) {
             return new PlaceResponse.Detail(
                 place.place().placeId(),
                 place.place().placeName(),
@@ -312,13 +312,13 @@ public class PlaceResponse {
         Double latitude
     ) {
 
-        public static List<Marker> from(List<PlaceQueryResult.Marker> markers) {
+        public static List<Marker> from(List<PlaceResult.Marker> markers) {
             return markers.stream()
                 .map(Marker::from)
                 .toList();
         }
 
-        private static Marker from(PlaceQueryResult.Marker marker) {
+        private static Marker from(PlaceResult.Marker marker) {
             return new Marker(
                 marker.placeId(),
                 marker.parentsCategory(),
@@ -337,7 +337,7 @@ public class PlaceResponse {
         List<Video> videos
     ) {
 
-        public static MarkerDetail from(PlaceInfo.Marker marker) {
+        public static MarkerDetail from(PlaceResult.Marker marker) {
             return new MarkerDetail(
                 marker.place().placeId(),
                 marker.place().placeName(),
@@ -359,7 +359,7 @@ public class PlaceResponse {
         List<Category> categories
     ) {
 
-        public static Categories from(List<PlaceInfo.Category> categories) {
+        public static Categories from(List<PlaceResult.Category> categories) {
             Map<Long, Category> categoryMap = new HashMap<>();
             categories.stream()
                 .filter(category -> category.parentId() == null)
@@ -385,7 +385,7 @@ public class PlaceResponse {
         @JsonInclude(Include.NON_EMPTY) List<Category> subCategories
     ) {
 
-        public static Category from(PlaceInfo.Category category) {
+        public static Category from(PlaceResult.Category category) {
             return new Category(category.id(), category.name(), new ArrayList<>());
         }
     }
@@ -401,7 +401,7 @@ public class PlaceResponse {
         String googlePlaceId
     ) {
 
-        public static Admin of(PlaceInfo.Simple simple) {
+        public static Admin of(PlaceResult.Simple simple) {
             return new PlaceResponse.Admin(
                 simple.place().placeId(),
                 simple.place().placeName(),
