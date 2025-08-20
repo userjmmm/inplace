@@ -1,8 +1,10 @@
 package influencer.dto;
 
+import influencer.command.dto.InfluencerCommand.InfluencerCreate;
+import influencer.command.dto.InfluencerCommand.InfluencerUpdate;
+import influencer.command.dto.InfluencerCommand.LikeMultiple;
+import influencer.command.dto.InfluencerCommand.LikeSingle;
 import java.util.List;
-import team7.inplace.influencer.application.dto.InfluencerCommand;
-import team7.inplace.influencer.application.dto.LikedInfluencerCommand;
 
 public class InfluencerRequest {
 
@@ -14,8 +16,19 @@ public class InfluencerRequest {
         String channelId
     ) {
 
-        public InfluencerCommand toCommand() {
-            return new InfluencerCommand(
+        public InfluencerCreate toCommand() {
+            return new InfluencerCreate(
+                influencerName(),
+                influencerImgUrl(),
+                influencerJob(),
+                channelTitle(),
+                channelId()
+            );
+        }
+
+        public InfluencerUpdate toCommand(Long id) {
+            return new InfluencerUpdate(
+                id,
                 influencerName(),
                 influencerImgUrl(),
                 influencerJob(),
@@ -30,8 +43,8 @@ public class InfluencerRequest {
         Boolean likes
     ) {
 
-        public LikedInfluencerCommand.Single toCommand() {
-            return new LikedInfluencerCommand.Single(influencerId(), likes());
+        public LikeSingle toCommand() {
+            return new LikeSingle(influencerId(), likes());
         }
     }
 
@@ -40,12 +53,12 @@ public class InfluencerRequest {
         Boolean likes
     ) {
 
-        public LikedInfluencerCommand.Multiple toCommand() {
+        public LikeMultiple toCommand() {
             var command = influencerIds.stream()
-                .map(influencerId -> new LikedInfluencerCommand.Single(influencerId, likes))
+                .map(influencerId -> new LikeSingle(influencerId, likes))
                 .toList();
 
-            return new LikedInfluencerCommand.Multiple(command);
+            return new LikeMultiple(command);
         }
     }
 }

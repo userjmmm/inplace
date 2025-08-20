@@ -1,9 +1,7 @@
 package banner;
 
 import banner.query.dto.BannerResult;
-import banner.query.dto.BannerResult.Admin;
 import java.time.LocalDateTime;
-import team7.inplace.admin.banner.application.dto.BannerInfo;
 
 public class BannerResponse {
 
@@ -15,7 +13,7 @@ public class BannerResponse {
         Long influencerId
     ) {
 
-        public static Info from(BannerInfo.Detail banner) {
+        public static Info from(BannerResult.Detail banner) {
             return new Info(banner.id(), banner.imageUrl(), banner.isMain(), banner.isMobile(),
                 banner.influencerId());
         }

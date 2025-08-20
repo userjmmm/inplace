@@ -1,8 +1,8 @@
 package banner;
 
+import banner.command.dto.BannerCommand;
 import java.time.LocalDate;
 import org.springframework.web.multipart.MultipartFile;
-import team7.inplace.admin.banner.application.command.BannerCommand;
 
 public class BannerRequest {
 
