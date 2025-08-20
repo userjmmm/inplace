@@ -9,15 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import place.client.GooglePlaceClientResponse;
-import place.client.GooglePlaceClientResponse.AccessibilityOptions;
-import place.client.GooglePlaceClientResponse.ParkingOptions;
-import place.client.GooglePlaceClientResponse.PaymentOptions;
-import place.client.GooglePlaceClientResponse.RegularOpeningHours;
-import place.query.PlaceQueryResult;
+import place.query.dto.GooglePlaceResult;
 import place.query.dto.PlaceResult;
-import review.query.ReviewQueryResult;
-import video.query.VideoQueryResult;
+import review.dto.ReviewResult;
+import video.query.dto.VideoResult;
 
 public class PlaceResponse {
 
@@ -55,7 +50,7 @@ public class PlaceResponse {
                 place.place().latitude().toString(),
                 place.place().likeCount(),
                 place.place().isLiked(),
-                place.video().stream()
+                place.videos().stream()
                     .map(PlaceResponse.Video::from)
                     .collect(Collectors.toList())
             );
@@ -167,7 +162,7 @@ public class PlaceResponse {
                     place.place().placeName()
                 ),
                 place.googlePlace().regularOpeningHours()
-                    .map(RegularOpeningHours::weekdayDescriptions)
+                    .map(GooglePlaceResult.RegularOpeningHours::weekdayDescriptions)
                     .orElse(List.of()),
                 ReviewLike.from(place.reviewLikeRate()),
                 place.place().likeCount(),
@@ -198,25 +193,25 @@ public class PlaceResponse {
     ) {
 
         public static PlaceResponse.Facility of(
-            GooglePlaceClientResponse.AccessibilityOptions accessibilityOptions,
-            GooglePlaceClientResponse.ParkingOptions parkingOptions,
-            GooglePlaceClientResponse.PaymentOptions paymentOptions
+            GooglePlaceResult.AccessibilityOptions accessibilityOptions,
+            GooglePlaceResult.ParkingOptions parkingOptions,
+            GooglePlaceResult.PaymentOptions paymentOptions
         ) {
             return new PlaceResponse.Facility(
                 Optional.ofNullable(accessibilityOptions)
-                    .flatMap(AccessibilityOptions::wheelchairAccessibleSeating)
+                    .flatMap(GooglePlaceResult.AccessibilityOptions::wheelchairAccessibleSeating)
                     .orElse(null),
                 Optional.ofNullable(parkingOptions)
-                    .flatMap(ParkingOptions::freeParkingLot)
+                    .flatMap(GooglePlaceResult.ParkingOptions::freeParkingLot)
                     .orElse(null),
                 Optional.ofNullable(parkingOptions)
-                    .flatMap(ParkingOptions::paidParkingLot)
+                    .flatMap(GooglePlaceResult.ParkingOptions::paidParkingLot)
                     .orElse(null),
                 Optional.ofNullable(paymentOptions)
-                    .flatMap(PaymentOptions::acceptsCreditCards)
+                    .flatMap(GooglePlaceResult.PaymentOptions::acceptsCreditCards)
                     .orElse(null),
                 Optional.ofNullable(paymentOptions)
-                    .flatMap(PaymentOptions::acceptsCashOnly)
+                    .flatMap(GooglePlaceResult.PaymentOptions::acceptsCashOnly)
                     .orElse(null)
             );
         }
@@ -229,7 +224,7 @@ public class PlaceResponse {
         String publishTime
     ) {
 
-        public static PlaceResponse.GoogleReview from(GooglePlaceClientResponse.Review review) {
+        public static PlaceResponse.GoogleReview from(GooglePlaceResult.Review review) {
             return new PlaceResponse.GoogleReview(
                 review.rating() >= 4,
                 review.text().isEmpty() ? "" : review.text().get().text().orElse(""),
@@ -255,7 +250,7 @@ public class PlaceResponse {
         Long dislike
     ) {
 
-        public static ReviewLike from(ReviewQueryResult.LikeRate placeLike) {
+        public static ReviewLike from(ReviewResult.LikeRate placeLike) {
             return new ReviewLike(placeLike.likes(), placeLike.dislikes());
         }
     }
@@ -265,7 +260,7 @@ public class PlaceResponse {
         String influencerName
     ) {
 
-        public static PlaceResponse.Video from(VideoQueryResult.SimpleVideo video) {
+        public static PlaceResponse.Video from(VideoResult.SimpleVideo video) {
             return new PlaceResponse.Video(video.videoUrl(), video.influencerName());
         }
     }
@@ -277,7 +272,7 @@ public class PlaceResponse {
         PlaceResponse.PlaceDetail place
     ) {
 
-        public static SurroundVideo from(VideoQueryResult.DetailedVideo videoInfo) {
+        public static SurroundVideo from(VideoResult.DetailedVideo videoInfo) {
             var place = new PlaceResponse.PlaceDetail(
                 videoInfo.placeId(),
                 videoInfo.placeName(),
@@ -337,7 +332,7 @@ public class PlaceResponse {
         List<Video> videos
     ) {
 
-        public static MarkerDetail from(PlaceResult.Marker marker) {
+        public static MarkerDetail from(PlaceResult.MarkerDetail marker) {
             return new MarkerDetail(
                 marker.place().placeId(),
                 marker.place().placeName(),

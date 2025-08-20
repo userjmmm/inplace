@@ -2,7 +2,6 @@ package place.query;
 
 import annotation.Facade;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import lombok.RequiredArgsConstructor;
@@ -109,7 +108,7 @@ public class PlaceQueryFacade {
     }
 
     /*
-    * Category 관련
+     * Category 관련
      */
 
     public PlaceResult.Category findCategoryById(Long categoryId) {
@@ -143,12 +142,12 @@ public class PlaceQueryFacade {
     /*
      * Marker 관련 매서드
      */
-    public PlaceResult.Marker getMarkerInfo(
+    public PlaceResult.MarkerDetail getMarkerDetail(
         Long placeId
     ) {
         MarkerDetail markerDetail = placeQueryService.getMarkerInfo(placeId);
         var videos = videoQueryService.getVideosByPlaceId(placeId);
-        return PlaceResult.Marker.of(markerDetail, videos);
+        return PlaceResult.MarkerDetail.of(markerDetail, videos);
     }
 
     public List<PlaceResult.Marker> getPlaceLocations(

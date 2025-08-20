@@ -1,17 +1,17 @@
 package review;
 
+import exception.InplaceException;
+import exception.code.ReviewErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import review.Review;
+import review.dto.ReviewResult;
 import review.jpa.ReviewJpaRepository;
 import review.query.ReviewQueryResult;
 import review.query.ReviewReadRepository;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.ReviewErrorCode;
-import team7.inplace.security.util.AuthorizationUtil;
+import util.AuthorizationUtil;
 
 @RequiredArgsConstructor
 @Service
@@ -21,11 +21,12 @@ public class ReviewService {
     private final ReviewJpaRepository reviewJPARepository;
 
     @Transactional(readOnly = true)
-    public Page<ReviewQueryResult.Simple> getPlaceReviews(Long placeId, Pageable pageable) {
+    public Page<ReviewResult.Simple> getPlaceReviews(Long placeId, Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrNull();
 
         return reviewReadRepository
-            .findSimpleReviewByUserIdAndPlaceId(placeId, userId, pageable);
+            .findSimpleReviewByUserIdAndPlaceId(placeId, userId, pageable)
+            .map(ReviewResult.Simple::from);
     }
 
 

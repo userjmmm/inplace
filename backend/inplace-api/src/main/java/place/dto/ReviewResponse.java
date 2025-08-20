@@ -1,7 +1,7 @@
 package place.dto;
 
 import java.time.LocalDate;
-import review.query.ReviewQueryResult;
+import review.dto.ReviewResult;
 
 public class ReviewResponse {
 
@@ -14,14 +14,14 @@ public class ReviewResponse {
         boolean mine
     ) {
 
-        public static Simple from(ReviewQueryResult.Simple reviewInfo) {
+        public static Simple from(ReviewResult.Simple review) {
             return new Simple(
-                reviewInfo.reviewId(),
-                reviewInfo.likes(),
-                reviewInfo.comment(),
-                reviewInfo.userNickname(),
-                reviewInfo.createdAt(),
-                reviewInfo.mine()
+                review.reviewId(),
+                review.likes(),
+                review.comment(),
+                review.userNickname(),
+                review.createdAt(),
+                review.mine()
             );
         }
     }

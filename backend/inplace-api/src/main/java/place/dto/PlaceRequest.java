@@ -30,9 +30,15 @@ public class PlaceRequest {
         String googlePlaceId
     ) {
 
-        public PlaceCommand.Create toCommand() {
-            return new PlacesCommand.Upsert(
+        public PlaceCommand.Create toCreateCommand() {
+            return new PlaceCommand.Create(
                 videoId, placeName, categoryId, address, x, y, googlePlaceId, kakaoPlaceId
+            );
+        }
+
+        public PlaceCommand.Update toUpdateCommand(Long placeId) {
+            return new PlaceCommand.Update(
+                placeId, placeName, categoryId, address, x, y, googlePlaceId, kakaoPlaceId
             );
         }
     }

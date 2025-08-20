@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +51,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
     public ResponseEntity<Void> savePlace(@RequestBody Upsert request) {
-        var command = request.toCommand();
+        var command = request.toCreateCommand();
         placeCommandService.createPlace(command);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -142,8 +143,8 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<MarkerDetail> getMarkerDetail(
         @PathVariable("id") Long placeId
     ) {
-        PlaceResult.Marker marker = placeQueryFacade.getMarkerInfo(placeId);
-        MarkerDetail markerDetailResponse = MarkerDetail.from(marker);
+        PlaceResult.MarkerDetail markerDetail = placeQueryFacade.getMarkerDetail(placeId);
+        MarkerDetail markerDetailResponse = MarkerDetail.from(markerDetail);
         return new ResponseEntity<>(markerDetailResponse, HttpStatus.OK);
     }
 
@@ -208,7 +209,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @PathVariable Long placeId,
         @RequestBody Upsert update
     ) {
-        Long updatedPlaceId = placeCommandService.updatePlaceInfo(placeId, update.toCommand());
+        Long updatedPlaceId = placeCommandService.updatePlaceInfo(update.toUpdateCommand(placeId));
 
         return new ResponseEntity<>(updatedPlaceId, HttpStatus.OK);
     }
