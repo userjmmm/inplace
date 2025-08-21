@@ -1,8 +1,7 @@
 package influencer.dto;
 
-import influencer.query.InfluencerQueryResult;
 import influencer.query.dto.InfluencerResult;
-import video.query.VideoQueryResult;
+import video.query.dto.VideoResult;
 
 public class InfluencerResponse {
 
@@ -65,7 +64,7 @@ public class InfluencerResponse {
         InfluencerResponse.Place place
     ) {
 
-        public static InfluencerResponse.Video from(VideoQueryResult.DetailedVideo videoInfo) {
+        public static InfluencerResponse.Video from(VideoResult.DetailedVideo videoInfo) {
             var place = new InfluencerResponse.Place(
                 videoInfo.placeId(),
                 videoInfo.placeName(),
