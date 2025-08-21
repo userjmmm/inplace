@@ -3,13 +3,23 @@ package place;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import place.command.PlaceCommandService;
 import place.command.dto.PlaceCommand;
@@ -24,6 +34,7 @@ import place.dto.PlaceResponse.MarkerDetail;
 import place.dto.PlaceResponse.Simple;
 import place.dto.ReviewResponse;
 import place.query.PlaceQueryFacade;
+import place.query.dto.PlaceResult;
 import review.ReviewService;
 
 @Slf4j
@@ -40,7 +51,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
     public ResponseEntity<Void> savePlace(@RequestBody Upsert request) {
-        var command = request.toCommand();
+        var command = request.toCreateCommand();
         placeCommandService.createPlace(command);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -48,14 +59,14 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     @Override
     @GetMapping
-    public ResponseEntity<Page<PlaceResponse.Simple>> getPlaces(
+    public ResponseEntity<Page<Simple>> getPlaces(
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
-        @ModelAttribute PlaceRequest.Filter filterParams,
+        @ModelAttribute PlaceRequest.Filter placeFilter,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
         var placeSimpleInfos = placeQueryFacade.getPlacesInMapRange(
-            coordinateParams.toCommand(),
-            filterParams.toCommand(),
+            coordinateParams.toParam(),
+            placeFilter.toParam(),
             pageable
         );
 
@@ -70,10 +81,10 @@ public class PlaceController implements PlaceControllerApiSpec {
     @GetMapping("/search")
     public ResponseEntity<Page<Simple>> getPlacesByName(
         @RequestParam String placeName,
-        @ModelAttribute PlaceRequest.Filter filterParams,
+        @ModelAttribute PlaceRequest.Filter placeFilter,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        var placeSimpleInfos = placeQueryFacade.getPlacesByName(placeName, filterParams.toCommand(),
+        var placeSimpleInfos = placeQueryFacade.getPlacesByName(placeName, placeFilter.toParam(),
             pageable);
         var responses = PlaceResponse.Simple.from(placeSimpleInfos.getContent());
         return new ResponseEntity<>(
@@ -86,15 +97,15 @@ public class PlaceController implements PlaceControllerApiSpec {
     @GetMapping("/all")
     public ResponseEntity<List<Marker>> getPlaceLocations(
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
-        @ModelAttribute PlaceRequest.Filter filterParams
+        @ModelAttribute PlaceRequest.Filter placeFilter
     ) {
-        List<PlaceQueryResult.Marker> placeMarkerInfos = placeQueryFacade.getPlaceLocations(
-            coordinateParams.toCommand(),
-            filterParams.toCommand()
+        List<PlaceResult.Marker> placeMarkerInfos = placeQueryFacade.getPlaceLocations(
+            coordinateParams.toParam(),
+            placeFilter.toParam()
         );
 
         return new ResponseEntity<>(
-            Marker.from(placeMarkerInfos),
+            PlaceResponse.Marker.from(placeMarkerInfos),
             HttpStatus.OK
         );
     }
@@ -103,11 +114,11 @@ public class PlaceController implements PlaceControllerApiSpec {
     @GetMapping("/all/search")
     public ResponseEntity<List<Marker>> getPlaceLocationsByName(
         @RequestParam(required = true) String placeName,
-        @ModelAttribute PlaceRequest.Filter filterParams
+        @ModelAttribute PlaceRequest.Filter placeFilter
     ) {
-        List<PlaceQueryResult.Marker> placeMarkerInfos = placeQueryFacade.getPlaceLocationsByName(
+        List<PlaceResult.Marker> placeMarkerInfos = placeQueryFacade.getPlaceLocationsByName(
             placeName,
-            filterParams.toCommand()
+            placeFilter.toParam()
         );
 
         return new ResponseEntity<>(
@@ -132,15 +143,15 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<MarkerDetail> getMarkerDetail(
         @PathVariable("id") Long placeId
     ) {
-        PlaceInfo.Marker marker = placeQueryFacade.getMarkerInfo(placeId);
-        MarkerDetail markerDetailResponse = MarkerDetail.from(marker);
+        PlaceResult.MarkerDetail markerDetail = placeQueryFacade.getMarkerDetail(placeId);
+        MarkerDetail markerDetailResponse = MarkerDetail.from(markerDetail);
         return new ResponseEntity<>(markerDetailResponse, HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/categories")
     public ResponseEntity<Categories> getCategories() {
-        List<PlaceInfo.Category> categories = placeQueryFacade.getCategories();
+        List<PlaceResult.Category> categories = placeQueryFacade.getCategories();
         var response = Categories.from(categories);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -172,7 +183,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     public ResponseEntity<List<Admin>> getAdminPlacesByVideoId(
         @PathVariable Long videoId
     ) {
-        List<Admin> responses = placeFacade.getAdminPlacesByVideoId(videoId)
+        List<Admin> responses = placeQueryFacade.getAdminPlacesByVideoId(videoId)
             .stream()
             .map(Admin::of)
             .toList();
@@ -198,7 +209,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @PathVariable Long placeId,
         @RequestBody Upsert update
     ) {
-        Long updatedPlaceId = placeCommandService.updatePlaceInfo(placeId, update.toCommand());
+        Long updatedPlaceId = placeCommandService.updatePlaceInfo(update.toUpdateCommand(placeId));
 
         return new ResponseEntity<>(updatedPlaceId, HttpStatus.OK);
     }

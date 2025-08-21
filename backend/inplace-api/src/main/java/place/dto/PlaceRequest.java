@@ -8,10 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import place.command.dto.PlaceCommand;
-import place.command.dto.PlaceCommand.CategoryCreate;
-import team7.inplace.place.application.command.PlacesCommand;
-import team7.inplace.place.application.command.PlacesCommand.FilterParams;
-import team7.inplace.place.application.command.PlacesCommand.RegionParam;
+import place.query.dto.PlaceParam;
 
 public class PlaceRequest {
 
@@ -33,9 +30,15 @@ public class PlaceRequest {
         String googlePlaceId
     ) {
 
-        public PlaceCommand.Create toCommand() {
-            return new PlacesCommand.Upsert(
+        public PlaceCommand.Create toCreateCommand() {
+            return new PlaceCommand.Create(
                 videoId, placeName, categoryId, address, x, y, googlePlaceId, kakaoPlaceId
+            );
+        }
+
+        public PlaceCommand.Update toUpdateCommand(Long placeId) {
+            return new PlaceCommand.Update(
+                placeId, placeName, categoryId, address, x, y, googlePlaceId, kakaoPlaceId
             );
         }
     }
@@ -49,8 +52,8 @@ public class PlaceRequest {
         @NotNull(message = "bottomRightLatitude 값이 없습니다.") Double bottomRightLatitude
     ) {
 
-        public PlacesCommand.Coordinate toCommand() {
-            return new PlacesCommand.Coordinate(
+        public PlaceParam.Coordinate toParam() {
+            return new PlaceParam.Coordinate(
                 topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude,
                 longitude, latitude
             );
@@ -75,13 +78,13 @@ public class PlaceRequest {
             }
         }
 
-        public PlacesCommand.FilterParams toCommand() {
+        public PlaceParam.Filter toParam() {
 
-            List<RegionParam> regionParamList = Arrays.stream(regions.split(","))
+            List<PlaceParam.Region> regionParamList = Arrays.stream(regions.split(","))
                 .filter(StringUtils::isNotEmpty)
                 .map((region -> {
                     var parts = regions.split("-");
-                    return new RegionParam(
+                    return new PlaceParam.Region(
                         parts[0],
                         "전체".equals(parts[1]) ? null : parts[1]
                     );
@@ -96,7 +99,7 @@ public class PlaceRequest {
                 .filter(StringUtils::isNotEmpty)
                 .toList();
 
-            return new FilterParams(
+            return new PlaceParam.Filter(
                 regionParamList,
                 categoryList,
                 influencerList

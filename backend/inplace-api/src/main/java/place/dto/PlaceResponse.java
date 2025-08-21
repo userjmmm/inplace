@@ -9,15 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import place.client.GooglePlaceClientResponse;
-import place.client.GooglePlaceClientResponse.AccessibilityOptions;
-import place.client.GooglePlaceClientResponse.ParkingOptions;
-import place.client.GooglePlaceClientResponse.PaymentOptions;
-import place.client.GooglePlaceClientResponse.RegularOpeningHours;
-import place.query.PlaceQueryResult;
+import place.query.dto.GooglePlaceResult;
 import place.query.dto.PlaceResult;
-import review.query.ReviewQueryResult;
-import video.query.VideoQueryResult;
+import review.dto.ReviewResult;
+import video.query.dto.VideoResult;
 
 public class PlaceResponse {
 
@@ -34,28 +29,28 @@ public class PlaceResponse {
         List<PlaceResponse.Video> videos
     ) {
 
-        public static List<Simple> from(List<PlaceInfo.Simple> placeInfos) {
+        public static List<Simple> from(List<PlaceResult.Simple> placeInfos) {
             return placeInfos.stream()
                 .map(Simple::from)
                 .toList();
         }
 
-        public static Simple from(PlaceInfo.Simple placeInfo) {
+        public static Simple from(PlaceResult.Simple place) {
             return new Simple(
-                placeInfo.place().placeId(),
-                placeInfo.place().placeName(),
+                place.place().placeId(),
+                place.place().placeName(),
                 new Address(
-                    placeInfo.place().address1(),
-                    placeInfo.place().address2(),
-                    placeInfo.place().address3()
+                    place.place().address1(),
+                    place.place().address2(),
+                    place.place().address3()
                 ),
-                placeInfo.place().category(),
+                place.place().category(),
                 "",
-                placeInfo.place().longitude().toString(),
-                placeInfo.place().latitude().toString(),
-                placeInfo.place().likeCount(),
-                placeInfo.place().isLiked(),
-                placeInfo.video().stream()
+                place.place().longitude().toString(),
+                place.place().latitude().toString(),
+                place.place().likeCount(),
+                place.place().isLiked(),
+                place.videos().stream()
                     .map(PlaceResponse.Video::from)
                     .collect(Collectors.toList())
             );
@@ -83,7 +78,7 @@ public class PlaceResponse {
         Boolean likes
     ) {
 
-        public static PlaceResponse.Detail from(PlaceInfo.Detail place) {
+        public static PlaceResponse.Detail from(PlaceResult.Detail place) {
             if (place.googlePlace() == null) {
                 return createDetailWithoutGooglePlace(place);
             }
@@ -91,7 +86,7 @@ public class PlaceResponse {
         }
 
         private static PlaceResponse.Detail createDetailWithoutGooglePlace(
-            PlaceInfo.Detail place
+            PlaceResult.Detail place
         ) {
             return new PlaceResponse.Detail(
                 place.place().placeId(),
@@ -129,7 +124,7 @@ public class PlaceResponse {
             );
         }
 
-        private static PlaceResponse.Detail createDetailWithGooglePlace(PlaceInfo.Detail place) {
+        private static PlaceResponse.Detail createDetailWithGooglePlace(PlaceResult.Detail place) {
             return new PlaceResponse.Detail(
                 place.place().placeId(),
                 place.place().placeName(),
@@ -167,7 +162,7 @@ public class PlaceResponse {
                     place.place().placeName()
                 ),
                 place.googlePlace().regularOpeningHours()
-                    .map(RegularOpeningHours::weekdayDescriptions)
+                    .map(GooglePlaceResult.RegularOpeningHours::weekdayDescriptions)
                     .orElse(List.of()),
                 ReviewLike.from(place.reviewLikeRate()),
                 place.place().likeCount(),
@@ -198,25 +193,25 @@ public class PlaceResponse {
     ) {
 
         public static PlaceResponse.Facility of(
-            GooglePlaceClientResponse.AccessibilityOptions accessibilityOptions,
-            GooglePlaceClientResponse.ParkingOptions parkingOptions,
-            GooglePlaceClientResponse.PaymentOptions paymentOptions
+            GooglePlaceResult.AccessibilityOptions accessibilityOptions,
+            GooglePlaceResult.ParkingOptions parkingOptions,
+            GooglePlaceResult.PaymentOptions paymentOptions
         ) {
             return new PlaceResponse.Facility(
                 Optional.ofNullable(accessibilityOptions)
-                    .flatMap(AccessibilityOptions::wheelchairAccessibleSeating)
+                    .flatMap(GooglePlaceResult.AccessibilityOptions::wheelchairAccessibleSeating)
                     .orElse(null),
                 Optional.ofNullable(parkingOptions)
-                    .flatMap(ParkingOptions::freeParkingLot)
+                    .flatMap(GooglePlaceResult.ParkingOptions::freeParkingLot)
                     .orElse(null),
                 Optional.ofNullable(parkingOptions)
-                    .flatMap(ParkingOptions::paidParkingLot)
+                    .flatMap(GooglePlaceResult.ParkingOptions::paidParkingLot)
                     .orElse(null),
                 Optional.ofNullable(paymentOptions)
-                    .flatMap(PaymentOptions::acceptsCreditCards)
+                    .flatMap(GooglePlaceResult.PaymentOptions::acceptsCreditCards)
                     .orElse(null),
                 Optional.ofNullable(paymentOptions)
-                    .flatMap(PaymentOptions::acceptsCashOnly)
+                    .flatMap(GooglePlaceResult.PaymentOptions::acceptsCashOnly)
                     .orElse(null)
             );
         }
@@ -229,7 +224,7 @@ public class PlaceResponse {
         String publishTime
     ) {
 
-        public static PlaceResponse.GoogleReview from(GooglePlaceClientResponse.Review review) {
+        public static PlaceResponse.GoogleReview from(GooglePlaceResult.Review review) {
             return new PlaceResponse.GoogleReview(
                 review.rating() >= 4,
                 review.text().isEmpty() ? "" : review.text().get().text().orElse(""),
@@ -255,7 +250,7 @@ public class PlaceResponse {
         Long dislike
     ) {
 
-        public static ReviewLike from(ReviewQueryResult.LikeRate placeLike) {
+        public static ReviewLike from(ReviewResult.LikeRate placeLike) {
             return new ReviewLike(placeLike.likes(), placeLike.dislikes());
         }
     }
@@ -265,7 +260,7 @@ public class PlaceResponse {
         String influencerName
     ) {
 
-        public static PlaceResponse.Video from(VideoQueryResult.SimpleVideo video) {
+        public static PlaceResponse.Video from(VideoResult.SimpleVideo video) {
             return new PlaceResponse.Video(video.videoUrl(), video.influencerName());
         }
     }
@@ -277,7 +272,7 @@ public class PlaceResponse {
         PlaceResponse.PlaceDetail place
     ) {
 
-        public static SurroundVideo from(VideoQueryResult.DetailedVideo videoInfo) {
+        public static SurroundVideo from(VideoResult.DetailedVideo videoInfo) {
             var place = new PlaceResponse.PlaceDetail(
                 videoInfo.placeId(),
                 videoInfo.placeName(),
@@ -312,13 +307,13 @@ public class PlaceResponse {
         Double latitude
     ) {
 
-        public static List<Marker> from(List<PlaceQueryResult.Marker> markers) {
+        public static List<Marker> from(List<PlaceResult.Marker> markers) {
             return markers.stream()
                 .map(Marker::from)
                 .toList();
         }
 
-        private static Marker from(PlaceQueryResult.Marker marker) {
+        private static Marker from(PlaceResult.Marker marker) {
             return new Marker(
                 marker.placeId(),
                 marker.parentsCategory(),
@@ -337,7 +332,7 @@ public class PlaceResponse {
         List<Video> videos
     ) {
 
-        public static MarkerDetail from(PlaceInfo.Marker marker) {
+        public static MarkerDetail from(PlaceResult.MarkerDetail marker) {
             return new MarkerDetail(
                 marker.place().placeId(),
                 marker.place().placeName(),
@@ -359,7 +354,7 @@ public class PlaceResponse {
         List<Category> categories
     ) {
 
-        public static Categories from(List<PlaceInfo.Category> categories) {
+        public static Categories from(List<PlaceResult.Category> categories) {
             Map<Long, Category> categoryMap = new HashMap<>();
             categories.stream()
                 .filter(category -> category.parentId() == null)
@@ -385,7 +380,7 @@ public class PlaceResponse {
         @JsonInclude(Include.NON_EMPTY) List<Category> subCategories
     ) {
 
-        public static Category from(PlaceInfo.Category category) {
+        public static Category from(PlaceResult.Category category) {
             return new Category(category.id(), category.name(), new ArrayList<>());
         }
     }
@@ -401,7 +396,7 @@ public class PlaceResponse {
         String googlePlaceId
     ) {
 
-        public static Admin of(PlaceInfo.Simple simple) {
+        public static Admin of(PlaceResult.Simple simple) {
             return new PlaceResponse.Admin(
                 simple.place().placeId(),
                 simple.place().placeName(),
