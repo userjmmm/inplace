@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import post.command.PostCommandFacade;
 import post.dto.PostRequest;
 import post.dto.PostRequest.UpsertComment;
 import post.dto.PostRequest.UpsertPost;
@@ -24,19 +25,20 @@ import post.dto.PostResponse.DetailedPost;
 import post.dto.PostResponse.DetailedPostImages;
 import post.dto.PostResponse.SimpleList;
 import post.dto.PostResponse.UserSuggestion;
-import team7.inplace.post.application.PostFacade;
+import post.query.PostQueryFacade;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/posts")
 public class PostController implements PostControllerApiSpec {
 
-    private final PostFacade postFacade;
+    private final PostQueryFacade postQueryFacade;
+    private final PostCommandFacade postCommandFacade;
 
     @Override
     @PostMapping
     public ResponseEntity<Void> createPost(@RequestBody UpsertPost postRequest) {
-        postFacade.createPost(postRequest.toCommand());
+        postCommandFacade.createPost(postRequest.toCommand());
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -47,7 +49,7 @@ public class PostController implements PostControllerApiSpec {
         @PathVariable Long postId,
         @RequestBody UpsertPost postRequest
     ) {
-        postFacade.updatePost(postRequest.toUpdateCommand(postId));
+        postCommandFacade.updatePost(postRequest.toUpdateCommand(postId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -57,7 +59,7 @@ public class PostController implements PostControllerApiSpec {
     public ResponseEntity<Void> likePost(
         @RequestBody PostRequest.PostLike request
     ) {
-        postFacade.likePost(request.toCommand());
+        postCommandFacade.likePost(request.toCommand());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -67,7 +69,7 @@ public class PostController implements PostControllerApiSpec {
     public ResponseEntity<Void> deletePost(
         @PathVariable Long postId
     ) {
-        postFacade.deletePost(postId);
+        postCommandFacade.deletePost(postId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -79,7 +81,7 @@ public class PostController implements PostControllerApiSpec {
         @RequestParam(defaultValue = "5") int size,
         @RequestParam(defaultValue = "createAt") String sort
     ) {
-        var posts = postFacade.getPosts(cursorId, size, sort);
+        var posts = postQueryFacade.getPosts(cursorId, size, sort);
 
         var response = SimpleList.from(posts);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -88,7 +90,7 @@ public class PostController implements PostControllerApiSpec {
     @Override
     @GetMapping("/{postId}")
     public ResponseEntity<DetailedPost> getPostById(@PathVariable Long postId) {
-        var post = postFacade.getPostById(postId);
+        var post = postQueryFacade.getPostById(postId);
 
         var response = DetailedPost.from(post);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -99,7 +101,7 @@ public class PostController implements PostControllerApiSpec {
     public ResponseEntity<DetailedPostImages> getPostImageDetails(
         @PathVariable Long postId
     ) {
-        var postImage = postFacade.getPostImageDetails(postId);
+        var postImage = postQueryFacade.getPostImageDetails(postId);
 
         var response = DetailedPostImages.from(postImage);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -111,7 +113,7 @@ public class PostController implements PostControllerApiSpec {
         @PathVariable Long postId,
         @RequestBody UpsertComment commentRequest
     ) {
-        postFacade.createComment(commentRequest.toCommand(postId));
+        postCommandFacade.createComment(commentRequest.toCommand(postId));
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -122,7 +124,7 @@ public class PostController implements PostControllerApiSpec {
         @PathVariable("postId") Long postId,
         @RequestBody PostRequest.CommentLike request
     ) {
-        postFacade.likeComment(request.toCommand(postId));
+        postCommandFacade.likeComment(request.toCommand(postId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -134,7 +136,7 @@ public class PostController implements PostControllerApiSpec {
         @PathVariable("commentId") Long commentId,
         @RequestBody UpsertComment commentRequest
     ) {
-        postFacade.updateComment(commentRequest.toUpdateCommand(commentId, postId));
+        postCommandFacade.updateComment(commentRequest.toUpdateCommand(commentId, postId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -145,7 +147,7 @@ public class PostController implements PostControllerApiSpec {
         @PathVariable("postId") Long postId,
         @PathVariable("commentId") Long commentId
     ) {
-        postFacade.deleteComment(postId, commentId);
+        postCommandFacade.deleteComment(postId, commentId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -156,7 +158,7 @@ public class PostController implements PostControllerApiSpec {
         @PathVariable("postId") Long postId,
         @PageableDefault(size = 10) Pageable pageable
     ) {
-        var comments = postFacade.getCommentsByPostId(postId, pageable);
+        var comments = postQueryFacade.getCommentsByPostId(postId, pageable);
 
         var response = comments.map(DetailedComment::from);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -168,7 +170,7 @@ public class PostController implements PostControllerApiSpec {
         @PathVariable(value = "postId") Long postId,
         @RequestParam(value = "value", required = true) String value
     ) {
-        var userSuggestions = postFacade.getCommentUserSuggestions(postId, value);
+        var userSuggestions = postQueryFacade.getCommentUserSuggestions(postId, value);
 
         var response = userSuggestions.stream()
             .map(UserSuggestion::from)

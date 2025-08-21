@@ -8,11 +8,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import post.query.CommentQueryResult;
-import post.query.PostQueryResult;
+import post.query.dto.CommentResult;
 import post.query.dto.PostResult;
 import team7.inplace.global.cursor.CursorResponse;
-import team7.inplace.post.application.dto.PostInfo;
 import user.dto.UserResponse;
 
 public class PostResponse {
@@ -46,13 +44,13 @@ public class PostResponse {
     ) {
 
         public static SimpleList from(
-            CursorResult<PostQueryResult.DetailedPost> postQueryResult
+            CursorResult<PostResult.DetailedPost> postResult
         ) {
-            List<SimplePost> posts = postQueryResult.value().stream()
+            List<SimplePost> posts = postResult.value().stream()
                 .map(SimplePost::from)
                 .toList();
             return new SimpleList(posts,
-                new CursorResponse(postQueryResult.hasNext(), postQueryResult.nextCursorId()));
+                new CursorResponse(postResult.hasNext(), postResult.nextCursorId()));
         }
     }
 
@@ -70,25 +68,25 @@ public class PostResponse {
         String createdAt
     ) {
 
-        public static SimplePost from(PostQueryResult.DetailedPost postQueryResult) {
+        public static SimplePost from(PostResult.DetailedPost postResult) {
             return new SimplePost(
-                postQueryResult.postId(),
+                postResult.postId(),
                 new UserResponse.Simple(
-                    postQueryResult.userNickname(),
-                    postQueryResult.userImageUrl(),
-                    postQueryResult.tierImageUrl(),
-                    postQueryResult.mainBadgeImageUrl()
+                    postResult.userNickname(),
+                    postResult.userImageUrl(),
+                    postResult.tierImageUrl(),
+                    postResult.mainBadgeImageUrl()
                 ),
-                postQueryResult.title(),
-                postQueryResult.content(),
-                postQueryResult.getImageUrls().isEmpty()
+                postResult.title(),
+                postResult.content(),
+                postResult.getImageUrls().isEmpty()
                     ? null
-                    : postQueryResult.getImageUrls().get(0),
-                postQueryResult.selfLike(),
-                postQueryResult.totalLikeCount(),
-                postQueryResult.totalCommentCount(),
-                postQueryResult.isMine(),
-                formatCreatedAt(postQueryResult.createdAt())
+                    : postResult.getImageUrls().get(0),
+                postResult.selfLike(),
+                postResult.totalLikeCount(),
+                postResult.totalCommentCount(),
+                postResult.isMine(),
+                formatCreatedAt(postResult.createdAt())
             );
         }
     }
@@ -106,26 +104,26 @@ public class PostResponse {
         String createdAt
     ) {
 
-        public static DetailedPost from(PostQueryResult.DetailedPost postQueryResult) {
-            List<SimplePostImage> images = postQueryResult.getImageUrls().stream()
+        public static DetailedPost from(PostResult.DetailedPost postResult) {
+            List<SimplePostImage> images = postResult.getImageUrls().stream()
                 .map(SimplePostImage::new)
                 .toList();
             return new DetailedPost(
-                postQueryResult.postId(),
+                postResult.postId(),
                 new UserResponse.Simple(
-                    postQueryResult.userNickname(),
-                    postQueryResult.userImageUrl(),
-                    postQueryResult.tierImageUrl(),
-                    postQueryResult.mainBadgeImageUrl()
+                    postResult.userNickname(),
+                    postResult.userImageUrl(),
+                    postResult.tierImageUrl(),
+                    postResult.mainBadgeImageUrl()
                 ),
-                postQueryResult.title(),
-                postQueryResult.content(),
+                postResult.title(),
+                postResult.content(),
                 images,
-                postQueryResult.selfLike(),
-                postQueryResult.totalLikeCount(),
-                postQueryResult.totalCommentCount(),
-                postQueryResult.isMine(),
-                formatCreatedAt(postQueryResult.createdAt())
+                postResult.selfLike(),
+                postResult.totalLikeCount(),
+                postResult.totalCommentCount(),
+                postResult.isMine(),
+                formatCreatedAt(postResult.createdAt())
             );
         }
     }
@@ -140,7 +138,7 @@ public class PostResponse {
         List<DetailedPostImage> images
     ) {
 
-        public static DetailedPostImages from(PostInfo.PostImages images) {
+        public static DetailedPostImages from(PostResult.PostImages images) {
             List<DetailedPostImage> detailedImages = images.images().stream()
                 .map(image -> new DetailedPostImage(image.imageUrl(), image.imageHash()))
                 .toList();
@@ -165,7 +163,7 @@ public class PostResponse {
         String createdAt
     ) {
 
-        public static DetailedComment from(CommentQueryResult.DetailedComment commentQueryResult) {
+        public static DetailedComment from(CommentResult.DetailedComment commentQueryResult) {
             return new DetailedComment(
                 commentQueryResult.commentId(),
                 new UserResponse.Simple(commentQueryResult.userNickname(),
@@ -187,7 +185,7 @@ public class PostResponse {
         String imageUrl
     ) {
 
-        public static UserSuggestion from(PostQueryResult.UserSuggestion userSuggestion) {
+        public static UserSuggestion from(PostResult.UserSuggestion userSuggestion) {
             return new UserSuggestion(
                 userSuggestion.userId(),
                 userSuggestion.userNickname(),
