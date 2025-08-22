@@ -1,7 +1,5 @@
 package video.dto;
 
-import team7.inplace.video.domain.CoolVideo;
-import team7.inplace.video.domain.RecentVideo;
 import video.query.dto.VideoResult;
 
 // Video 엔티티의 Controller Response 정보 전달을 담당하는 클래스
@@ -58,38 +56,38 @@ public class VideoResponse {
             );
         }
 
-        public static VideoResponse.Detail from(CoolVideo coolVideo) {
+        public static VideoResponse.Detail from(VideoResult.CoolVideo coolVideo) {
             var place = new VideoResponse.PlaceDetail(
-                coolVideo.getPlaceId(),
-                coolVideo.getPlaceName(),
+                coolVideo.placeId(),
+                coolVideo.placeName(),
                 new Address(
-                    coolVideo.getAddress1(),
-                    coolVideo.getAddress2(),
-                    coolVideo.getAddress3()
+                    coolVideo.address1(),
+                    coolVideo.address2(),
+                    coolVideo.address3()
                 )
             );
             return new VideoResponse.Detail(
-                coolVideo.getVideoId(),
-                coolVideo.getInfluencerName(),
-                coolVideo.getVideoUrl(),
+                coolVideo.videoId(),
+                coolVideo.influencerName(),
+                coolVideo.videoUrl(),
                 place
             );
         }
 
-        public static VideoResponse.Detail from(RecentVideo recentVideo) {
+        public static VideoResponse.Detail from(VideoResult.RecentVideo recentVideo) {
             var place = new VideoResponse.PlaceDetail(
-                recentVideo.getPlaceId(),
-                recentVideo.getPlaceName(),
+                recentVideo.placeId(),
+                recentVideo.placeName(),
                 new Address(
-                    recentVideo.getAddress1(),
-                    recentVideo.getAddress2(),
-                    recentVideo.getAddress3()
+                    recentVideo.address1(),
+                    recentVideo.address2(),
+                    recentVideo.address3()
                 )
             );
             return new VideoResponse.Detail(
-                recentVideo.getVideoId(),
-                recentVideo.getInfluencerName(),
-                recentVideo.getVideoUrl(),
+                recentVideo.videoId(),
+                recentVideo.influencerName(),
+                recentVideo.videoUrl(),
                 place
             );
         }

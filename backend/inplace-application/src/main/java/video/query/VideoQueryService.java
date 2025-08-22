@@ -2,14 +2,14 @@ package video.query;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import util.AuthorizationUtil;
-import video.CoolVideo;
-import video.RecentVideo;
 import video.jpa.CoolVideoJpaRepository;
 import video.jpa.RecentVideoJpaRepository;
 import video.jpa.VideoJpaRepository;
@@ -53,13 +53,15 @@ public class VideoQueryService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecentVideo> getRecentVideos() {
-        return recentVideoJpaRepository.findAll();
+    public List<VideoResult.RecentVideo> getRecentVideos() {
+        return recentVideoJpaRepository.findAll().stream().map(VideoResult.RecentVideo::from).toList();
     }
 
     @Transactional(readOnly = true)
-    public List<CoolVideo> getCoolVideo(String parentCategoryName) {
-        return coolVideoJpaRepository.findByPlaceCategoryParentName(parentCategoryName);
+    public List<VideoResult.CoolVideo> getCoolVideo(String parentCategoryName) {
+        return coolVideoJpaRepository.findByPlaceCategoryParentName(parentCategoryName).stream()
+                   .map(VideoResult.CoolVideo::from)
+                   .toList();
     }
 
     @Transactional(readOnly = true)
@@ -79,7 +81,12 @@ public class VideoQueryService {
 
     @Transactional(readOnly = true)
     public Map<Long, List<SimpleVideo>> getVideosByPlaceId(List<Long> placeIds) {
-        return videoReadRepository.findSimpleVideosByPlaceIds(placeIds);
+        return videoReadRepository.findSimpleVideosByPlaceIds(placeIds).entrySet().stream()
+                   .collect(
+                       Collectors.toMap(
+                           Map.Entry::getKey,
+                           entry -> entry.getValue().stream().map(SimpleVideo::from).toList()
+                   ));
     }
 
     @Transactional(readOnly = true)
@@ -87,10 +94,10 @@ public class VideoQueryService {
         return videoReadRepository.findSimpleVideosByPlaceId(placeId).stream().map(SimpleVideo::from).toList();
     }
 
-    @Transactional(readOnly = true) // Todo videoQueryParam? videoParam?
+    @Transactional(readOnly = true)
     public Page<Admin> getAdminVideosByCondition(
         VideoParam.Condition condition, Pageable pageable) {
-        return videoReadRepository.findAdminVideoByCondition(condition, pageable).map(Admin::from);
+        return videoReadRepository.findAdminVideoByCondition(condition.toQueryParam(), pageable).map(Admin::from);
     }
 
     @Transactional(readOnly = true)
