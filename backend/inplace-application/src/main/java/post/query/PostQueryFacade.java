@@ -7,9 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import post.Post;
+import post.query.dto.CommentResult;
 import post.query.dto.PostResult;
-import post.query.dto.PostResult.ReportedPost;
 import util.AuthorizationUtil;
 
 @Facade
@@ -19,15 +18,20 @@ public class PostQueryFacade {
 
     private final PostQueryService postQueryService;
 
-    public CursorResult<PostQueryResult.DetailedPost> getPosts(Long cursorId, int size, String orderBy) {
+    public CursorResult<PostResult.DetailedPost> getPosts(Long cursorId, int size, String orderBy) {
         var userId = AuthorizationUtil.getUserIdOrNull();
+        var queryResult = postQueryService.getPosts(userId, cursorId, size, orderBy);
+        var result =  postQueryService.getPosts(userId, cursorId, size, orderBy).value().stream()
+            .map(PostResult.DetailedPost::from)
+            .toList();
 
-        return postQueryService.getPosts(userId, cursorId, size, orderBy);
+        return new CursorResult<>(result, queryResult.hasNext(), queryResult.nextCursorId());
     }
 
-    public PostQueryResult.DetailedPost getPostById(Long postId) {
+    public PostResult.DetailedPost getPostById(Long postId) {
         var userId = AuthorizationUtil.getUserIdOrNull();
-        return postQueryService.getPostById(postId, userId);
+        var queryResult = postQueryService.getPostById(userId, postId);
+        return PostResult.DetailedPost.from(queryResult);
     }
 
     public PostResult.PostImages getPostImageDetails(Long postId) {
@@ -35,16 +39,21 @@ public class PostQueryFacade {
         return postQueryService.getPostImageDetails(postId, userId);
     }
 
-    public Page<PostResult.DetailedComment> getCommentsByPostId(
+    public Page<CommentResult.DetailedComment> getCommentsByPostId(
         Long postId, Pageable pageable
     ) {
         var userId = AuthorizationUtil.getUserIdOrNull();
-        return postQueryService.getCommentsByPostId(postId, userId, pageable);
+        var queryResult = postQueryService.getCommentsByPostId(userId, postId, pageable);
+        return queryResult.map(CommentResult.DetailedComment::from);
     }
 
     public List<PostResult.UserSuggestion> getCommentUserSuggestions(Long postId, String keyword) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
-        return postQueryService.getUserSuggestions(userId, postId, keyword);
+        var queryResult = postQueryService.getUserSuggestions(userId, postId, keyword);
+
+        return queryResult.stream()
+            .map(PostResult.UserSuggestion::from)
+            .toList();
     }
 
     public List<PostResult.ReportedPost> findReportedPosts() {

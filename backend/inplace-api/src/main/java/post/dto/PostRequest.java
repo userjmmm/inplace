@@ -1,7 +1,7 @@
 package post.dto;
 
 import java.util.List;
-import team7.inplace.post.application.dto.PostCommand;
+import post.command.dto.PostCommand;
 
 public class PostRequest {
 

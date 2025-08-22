@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import post.Comment;
 import post.Post;
+import post.query.PostQueryResult;
 
 public class PostResult {
 
@@ -64,6 +65,72 @@ public class PostResult {
                 comment.getDeleteAt()
             );
         }
+
+    }
+
+    public record DetailedPost(
+        Long postId,
+        String userNickname,
+        String userImageUrl,
+        String tierImageUrl,
+        String mainBadgeImageUrl,
+        String title,
+        String content,
+        List<PostQueryResult.Image> imageInfos, // TODO : JsonNode -> List<Image> 반환으로 변경
+        Boolean selfLike,
+        Integer totalLikeCount,
+        Integer totalCommentCount,
+        Boolean isMine,
+        LocalDateTime createdAt
+    ) {
+
+        public static DetailedPost from(PostQueryResult.DetailedPost post) {
+            return new DetailedPost(
+                post.postId(),
+                post.userNickname(),
+                post.userImageUrl(),
+                post.tierImageUrl(),
+                post.mainBadgeImageUrl(),
+                post.title(),
+                post.content(),
+                post.imageInfos(),
+                post.selfLike(),
+                post.totalLikeCount(),
+                post.totalCommentCount(),
+                post.isMine(),
+                post.createdAt()
+            );
+        }
+
+    }
+
+    public record CursorDetailedPost(
+        PostQueryResult.DetailedPost detailedPost,
+        Long cursorId
+    ) {
+
+    }
+
+    public record UserSuggestion(
+        Long userId,
+        String userNickname,
+        String userImageUrl
+    ) {
+
+        public static UserSuggestion from(PostQueryResult.UserSuggestion user) {
+            return new UserSuggestion(
+                user.userId(),
+                user.userNickname(),
+                user.userImageUrl()
+            );
+        }
+
+    }
+
+    public record Image(
+        String imageUrl,
+        String imageHash
+    ) {
 
     }
 }
