@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import place.PlaceService;
-import place.dto.PlaceResult;
 import place.query.PlaceQueryResult;
+import place.query.PlaceQueryService;
+import place.query.dto.PlaceResult;
 import review.ReviewService;
 import review.query.ReviewQueryResult;
 import token.OauthTokenService;
@@ -25,16 +25,18 @@ import video.query.VideoQueryService;
 public class UserFacade {
 
     private final InfluencerQueryService influencerQueryService;
-    private final PlaceService placeService;
+    private final PlaceQueryService placeService;
     private final ReviewService reviewService;
     private final VideoQueryService videoQueryService;
     private final UserQueryService userQueryService;
+
     private final UserCommandService userCommandService;
     private final OauthTokenService oauthTokenService;
 
     //TODO: Return 클래스 변경 필요
-    public Page<InfluencerResult.Detail> getMyFavoriteInfluencers(Pageable pageable) {
+    public Page<InfluencerResult.Simple> getMyFavoriteInfluencers(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
+
         return influencerQueryService.getFavoriteInfluencers(userId, pageable);
     }
 

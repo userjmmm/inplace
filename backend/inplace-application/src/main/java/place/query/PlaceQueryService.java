@@ -3,7 +3,6 @@ package place.query;
 import exception.InplaceException;
 import exception.code.CategoryErrorCode;
 import exception.code.PlaceErrorCode;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +11,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import place.dto.PlaceInfo;
 import place.jpa.CategoryJpaRepository;
 import place.jpa.PlaceJpaRepository;
-import place.query.PlaceQueryResult.Marker;
 import place.query.dto.PlaceParam;
 import place.query.dto.PlaceResult;
 import place.query.dto.PlaceResult.Category;
@@ -81,7 +78,7 @@ public class PlaceQueryService {
         return placeJpaRepository.findGooglePlaceIdById(placeId);
     }
 
-    public List<PlaceInfo.Category> getCategories() {
+    public List<PlaceResult.Category> getCategories() {
         var categories = categoryRepository.findAll();
         return categories.stream()
             .map(Category::from)
@@ -97,12 +94,12 @@ public class PlaceQueryService {
      *   TODO: 한 장소에 비디오가 여러개일 수 있으니 수정 필요 / Command를 Facade에서 만들도록 변경
      */
     @Transactional(readOnly = true)
-    public PlaceInfo.Simple getPlaceMessageCommand(Long placeId, Long userId) {
+    public PlaceResult.Simple getPlaceMessageCommand(Long placeId, Long userId) {
         var place = placeReadRepository.findDetailedPlaceById(placeId, userId)
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
         var videos = videoReadRepository.findSimpleVideosByPlaceId(placeId);
 
-        return PlaceInfo.Simple.of(place, videos);
+        return PlaceResult.Simple.of(place, videos);
     }
 
     @Transactional(readOnly = true)

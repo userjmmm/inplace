@@ -12,19 +12,17 @@ import video.CoolVideo;
 import video.RecentVideo;
 import video.jpa.CoolVideoJpaRepository;
 import video.jpa.RecentVideoJpaRepository;
-import video.jpa.VideoJpaRepository;
+import video.query.dto.VideoParam;
 import video.query.dto.VideoResult;
 import video.query.dto.VideoResult.Admin;
 import video.query.dto.VideoResult.DetailedVideo;
 import video.query.dto.VideoResult.SimpleVideo;
-import video.query.dto.VideoParam;
 
 @Service
 @RequiredArgsConstructor
 public class VideoQueryService {
 
     private final VideoReadRepository videoReadRepository;
-    private final VideoJpaRepository videoJpaRepository;
     private final CoolVideoJpaRepository coolVideoJpaRepository;
     private final RecentVideoJpaRepository recentVideoJpaRepository;
 
@@ -78,19 +76,22 @@ public class VideoQueryService {
     }
 
     @Transactional(readOnly = true)
-    public Map<Long, List<SimpleVideo>> getVideosByPlaceId(List<Long> placeIds) {
+    public Map<Long, List<VideoQueryResult.SimpleVideo>> getVideosByPlaceId(List<Long> placeIds) {
         return videoReadRepository.findSimpleVideosByPlaceIds(placeIds);
     }
 
     @Transactional(readOnly = true)
     public List<SimpleVideo> getVideosByPlaceId(Long placeId) {
-        return videoReadRepository.findSimpleVideosByPlaceId(placeId).stream().map(SimpleVideo::from).toList();
+        return videoReadRepository.findSimpleVideosByPlaceId(placeId).stream()
+            .map(SimpleVideo::from).toList();
     }
 
     @Transactional(readOnly = true) // Todo videoQueryParam? videoParam?
     public Page<Admin> getAdminVideosByCondition(
-        VideoParam.Condition condition, Pageable pageable) {
-        return videoReadRepository.findAdminVideoByCondition(condition, pageable).map(Admin::from);
+        VideoParam.Condition condition, Pageable pageable
+    ) {
+        return videoReadRepository.findAdminVideoByCondition(condition.toQueryParam(), pageable)
+            .map(Admin::from);
     }
 
     @Transactional(readOnly = true)
