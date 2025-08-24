@@ -23,4 +23,8 @@ dependencies {
     // OpenAI
     implementation platform("org.springframework.ai:spring-ai-bom:1.0.0")
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+
+    // QR code
+    implementation 'com.google.zxing:core:3.4.1'
+    implementation 'com.google.zxing:javase:3.4.1'
 }
