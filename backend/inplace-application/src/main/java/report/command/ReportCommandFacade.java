@@ -1,25 +1,25 @@
-package report;
+package report.command;
 
+import annotation.Facade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import team7.inplace.global.annotation.Facade;
-import team7.inplace.post.application.PostService;
-import team7.inplace.report.event.ReportEvent.CommentReportEvent;
-import team7.inplace.report.event.ReportEvent.PostReportEvent;
+import post.command.PostCommandService;
+import report.event.dto.ReportEvent.CommentReportEvent;
+import report.event.dto.ReportEvent.PostReportEvent;
 
 @Facade
 @RequiredArgsConstructor
-public class ReportFacade {
+public class ReportCommandFacade {
     private final ApplicationEventPublisher eventPublisher;
-    private final PostService postService;
+    private final PostCommandService postCommandService;
 
     public void processPostReport(Long postId) {
-        postService.reportPost(postId);
+        postCommandService.reportPost(postId);
         eventPublisher.publishEvent(new PostReportEvent(postId));
     }
 
     public void processCommentReport(Long commentId) {
-        postService.reportComment(commentId);
+        postCommandService.reportComment(commentId);
         eventPublisher.publishEvent(new CommentReportEvent(commentId));
     }
 
