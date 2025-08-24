@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import search.dto.SearchRequest;
 import search.dto.SearchResponse;
-import team7.inplace.search.application.dto.AutoCompletionInfo;
 import video.dto.VideoResponse;
 
 @Tag(name = "검색 API입니다.")
@@ -20,7 +19,7 @@ public interface SearchControllerApiSpec {
 
     @Operation(summary = "추천 검색어를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "검색어 조회 성공")
-    ResponseEntity<List<AutoCompletionInfo>> searchKeywords(
+    ResponseEntity<List<SearchResponse.AutoCompletion>> searchKeywords(
         @ModelAttribute SearchRequest.AutoComplete request
     );
 
@@ -30,7 +29,7 @@ public interface SearchControllerApiSpec {
 
     @Operation(summary = "인플루언서를 검색합니다.")
     @ApiResponse(responseCode = "200", description = "인플루언서 검색 성공")
-    ResponseEntity<List<InfluencerResponse.Info>> getInfluencersForPaging(String keyword);
+    ResponseEntity<List<InfluencerResponse.Simple>> getInfluencersForPaging(String keyword);
 
     @Operation(summary = "장소를 검색합니다.")
     @ApiResponse(responseCode = "200", description = "장소 검색 성공")
@@ -38,7 +37,7 @@ public interface SearchControllerApiSpec {
 
     @Operation(summary = "인플루언서 검색창 전용 / 페이징 처리된 인플루언서 페이지를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "인플루언서 페이지 조회 성공")
-    ResponseEntity<Page<InfluencerResponse.Info>> getInfluencersForPaging(
+    ResponseEntity<Page<InfluencerResponse.Simple>> getInfluencersForPaging(
         String keyword, @PageableDefault Pageable pageable
     );
 }

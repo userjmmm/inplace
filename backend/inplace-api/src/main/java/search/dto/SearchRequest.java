@@ -2,7 +2,7 @@ package search.dto;
 
 import lombok.Getter;
 import lombok.ToString;
-import team7.inplace.search.application.dto.SearchType;
+import search.query.dto.SearchType;
 
 public class SearchRequest {
 
