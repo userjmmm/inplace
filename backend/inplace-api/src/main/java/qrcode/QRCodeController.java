@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import team7.inplace.qrcode.application.QRCodeFacade;
+import qrcode.query.QRCodeQueryFacade;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/qrcodes")
 public class QRCodeController implements QRCodeControllerApiSpec {
 
-    private final QRCodeFacade qrCodeFacade;
+    private final QRCodeQueryFacade qrCodeQueryFacade;
 
     @Override
     @GetMapping()
@@ -27,7 +27,7 @@ public class QRCodeController implements QRCodeControllerApiSpec {
         @RequestParam(required = false, defaultValue = "200")
         Integer height
     ) {
-        var qrCode = qrCodeFacade.getQRCode(placeId, width, height);
+        var qrCode = qrCodeQueryFacade.getQRCode(placeId, width, height);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
 

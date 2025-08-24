@@ -1,4 +1,4 @@
-package report;
+package report.query;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.moderation.ModerationPrompt;

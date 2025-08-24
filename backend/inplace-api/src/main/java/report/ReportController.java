@@ -7,20 +7,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import report.command.ReportCommandFacade;
 import report.dto.ReportRequest.SubmitReport;
-import team7.inplace.report.application.ReportFacade;
 
 @RestController
 @RequestMapping("/reports")
 @RequiredArgsConstructor
 public class ReportController implements ReportControllerApiSpec {
 
-    private final ReportFacade reportFacade;
+    private final ReportCommandFacade reportCommandFacade;
 
     @Override
     @PostMapping("/post")
     public ResponseEntity<Void> submitPostReport(@RequestBody SubmitReport request) {
-        reportFacade.processPostReport(request.id());
+        reportCommandFacade.processPostReport(request.id());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -28,7 +28,7 @@ public class ReportController implements ReportControllerApiSpec {
     @Override
     @PostMapping("/comment")
     public ResponseEntity<Void> submitCommentReport(@RequestBody SubmitReport request) {
-        reportFacade.processCommentReport(request.id());
+        reportCommandFacade.processCommentReport(request.id());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

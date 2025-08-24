@@ -1,10 +1,11 @@
 package user.dto;
 
-import influencer.dto.InfluencerResult;
+import influencer.query.dto.InfluencerResult;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import place.dto.PlaceResult;
+import place.query.dto.PlaceResult;
+import video.query.dto.VideoResult;
 
 public class UserResponse {
 
@@ -134,9 +135,9 @@ public class UserResponse {
                 likedPlaceResult.place().placeId(),
                 likedPlaceResult.place().placeName(),
                 "",
-                likedPlaceResult.video()
+                likedPlaceResult.videos()
                     .stream()
-                    .map(VideoQueryResult.SimpleVideo::influencerName)
+                    .map(VideoResult.SimpleVideo::influencerName)
                     .distinct()
                     .collect(Collectors.joining(", ")),
                 new ReviewPlaceAddress(
@@ -144,9 +145,9 @@ public class UserResponse {
                     likedPlaceResult.place().address2(),
                     likedPlaceResult.place().address3()
                 ),
-                likedPlaceResult.video()
+                likedPlaceResult.videos()
                     .stream()
-                    .map(VideoQueryResult.SimpleVideo::videoUrl)
+                    .map(VideoResult.SimpleVideo::videoUrl)
                     .findFirst()
                     .orElse(""),
                 likedPlaceResult.place().isLiked()
@@ -162,13 +163,13 @@ public class UserResponse {
         boolean likes
     ) {
 
-        public static LikedInfluencer from(InfluencerResult influencerResult) {
+        public static LikedInfluencer from(InfluencerResult.Simple influencerResult) {
             return new LikedInfluencer(
-                influencerResult.influencerId(),
-                influencerResult.influencerName(),
-                influencerResult.influencerImgUrl(),
-                influencerResult.influencerJob(),
-                influencerResult.likes()
+                influencerResult.id(),
+                influencerResult.name(),
+                influencerResult.imgUrl(),
+                influencerResult.job(),
+                influencerResult.isLiked()
             );
         }
     }
