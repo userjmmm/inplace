@@ -1,7 +1,7 @@
-package search.dto;
+package search.query.dto;
 
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.SearchErrorCode;
+import exception.InplaceException;
+import exception.code.SearchErrorCode;
 
 public enum SearchType {
     PLACE, INFLUENCER, VIDEO, ALL;

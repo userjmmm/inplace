@@ -1,4 +1,4 @@
-package qrcode;
+package qrcode.query;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -13,7 +13,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 @Service
-public class QRCodeService {
+public class QrCodeQueryService {
 
     public byte[] generateQRCode(Long kakaoPlaceId, Integer width, Integer height) {
         String qrCodeData = "http://place.map.kakao.com/" + kakaoPlaceId;
@@ -29,9 +29,7 @@ public class QRCodeService {
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 
         try {
-
-            bitMatrix = multiFormatWriter.encode(qrCodeData, BarcodeFormat.QR_CODE, width, height,
-                hints);
+            bitMatrix = multiFormatWriter.encode(qrCodeData, BarcodeFormat.QR_CODE, width, height, hints);
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream);

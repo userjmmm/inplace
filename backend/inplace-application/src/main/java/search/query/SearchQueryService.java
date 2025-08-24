@@ -1,7 +1,6 @@
 package search.query;
 
-import influencer.query.InfluencerQueryResult;
-import influencer.query.InfluencerQueryResult.Simple;
+import influencer.query.dto.InfluencerResult;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -12,9 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import search.InfluencerSearchQueryDslRepository;
 import search.PlaceSearchQueryDslRepository;
-import search.SearchQueryResult;
 import search.VideoSearchQueryDslRepository;
-import video.query.VideoQueryResult;
+import search.query.dto.SearchType;
+import search.query.dto.SearchResult;
+import util.AuthorizationUtil;
+import video.query.dto.VideoResult;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,10 +28,10 @@ public class SearchQueryService {
     private final InfluencerSearchQueryDslRepository influencerSearchRepository;
     private final PlaceSearchQueryDslRepository placeSearchRepository;
 
-    public List<AutoCompletionInfo> searchAutoCompletions(SearchType type, String keyword) {
+    public List<SearchResult.AutoCompletion> searchAutoCompletions(SearchType type, String keyword) {
         var placeSearchInfo = placeSearchRepository.searchAutoComplete(keyword).stream()
             .map(
-                info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.PLACE))
+                info -> new SearchResult.AutoCompletion(info.keyword(), info.score(), SearchType.PLACE))
             .toList();
 
         if (type.equals(SearchType.PLACE)) {
@@ -39,23 +40,23 @@ public class SearchQueryService {
 
         var influencerSearchInfo = influencerSearchRepository.searchAutoComplete(keyword).stream()
             .map(
-                info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.INFLUENCER))
+                info -> new SearchResult.AutoCompletion(info.keyword(), info.score(), SearchType.INFLUENCER))
             .toList();
 
         return Stream.concat(influencerSearchInfo.stream(), placeSearchInfo.stream())
-            .sorted(Comparator.comparing(AutoCompletionInfo::score).reversed())
+            .sorted(Comparator.comparing(SearchResult.AutoCompletion::score).reversed())
             .limit(MAX_COMPLETION_RESULTS)
             .toList();
     }
 
-    public Page<Simple> searchInfluencer(String keyword, Pageable pageable) {
+    public Page<InfluencerResult.Simple> searchInfluencer(String keyword, Pageable pageable) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         var influencerInfos = influencerSearchRepository.search(keyword, pageable, userId);
 
-        return influencerInfos;
+        return influencerInfos.map(InfluencerResult.Simple::from);
     }
 
-    public List<InfluencerQueryResult.Simple> searchInfluencer(String keyword) {
+    public List<InfluencerResult.Simple> searchInfluencer(String keyword) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         var influencerInfos = influencerSearchRepository.search(
             keyword,
@@ -63,10 +64,12 @@ public class SearchQueryService {
             userId
         );
 
-        return influencerInfos.getContent();
+        return influencerInfos.getContent().stream()
+            .map(InfluencerResult.Simple::from)
+            .toList();
     }
 
-    public List<VideoQueryResult.DetailedVideo> searchVideo(String keyword) {
+    public List<VideoResult.DetailedVideo> searchVideo(String keyword) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         var videoInfos = videoSearchRepository.search(
             keyword,
@@ -74,10 +77,12 @@ public class SearchQueryService {
             userId
         );
 
-        return videoInfos.getContent();
+        return videoInfos.getContent().stream()
+            .map(VideoResult.DetailedVideo::from)
+            .toList();
     }
 
-    public List<SearchQueryResult.Place> searchPlace(String keyword) {
+    public List<SearchResult.Place> searchPlace(String keyword) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         var placeInfos = placeSearchRepository.search(
             keyword,
@@ -85,6 +90,8 @@ public class SearchQueryService {
             userId
         );
 
-        return placeInfos.getContent();
+        return placeInfos.getContent().stream()
+            .map(SearchResult.Place::from)
+            .toList();
     }
 }

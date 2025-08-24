@@ -1,4 +1,4 @@
-package report.event;
+package report.event.dto;
 
 public class ReportEvent {
 
