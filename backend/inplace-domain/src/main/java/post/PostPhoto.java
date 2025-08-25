@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import exception.InplaceException;
 import exception.code.PostErrorCode;
-import jakarta.persistence.Convert;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,9 +18,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostPhoto { //TODO PostQueryResult의 JsonNode -> List<PostPhoto> 변경에 따른 수정 필요
+public class PostPhoto {
 
-    @Convert(converter = JsonNodeConverter.class)
+    @Column(columnDefinition = "JSON")
     private JsonNode imageInfos;
 
     public PostPhoto(List<String> imageInfos, List<String> imgHashes) {
