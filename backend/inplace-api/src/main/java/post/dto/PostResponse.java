@@ -2,15 +2,15 @@ package post.dto;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
-import base.CursorResult;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import cursor.CursorResult;
+import global.CursorResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import post.query.dto.CommentResult;
 import post.query.dto.PostResult;
-import team7.inplace.global.cursor.CursorResponse;
 import user.dto.UserResponse;
 
 public class PostResponse {
@@ -79,9 +79,9 @@ public class PostResponse {
                 ),
                 postResult.title(),
                 postResult.content(),
-                postResult.getImageUrls().isEmpty()
+                postResult.imageInfos().isEmpty()
                     ? null
-                    : postResult.getImageUrls().get(0),
+                    : postResult.imageInfos().get(0).imageUrl(),
                 postResult.selfLike(),
                 postResult.totalLikeCount(),
                 postResult.totalCommentCount(),
@@ -105,8 +105,8 @@ public class PostResponse {
     ) {
 
         public static DetailedPost from(PostResult.DetailedPost postResult) {
-            List<SimplePostImage> images = postResult.getImageUrls().stream()
-                .map(SimplePostImage::new)
+            List<SimplePostImage> images = postResult.imageInfos().stream()
+                .map(image -> new SimplePostImage(image.imageUrl()))
                 .toList();
             return new DetailedPost(
                 postResult.postId(),

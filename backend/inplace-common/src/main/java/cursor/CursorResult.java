@@ -1,4 +1,4 @@
-package base;
+package cursor;
 
 import java.util.List;
 
