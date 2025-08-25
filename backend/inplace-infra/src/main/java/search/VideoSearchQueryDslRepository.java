@@ -1,8 +1,10 @@
 package search;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import influencer.QInfluencer;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,12 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import team7.inplace.influencer.domain.QInfluencer;
-import team7.inplace.place.domain.QCategory;
-import team7.inplace.place.domain.QPlace;
-import team7.inplace.place.domain.QPlaceVideo;
-import team7.inplace.video.domain.QVideo;
-import team7.inplace.video.persistence.dto.QVideoQueryResult_DetailedVideo;
+import place.QCategory;
+import place.QPlace;
+import place.QPlaceVideo;
+import video.QVideo;
 import video.query.VideoQueryResult;
 import video.query.VideoQueryResult.DetailedVideo;
 
@@ -51,7 +51,7 @@ public class VideoSearchQueryDslRepository implements SearchRepository<DetailedV
 
         QCategory selfCategory = new QCategory("selfCategory");
         var contents = queryFactory
-            .select(new QVideoQueryResult_DetailedVideo(
+            .select(Projections.constructor(VideoQueryResult.DetailedVideo.class,
                 QVideo.video.id,
                 QVideo.video.uuid,
                 QInfluencer.influencer.name,

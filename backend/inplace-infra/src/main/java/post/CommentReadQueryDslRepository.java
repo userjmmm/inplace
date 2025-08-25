@@ -1,5 +1,6 @@
-package review;
+package post;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -11,12 +12,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import post.query.CommentQueryResult;
 import post.query.CommentReadRepository;
-import team7.inplace.liked.likedComment.domain.QLikedComment;
-import team7.inplace.post.domain.QComment;
-import team7.inplace.post.persistence.dto.QCommentQueryResult_DetailedComment;
-import team7.inplace.user.domain.QBadge;
-import team7.inplace.user.domain.QUser;
-import team7.inplace.user.domain.QUserTier;
+import user.QBadge;
+import user.QTier;
+import user.QUser;
 
 @Repository
 @RequiredArgsConstructor
@@ -58,11 +56,11 @@ public class CommentReadQueryDslRepository implements CommentReadRepository {
         }
 
         return jpaQueryFactory.select(
-                new QCommentQueryResult_DetailedComment(
+                Projections.constructor(CommentQueryResult.DetailedComment.class,
                     QComment.comment.id,
                     QUser.user.nickname,
                     QUser.user.profileImageUrl,
-                    QUserTier.userTier.imgUrl,
+                    QTier.tier.imgUrl,
                     QBadge.badge.imgUrl,
                     QComment.comment.content,
                     userId == null ?
@@ -83,7 +81,7 @@ public class CommentReadQueryDslRepository implements CommentReadRepository {
             )
             .from(QComment.comment)
             .join(QUser.user).on(QComment.comment.authorId.eq(QUser.user.id))
-            .innerJoin(QUserTier.userTier).on(QUser.user.tierId.eq(QUserTier.userTier.id))
+            .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedComment.likedComment)
             .on(userId == null ? Expressions.FALSE : likedJoinCondition)

@@ -1,5 +1,6 @@
 package search;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -9,11 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import place.QLikedPlace;
+import place.QPlace;
 import search.SearchQueryResult.AutoComplete;
 import search.SearchQueryResult.Place;
-import team7.inplace.liked.likedPlace.domain.QLikedPlace;
-import team7.inplace.place.domain.QPlace;
-import team7.inplace.search.persistence.dto.QSearchQueryResult_Place;
 
 @Repository
 @RequiredArgsConstructor
@@ -49,10 +49,11 @@ public class PlaceSearchQueryDslRepository implements SearchRepository<Place> {
         var matchScore = getMatchScore(keyword);
 
         var content = queryFactory
-            .select(new QSearchQueryResult_Place(
-                QPlace.place.id,
-                QPlace.place.name,
-                QLikedPlace.likedPlace.id.isNotNull())
+            .select(
+                Projections.constructor(SearchQueryResult.Place.class,
+                    QPlace.place.id,
+                    QPlace.place.name,
+                    QLikedPlace.likedPlace.id.isNotNull())
             )
             .from(QPlace.place)
             .leftJoin(QLikedPlace.likedPlace).on(

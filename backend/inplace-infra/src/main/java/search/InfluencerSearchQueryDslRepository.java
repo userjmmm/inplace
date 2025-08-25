@@ -1,8 +1,11 @@
 package search;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import influencer.QInfluencer;
+import influencer.QLikedInfluencer;
 import influencer.query.InfluencerQueryResult;
 import influencer.query.InfluencerQueryResult.Simple;
 import java.util.List;
@@ -12,9 +15,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import search.SearchQueryResult.AutoComplete;
-import team7.inplace.influencer.domain.QInfluencer;
-import team7.inplace.influencer.persistence.dto.QInfluencerQueryResult_Simple;
-import team7.inplace.liked.likedInfluencer.domain.QLikedInfluencer;
 
 @Repository
 @RequiredArgsConstructor
@@ -51,7 +51,7 @@ public class InfluencerSearchQueryDslRepository implements SearchRepository<Simp
         var matchScore = getMatchScore(keyword);
 
         var content = queryFactory
-            .select(new QInfluencerQueryResult_Simple(
+            .select(Projections.constructor(InfluencerQueryResult.Simple.class,
                 QInfluencer.influencer.id,
                 QInfluencer.influencer.name,
                 QInfluencer.influencer.imgUrl,
