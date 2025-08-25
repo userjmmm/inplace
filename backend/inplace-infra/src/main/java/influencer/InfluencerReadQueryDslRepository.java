@@ -1,5 +1,7 @@
 package influencer;
 
+import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,12 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import team7.inplace.influencer.domain.QInfluencer;
-import team7.inplace.influencer.persistence.dto.QInfluencerQueryResult_Detail;
-import team7.inplace.influencer.persistence.dto.QInfluencerQueryResult_Simple;
-import team7.inplace.liked.likedInfluencer.domain.QLikedInfluencer;
-import team7.inplace.place.domain.QPlaceVideo;
-import team7.inplace.video.domain.QVideo;
+import place.QPlaceVideo;
+import video.QVideo;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,7 +41,7 @@ public class InfluencerReadQueryDslRepository implements InfluencerReadRepositor
         return Optional.ofNullable(
             queryFactory
                 .select(
-                    new QInfluencerQueryResult_Detail(
+                    Projections.constructor(InfluencerQueryResult.Detail.class,
                         QInfluencer.influencer.id,
                         QInfluencer.influencer.name,
                         QInfluencer.influencer.imgUrl,
@@ -107,7 +105,7 @@ public class InfluencerReadQueryDslRepository implements InfluencerReadRepositor
         }
 
         var influencers = queryFactory
-            .select(new QInfluencerQueryResult_Simple(
+            .select(Projections.constructor(InfluencerQueryResult.Simple.class,
                 QInfluencer.influencer.id,
                 QInfluencer.influencer.name,
                 QInfluencer.influencer.imgUrl,

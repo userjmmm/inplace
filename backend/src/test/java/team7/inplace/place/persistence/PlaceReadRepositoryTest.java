@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
-import place.PlaceReadRepositoryImpl;
+import place.PlaceReadQueryDslRepositoryImpl;
 import place.query.PlaceQueryResult.DetailedPlace;
 import place.query.PlaceQueryResult.Marker;
 import place.query.PlaceReadRepository;
@@ -43,7 +43,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
     @BeforeEach
     void setUp() {
         JPAQueryFactory queryFactory = new JPAQueryFactory(testEntityManager.getEntityManager());
-        this.placeReadRepository = new PlaceReadRepositoryImpl(queryFactory);
+        this.placeReadRepository = new PlaceReadQueryDslRepositoryImpl(queryFactory);
     }
 
     @Test

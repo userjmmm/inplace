@@ -1,11 +1,13 @@
 package place;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import influencer.QInfluencer;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +22,11 @@ import place.query.PlaceQueryResult.Marker;
 import place.query.PlaceQueryResult.MarkerDetail;
 import place.query.PlaceQueryResult.SimplePlace;
 import place.query.PlaceReadRepository;
-import team7.inplace.influencer.domain.QInfluencer;
-import team7.inplace.liked.likedPlace.domain.QLikedPlace;
-import team7.inplace.place.domain.QCategory;
-import team7.inplace.place.domain.QPlace;
-import team7.inplace.place.domain.QPlaceVideo;
-import team7.inplace.video.domain.QVideo;
+import video.QVideo;
 
 @Repository
 @RequiredArgsConstructor
-public class PlaceReadRepositoryImpl implements PlaceReadRepository {
+public class PlaceReadQueryDslRepositoryImpl implements PlaceReadRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -55,7 +52,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         var bottomRightLatitude = coordinateParams.bottomRightLatitude();
         var regionFilters = filterParams.regions();
         var categoryFilters = filterParams.categories();
-        vaar influencerFilters = filterParams.influencers();
+        var influencerFilters = filterParams.influencers();
 
         List<Long> placeIds = getFilteredPlaceIds(
             topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude,
@@ -100,7 +97,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     @Override
     public Optional<SimplePlace> findSimplePlaceById(Long placeId) {
         SimplePlace place = jpaQueryFactory
-            .select(new QPlaceQueryResult_SimplePlace(
+            .select(Projections.constructor(PlaceQueryResult.SimplePlace.class,
                 QPlace.place.id, QPlace.place.name,
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
@@ -140,7 +137,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     @Override
     public MarkerDetail findPlaceMarkerById(Long placeId) {
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_MarkerDetail(
+            .select(Projections.constructor(PlaceQueryResult.MarkerDetail.class,
                 QPlace.place.id, QPlace.place.name, QCategory.category.name,
                 QPlace.place.address.address1, QPlace.place.address.address2,
                 QPlace.place.address.address3
@@ -202,7 +199,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             .fetch();
 
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_DetailedPlace(
+            .select(Projections.constructor(PlaceQueryResult.DetailedPlace.class,
                 QPlace.place.id,
                 QPlace.place.name,
                 QPlace.place.address.address1,
@@ -229,7 +226,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         QLikedPlace selfLiked = new QLikedPlace("selfLiked");
 
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_DetailedPlace(
+            .select(Projections.constructor(PlaceQueryResult.DetailedPlace.class,
                 QPlace.place.id,
                 QPlace.place.name,
                 QPlace.place.address.address1,
@@ -256,7 +253,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         QCategory category = new QCategory("category");
         QCategory parentCategory = new QCategory("parentCategory");
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_Marker(
+            .select(Projections.constructor(PlaceQueryResult.Marker.class,
                 QPlace.place.id,
                 parentCategory.engName,
                 QPlace.place.coordinate.longitude,

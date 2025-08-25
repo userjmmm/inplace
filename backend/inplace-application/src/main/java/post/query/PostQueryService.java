@@ -1,25 +1,23 @@
 package post.query;
 
-import base.CursorResult;
+import cursor.CursorResult;
 import exception.InplaceException;
 import exception.code.PostErrorCode;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import post.query.dto.PostResult;
+import post.CommentReadQueryDslRepository;
+import post.PostReadQueryDslRepository;
 import post.jpa.CommentJpaRepository;
 import post.jpa.PostJpaRepository;
 import post.query.CommentQueryResult.DetailedComment;
 import post.query.PostQueryResult.DetailedPost;
 import post.query.PostQueryResult.UserSuggestion;
-import post.query.dto.PostResult.ReportedPost;
-import review.CommentReadQueryDslRepository;
-import review.PostReadQueryDslRepository;
+import post.query.dto.PostResult;
 
 @Service
 @Slf4j

@@ -1,12 +1,13 @@
-package review;
+package post;
 
-import base.CursorResult;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import cursor.CursorResult;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -17,6 +18,9 @@ import post.query.PostQueryResult.CursorDetailedPost;
 import post.query.PostQueryResult.DetailedPost;
 import post.query.PostQueryResult.UserSuggestion;
 import post.query.PostReadRepository;
+import user.QBadge;
+import user.QTier;
+import user.QUser;
 
 @Repository
 @RequiredArgsConstructor
@@ -61,12 +65,12 @@ public class PostReadQueryDslRepository implements PostReadRepository {
             likedJoinCondition = likedJoinCondition.and(QLikedPost.likedPost.userId.eq(userId));
         }
         return queryFactory
-            .select(new QPostQueryResult_CursorDetailedPost(
-                    new QPostQueryResult_DetailedPost(
+            .select(Projections.constructor(PostQueryResult.CursorDetailedPost.class,
+                    Projections.constructor(PostQueryResult.DetailedPost.class,
                         QPost.post.id,
                         QUser.user.nickname,
                         QUser.user.profileImageUrl,
-                        QUserTier.userTier.imgUrl,
+                        QTier.tier.imgUrl,
                         QBadge.badge.imgUrl,
                         QPost.post.title.title,
                         QPost.post.content.content.substring(0, 120),
@@ -82,7 +86,7 @@ public class PostReadQueryDslRepository implements PostReadRepository {
             )
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
-            .innerJoin(QUserTier.userTier).on(QUser.user.tierId.eq(QUserTier.userTier.id))
+            .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
             .where(QPost.post.deleteAt.isNull());
@@ -95,11 +99,11 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         }
         return queryFactory
             .select(
-                new QPostQueryResult_DetailedPost(
+                Projections.constructor(PostQueryResult.DetailedPost.class,
                     QPost.post.id,
                     QUser.user.nickname,
                     QUser.user.profileImageUrl,
-                    QUserTier.userTier.imgUrl,
+                    QTier.tier.imgUrl,
                     QBadge.badge.imgUrl,
                     QPost.post.title.title,
                     QPost.post.content.content,
@@ -113,7 +117,7 @@ public class PostReadQueryDslRepository implements PostReadRepository {
             )
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
-            .innerJoin(QUserTier.userTier).on(QUser.user.tierId.eq(QUserTier.userTier.id))
+            .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
             .where(QPost.post.id.eq(postId)
@@ -148,7 +152,7 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         Long postId, String keyword
     ) {
         var postUser = queryFactory
-            .select(new QPostQueryResult_UserSuggestion(
+            .select(Projections.constructor(PostQueryResult.UserSuggestion.class,
                 QUser.user.id,
                 QUser.user.nickname,
                 QUser.user.profileImageUrl
@@ -164,7 +168,7 @@ public class PostReadQueryDslRepository implements PostReadRepository {
             .fetch();
 
         var commentUser = queryFactory
-            .select(new QPostQueryResult_UserSuggestion(
+            .select(Projections.constructor(PostQueryResult.UserSuggestion.class,
                 QUser.user.id,
                 QUser.user.nickname,
                 QUser.user.profileImageUrl

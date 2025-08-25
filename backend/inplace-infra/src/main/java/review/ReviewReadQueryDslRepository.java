@@ -1,6 +1,7 @@
 package review;
 
 import com.querydsl.core.types.ExpressionUtils;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collections;
@@ -9,14 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import place.QPlace;
 import review.query.ReviewQueryResult;
 import review.query.ReviewReadRepository;
-import team7.inplace.place.domain.QPlace;
-import team7.inplace.review.domain.QReview;
-import team7.inplace.review.persistence.dto.QReviewQueryResult_Detail;
-import team7.inplace.review.persistence.dto.QReviewQueryResult_LikeRate;
-import team7.inplace.review.persistence.dto.QReviewQueryResult_Simple;
-import team7.inplace.user.domain.QUser;
+import user.QUser;
 
 @Repository
 @RequiredArgsConstructor
@@ -42,7 +39,7 @@ public class ReviewReadQueryDslRepository implements ReviewReadRepository {
             return new PageImpl<>(Collections.emptyList(), pageable, 0);
         }
         var contents = jpaQueryFactory
-            .select(new QReviewQueryResult_Detail(
+            .select(Projections.constructor(ReviewQueryResult.Detail.class,
                 QReview.review.id,
                 QReview.review.isLiked,
                 QReview.review.comment,
@@ -83,7 +80,7 @@ public class ReviewReadQueryDslRepository implements ReviewReadRepository {
         }
 
         var reviews = jpaQueryFactory
-            .select(new QReviewQueryResult_Simple(
+            .select(Projections.constructor(ReviewQueryResult.Simple.class,
                 QReview.review.id,
                 QReview.review.isLiked,
                 QReview.review.comment,
@@ -108,7 +105,7 @@ public class ReviewReadQueryDslRepository implements ReviewReadRepository {
     @Override
     public ReviewQueryResult.LikeRate countRateByPlaceId(Long placeId) {
         var result = jpaQueryFactory
-            .select(new QReviewQueryResult_LikeRate(
+            .select(Projections.constructor(ReviewQueryResult.LikeRate.class,
                 QReview.review.isLiked.when(true).then(1L).otherwise(0L).sum().coalesce(0L),
                 QReview.review.isLiked.when(false).then(1L).otherwise(0L).sum().coalesce(0L)
             ))

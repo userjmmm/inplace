@@ -1,11 +1,14 @@
 package video;
 
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import influencer.QInfluencer;
+import influencer.QLikedInfluencer;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,17 +19,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import team7.inplace.influencer.domain.QInfluencer;
-import team7.inplace.liked.likedInfluencer.domain.QLikedInfluencer;
-import team7.inplace.liked.likedPlace.domain.QLikedPlace;
-import team7.inplace.place.domain.QCategory;
-import team7.inplace.place.domain.QPlace;
-import team7.inplace.place.domain.QPlaceVideo;
-import team7.inplace.video.domain.QVideo;
-import team7.inplace.video.persistence.dto.QVideoQueryResult_AdminVideo;
-import team7.inplace.video.persistence.dto.QVideoQueryResult_DetailedVideo;
-import team7.inplace.video.persistence.dto.QVideoQueryResult_SimpleVideo;
+import place.QCategory;
+import place.QLikedPlace;
+import place.QPlace;
+import place.QPlaceVideo;
 import video.query.VideoQueryParam;
+import video.query.VideoQueryResult;
 import video.query.VideoQueryResult.AdminVideo;
 import video.query.VideoQueryResult.DetailedVideo;
 import video.query.VideoQueryResult.SimpleVideo;
@@ -143,7 +141,7 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
         }
 
         List<SimpleVideo> videos = queryFactory
-            .select(new QVideoQueryResult_SimpleVideo(
+            .select(Projections.constructor(VideoQueryResult.SimpleVideo.class,
                 QVideo.video.id,
                 QVideo.video.uuid,
                 QInfluencer.influencer.name,
@@ -215,7 +213,7 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
         }
 
         List<AdminVideo> videos = queryFactory
-            .select(new QVideoQueryResult_AdminVideo(
+            .select(Projections.constructor(VideoQueryResult.AdminVideo.class,
                 QVideo.video.id,
                 QVideo.video.uuid,
                 Expressions.constant(Boolean.TRUE.equals(condition.placeRegistration()))
@@ -248,7 +246,7 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
 
     private JPAQuery<SimpleVideo> buildSimpleVideoQuery() {
         return queryFactory
-            .select(new QVideoQueryResult_SimpleVideo(
+            .select(Projections.constructor(VideoQueryResult.SimpleVideo.class,
                 QVideo.video.id,
                 QVideo.video.uuid,
                 QInfluencer.influencer.name,
@@ -268,7 +266,7 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
         QCategory selfCategory = new QCategory("selfCategory");
 
         return queryFactory
-            .select(new QVideoQueryResult_DetailedVideo(
+            .select(Projections.constructor(VideoQueryResult.DetailedVideo.class,
                 QVideo.video.id,
                 QVideo.video.uuid,
                 QInfluencer.influencer.name,
