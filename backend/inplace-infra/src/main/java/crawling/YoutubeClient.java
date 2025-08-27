@@ -1,5 +1,6 @@
 package crawling;
 
+import annotation.Client;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,8 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import annotation.Client;
-import team7.inplace.global.properties.GoogleApiProperties;
+import properties.GoogleApiProperties;
 
 @Slf4j
 @RequiredArgsConstructor

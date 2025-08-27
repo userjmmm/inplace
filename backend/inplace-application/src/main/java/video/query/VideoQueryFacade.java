@@ -8,54 +8,33 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import util.AuthorizationUtil;
-import video.query.dto.VideoResult.DetailedVideo;
 import video.query.dto.VideoParam;
 import video.query.dto.VideoResult;
+import video.query.dto.VideoResult.DetailedVideo;
+import video.query.dto.VideoResult.SimpleVideo;
 
 @Facade
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class VideoQueryFacade {
+
     private final VideoQueryService videoQueryService;
-    
-    public List<VideoResult.DetailedVideo> getVideosBySurround(
-        VideoParam.LatAndLon videoSearchParams,
-        Pageable pageable
-    ) {
-        return videoQueryService.readVideosBySurround(videoSearchParams, pageable).stream()
-                   .map(DetailedVideo::from)
-                   .toList();
-    }
-    
-    public List<VideoResult.RecentVideo> getRecentVideos() {
-        return videoQueryService.readRecentVideos().stream()
-                   .map(VideoResult.RecentVideo::from)
-                   .toList();
-    }
-    
-    public List<VideoResult.CoolVideo> getCoolVideos(String parentCategoryName) {
-        return videoQueryService.readCoolVideos(parentCategoryName).stream()
-                   .map(VideoResult.CoolVideo::from)
-                   .toList();
-    }
-    
-    public List<VideoResult.DetailedVideo> getMyInfluencerVideos() {
+
+    public List<DetailedVideo> getMyInfluencerVideos() {
+        // User 정보를 쿠키에서 추출
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        
-        return videoQueryService.readMyInfluencerVideos(userId).stream()
-                   .map(VideoResult.DetailedVideo::from)
-                   .toList();
+        // 인플루언서 id를 사용하여 영상을 조회
+        return videoQueryService.getMyInfluencerVideos(userId);
     }
-    
-    // ADMIN 메서드
-    public Page<VideoResult.Admin> getAdminVideosByCondition(VideoParam.Condition condition, Pageable pageable) {
-        return videoQueryService.readAdminVideosByCondition(condition, pageable)
-                   .map(VideoResult.Admin::from);
+
+    public Page<SimpleVideo> getVideoWithNoPlace(Pageable pageable) {
+        return videoQueryService.getVideoWithNoPlace(pageable);
     }
-    
-    public Page<VideoResult.SimpleVideo> getVideoWithNoPlace(Pageable pageable) {
-        return videoQueryService.readVideoWithNoPlace(pageable)
-                   .map(VideoResult.SimpleVideo::from);
+
+    public Page<VideoResult.Admin> getAdminVideosByCondition(
+        VideoParam.Condition condition, Pageable pageable
+    ) {
+        return videoQueryService.getAdminVideosByCondition(condition, pageable);
     }
 }

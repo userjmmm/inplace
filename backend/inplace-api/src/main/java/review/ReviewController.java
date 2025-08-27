@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import review.dto.ReviewRequest;
 import review.dto.ReviewResponse;
 import review.dto.ReviewResponse.Invitation;
-import team7.inplace.review.application.ReviewInvitationService;
-import team7.inplace.review.application.ReviewService;
 
 @RestController
 @RequiredArgsConstructor

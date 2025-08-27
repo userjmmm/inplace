@@ -11,15 +11,17 @@ import org.springframework.data.domain.Pageable;
 import place.query.PlaceQueryResult.MarkerDetail;
 import place.query.dto.PlaceParam;
 import place.query.dto.PlaceResult;
+import review.ReviewService;
 import util.AuthorizationUtil;
 import video.query.VideoQueryService;
-import video.query.dto.VideoParam;
+import video.query.dto.VideoParam.SquareBound;
 
 @Facade
 @RequiredArgsConstructor
 public class PlaceQueryFacade {
 
     private final PlaceQueryService placeQueryService;
+    private final ReviewService reviewQueryService;
     private final VideoQueryService videoQueryService;
     private final Executor externalApiExecutor;
 
@@ -31,7 +33,7 @@ public class PlaceQueryFacade {
         if (googlePlaceId.isEmpty()) {
             var placeInfo = placeQueryService.getPlaceInfo(userId, placeId);
 
-            var videoSearchParam = VideoSearchParams.from(
+            var videoSearchParam = SquareBound.from(
                 placeInfo.longitude().toString(),
                 placeInfo.latitude().toString()
             );
@@ -52,7 +54,7 @@ public class PlaceQueryFacade {
 
         var placeInfo = placeQueryService.getPlaceInfo(userId, placeId);
         var surroundVideos = videoQueryService.getVideosBySurround(
-            VideoParam.LatAndLon.from(placeInfo.longitude().toString(),
+            SquareBound.from(placeInfo.longitude().toString(),
                 placeInfo.latitude().toString()),
             PageRequest.of(0, 10),
             false
@@ -95,7 +97,8 @@ public class PlaceQueryFacade {
     ) {
         var userId = AuthorizationUtil.getUserIdOrNull();
 
-        var placeSimpleInfos = placeQueryService.getPlacesByName(userId, name, filterParams, pageable);
+        var placeSimpleInfos = placeQueryService.getPlacesByName(userId, name, filterParams,
+            pageable);
         var placeIds = placeSimpleInfos.getContent()
             .stream()
             .map(PlaceQueryResult.DetailedPlace::placeId)
@@ -154,13 +157,19 @@ public class PlaceQueryFacade {
         PlaceParam.Coordinate coordinateParams,
         PlaceParam.Filter filterParams
     ) {
-        return placeQueryService.getPlaceLocations(coordinateParams, filterParams);
+        return placeQueryService.getPlaceLocations(coordinateParams, filterParams)
+            .stream()
+            .map(PlaceResult.Marker::from)
+            .toList();
     }
 
     public List<PlaceResult.Marker> getPlaceLocationsByName(
         String name,
         PlaceParam.Filter filterParams
     ) {
-        return placeQueryService.getPlaceLocationsByName(name, filterParams);
+        return placeQueryService.getPlaceLocationsByName(name, filterParams)
+            .stream()
+            .map(PlaceResult.Marker::from)
+            .toList();
     }
 }

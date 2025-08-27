@@ -21,16 +21,16 @@ public class PlaceResult {
         public static PlaceResult.Detail of(
             PlaceQueryResult.DetailedPlace place,
             GooglePlaceClientResponse.Place googlePlace,
-            List<VideoQueryResult.SimpleVideo> videos,
+            List<VideoResult.SimpleVideo> videos,
             ReviewQueryResult.LikeRate reviewLikeRate,
-            List<VideoQueryResult.DetailedVideo> surroundVideos
+            List<VideoResult.DetailedVideo> surroundVideos
         ) {
             return new PlaceResult.Detail(
                 PlaceResult.DetailedPlace.from(place),
                 GooglePlaceResult.Place.from(googlePlace),
-                videos.stream().map(VideoResult.SimpleVideo::from).toList(),
+                videos,
                 ReviewResult.LikeRate.from(reviewLikeRate),
-                surroundVideos.stream().map(VideoResult.DetailedVideo::from).toList()
+                surroundVideos
             );
         }
     }

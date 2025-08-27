@@ -1,11 +1,10 @@
 package video.query.dto;
 
 import video.query.VideoQueryParam;
-import video.query.VideoQueryParam.Condition;
 
 public class VideoParam {
 
-    public record LatAndLon(
+    public record SquareBound(
         String topLeftLongitude,
         String topLeftLatitude,
         String bottomRightLongitude,
@@ -14,7 +13,7 @@ public class VideoParam {
         String latitude
     ) {
 
-        private LatAndLon(String longitude, String latitude) {
+        private SquareBound(String longitude, String latitude) {
             this(
                 calculateTopLeftLongitude(longitude),   // topLeftLongitude
                 calculateTopLeftLatitude(latitude),     // topLeftLatitude
@@ -25,8 +24,8 @@ public class VideoParam {
             );
         }
 
-        public static LatAndLon from(String longitude, String latitude) {
-            return new LatAndLon(longitude, latitude);
+        public static SquareBound from(String longitude, String latitude) {
+            return new SquareBound(longitude, latitude);
         }
 
         private static String calculateTopLeftLongitude(String longitude) {
@@ -50,6 +49,7 @@ public class VideoParam {
         Boolean placeRegistration,
         Long influencerId
     ) {
+
         public static Condition of(Boolean placeRegistration, Long influencerId) {
             return new Condition(placeRegistration, influencerId);
         }

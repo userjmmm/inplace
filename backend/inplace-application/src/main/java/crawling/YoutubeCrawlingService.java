@@ -1,15 +1,13 @@
 package crawling;
 
 import crawling.dto.CrawlingInfo;
+import crawling.dto.CrawlingInfo.ViewInfo;
 import influencer.jpa.InfluencerJpaRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.admin.crawling.application.dto.CrawlingInfo.ViewInfo;
-import team7.inplace.admin.crawling.client.YoutubeClient;
-import team7.inplace.video.persistence.VideoRepository;
 import video.jpa.VideoJpaRepository;
 
 @Slf4j

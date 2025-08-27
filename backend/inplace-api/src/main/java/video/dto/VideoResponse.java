@@ -55,42 +55,6 @@ public class VideoResponse {
                 place
             );
         }
-
-        public static VideoResponse.Detail from(VideoResult.CoolVideo coolVideo) {
-            var place = new VideoResponse.PlaceDetail(
-                coolVideo.placeId(),
-                coolVideo.placeName(),
-                new Address(
-                    coolVideo.address1(),
-                    coolVideo.address2(),
-                    coolVideo.address3()
-                )
-            );
-            return new VideoResponse.Detail(
-                coolVideo.videoId(),
-                coolVideo.influencerName(),
-                coolVideo.videoUrl(),
-                place
-            );
-        }
-
-        public static VideoResponse.Detail from(VideoResult.RecentVideo recentVideo) {
-            var place = new VideoResponse.PlaceDetail(
-                recentVideo.placeId(),
-                recentVideo.placeName(),
-                new Address(
-                    recentVideo.address1(),
-                    recentVideo.address2(),
-                    recentVideo.address3()
-                )
-            );
-            return new VideoResponse.Detail(
-                recentVideo.videoId(),
-                recentVideo.influencerName(),
-                recentVideo.videoUrl(),
-                place
-            );
-        }
     }
 
     public record PlaceDetail(

@@ -22,7 +22,7 @@ spring:
 logging:
   level:
     root: INFO
-    team7.inplace: DEBUG
+    #    team7.inplace: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.web: DEBUG
@@ -43,7 +43,7 @@ spring:
 logging:
   level:
     root: INFO
-    team7.inplace: DEBUG
+    #    team7.inplace: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.web: DEBUG
@@ -64,7 +64,7 @@ spring:
 logging:
   level:
     root: ERROR
-    team7.inplace: INFO
+    #    team7.inplace: INFO
     org.springframework.web: ERROR
     org.springframework.security: ERROR
 springdoc:

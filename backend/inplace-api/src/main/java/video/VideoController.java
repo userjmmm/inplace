@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import video.command.VideoCommandFacade;
+import video.command.VideoCommandService;
 import video.dto.VideoResponse;
 import video.dto.VideoResponse.Detail;
 import video.dto.VideoResponse.Simple;
-import video.command.VideoCommandFacade;
 import video.query.VideoQueryFacade;
+import video.query.VideoQueryService;
 import video.query.dto.VideoParam;
 
 
@@ -29,6 +31,8 @@ public class VideoController implements VideoControllerApiSpec {
 
     private final VideoQueryFacade videoQueryFacade;
     private final VideoCommandFacade videoCommandFacade;
+    private final VideoQueryService videoQueryService;
+    private final VideoCommandService videoCommandService;
 
     @Override
     @GetMapping()
@@ -38,28 +42,25 @@ public class VideoController implements VideoControllerApiSpec {
         @RequestParam(value = "latitude", defaultValue = "35.9") String latitude,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        VideoParam.LatAndLon searchParams = VideoParam.LatAndLon.from(longitude, latitude);
-        var videoResponses = videoQueryFacade.getVideosBySurround(searchParams, pageable)
+        var searchParams = VideoParam.SquareBound.from(longitude, latitude);
+        var videoResponses = videoQueryService.getVideosBySurround(searchParams, pageable, true)
             .stream().map(VideoResponse.Detail::from).toList();
-        
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/new")
     public ResponseEntity<List<VideoResponse.Detail>> readByNew() {
-        var videoResponses = videoQueryFacade.getRecentVideos()
+        var videoResponses = videoQueryService.getRecentVideos()
             .stream().map(VideoResponse.Detail::from).toList();
-        
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/cool/{category}")
     public ResponseEntity<List<VideoResponse.Detail>> readByCool(@PathVariable String category) {
-        var videoResponses = videoQueryFacade.getCoolVideos(category)
+        var videoResponses = videoQueryService.getCoolVideo(category)
             .stream().map(VideoResponse.Detail::from).toList();
-        
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
@@ -69,7 +70,6 @@ public class VideoController implements VideoControllerApiSpec {
     public ResponseEntity<List<VideoResponse.Detail>> readByMyInfluencer() {
         var myVideos = videoQueryFacade.getMyInfluencerVideos()
             .stream().map(VideoResponse.Detail::from).toList();
-        
         return new ResponseEntity<>(myVideos, HttpStatus.OK);
     }
 
@@ -81,7 +81,6 @@ public class VideoController implements VideoControllerApiSpec {
     ) {
         var videoResponses = videoQueryFacade.getVideoWithNoPlace(pageable)
             .map(VideoResponse.Simple::from);
-        
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
@@ -89,7 +88,7 @@ public class VideoController implements VideoControllerApiSpec {
     @DeleteMapping("/{videoId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteVideo(@PathVariable Long videoId) {
-        videoCommandFacade.deleteVideo(videoId);
+        videoCommandService.deleteVideo(videoId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -98,7 +97,7 @@ public class VideoController implements VideoControllerApiSpec {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateMainVideos() {
         videoCommandFacade.updateCoolVideos();
-        videoCommandFacade.updateRecentVideos();
+        videoCommandService.updateRecentVideos();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

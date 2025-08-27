@@ -4,7 +4,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import team7.inplace.user.util.UserCommentCountFlusher;
+import user.util.UserCommentCountFlusher;
 
 @Component
 @RequiredArgsConstructor

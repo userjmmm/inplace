@@ -76,7 +76,7 @@ public class PostResult {
         String mainBadgeImageUrl,
         String title,
         String content,
-        List<PostQueryResult.Image> imageInfos, // TODO : JsonNode -> List<Image> 반환으로 변경
+        List<PostImage> imageInfos, // TODO : JsonNode -> List<Image> 반환으로 변경
         Boolean selfLike,
         Integer totalLikeCount,
         Integer totalCommentCount,
@@ -93,7 +93,9 @@ public class PostResult {
                 post.mainBadgeImageUrl(),
                 post.title(),
                 post.content(),
-                post.imageInfos(),
+                post.imageInfos().stream()
+                    .map(image -> new PostImage(image.imageUrl(), image.imageHash()))
+                    .toList(),
                 post.selfLike(),
                 post.totalLikeCount(),
                 post.totalCommentCount(),
@@ -124,13 +126,6 @@ public class PostResult {
                 user.userImageUrl()
             );
         }
-
-    }
-
-    public record Image(
-        String imageUrl,
-        String imageHash
-    ) {
 
     }
 }

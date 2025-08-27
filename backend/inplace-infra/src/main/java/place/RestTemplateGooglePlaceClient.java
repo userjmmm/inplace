@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import place.client.GooglePlaceClient;
 import place.client.GooglePlaceClientResponse;
 import place.client.GooglePlaceClientResponse.Place;
-import team7.inplace.global.properties.GoogleApiProperties;
+import properties.GoogleApiProperties;
 
 @Slf4j
 @Client("Google Place Client")

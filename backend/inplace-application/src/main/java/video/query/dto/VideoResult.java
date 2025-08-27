@@ -1,5 +1,7 @@
 package video.query.dto;
 
+import video.CoolVideo;
+import video.RecentVideo;
 import video.query.VideoQueryResult;
 
 public class VideoResult {
@@ -28,6 +30,7 @@ public class VideoResult {
         String placeCategory,
         String videoUrl
     ) {
+
         public static SimpleVideo from(VideoQueryResult.SimpleVideo videoInfo) {
             return new SimpleVideo(
                 videoInfo.videoId(),
@@ -54,6 +57,7 @@ public class VideoResult {
         String address3,
         String videoUrl
     ) {
+
         public static DetailedVideo from(VideoQueryResult.DetailedVideo videoInfo) {
             return new DetailedVideo(
                 videoInfo.videoId(),
@@ -67,6 +71,38 @@ public class VideoResult {
                 videoInfo.address2(),
                 videoInfo.address3(),
                 videoInfo.videoUrl()
+            );
+        }
+
+        public static DetailedVideo from(CoolVideo video) {
+            return new DetailedVideo(
+                video.getVideoId(),
+                video.getVideoUUID(),
+                video.getInfluencerName(),
+                video.getPlaceId(),
+                video.getPlaceName(),
+                video.getPlaceCategoryParentName(),
+                video.getPlaceCategoryParentId(),
+                video.getAddress1(),
+                video.getAddress2(),
+                video.getAddress3(),
+                video.getVideoUrl()
+            );
+        }
+
+        public static DetailedVideo from(RecentVideo video) {
+            return new DetailedVideo(
+                video.getVideoId(),
+                video.getVideoUUID(),
+                video.getInfluencerName(),
+                video.getPlaceId(),
+                video.getPlaceName(),
+                video.getPlaceCategoryParentName(),
+                null,
+                video.getAddress1(),
+                video.getAddress2(),
+                video.getAddress3(),
+                video.getVideoUrl()
             );
         }
     }
