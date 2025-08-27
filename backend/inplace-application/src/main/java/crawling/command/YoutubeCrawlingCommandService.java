@@ -3,6 +3,7 @@ package crawling.command;
 import crawling.YoutubeClient;
 import crawling.dto.CrawlingInfo;
 import crawling.dto.CrawlingInfo.VideoPlaceInfo;
+import crawling.dto.CrawlingInfo.ViewInfo;
 import influencer.jpa.InfluencerJpaRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

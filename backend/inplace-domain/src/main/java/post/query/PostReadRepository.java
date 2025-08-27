@@ -1,8 +1,9 @@
 package post.query;
 
-import cursor.CursorResult;
 import java.util.List;
 import java.util.Optional;
+
+import base.CursorResult;
 
 public interface PostReadRepository {
 

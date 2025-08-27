@@ -1,7 +1,5 @@
 package video.dto;
 
-import team7.inplace.video.domain.CoolVideo;
-import team7.inplace.video.domain.RecentVideo;
 import video.query.dto.VideoResult;
 
 // Video 엔티티의 Controller Response 정보 전달을 담당하는 클래스
@@ -54,42 +52,6 @@ public class VideoResponse {
                 videoInfo.videoId(),
                 videoInfo.influencerName(),
                 videoInfo.videoUrl(),
-                place
-            );
-        }
-
-        public static VideoResponse.Detail from(CoolVideo coolVideo) {
-            var place = new VideoResponse.PlaceDetail(
-                coolVideo.getPlaceId(),
-                coolVideo.getPlaceName(),
-                new Address(
-                    coolVideo.getAddress1(),
-                    coolVideo.getAddress2(),
-                    coolVideo.getAddress3()
-                )
-            );
-            return new VideoResponse.Detail(
-                coolVideo.getVideoId(),
-                coolVideo.getInfluencerName(),
-                coolVideo.getVideoUrl(),
-                place
-            );
-        }
-
-        public static VideoResponse.Detail from(RecentVideo recentVideo) {
-            var place = new VideoResponse.PlaceDetail(
-                recentVideo.getPlaceId(),
-                recentVideo.getPlaceName(),
-                new Address(
-                    recentVideo.getAddress1(),
-                    recentVideo.getAddress2(),
-                    recentVideo.getAddress3()
-                )
-            );
-            return new VideoResponse.Detail(
-                recentVideo.getVideoId(),
-                recentVideo.getInfluencerName(),
-                recentVideo.getVideoUrl(),
                 place
             );
         }

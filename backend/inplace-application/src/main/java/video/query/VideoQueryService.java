@@ -8,11 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import util.AuthorizationUtil;
-import video.CoolVideo;
-import video.RecentVideo;
 import video.jpa.CoolVideoJpaRepository;
 import video.jpa.RecentVideoJpaRepository;
 import video.query.dto.VideoParam;
+import video.query.dto.VideoParam.SquareBound;
 import video.query.dto.VideoResult;
 import video.query.dto.VideoResult.Admin;
 import video.query.dto.VideoResult.DetailedVideo;
@@ -29,7 +28,7 @@ public class VideoQueryService {
     //TODO: Facade에서 호출로 변경해야함.
     @Transactional(readOnly = true)
     public List<DetailedVideo> getVideosBySurround(
-        VideoParam.LatAndLon videoSearchParams,
+        SquareBound videoSearchParams,
         Pageable pageable,
         boolean authorizationRequired
     ) {
@@ -51,13 +50,19 @@ public class VideoQueryService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecentVideo> getRecentVideos() {
-        return recentVideoJpaRepository.findAll();
+    public List<VideoResult.DetailedVideo> getRecentVideos() {
+        return recentVideoJpaRepository.findAll()
+            .stream()
+            .map(DetailedVideo::from)
+            .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<CoolVideo> getCoolVideo(String parentCategoryName) {
-        return coolVideoJpaRepository.findByPlaceCategoryParentName(parentCategoryName);
+    public List<VideoResult.DetailedVideo> getCoolVideo(String parentCategoryName) {
+        return coolVideoJpaRepository.findByPlaceCategoryParentName(parentCategoryName)
+            .stream()
+            .map(DetailedVideo::from)
+            .toList();
     }
 
     @Transactional(readOnly = true)

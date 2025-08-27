@@ -1,6 +1,5 @@
 package review.dto;
 
-import team7.inplace.review.application.dto.ReviewCommand;
 
 public class ReviewRequest {
 

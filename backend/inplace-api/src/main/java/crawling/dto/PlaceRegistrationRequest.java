@@ -1,6 +1,7 @@
 package crawling.dto;
 
-import team7.inplace.admin.crawling.application.command.PlaceRegistrationCommand;
+
+import crawling.command.PlaceRegistrationCommand;
 
 public record PlaceRegistrationRequest(
     Long videoId,

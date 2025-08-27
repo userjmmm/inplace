@@ -7,19 +7,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import video.command.VideoCommandFacade;
+import video.command.VideoCommandService;
 import video.dto.VideoResponse;
 import video.dto.VideoResponse.Detail;
 import video.dto.VideoResponse.Simple;
-import video.command.VideoCommandFacade;
-import video.command.VideoCommandService;
 import video.query.VideoQueryFacade;
 import video.query.VideoQueryService;
+import video.query.dto.VideoParam;
 
 
 @RestController
@@ -40,7 +42,7 @@ public class VideoController implements VideoControllerApiSpec {
         @RequestParam(value = "latitude", defaultValue = "35.9") String latitude,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        VideoSearchParams searchParams = VideoSearchParams.from(longitude, latitude);
+        var searchParams = VideoParam.SquareBound.from(longitude, latitude);
         var videoResponses = videoQueryService.getVideosBySurround(searchParams, pageable, true)
             .stream().map(VideoResponse.Detail::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);

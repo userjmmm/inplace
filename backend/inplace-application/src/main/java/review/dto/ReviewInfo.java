@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import place.query.PlaceQueryResult;
 import review.Review;
-import team7.inplace.user.domain.User;
+import user.User;
 import video.query.VideoQueryResult.SimpleVideo;
 
 public class ReviewInfo {

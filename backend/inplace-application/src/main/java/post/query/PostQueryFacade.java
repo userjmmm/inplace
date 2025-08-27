@@ -1,7 +1,7 @@
 package post.query;
 
 import annotation.Facade;
-import cursor.CursorResult;
+import base.CursorResult;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,7 @@ public class PostQueryFacade {
     public CursorResult<PostResult.DetailedPost> getPosts(Long cursorId, int size, String orderBy) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         var queryResult = postQueryService.getPosts(userId, cursorId, size, orderBy);
-        var result = postQueryService.getPosts(userId, cursorId, size, orderBy).value().stream()
+        var result =  postQueryService.getPosts(userId, cursorId, size, orderBy).value().stream()
             .map(PostResult.DetailedPost::from)
             .toList();
 

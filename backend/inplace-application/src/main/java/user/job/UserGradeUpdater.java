@@ -1,5 +1,7 @@
 package user.job;
 
+import exception.InplaceException;
+import exception.code.UserErrorCode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,13 +10,11 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.UserErrorCode;
-import team7.inplace.user.application.dto.TierConditions;
-import team7.inplace.user.domain.User;
+import user.User;
 import user.UserWriteRepository;
-import user.jpa.UserJpaRepository;
+import user.dto.TierConditions;
 import user.jpa.TierJpaRepository;
+import user.jpa.UserJpaRepository;
 
 @Service
 @RequiredArgsConstructor

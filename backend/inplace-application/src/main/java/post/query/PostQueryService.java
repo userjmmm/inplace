@@ -1,6 +1,6 @@
 package post.query;
 
-import cursor.CursorResult;
+import base.CursorResult;
 import exception.InplaceException;
 import exception.code.PostErrorCode;
 import java.util.List;

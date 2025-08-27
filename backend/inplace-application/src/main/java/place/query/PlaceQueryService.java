@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import place.client.GooglePlaceClient;
+import place.client.GooglePlaceClientResponse;
 import place.jpa.CategoryJpaRepository;
 import place.jpa.PlaceJpaRepository;
 import place.query.dto.PlaceParam;
@@ -25,6 +27,7 @@ public class PlaceQueryService {
 
     private final PlaceReadRepository placeReadRepository;
     private final PlaceJpaRepository placeJpaRepository;
+    private final GooglePlaceClient googlePlaceClient;
     private final CategoryJpaRepository categoryRepository;
     private final VideoReadRepository videoReadRepository;
 
@@ -76,6 +79,10 @@ public class PlaceQueryService {
 
     public Optional<String> getGooglePlaceId(Long placeId) {
         return placeJpaRepository.findGooglePlaceIdById(placeId);
+    }
+
+    public GooglePlaceClientResponse.Place getGooglePlaceInfo(String googlePlaceId) {
+        return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
     }
 
     public List<PlaceResult.Category> getCategories() {
