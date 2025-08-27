@@ -4,7 +4,7 @@ import video.CoolVideo;
 import video.RecentVideo;
 import video.query.VideoQueryResult;
 
-public class VideoResult { // TODO: VideoQueryResult -> VideoResult 변환
+public class VideoResult {
 
     public record Admin(
         Long id,
@@ -103,6 +103,54 @@ public class VideoResult { // TODO: VideoQueryResult -> VideoResult 변환
                 video.getAddress2(),
                 video.getAddress3(),
                 video.getVideoUrl()
+            );
+        }
+    }
+    
+    public record RecentVideo(
+        Long videoId,
+        String influencerName,
+        Long placeId,
+        String placeName,
+        String address1,
+        String address2,
+        String address3,
+        String videoUrl
+    ) {
+        public static RecentVideo from(video.RecentVideo recentVideo) {
+            return new RecentVideo(
+                recentVideo.getVideoId(),
+                recentVideo.getInfluencerName(),
+                recentVideo.getPlaceId(),
+                recentVideo.getPlaceName(),
+                recentVideo.getAddress1(),
+                recentVideo.getAddress2(),
+                recentVideo.getAddress3(),
+                recentVideo.getVideoUrl()
+            );
+        }
+    }
+    
+    public record CoolVideo(
+        Long videoId,
+        String influencerName,
+        Long placeId,
+        String placeName,
+        String address1,
+        String address2,
+        String address3,
+        String videoUrl
+    ) {
+        public static CoolVideo from(video.CoolVideo coolVideo) {
+            return new CoolVideo(
+                coolVideo.getVideoId(),
+                coolVideo.getInfluencerName(),
+                coolVideo.getPlaceId(),
+                coolVideo.getPlaceName(),
+                coolVideo.getAddress1(),
+                coolVideo.getAddress2(),
+                coolVideo.getAddress3(),
+                coolVideo.getVideoUrl()
             );
         }
     }

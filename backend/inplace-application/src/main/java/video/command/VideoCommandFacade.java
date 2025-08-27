@@ -47,4 +47,13 @@ public class VideoCommandFacade {
         videoCommandService.updateCoolVideos(parentCategoryIds);
     }
 
+    @Transactional
+    public void updateRecentVideos() {
+        videoCommandService.updateRecentVideos();
+    }
+    
+    @Transactional
+    public void deleteVideo(Long videoId) {
+        videoCommandService.deleteVideo(videoId);
+    }
 }
