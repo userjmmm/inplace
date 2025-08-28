@@ -3,8 +3,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web' //TODO - 이거 여기 들어가는 거 맞나?
 
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.h2database:h2'
     implementation 'com.github.ben-manes.caffeine:caffeine'
-    
+
     // JPA 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
