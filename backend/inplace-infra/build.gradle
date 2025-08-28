@@ -1,8 +1,6 @@
 dependencies {
     implementation project(':inplace-domain')
 
-    implementation 'org.springframework.boot:spring-boot-starter-web' //TODO - 이거 여기 들어가는 거 맞나?
-
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
     implementation 'com.github.ben-manes.caffeine:caffeine'
@@ -14,11 +12,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:9.1.1'
 
     // JPA 어노테이션 처리를 위한 의존성
-    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
-    // QueryDSL 의존성
-    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    // QueryDSL 의존성 - 버전을 명시하지 않아 Spring Boot BOM이 관리
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"

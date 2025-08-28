@@ -1,30 +1,41 @@
 package my.inplace.application.place.query;
 
-import my.inplace.application.annotation.Facade;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import lombok.RequiredArgsConstructor;
-import my.inplace.domain.place.query.PlaceQueryResult;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import my.inplace.domain.place.query.PlaceQueryResult.MarkerDetail;
+import my.inplace.application.annotation.Facade;
 import my.inplace.application.place.query.dto.PlaceParam;
 import my.inplace.application.place.query.dto.PlaceResult;
 import my.inplace.application.review.ReviewService;
-import my.inplace.security.util.AuthorizationUtil;
 import my.inplace.application.video.query.VideoQueryService;
 import my.inplace.application.video.query.dto.VideoParam.SquareBound;
+import my.inplace.domain.place.query.PlaceQueryResult;
+import my.inplace.domain.place.query.PlaceQueryResult.MarkerDetail;
+import my.inplace.security.util.AuthorizationUtil;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Facade
-@RequiredArgsConstructor
 public class PlaceQueryFacade {
 
     private final PlaceQueryService placeQueryService;
     private final ReviewService reviewQueryService;
     private final VideoQueryService videoQueryService;
     private final Executor externalApiExecutor;
+
+    public PlaceQueryFacade(
+        PlaceQueryService placeQueryService,
+        ReviewService reviewQueryService,
+        VideoQueryService videoQueryService,
+        @Qualifier("externalApiExecutor") Executor externalApiExecutor
+    ) {
+        this.placeQueryService = placeQueryService;
+        this.reviewQueryService = reviewQueryService;
+        this.videoQueryService = videoQueryService;
+        this.externalApiExecutor = externalApiExecutor;
+    }
 
     public PlaceResult.Detail getDetailedPlaces(
         Long placeId

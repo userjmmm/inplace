@@ -1,11 +1,11 @@
 package my.inplace.application.config;
 
 import java.util.concurrent.Executor;
+import my.inplace.common.aop.ThreadContextPropagatingDecorator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import my.inplace.common.aop.ThreadContextPropagatingDecorator;
 
 @EnableAsync
 @Configuration
@@ -33,10 +33,10 @@ public class AsyncConfig {
         executor.setThreadNamePrefix("ai-");
         executor.setTaskDecorator(new ThreadContextPropagatingDecorator());
         executor.initialize();
-        
+
         return executor;
     }
-    
+
     @Bean(name = "fcmExecutor")
     public Executor fcmExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -46,7 +46,7 @@ public class AsyncConfig {
         executor.setThreadNamePrefix("fcm-");
         executor.setTaskDecorator(new ThreadContextPropagatingDecorator());
         executor.initialize();
-        
+
         return executor;
     }
 
