@@ -25,7 +25,7 @@ export default function PostDetailPage() {
   const { id } = useParams() as { id: string };
   const location = useLocation();
   const navigate = useNavigate();
-  const { activeCategory } = location.state;
+  const { activeCategory = '전체 게시글' } = location.state || {};
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
 
@@ -37,6 +37,7 @@ export default function PostDetailPage() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isLike, setIsLike] = useState(postData.selfLike);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reportStatus, setReportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
   const handleEditPost = (postId: string, formData: object) => {
@@ -59,16 +60,31 @@ export default function PostDetailPage() {
     });
   };
 
-  const handleReportSubmit = (type: string, content: string) => {
+  const handleReportSubmit = async (type: string, content: string) => {
     const reason = content ? `${type} : ${content}` : type;
-    reportPost(
-      { id: Number(id), reason },
-      {
-        onError: () => {
-          alert('게시글 신고에 실패했어요. 다시 시도해주세요!');
-        },
-      },
-    );
+    try {
+      await new Promise<void>((resolve, reject) => {
+        reportPost(
+          { id: Number(id), reason },
+          {
+            onSuccess: () => {
+              setReportStatus('success');
+              resolve();
+            },
+            onError: (err) => {
+              setReportStatus('error');
+              reject(err);
+            },
+          },
+        );
+      });
+    } catch (e) {
+      console.error('신고 실패');
+    }
+  };
+  const handleReportClose = () => {
+    setIsReportModalOpen(false);
+    setReportStatus('idle');
   };
   const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -97,7 +113,6 @@ export default function PostDetailPage() {
   const formData = {
     title: postData.title,
     content: postData.content,
-    imageUrls: postData.imageUrls,
   };
 
   const imageUrls = postData.imageUrls ?? [];
@@ -162,7 +177,7 @@ export default function PostDetailPage() {
           <ImageList>
             {postData.imageUrls.map((imgUrl, index) => (
               <PostImg
-                key={imgUrl.hash}
+                key={imgUrl.imageUrl}
                 src={imgUrl.imageUrl}
                 alt={`게시글 이미지 ${index}`}
                 onClick={() => {
@@ -225,7 +240,9 @@ export default function PostDetailPage() {
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
-      {isReportModalOpen && <ReportModal onClose={() => setIsReportModalOpen(false)} onSubmit={handleReportSubmit} />}
+      {isReportModalOpen && (
+        <ReportModal onClose={handleReportClose} onSubmit={handleReportSubmit} status={reportStatus} />
+      )}
     </Wrapper>
   );
 }

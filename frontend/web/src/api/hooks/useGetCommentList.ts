@@ -14,7 +14,7 @@ export const getCommentList = async (id: string, page: number, size: number) => 
 };
 export const useGetCommentList = (id: string, page: number, size: number) => {
   return useQuery({
-    queryKey: ['commentList', page, size, id],
+    queryKey: ['commentList', id, page, size],
     queryFn: () => getCommentList(id, page, size),
   });
 };

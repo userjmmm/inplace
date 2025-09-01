@@ -1,7 +1,8 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { MdOutlineLogout } from 'react-icons/md';
+import { TiHome } from 'react-icons/ti';
 import { useRef, useState } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
 import useAuth from '@/hooks/useAuth';
@@ -10,49 +11,111 @@ import LoginModal from '@/components/common/modals/LoginModal';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import FallbackImage from '../../Items/FallbackImage';
 import useClickOutside from '@/hooks/useClickOutside';
+import { requestNotificationPermission } from '@/libs/FCM';
+import AlarmButton from './Alarm/AlarmButton';
 
 export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
   const { data: imgSrc } = useGetUserInfo();
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const isDarkMode = theme === 'dark';
   const location = useLocation();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const [isOpen, setIsOpen] = useState(isAuthenticated);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleClickProfile = () => {
     setIsOpen(!isOpen);
   };
-  useClickOutside([dropdownRef], () => setIsOpen(false));
+  const handleMyPage = () => {
+    navigate('/my');
+    setIsOpen(false);
+  };
+
+  // 모달이 열려 있을 때는 닫지 않도록 조건 추가
+  useClickOutside([dropdownRef], () => {
+    if (!isModalOpen) {
+      setIsOpen(false);
+    }
+  });
+
+  const handleLoginIconClick = async () => {
+    try {
+      await requestNotificationPermission();
+    } catch (error) {
+      console.log('알림 권한 요청 실패:', error);
+    }
+  };
 
   return (
     <Container>
-      <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼_B" $isDarkMode={isDarkMode}>
-        {isDarkMode ? <FiSun size={24} color="white" /> : <FiMoon size={22} color="black" />}
-      </ThemeButton>
-      {isAuthenticated ? (
-        <UserProfile ref={dropdownRef}>
-          <Profile onClick={handleClickProfile}>
+      <AlarmButton iconSize={22} />
+      <UserProfile ref={dropdownRef}>
+        <Profile onClick={handleClickProfile}>
+          {isAuthenticated ? (
             <FallbackImage src={imgSrc?.imgUrl} alt="profile" />
-          </Profile>
-          {isOpen && (
-            <UserDropdown>
-              <DropdownItem onClick={handleLogout}>
-                <MdOutlineLogout size={16} />
-                로그아웃
-              </DropdownItem>
-            </UserDropdown>
-          )}
-        </UserProfile>
-      ) : (
-        <LoginModal currentPath={location.pathname}>
-          {(openModal: () => void) => (
-            <IconButton onClick={openModal}>
+          ) : (
+            <IconButton>
               <AiOutlineUser size={26} />
             </IconButton>
           )}
-        </LoginModal>
-      )}
+        </Profile>
+        {isOpen && (
+          <UserDropdown>
+            {isAuthenticated ? (
+              <>
+                {location.pathname !== '/my' && (
+                  <DropdownItem onClick={handleMyPage}>
+                    <TiHome size={16} />
+                    마이페이지
+                  </DropdownItem>
+                )}
+                <DropdownItem onClick={toggleTheme} $isDarkMode={isDarkMode}>
+                  <ThemeButton $isDarkMode={isDarkMode}>
+                    {isDarkMode ? <FiSun size={16} color="white" /> : <FiMoon size={16} color="black" />}
+                  </ThemeButton>
+                  테마 변경
+                </DropdownItem>
+                <DropdownItem onClick={handleLogout}>
+                  <MdOutlineLogout size={16} />
+                  로그아웃
+                </DropdownItem>
+              </>
+            ) : (
+              <>
+                <LoginModal
+                  currentPath={location.pathname}
+                  onClose={() => {
+                    setIsModalOpen(false);
+                    setIsOpen(false);
+                  }}
+                >
+                  {(openModal: () => void) => (
+                    <DropdownItem
+                      onClick={async () => {
+                        await handleLoginIconClick();
+                        setIsModalOpen(true);
+                        openModal();
+                      }}
+                    >
+                      <AiOutlineUser size={16} />
+                      로그인
+                    </DropdownItem>
+                  )}
+                </LoginModal>
+                <DropdownItem onClick={toggleTheme} $isDarkMode={isDarkMode}>
+                  <ThemeButton $isDarkMode={isDarkMode}>
+                    {isDarkMode ? <FiSun size={16} color="white" /> : <FiMoon size={16} color="black" />}
+                  </ThemeButton>
+                  테마 변경
+                </DropdownItem>
+              </>
+            )}
+          </UserDropdown>
+        )}
+      </UserProfile>
     </Container>
   );
 }
@@ -79,11 +142,6 @@ const ThemeButton = styled.button<{ $isDarkMode: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
-  }
 `;
 
 const UserProfile = styled.div`
@@ -96,6 +154,8 @@ const Profile = styled.div`
   border-radius: 50%;
   display: flex;
   cursor: pointer;
+  align-items: center;
+  justify-content: center;
 `;
 
 const UserDropdown = styled.div`
@@ -116,16 +176,20 @@ const UserDropdown = styled.div`
   }
 `;
 
-const DropdownItem = styled.div`
-  padding: 12px 10px;
+const DropdownItem = styled.div<{ $isDarkMode?: boolean }>`
+  padding: 12px 12px;
   display: flex;
-  justify-content: space-around;
+  gap: 8px;
   align-items: end;
   cursor: pointer;
   font-size: 14px;
 
   &:hover {
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#222222' : '#daeeee')};
+    button {
+      transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
+      transition: transform 0.3s ease;
+    }
   }
 
   @media screen and (max-width: 768px) {

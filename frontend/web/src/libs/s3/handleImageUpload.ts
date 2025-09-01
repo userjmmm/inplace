@@ -6,7 +6,7 @@ const CLOUDFRONT_DOMAIN = 'https://d1d3zg2ervqwcu.cloudfront.net';
 export default async function handleImageUpload(newImages: UploadImage[]) {
   const ids = newImages.map((image) => image.file.name).join(',');
 
-  const response = await fetch(`https://fh318e0yce.execute-api.ap-northeast-2.amazonaws.com?ids=${ids}`, {
+  const response = await fetch(`https://image.inplace.my?ids=${ids}`, {
     credentials: 'include',
   });
   if (!response.ok) throw new Error('Failed to get presigned URLs');

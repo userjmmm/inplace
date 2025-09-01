@@ -40,7 +40,7 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
             {truncatedText}
           </StyledText>
         </Content>
-        {item.photoUrls && isMobile && <PostImg src={item.photoUrls} />}
+        {item.imageUrl && isMobile && <PostImg src={item.imageUrl} />}
         <ItemInfo>
           <StyledText size="s" weight="normal">
             {item.createdAt}
@@ -64,7 +64,7 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
           </Count>
         </ItemInfo>
       </LeftInfo>
-      {item.photoUrls && !isMobile && <PostImg src={item.photoUrls} />}
+      {item.imageUrl && !isMobile && <PostImg src={item.imageUrl} />}
     </Wrapper>
   );
 }
