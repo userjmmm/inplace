@@ -14,19 +14,19 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
 
     @Modifying
     @Query("update Post p set p.totalLikeCount = p.totalLikeCount + 1 where p.id = :postId")
-    void increaseLikeCount(Long postId);
+    void increaseLikeCount(@Param("postId") Long postId);
 
     @Modifying
     @Query("update Post p set p.totalLikeCount = p.totalLikeCount - 1 where p.id = :postId")
-    void decreaseLikeCount(Long postId);
+    void decreaseLikeCount(@Param("postId") Long postId);
 
     @Modifying
     @Query("update Post p set p.totalCommentCount = p.totalCommentCount + 1 where p.id = :postId")
-    void increaseCommentCount(Long postId);
+    void increaseCommentCount(@Param("postId") Long postId);
 
     @Modifying
     @Query("update Post p set p.totalCommentCount = p.totalCommentCount - 1 where p.id = :postId")
-    void decreaseCommentCount(Long postId);
+    void decreaseCommentCount(@Param("postId") Long postId);
 
     @Query("SELECT p.content.content FROM Post p WHERE p.id = :postId")
     Optional<String> findContentById(@Param("postId") Long postId);
