@@ -1,7 +1,6 @@
 package my.inplace.api.review.dto;
 
-
-import my.inplace.application.review.dto.ReviewInfo;
+import my.inplace.application.review.dto.ReviewResult;
 
 public class ReviewResponse {
 
@@ -13,13 +12,13 @@ public class ReviewResponse {
         String userNickname
     ) {
 
-        public static Invitation from(ReviewInfo.Invitation reviewInfo) {
+        public static Invitation from(ReviewResult.Invitation reviewResult) {
             return new Invitation(
-                reviewInfo.placeName(),
-                reviewInfo.placeAddress(),
+                reviewResult.placeName(),
+                reviewResult.placeAddress(),
                 "",
-                reviewInfo.influencerName(),
-                reviewInfo.userNickname()
+                reviewResult.influencerName(),
+                reviewResult.userNickname()
             );
         }
     }

@@ -1,19 +1,19 @@
 package my.inplace.application.review;
 
-import my.inplace.common.exception.InplaceException;
-import my.inplace.common.exception.code.ReviewErrorCode;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import my.inplace.infra.review.ReviewInvitationRedisRepository;
-import my.inplace.domain.review.ReviewInvitation;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import my.inplace.domain.place.query.PlaceReadRepository;
 import my.inplace.application.review.dto.ReviewCommand;
-import my.inplace.application.review.dto.ReviewInfo;
+import my.inplace.application.review.dto.ReviewResult;
+import my.inplace.common.exception.InplaceException;
+import my.inplace.common.exception.code.ReviewErrorCode;
+import my.inplace.domain.place.query.PlaceReadRepository;
+import my.inplace.domain.review.ReviewInvitation;
+import my.inplace.domain.video.query.VideoReadRepository;
+import my.inplace.infra.review.ReviewInvitationRedisRepository;
 import my.inplace.infra.review.jpa.ReviewJpaRepository;
 import my.inplace.infra.user.jpa.UserJpaRepository;
-import my.inplace.domain.video.query.VideoReadRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +60,7 @@ public class ReviewInvitationService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewInfo.Invitation getReviewInvitation(String invitationId) {
+    public ReviewResult.Invitation getReviewInvitation(String invitationId) {
         var invitation = reviewInvitationRedisRepository.get(invitationId)
             .orElseThrow(() -> InplaceException.of(ReviewErrorCode.INVALID_UUID));
 
@@ -71,6 +71,6 @@ public class ReviewInvitationService {
             .orElseThrow(() -> InplaceException.of(ReviewErrorCode.INVALID_USER_ID));
         var videos = videoReadRepository.findSimpleVideosByPlaceId(invitation.getPlaceId());
 
-        return ReviewInfo.Invitation.from(place, videos, user);
+        return ReviewResult.Invitation.from(place, videos, user);
     }
 }

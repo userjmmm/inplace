@@ -1,8 +1,13 @@
 package my.inplace.application.review.dto;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.review.Review;
 import my.inplace.domain.review.query.ReviewQueryResult;
+import my.inplace.domain.user.User;
+import my.inplace.domain.video.query.VideoQueryResult.SimpleVideo;
 
 public class ReviewResult {
 
@@ -56,6 +61,28 @@ public class ReviewResult {
             return new LikeRate(
                 review.likes(),
                 review.dislikes()
+            );
+        }
+    }
+
+    public record Invitation(
+        String placeName,
+        String placeAddress,
+        String influencerName,
+        String userNickname
+    ) {
+
+        public static Invitation from(
+            PlaceQueryResult.DetailedPlace place,
+            List<SimpleVideo> video,
+            User user
+        ) {
+            return new Invitation(
+                place.placeName(),
+                place.address1() + " " + place.address2() + " " + place.address3(),
+                video.stream().map(SimpleVideo::influencerName).distinct()
+                    .collect(Collectors.joining(", ")),
+                user.getNickname()
             );
         }
     }
