@@ -64,7 +64,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = jwtUtil.createAccessToken(customUserDetails.username(),
             customUserDetails.id(), customUserDetails.roles());
         setCookie(response, TokenType.ACCESS_TOKEN.getValue(), accessToken);
-        response.sendRedirect("/my/inplace/security/admin/main");
+        response.sendRedirect("/admin/main");
     }
 
     private void setFirstUserToResponse(HttpServletResponse response, Boolean isFirstUser) {

@@ -22,4 +22,7 @@ dependencies {
 
     // 검증 의존성
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // 타임리프 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
