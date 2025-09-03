@@ -12,13 +12,13 @@ public interface ReviewJpaRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END " +
         "FROM Review r WHERE r.userId = :userId AND r.placeId = :placeId AND r.deleteAt IS NULL")
-    boolean existsByUserIdAndPlaceId(Long userId, Long placeId);
+    boolean existsByUserIdAndPlaceId(@Param("userId") Long userId, @Param("placeId") Long placeId);
 
     @Query("SELECT r FROM Review r WHERE r.placeId = :placeId AND r.deleteAt IS NULL")
-    Page<Review> findByPlaceId(Long placeId, Pageable pageable);
+    Page<Review> findByPlaceId(@Param("placeId") Long placeId, Pageable pageable);
 
     @Query("SELECT r FROM Review r WHERE r.userId = :userId AND r.deleteAt IS NULL")
-    Page<Review> findByUserId(Long userId, Pageable pageable);
+    Page<Review> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
     @Query(
         "SELECT new my.inplace.domain.review.query.ReviewQueryResult$LikeRate( " + // <--- 이렇게 수정!

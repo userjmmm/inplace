@@ -1,9 +1,10 @@
 package my.inplace.infra.place.jpa;
 
 import java.util.List;
+import my.inplace.domain.place.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import my.inplace.domain.place.Category;
+import org.springframework.data.repository.query.Param;
 
 public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
 
@@ -17,5 +18,5 @@ public interface CategoryJpaRepository extends JpaRepository<Category, Long> {
     List<Category> findSubCategories();
 
     @Query("select c from categories c where c.parentId = :parentId")
-    List<Category> findSubCategoriesByParentId(Long parentId);
+    List<Category> findSubCategoriesByParentId(@Param("parentId") Long parentId);
 }
