@@ -26,12 +26,12 @@ public class SearchResponse {
         boolean likes
     ) {
 
-        public static Place from(SearchResult.Place placeInfo) {
+        public static Place from(SearchResult.Place placeResult) {
             return new Place(
-                placeInfo.id(),
-                placeInfo.name(),
+                placeResult.id(),
+                placeResult.name(),
                 "",
-                placeInfo.likes()
+                placeResult.likes()
             );
         }
 

@@ -11,14 +11,14 @@ public class VideoResponse {
         VideoResponse.Place place
     ) {
 
-        public static VideoResponse.Simple from(VideoResult.SimpleVideo videoInfo) {
+        public static VideoResponse.Simple from(VideoResult.SimpleVideo videoResult) {
             var place = new VideoResponse.Place(
-                videoInfo.placeId(),
-                videoInfo.placeName()
+                videoResult.placeId(),
+                videoResult.placeName()
             );
             return new VideoResponse.Simple(
-                videoInfo.videoId(),
-                videoInfo.videoUrl(),
+                videoResult.videoId(),
+                videoResult.videoUrl(),
                 place
             );
         }
@@ -38,20 +38,20 @@ public class VideoResponse {
         VideoResponse.PlaceDetail place
     ) {
 
-        public static VideoResponse.Detail from(VideoResult.DetailedVideo videoInfo) {
+        public static VideoResponse.Detail from(VideoResult.DetailedVideo videoResult) {
             var place = new VideoResponse.PlaceDetail(
-                videoInfo.placeId(),
-                videoInfo.placeName(),
+                videoResult.placeId(),
+                videoResult.placeName(),
                 new Address(
-                    videoInfo.address1(),
-                    videoInfo.address2(),
-                    videoInfo.address3()
+                    videoResult.address1(),
+                    videoResult.address2(),
+                    videoResult.address3()
                 )
             );
             return new VideoResponse.Detail(
-                videoInfo.videoId(),
-                videoInfo.influencerName(),
-                videoInfo.videoUrl(),
+                videoResult.videoId(),
+                videoResult.influencerName(),
+                videoResult.videoUrl(),
                 place
             );
         }

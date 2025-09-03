@@ -29,8 +29,8 @@ public class PlaceResponse {
         List<PlaceResponse.Video> videos
     ) {
 
-        public static List<Simple> from(List<PlaceResult.Simple> placeInfos) {
-            return placeInfos.stream()
+        public static List<Simple> from(List<PlaceResult.Simple> placeResults) {
+            return placeResults.stream()
                 .map(Simple::from)
                 .toList();
         }
@@ -272,20 +272,20 @@ public class PlaceResponse {
         PlaceResponse.PlaceDetail place
     ) {
 
-        public static SurroundVideo from(VideoResult.DetailedVideo videoInfo) {
+        public static SurroundVideo from(VideoResult.DetailedVideo videoResult) {
             var place = new PlaceResponse.PlaceDetail(
-                videoInfo.placeId(),
-                videoInfo.placeName(),
+                videoResult.placeId(),
+                videoResult.placeName(),
                 new PlaceResponse.Address(
-                    videoInfo.address1(),
-                    videoInfo.address2(),
-                    videoInfo.address3()
+                    videoResult.address1(),
+                    videoResult.address2(),
+                    videoResult.address3()
                 )
             );
             return new SurroundVideo(
-                videoInfo.videoId(),
-                videoInfo.influencerName(),
-                videoInfo.videoUrl(),
+                videoResult.videoId(),
+                videoResult.influencerName(),
+                videoResult.videoUrl(),
                 place
             );
         }

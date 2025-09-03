@@ -5,7 +5,6 @@ import my.inplace.application.video.query.dto.VideoResult;
 
 public class InfluencerResponse {
 
-    //TODO: 클래스 이름 변경해야함
     public record Simple(
         Long influencerId,
         String influencerName,
@@ -14,13 +13,13 @@ public class InfluencerResponse {
         boolean likes
     ) {
 
-        public static InfluencerResponse.Simple from(InfluencerResult.Simple influencerInfo) {
+        public static InfluencerResponse.Simple from(InfluencerResult.Simple influencerResult) {
             return new InfluencerResponse.Simple(
-                influencerInfo.id(),
-                influencerInfo.name(),
-                influencerInfo.imgUrl(),
-                influencerInfo.job(),
-                influencerInfo.isLiked()
+                influencerResult.id(),
+                influencerResult.name(),
+                influencerResult.imgUrl(),
+                influencerResult.job(),
+                influencerResult.isLiked()
             );
         }
     }
@@ -29,8 +28,8 @@ public class InfluencerResponse {
         String influencerName
     ) {
 
-        public static Name from(InfluencerResult.Name influencerInfo) {
-            return new Name(influencerInfo.name());
+        public static Name from(InfluencerResult.Name influencerResult) {
+            return new Name(influencerResult.name());
         }
     }
 
@@ -44,15 +43,15 @@ public class InfluencerResponse {
         Long placeCount
     ) {
 
-        public static Detail from(InfluencerResult.Detail influencerInfo) {
+        public static Detail from(InfluencerResult.Detail influencerResult) {
             return new Detail(
-                influencerInfo.id(),
-                influencerInfo.name(),
-                influencerInfo.imgUrl(),
-                influencerInfo.job(),
-                influencerInfo.isLiked(),
-                influencerInfo.follower(),
-                influencerInfo.placeCount()
+                influencerResult.id(),
+                influencerResult.name(),
+                influencerResult.imgUrl(),
+                influencerResult.job(),
+                influencerResult.isLiked(),
+                influencerResult.follower(),
+                influencerResult.placeCount()
             );
         }
     }
@@ -64,20 +63,20 @@ public class InfluencerResponse {
         InfluencerResponse.Place place
     ) {
 
-        public static InfluencerResponse.Video from(VideoResult.DetailedVideo videoInfo) {
+        public static InfluencerResponse.Video from(VideoResult.DetailedVideo videoResult) {
             var place = new InfluencerResponse.Place(
-                videoInfo.placeId(),
-                videoInfo.placeName(),
+                videoResult.placeId(),
+                videoResult.placeName(),
                 new Address(
-                    videoInfo.address1(),
-                    videoInfo.address2(),
-                    videoInfo.address3()
+                    videoResult.address1(),
+                    videoResult.address2(),
+                    videoResult.address3()
                 )
             );
             return new InfluencerResponse.Video(
-                videoInfo.videoId(),
-                videoInfo.influencerName(),
-                videoInfo.videoUrl(),
+                videoResult.videoId(),
+                videoResult.influencerName(),
+                videoResult.videoUrl(),
                 place
             );
         }
