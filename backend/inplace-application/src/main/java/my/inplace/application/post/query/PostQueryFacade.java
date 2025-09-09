@@ -43,7 +43,7 @@ public class PostQueryFacade {
         Long postId, Pageable pageable
     ) {
         var userId = AuthorizationUtil.getUserIdOrNull();
-        var queryResult = postQueryService.getCommentsByPostId(userId, postId, pageable);
+        var queryResult = postQueryService.getCommentsByPostId(postId, userId, pageable);
         return queryResult.map(CommentResult.DetailedComment::from);
     }
 
