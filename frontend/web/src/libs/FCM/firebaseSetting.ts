@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getMessaging } from 'firebase/messaging';
-// TODO: Add SDKs for Firebase products that you want to use
+import { getMessaging, type Messaging } from 'firebase/messaging';
+// TODO: Add SDKs for Firebase products that you want use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
@@ -18,4 +18,17 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-export const messaging = getMessaging(app);
+
+// Initialize messaging with proper type
+const initializeMessaging = (): Messaging | null => {
+  try {
+    if (typeof window !== 'undefined' && !window.ReactNativeWebView) {
+      return getMessaging(app);
+    }
+  } catch (error) {
+    console.warn('Firebase messaging not supported in this environment:', error);
+  }
+  return null;
+};
+
+export const messaging = initializeMessaging();
