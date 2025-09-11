@@ -82,6 +82,10 @@ public class User extends BaseEntity {
     public void updateFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
     }
+    
+    public void deleteFcmToken() {
+        this.fcmToken = null;
+    }
 
     public void updateMainBadge(Long badgeId) {
         this.mainBadgeId = badgeId;

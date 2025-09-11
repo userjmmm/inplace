@@ -17,6 +17,12 @@ public class AlarmCommandFacade {
         userCommandService.updateFcmToken(userId, token);
     }
     
+    public void deleteFcmToken() {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        
+        userCommandService.deleteFcmToken(userId);
+    }
+    
     public void processAlarm(Long id) {
         alarmCommandService.checkAlarm(id);
     }

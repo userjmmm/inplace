@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import my.inplace.infra.post.CommentReadQueryDslRepository;
@@ -126,5 +127,9 @@ public class PostQueryService {
             .stream()
             .map(PostResult.ReportedComment::from)
             .toList();
+    }
+    
+    public Long getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
+        return postJpaRepository.findIndexOfComment(postId, commentId);
     }
 }

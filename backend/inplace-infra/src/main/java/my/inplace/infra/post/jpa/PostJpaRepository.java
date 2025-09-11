@@ -41,4 +41,12 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p.authorId FROM Post p WHERE p.id = :postId")
     Long findAuthorIdByPostId(@Param("postId") Long postId);
+    
+    @Query("""
+        SELECT COUNT(c)
+        FROM Comment c
+        WHERE c.postId = :postId
+        AND c.createdAt < (SELECT c2.createdAt FROM Comment c2 WHERE c2.id = :commentId)
+    """)
+    long findIndexOfComment(@Param("postId") Long postId, @Param("commentId") Long commentId);
 }

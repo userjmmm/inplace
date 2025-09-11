@@ -1,10 +1,7 @@
 package my.inplace.domain.alarm;
 
+import jakarta.persistence.*;
 import my.inplace.domain.base.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,17 +14,18 @@ public class Alarm extends BaseEntity {
 
     private Long userId;
     private Long postId;
-    private Long commentId;
+    @Embedded
+    private AlarmComment alarmComment;
     private String content;
     private boolean checked;
 
     @Enumerated(EnumType.STRING)
     private AlarmType alarmType;
 
-    public Alarm(Long userId, Long postId, Long commentId, String content, AlarmType alarmType) {
+    public Alarm(Long userId, Long postId, AlarmComment alarmComment, String content, AlarmType alarmType) {
         this.userId = userId;
         this.postId = postId;
-        this.commentId = commentId;
+        this.alarmComment = alarmComment;
         this.content = content;
         this.alarmType = alarmType;
     }

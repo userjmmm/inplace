@@ -32,7 +32,13 @@ public class AlarmEventHandler {
         String title = postQueryService.getPostTitleById(mentionAlarmEvent.postId());
 
         String content = title + " 게시글에서 " + mentionAlarmEvent.sender() + " 님이 언급했습니다.";
-
+        
+        Long index = postQueryService.getCommentIndexByPostIdAndCommentId(
+            mentionAlarmEvent.postId(), mentionAlarmEvent.commentId());
+        
+        int pageNumber = index.intValue() / 10;
+        int offset = index.intValue() % 10;
+        
         sendFcmMessage(
             "새로운 언급 알림", content, userQueryService.getFcmTokenByUser(userId)
         );
@@ -41,6 +47,8 @@ public class AlarmEventHandler {
             userId,
             mentionAlarmEvent.postId(),
             mentionAlarmEvent.commentId(),
+            pageNumber,
+            offset,
             content,
             AlarmType.MENTION
         );
@@ -63,6 +71,8 @@ public class AlarmEventHandler {
             userId,
             postReportAlarmEvent.postId(),
             null,
+            0,
+            0,
             content,
             AlarmType.REPORT
         );
@@ -86,6 +96,8 @@ public class AlarmEventHandler {
             userId,
             postId,
             commentId,
+            0,
+            0,
             content,
             AlarmType.REPORT
         );
