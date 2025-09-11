@@ -81,7 +81,7 @@ public class PostCommandFacade {
     private List<String> parseMentionedUser(String comment) {
         List<String> mentions = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile("@(\\w+)");
+        Pattern pattern = Pattern.compile("@([가-힣A-Za-z0-9_]+)");
         Matcher matcher = pattern.matcher(comment);
         while (matcher.find()) {
             mentions.add(matcher.group(1));
