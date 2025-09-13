@@ -7,17 +7,21 @@ public record AlarmResult(
     Long alarmId,
     Long postId,
     Long commentId,
+    int pageNumber,
+    int offset,
     String content,
     Boolean checked,
     String type,
     String createdAt
 ) {
 
-    public static AlarmResult from(Alarm alarm) { // TODO
+    public static AlarmResult from(Alarm alarm) {
         return new AlarmResult(
             alarm.getId(),
             alarm.getPostId(),
-            alarm.getCommentId(),
+            alarm.getAlarmComment().getCommentId(),
+            alarm.getAlarmComment().getPageNumber(),
+            alarm.getAlarmComment().getOffset(),
             alarm.getContent(),
             alarm.isChecked(),
             alarm.getAlarmType().name(),
