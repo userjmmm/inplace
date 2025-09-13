@@ -13,4 +13,10 @@ public class UserRequest {
     ) {
 
     }
+    
+    public record UpdatePushResent(
+        Boolean isResented
+    ) {
+    
+    }
 }

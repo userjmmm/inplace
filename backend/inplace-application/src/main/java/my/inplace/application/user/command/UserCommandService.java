@@ -104,4 +104,20 @@ public class UserCommandService {
         
         user.deleteFcmToken();
     }
+    
+    @Transactional
+    public void updateReportPushResent(Long userId, Boolean isResented) {
+        User user = userJpaRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        user.updateReportPushResent(isResented);
+    }
+    
+    @Transactional
+    public void updateMentionPushResent(Long userId, Boolean isResented) {
+        User user = userJpaRepository.findById(userId)
+                        .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        user.updateMentionPushResent(isResented);
+    }
 }
