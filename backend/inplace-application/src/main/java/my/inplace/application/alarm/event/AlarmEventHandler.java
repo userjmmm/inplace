@@ -39,10 +39,10 @@ public class AlarmEventHandler {
         int pageNumber = index.intValue() / 10;
         int offset = index.intValue() % 10;
         
-        sendFcmMessage(
-            "새로운 언급 알림", content, userQueryService.getFcmTokenByUser(userId)
-        );
-
+        if(userQueryService.isMentionResented(userId)) {
+            sendFcmMessage("새로운 언급 알림", content, userQueryService.getFcmTokenByUser(userId));
+        }
+        
         alarmCommandService.saveAlarm(
             userId,
             mentionAlarmEvent.postId(),
@@ -63,10 +63,10 @@ public class AlarmEventHandler {
 
         String content = title + " 게시글이 신고로 인하여 삭제되었습니다.";
 
-        sendFcmMessage(
-            "게시글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId)
-        );
-
+        if(userQueryService.isReportPushResented(userId)) {
+            sendFcmMessage("게시글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId));
+        }
+        
         alarmCommandService.saveAlarm(
             userId,
             postReportAlarmEvent.postId(),
@@ -87,10 +87,10 @@ public class AlarmEventHandler {
         String title = postQueryService.getPostTitleById(postId);
 
         String content = title + " 게시글에 작성한 댓글이 신고로 인하여 삭제되었습니다";
-
-        sendFcmMessage(
-            "댓글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId)
-        );
+    
+        if(userQueryService.isReportPushResented(userId)) {
+            sendFcmMessage("댓글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId));
+        }
 
         alarmCommandService.saveAlarm(
             userId,
