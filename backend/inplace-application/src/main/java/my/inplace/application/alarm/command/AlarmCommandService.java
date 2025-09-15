@@ -1,6 +1,7 @@
 package my.inplace.application.alarm.command;
 
 import my.inplace.domain.alarm.Alarm;
+import my.inplace.domain.alarm.AlarmComment;
 import my.inplace.domain.alarm.AlarmType;
 import my.inplace.infra.alarm.jpa.AlarmJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,11 @@ public class AlarmCommandService {
 
     @Transactional
     public void saveAlarm(
-        Long userId, Long postId, Long commentId, String content, AlarmType alarmType) {
-        Alarm alarm = new Alarm(userId, postId, commentId, content, alarmType);
+        Long userId, Long postId, Long commentId, int pageNumber, int offset, String content, AlarmType alarmType) {
+        Alarm alarm = new Alarm(
+            userId, postId,
+            new AlarmComment(commentId, pageNumber, offset),
+            content, alarmType);
 
         alarmJpaRepository.save(alarm);
     }

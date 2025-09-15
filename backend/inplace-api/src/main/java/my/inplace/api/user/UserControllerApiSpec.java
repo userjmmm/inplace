@@ -42,4 +42,10 @@ public interface UserControllerApiSpec {
 
     @Operation(summary = "메인 뱃지 변경", description = "메인 뱃지를 변경합니다.")
     ResponseEntity<Void> updateMainBadge(UserRequest.UpdateMainBadge request);
+    
+    @Operation(summary = "신고에 대한 푸시 알림 허용/거부", description = "신고에 대한 푸시 알림을 허용하거나 거부합니다.")
+    ResponseEntity<Void> updateReportPushResent(UserRequest.UpdatePushResent resent);
+    
+    @Operation(summary = "언급에 대한 푸시 알림 허용/거부", description = "언급에 대한 푸시 알림을 허용하거나 거부합니다.")
+    ResponseEntity<Void> updateMentionPushResent(UserRequest.UpdatePushResent resent);
 }

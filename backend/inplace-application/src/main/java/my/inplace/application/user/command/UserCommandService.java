@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserCommandService {
 
     private final UserJpaRepository userJpaRepository;
-    private final UserReadRepository userReadRepßository;
     private final UserBadgeJpaRepository userBadgeJpaRepository;
     private final TierJpaRepository tierJpaRepository;
 
@@ -96,5 +95,29 @@ public class UserCommandService {
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         user.updateFcmToken(fcmToken);
+    }
+    
+    @Transactional
+    public void deleteFcmToken(Long userId) {
+        User user = userJpaRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        user.deleteFcmToken();
+    }
+    
+    @Transactional
+    public void updateReportPushResent(Long userId, Boolean isResented) {
+        User user = userJpaRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        user.updateReportPushResent(isResented);
+    }
+    
+    @Transactional
+    public void updateMentionPushResent(Long userId, Boolean isResented) {
+        User user = userJpaRepository.findById(userId)
+                        .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        user.updateMentionPushResent(isResented);
     }
 }

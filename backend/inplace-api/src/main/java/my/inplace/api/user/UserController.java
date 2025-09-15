@@ -83,4 +83,15 @@ public class UserController implements UserControllerApiSpec {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PatchMapping("/resent/report")
+    public ResponseEntity<Void> updateReportPushResent(UserRequest.UpdatePushResent resent) {
+        userFacade.updateReportResent(resent.isResented());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @PatchMapping("/resent/mention")
+    public ResponseEntity<Void> updateMentionPushResent(UserRequest.UpdatePushResent resent) {
+        userFacade.updateMentionResent(resent.isResented());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

@@ -53,6 +53,12 @@ public class User extends BaseEntity {
 
     @Column(name = "received_like_count")
     private Long receivedLikeCount;
+    
+    @Column(name = "report_push_consent")
+    private Boolean reportPushConsent;
+    
+    @Column(name = "mention_push_consent")
+    private Boolean mentionPushConsent;
 
     public User(
         String username, String password, String nickname, String profileImageUrl,
@@ -69,6 +75,8 @@ public class User extends BaseEntity {
         this.postCount = 0;
         this.receivedCommentCount = 0L;
         this.receivedLikeCount = 0L;
+        this.reportPushConsent = false;
+        this.mentionPushConsent = false;
     }
 
     public void updateNickname(String nickname) {
@@ -81,6 +89,10 @@ public class User extends BaseEntity {
 
     public void updateFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
+    }
+    
+    public void deleteFcmToken() {
+        this.fcmToken = null;
     }
 
     public void updateMainBadge(Long badgeId) {
@@ -101,5 +113,13 @@ public class User extends BaseEntity {
 
     public void updateReceivedLikeCount(Long receivedLikeCount) {
         this.receivedLikeCount = receivedLikeCount;
+    }
+    
+    public void updateReportPushResent(Boolean tf) {
+        this.reportPushConsent = tf;
+    }
+    
+    public void updateMentionPushResent(Boolean tf) {
+        this.mentionPushConsent = tf;
     }
 }

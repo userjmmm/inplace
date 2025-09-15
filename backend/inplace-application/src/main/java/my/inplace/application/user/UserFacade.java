@@ -91,4 +91,16 @@ public class UserFacade {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         userCommandService.updateBadge(userId, badgeId);
     }
+    
+    public void updateReportResent(Boolean isResented) {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        
+        userCommandService.updateReportPushResent(userId, isResented);
+    }
+    
+    public void updateMentionResent(Boolean isResented) {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        
+        userCommandService.updateMentionPushResent(userId, isResented);
+    }
 }

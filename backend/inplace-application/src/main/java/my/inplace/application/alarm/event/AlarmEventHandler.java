@@ -32,15 +32,23 @@ public class AlarmEventHandler {
         String title = postQueryService.getPostTitleById(mentionAlarmEvent.postId());
 
         String content = title + " 게시글에서 " + mentionAlarmEvent.sender() + " 님이 언급했습니다.";
-
-        sendFcmMessage(
-            "새로운 언급 알림", content, userQueryService.getFcmTokenByUser(userId)
-        );
-
+        
+        Long index = postQueryService.getCommentIndexByPostIdAndCommentId(
+            mentionAlarmEvent.postId(), mentionAlarmEvent.commentId());
+        
+        int pageNumber = index.intValue() / 10;
+        int offset = index.intValue() % 10;
+        
+        if(userQueryService.isMentionResented(userId)) {
+            sendFcmMessage("새로운 언급 알림", content, userQueryService.getFcmTokenByUser(userId));
+        }
+        
         alarmCommandService.saveAlarm(
             userId,
             mentionAlarmEvent.postId(),
             mentionAlarmEvent.commentId(),
+            pageNumber,
+            offset,
             content,
             AlarmType.MENTION
         );
@@ -55,14 +63,16 @@ public class AlarmEventHandler {
 
         String content = title + " 게시글이 신고로 인하여 삭제되었습니다.";
 
-        sendFcmMessage(
-            "게시글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId)
-        );
-
+        if(userQueryService.isReportPushResented(userId)) {
+            sendFcmMessage("게시글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId));
+        }
+        
         alarmCommandService.saveAlarm(
             userId,
             postReportAlarmEvent.postId(),
             null,
+            0,
+            0,
             content,
             AlarmType.REPORT
         );
@@ -77,15 +87,17 @@ public class AlarmEventHandler {
         String title = postQueryService.getPostTitleById(postId);
 
         String content = title + " 게시글에 작성한 댓글이 신고로 인하여 삭제되었습니다";
-
-        sendFcmMessage(
-            "댓글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId)
-        );
+    
+        if(userQueryService.isReportPushResented(userId)) {
+            sendFcmMessage("댓글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId));
+        }
 
         alarmCommandService.saveAlarm(
             userId,
             postId,
             commentId,
+            0,
+            0,
             content,
             AlarmType.REPORT
         );
