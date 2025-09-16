@@ -2,6 +2,7 @@ package my.inplace.infra.influencer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.Optional;
 import my.inplace.domain.influencer.query.InfluencerQueryResult;
 import my.inplace.infra.config.TestQueryDslConfig;
@@ -48,6 +49,15 @@ class InfluencerReadQueryDslRepositoryTest {
 
     @Test
     void getInfluencerNamesByPlaceId() {
+        // given
+        Long placeId = 1L;
+        List<String> expected = List.of("인플루언서3", "인플루언서4");
+
+        // when
+        List<String> actual = influencerRepository.getInfluencerNamesByPlaceId(placeId);
+
+        // then
+        assertThat(actual).hasSameElementsAs(expected);
     }
 
     @Test

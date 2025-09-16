@@ -32,17 +32,19 @@ VALUES (1, 1, null, 'UUID1'),
        (10, 3, null, 'UUID10'),
        (11, 3, null, 'UUID11'),
        (12, 3, null, 'UUID12'),
+       (13, 3, 1, 'UUID13'),
 
-       (13, 4, 1, 'UUID13'),
-       (14, 4, 2, 'UUID14'),
-       (15, 4, 3, 'UUID15'),
-       (16, 4, 4, 'UUID16');
+       (14, 4, 1, 'UUID14'),
+       (15, 4, 2, 'UUID15'),
+       (16, 4, 3, 'UUID16'),
+       (17, 4, 4, 'UUID17');
 
 INSERT INTO place_videos(id, video_id, place_id)
 VALUES (1, 13, 1),
-       (2, 14, 2),
-       (3, 15, 3),
-       (4, 16, 4);
+       (2, 14, 1),
+       (3, 15, 2),
+       (4, 16, 3),
+       (5, 17, 4);
 
 INSERT INTO users (id, username)
 VALUES (1, '유저1'),
