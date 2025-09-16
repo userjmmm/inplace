@@ -30,7 +30,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class PlaceReadQueryDslRepositoryImpl implements PlaceReadRepository {
+public class PlaceReadQueryDslRepository implements PlaceReadRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 

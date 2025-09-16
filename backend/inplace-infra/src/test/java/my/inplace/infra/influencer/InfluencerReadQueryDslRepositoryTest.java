@@ -31,7 +31,6 @@ class InfluencerReadQueryDslRepositoryTest {
     @Autowired
     InfluencerReadQueryDslRepository influencerRepository;
 
-
     @Test
     void getInfluencerDetail() {
         // given
