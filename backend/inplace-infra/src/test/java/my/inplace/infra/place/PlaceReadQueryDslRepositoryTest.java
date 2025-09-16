@@ -2,8 +2,12 @@ package my.inplace.infra.place;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import java.util.Optional;
+import my.inplace.domain.place.query.PlaceQueryParam;
+import my.inplace.domain.place.query.PlaceQueryParam.Coordinate;
 import my.inplace.domain.place.query.PlaceQueryResult;
+import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.config.TestQueryDslConfig;
 import org.junit.jupiter.api.Test;
@@ -14,8 +18,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
 @DataJpaTest(
     includeFilters = @Filter(
@@ -25,7 +32,7 @@ import org.springframework.test.context.jdbc.Sql;
 )
 @ActiveProfiles("test-mysql")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Sql(scripts = "/sql/test-place.sql")
+@Sql(scripts = "/sql/test-place.sql", executionPhase = ExecutionPhase.BEFORE_TEST_CLASS)
 @Import(TestQueryDslConfig.class)
 @EntityScan("my.inplace.domain")
 class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
@@ -51,7 +58,35 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
     }
 
     @Test
-    void findPlacesInMapRangeWithPaging() {
+    void findPlacesInMapRangeWithPagingWhenRegionExists() {
+        // then
+        PlaceQueryParam.Coordinate coordinate = new PlaceQueryParam.Coordinate( // 어차피 사용되지 않는다.
+            null, null, null, null
+        );
+        PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
+            List.of(new PlaceQueryParam.Region("주소1", "주소2")),
+            List.of(1L, 2L),
+            List.of("인플루언서5")
+        );
+        Long userId = 1L;
+        List<PlaceQueryResult.DetailedPlace> expected = List.of(
+            new PlaceQueryResult.DetailedPlace(17L, "테스트장소17", "주소1", "주소2", "주소3", 127.6, 37.6, "카페", "googlePlaceId17", 17L, 1L, false),
+            new PlaceQueryResult.DetailedPlace(18L, "테스트장소18", "주소1", "주소2", "주소3", 127.7, 37.7, "양식", "googlePlaceId18", 18L, 1L, true),
+            new PlaceQueryResult.DetailedPlace(19L, "테스트장소19", "주소1", "주소2", "주소3", 127.8, 37.8, "일식", "googlePlaceId19", 19L, 1L, true),
+            new PlaceQueryResult.DetailedPlace(20L, "테스트장소20", "주소1", "주소2", "주소3", 127.9, 37.9, "한식", "googlePlaceId20", 20L, 1L, true)
+        );
+
+        // when
+        Page<DetailedPlace> actual = placeReadRepository.findPlacesInMapRangeWithPaging(
+            coordinate,
+            filter,
+            Pageable.ofSize(5),
+            userId
+        );
+
+        // then
+        assertThat(actual.getTotalElements()).isEqualTo(expected.size());
+        assertThat(actual.getContent()).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test

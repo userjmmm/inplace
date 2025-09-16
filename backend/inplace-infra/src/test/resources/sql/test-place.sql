@@ -2,7 +2,7 @@ CREATE FULLTEXT INDEX full_text_idx_place_name ON places (name) with parser ngra
 
 INSERT INTO categories(id, name, eng_name, parent_id)
 VALUES (1, '맛집', 'eats', null),
-       (2, '카페', 'cafe', 1),
+       (2, '카페', 'cafe', null),
        (3, '양식', 'western', 1),
        (4, '일식', 'japanese',1),
        (5, '한식', 'korean', 1);
