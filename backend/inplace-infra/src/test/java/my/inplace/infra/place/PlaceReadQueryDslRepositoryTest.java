@@ -9,6 +9,7 @@ import my.inplace.domain.place.query.PlaceQueryParam.Coordinate;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
 import my.inplace.domain.place.query.PlaceQueryResult.Marker;
+import my.inplace.domain.place.query.PlaceQueryResult.SimplePlace;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.config.TestQueryDslConfig;
 import org.junit.jupiter.api.Test;
@@ -174,6 +175,14 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
     @Test
     void findSimplePlaceById() {
+        // given
+        Long placeId = 1L;
+        PlaceQueryResult.SimplePlace expected = new PlaceQueryResult.SimplePlace(1L, "테스트장소1", "주소1-1", "주소2-1", "주소3");
+        // when
+        Optional<SimplePlace> actual = placeReadRepository.findSimplePlaceById(placeId);
+        // then
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get()).isEqualTo(expected);
     }
 
     @Test
