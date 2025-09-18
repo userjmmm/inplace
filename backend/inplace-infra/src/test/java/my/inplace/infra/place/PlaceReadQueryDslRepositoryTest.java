@@ -9,6 +9,7 @@ import my.inplace.domain.place.query.PlaceQueryParam.Coordinate;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
 import my.inplace.domain.place.query.PlaceQueryResult.Marker;
+import my.inplace.domain.place.query.PlaceQueryResult.MarkerDetail;
 import my.inplace.domain.place.query.PlaceQueryResult.SimplePlace;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.config.TestQueryDslConfig;
@@ -208,6 +209,16 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
     @Test
     void findPlaceMarkerById() {
+        // given
+        Long placeId = 1L;
+        PlaceQueryResult.MarkerDetail expected = new PlaceQueryResult.MarkerDetail(1L, "테스트장소1", "카페", "주소1-1", "주소2-1", "주소3");
+
+        // when
+        PlaceQueryResult.MarkerDetail actual = placeReadRepository.findPlaceMarkerById(placeId);
+
+        // then
+        assertThat(actual).isNotNull();
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
