@@ -5,11 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.List;
 import java.util.Optional;
 import my.inplace.domain.place.query.PlaceQueryParam;
-import my.inplace.domain.place.query.PlaceQueryParam.Coordinate;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
-import my.inplace.domain.place.query.PlaceQueryResult.Marker;
-import my.inplace.domain.place.query.PlaceQueryResult.MarkerDetail;
 import my.inplace.domain.place.query.PlaceQueryResult.SimplePlace;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.config.TestQueryDslConfig;
@@ -73,10 +70,14 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         );
         Long userId = 1L;
         List<PlaceQueryResult.DetailedPlace> expected = List.of(
-            new PlaceQueryResult.DetailedPlace(17L, "테스트장소17", "주소1", "주소2", "주소3", 127.6, 37.6, "카페", "googlePlaceId17", 17L, 1L, false),
-            new PlaceQueryResult.DetailedPlace(18L, "테스트장소18", "주소1", "주소2", "주소3", 127.7, 37.7, "양식", "googlePlaceId18", 18L, 1L, true),
-            new PlaceQueryResult.DetailedPlace(19L, "테스트장소19", "주소1", "주소2", "주소3", 127.8, 37.8, "일식", "googlePlaceId19", 19L, 1L, true),
-            new PlaceQueryResult.DetailedPlace(20L, "테스트장소20", "주소1", "주소2", "주소3", 127.9, 37.9, "한식", "googlePlaceId20", 20L, 1L, true)
+            new PlaceQueryResult.DetailedPlace(17L, "테스트장소17", "주소1", "주소2", "주소3", 127.6, 37.6, "카페", "googlePlaceId17", 17L, 1L,
+                false),
+            new PlaceQueryResult.DetailedPlace(18L, "테스트장소18", "주소1", "주소2", "주소3", 127.7, 37.7, "양식", "googlePlaceId18", 18L, 1L,
+                true),
+            new PlaceQueryResult.DetailedPlace(19L, "테스트장소19", "주소1", "주소2", "주소3", 127.8, 37.8, "일식", "googlePlaceId19", 19L, 1L,
+                true),
+            new PlaceQueryResult.DetailedPlace(20L, "테스트장소20", "주소1", "주소2", "주소3", 127.9, 37.9, "한식", "googlePlaceId20", 20L, 1L,
+                true)
         );
 
         // when
@@ -105,10 +106,14 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         );
         Long userId = 1L;
         List<PlaceQueryResult.DetailedPlace> expected = List.of(
-            new PlaceQueryResult.DetailedPlace(9L, "테스트장소9", "주소1-2", "주소2-3", "주소3", 126.8, 36.8, "일식", "googlePlaceId9", 9L, 1L, false),
-            new PlaceQueryResult.DetailedPlace(10L, "테스트장소10", "주소1-2", "주소2-3", "주소3", 126.9, 36.9, "한식", "googlePlaceId10", 10L, 1L, false),
-            new PlaceQueryResult.DetailedPlace(11L, "테스트장소11", "주소1", "주소2", "주소3", 127.0, 37.0, "카페", "googlePlaceId11", 11L, 1L, false),
-            new PlaceQueryResult.DetailedPlace(12L, "테스트장소12", "주소1", "주소2", "주소3", 127.1, 37.1, "카페", "googlePlaceId12", 12L, 1L, true)
+            new PlaceQueryResult.DetailedPlace(9L, "테스트장소9", "주소1-2", "주소2-3", "주소3", 126.8, 36.8, "일식", "googlePlaceId9", 9L, 1L,
+                false),
+            new PlaceQueryResult.DetailedPlace(10L, "테스트장소10", "주소1-2", "주소2-3", "주소3", 126.9, 36.9, "한식", "googlePlaceId10", 10L,
+                1L, false),
+            new PlaceQueryResult.DetailedPlace(11L, "테스트장소11", "주소1", "주소2", "주소3", 127.0, 37.0, "카페", "googlePlaceId11", 11L, 1L,
+                false),
+            new PlaceQueryResult.DetailedPlace(12L, "테스트장소12", "주소1", "주소2", "주소3", 127.1, 37.1, "카페", "googlePlaceId12", 12L, 1L,
+                true)
         );
 
         // when
@@ -192,11 +197,16 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         Long userId = 1L;
         Pageable pageable = Pageable.ofSize(5);
         List<PlaceQueryResult.DetailedPlace> expected = List.of(
-            new PlaceQueryResult.DetailedPlace(12L, "테스트장소12", "주소1", "주소2", "주소3", 127.1, 37.1, "카페", "googlePlaceId12", 12L, 1L, true),
-            new PlaceQueryResult.DetailedPlace(13L, "테스트장소13", "주소1", "주소2", "주소3", 127.2, 37.2, "양식", "googlePlaceId13", 13L, 1L, true),
-            new PlaceQueryResult.DetailedPlace(18L, "테스트장소18", "주소1", "주소2", "주소3", 127.7, 37.7, "양식", "googlePlaceId18", 18L, 1L, true),
-            new PlaceQueryResult.DetailedPlace(19L, "테스트장소19", "주소1", "주소2", "주소3", 127.8, 37.8, "일식", "googlePlaceId19", 19L, 1L, true),
-            new PlaceQueryResult.DetailedPlace(20L, "테스트장소20", "주소1", "주소2", "주소3", 127.9, 37.9, "한식", "googlePlaceId20", 20L, 1L, true)
+            new PlaceQueryResult.DetailedPlace(12L, "테스트장소12", "주소1", "주소2", "주소3", 127.1, 37.1, "카페", "googlePlaceId12", 12L, 1L,
+                true),
+            new PlaceQueryResult.DetailedPlace(13L, "테스트장소13", "주소1", "주소2", "주소3", 127.2, 37.2, "양식", "googlePlaceId13", 13L, 1L,
+                true),
+            new PlaceQueryResult.DetailedPlace(18L, "테스트장소18", "주소1", "주소2", "주소3", 127.7, 37.7, "양식", "googlePlaceId18", 18L, 1L,
+                true),
+            new PlaceQueryResult.DetailedPlace(19L, "테스트장소19", "주소1", "주소2", "주소3", 127.8, 37.8, "일식", "googlePlaceId19", 19L, 1L,
+                true),
+            new PlaceQueryResult.DetailedPlace(20L, "테스트장소20", "주소1", "주소2", "주소3", 127.9, 37.9, "한식", "googlePlaceId20", 20L, 1L,
+                true)
         );
 
         // when
@@ -222,19 +232,16 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
     }
 
     @Test
-    void findPlaceLocationsByName() {
+    void findPlaceLocationsByNameWhenRegionExists() {
         // given
         String name = "테스트장소";
         PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
-            List.of(),
+            List.of(new PlaceQueryParam.Region("주소1-1", "주소2-2")),
             List.of(1L, 2L),
             List.of("인플루언서2")
         );
         List<PlaceQueryResult.Marker> expected = List.of(
-            new PlaceQueryResult.Marker(5L, "eats", 126.4, 36.4),
-            new PlaceQueryResult.Marker(6L, "eats", 126.5, 36.5),
-            new PlaceQueryResult.Marker(7L, "eats", 126.6, 36.6),
-            new PlaceQueryResult.Marker(8L, "eats", 126.7, 36.7)
+            new PlaceQueryResult.Marker(6L, "eats", 126.5, 36.5)
         );
 
         // when
@@ -246,7 +253,73 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
     }
 
     @Test
-    void findPlacesByNameWithPaging() {
+    void findPlaceLocationsByNameWhenRegionDoesNotExist() {
+        // given
+        String name = "테스트장소";
+        PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
+            List.of(),
+            List.of(1L, 2L),
+            List.of("인플루언서4")
+        );
+        List<PlaceQueryResult.Marker> expected = List.of(
+            new PlaceQueryResult.Marker(13L, "eats", 127.2, 37.2),
+            new PlaceQueryResult.Marker(14L, "eats", 127.3, 37.3),
+            new PlaceQueryResult.Marker(15L, "eats", 127.4, 37.4),
+            new PlaceQueryResult.Marker(16L, "eats", 127.5, 37.5)
+        );
+
+        // when
+        List<PlaceQueryResult.Marker> actual = placeReadRepository.findPlaceLocationsByName(name, filter);
+
+        // then
+        assertThat(actual).isNotNull();
+        assertThat(actual).hasSameElementsAs(expected);
+    }
+
+    @Test
+    void findPlacesByNameWithPagingWithRegionExists() {
+        // given
+        Long userId = 1L;
+        String name = "소1";
+        PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
+            List.of(new PlaceQueryParam.Region("주소1-1", "주소2-1")),
+            List.of(1L, 2L),
+            List.of("인플루언서1")
+        );
+        Pageable pageable = Pageable.ofSize(5);
+        List<PlaceQueryResult.DetailedPlace> expected = List.of(
+            new PlaceQueryResult.DetailedPlace(1L, "테스트장소1", "주소1-1", "주소2-1", "주소3", 126.0, 36.0, "카페", "googlePlaceId1", 1L, 1L, false)
+        );
+
+        // when
+        Page<PlaceQueryResult.DetailedPlace> actual = placeReadRepository.findPlacesByNameWithPaging(userId, name, filter,
+            pageable);
+
+        // then
+        assertThat(actual.getTotalElements()).isEqualTo(expected.size());
+    }
+
+    @Test
+    void findPlacesByNameWithPagingWithRegionDoesNotExist() {
+        // given
+        Long userId = 1L;
+        String name = "소20";
+        PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
+            List.of(),
+            List.of(1L, 2L),
+            List.of("인플루언서5")
+        );
+        Pageable pageable = Pageable.ofSize(5);
+        List<PlaceQueryResult.DetailedPlace> expected = List.of(
+            new PlaceQueryResult.DetailedPlace(20L, "테스트장소20", "주소1", "주소2", "주소3", 127.9, 37.9, "한식", "googlePlaceId20", 20L, 1L, true)
+            );
+
+        // when
+        Page<PlaceQueryResult.DetailedPlace> actual = placeReadRepository.findPlacesByNameWithPaging(userId, name, filter,
+            pageable);
+
+        // then
+        assertThat(actual.getTotalElements()).isEqualTo(expected.size());
     }
 
     @Test
