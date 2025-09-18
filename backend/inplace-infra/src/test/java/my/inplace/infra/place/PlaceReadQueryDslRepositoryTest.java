@@ -223,6 +223,26 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
     @Test
     void findPlaceLocationsByName() {
+        // given
+        String name = "테스트장소";
+        PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
+            List.of(),
+            List.of(1L, 2L),
+            List.of("인플루언서2")
+        );
+        List<PlaceQueryResult.Marker> expected = List.of(
+            new PlaceQueryResult.Marker(5L, "eats", 126.4, 36.4),
+            new PlaceQueryResult.Marker(6L, "eats", 126.5, 36.5),
+            new PlaceQueryResult.Marker(7L, "eats", 126.6, 36.6),
+            new PlaceQueryResult.Marker(8L, "eats", 126.7, 36.7)
+        );
+
+        // when
+        List<PlaceQueryResult.Marker> actual = placeReadRepository.findPlaceLocationsByName(name, filter);
+
+        // then
+        assertThat(actual).isNotNull();
+        assertThat(actual).hasSameElementsAs(expected);
     }
 
     @Test
