@@ -324,5 +324,18 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
     @Test
     void getDetailedPlacesByVideoId() {
+        // given
+        Long videoId = 1L;
+        List<PlaceQueryResult.DetailedPlace> expected = List.of(
+            new PlaceQueryResult.DetailedPlace(1L, "테스트장소1", "주소1-1", "주소2-1", "주소3", 126.0, 36.0, "카페", "googlePlaceId1", 1L, null, null),
+            new PlaceQueryResult.DetailedPlace(20L, "테스트장소20", "주소1", "주소2", "주소3", 127.9, 37.9, "한식", "googlePlaceId20", 20L, null, null)
+
+        );
+
+        // when
+        List<PlaceQueryResult.DetailedPlace> actual = placeReadRepository.getDetailedPlacesByVideoId(videoId);
+
+        // then
+        assertThat(actual).isEqualTo(expected);
     }
 }
