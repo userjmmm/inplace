@@ -8,6 +8,7 @@ import my.inplace.domain.place.query.PlaceQueryParam;
 import my.inplace.domain.place.query.PlaceQueryParam.Coordinate;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
+import my.inplace.domain.place.query.PlaceQueryResult.Marker;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.config.TestQueryDslConfig;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         Long placeId = 1L;
         Long userId = 1L;
         PlaceQueryResult.DetailedPlace expected = new PlaceQueryResult.DetailedPlace(
-            1L, "테스트장소1", "주소1-1", "주소2-1", "주소3", 126.0, 36.0, "맛집", "googlePlaceId1", 1L, 1L, false
+            1L, "테스트장소1", "주소1-1", "주소2-1", "주소3", 126.0, 36.0, "카페", "googlePlaceId1", 1L, 1L, false
         );
 
         // when
@@ -104,7 +105,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         List<PlaceQueryResult.DetailedPlace> expected = List.of(
             new PlaceQueryResult.DetailedPlace(9L, "테스트장소9", "주소1-2", "주소2-3", "주소3", 126.8, 36.8, "일식", "googlePlaceId9", 9L, 1L, false),
             new PlaceQueryResult.DetailedPlace(10L, "테스트장소10", "주소1-2", "주소2-3", "주소3", 126.9, 36.9, "한식", "googlePlaceId10", 10L, 1L, false),
-            new PlaceQueryResult.DetailedPlace(11L, "테스트장소11", "주소1", "주소2", "주소3", 127.0, 37.0, "맛집", "googlePlaceId11", 11L, 1L, false),
+            new PlaceQueryResult.DetailedPlace(11L, "테스트장소11", "주소1", "주소2", "주소3", 127.0, 37.0, "카페", "googlePlaceId11", 11L, 1L, false),
             new PlaceQueryResult.DetailedPlace(12L, "테스트장소12", "주소1", "주소2", "주소3", 127.1, 37.1, "카페", "googlePlaceId12", 12L, 1L, true)
         );
 
@@ -122,7 +123,53 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
     }
 
     @Test
-    void findPlaceLocationsInMapRange() {
+    void findPlaceLocationsInMapRangeWhenRegionExists() {
+        // given
+        PlaceQueryParam.Coordinate coordinate = new PlaceQueryParam.Coordinate( // 어차피 사용되지 않는다.
+            null, null, null, null
+        );
+        PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
+            List.of(new PlaceQueryParam.Region("주소1", "주소2")),
+            List.of(1L, 2L),
+            List.of("인플루언서3")
+        );
+        List<PlaceQueryResult.Marker> expected = List.of(
+            new PlaceQueryResult.Marker(11L, "eats", 127.0, 37.0),
+            new PlaceQueryResult.Marker(12L, "eats", 127.1, 37.1)
+        );
+
+        // when
+        List<PlaceQueryResult.Marker> actual = placeReadRepository.findPlaceLocationsInMapRange(coordinate, filter);
+        // then
+
+        assertThat(actual).isNotNull();
+        assertThat(actual).hasSameElementsAs(expected);
+    }
+
+    @Test
+    void findPlaceLocationsInMapRangeWhenRegionDoesNotExist() {
+        // given
+        PlaceQueryParam.Coordinate coordinate = new PlaceQueryParam.Coordinate( // 어차피 사용되지 않는다.
+            126.2, 37.5, 127.5, 36.2
+        );
+        PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
+            List.of(),
+            List.of(1L, 2L),
+            List.of("인플루언서4")
+        );
+        List<PlaceQueryResult.Marker> expected = List.of(
+            new PlaceQueryResult.Marker(13L, "eats", 127.2, 37.2),
+            new PlaceQueryResult.Marker(14L, "eats", 127.3, 37.3),
+            new PlaceQueryResult.Marker(15L, "eats", 127.4, 37.4),
+            new PlaceQueryResult.Marker(16L, "eats", 127.5, 37.5)
+        );
+
+        // when
+        List<PlaceQueryResult.Marker> actual = placeReadRepository.findPlaceLocationsInMapRange(coordinate, filter);
+        // then
+
+        assertThat(actual).isNotNull();
+        assertThat(actual).hasSameElementsAs(expected);
     }
 
     @Test
