@@ -90,6 +90,38 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
     }
 
     @Test
+    void findPlacesInMapRangeWithPagingWhenRegionDoesNotExist() {
+        // then
+        PlaceQueryParam.Coordinate coordinate = new PlaceQueryParam.Coordinate( // 어차피 사용되지 않는다.
+            126.2, 37.5, 127.5, 36.2
+        );
+        PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
+            List.of(),
+            List.of(1L, 2L),
+            List.of("인플루언서3")
+        );
+        Long userId = 1L;
+        List<PlaceQueryResult.DetailedPlace> expected = List.of(
+            new PlaceQueryResult.DetailedPlace(9L, "테스트장소9", "주소1-2", "주소2-3", "주소3", 126.8, 36.8, "일식", "googlePlaceId9", 9L, 1L, false),
+            new PlaceQueryResult.DetailedPlace(10L, "테스트장소10", "주소1-2", "주소2-3", "주소3", 126.9, 36.9, "한식", "googlePlaceId10", 10L, 1L, false),
+            new PlaceQueryResult.DetailedPlace(11L, "테스트장소11", "주소1", "주소2", "주소3", 127.0, 37.0, "맛집", "googlePlaceId11", 11L, 1L, false),
+            new PlaceQueryResult.DetailedPlace(12L, "테스트장소12", "주소1", "주소2", "주소3", 127.1, 37.1, "카페", "googlePlaceId12", 12L, 1L, true)
+        );
+
+        // when
+        Page<DetailedPlace> actual = placeReadRepository.findPlacesInMapRangeWithPaging(
+            coordinate,
+            filter,
+            Pageable.ofSize(5),
+            userId
+        );
+
+        // then
+        assertThat(actual.getTotalElements()).isEqualTo(expected.size());
+        assertThat(actual.getContent()).containsExactlyInAnyOrderElementsOf(expected);
+    }
+
+    @Test
     void findPlaceLocationsInMapRange() {
     }
 
