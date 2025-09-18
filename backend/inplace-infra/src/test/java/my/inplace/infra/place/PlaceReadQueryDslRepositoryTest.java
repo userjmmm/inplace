@@ -187,6 +187,23 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
     @Test
     void findLikedPlacesByUserIdWithPaging() {
+        // given
+        Long userId = 1L;
+        Pageable pageable = Pageable.ofSize(5);
+        List<PlaceQueryResult.DetailedPlace> expected = List.of(
+            new PlaceQueryResult.DetailedPlace(12L, "테스트장소12", "주소1", "주소2", "주소3", 127.1, 37.1, "카페", "googlePlaceId12", 12L, 1L, true),
+            new PlaceQueryResult.DetailedPlace(13L, "테스트장소13", "주소1", "주소2", "주소3", 127.2, 37.2, "양식", "googlePlaceId13", 13L, 1L, true),
+            new PlaceQueryResult.DetailedPlace(18L, "테스트장소18", "주소1", "주소2", "주소3", 127.7, 37.7, "양식", "googlePlaceId18", 18L, 1L, true),
+            new PlaceQueryResult.DetailedPlace(19L, "테스트장소19", "주소1", "주소2", "주소3", 127.8, 37.8, "일식", "googlePlaceId19", 19L, 1L, true),
+            new PlaceQueryResult.DetailedPlace(20L, "테스트장소20", "주소1", "주소2", "주소3", 127.9, 37.9, "한식", "googlePlaceId20", 20L, 1L, true)
+        );
+
+        // when
+        Page<PlaceQueryResult.DetailedPlace> actual = placeReadRepository.findLikedPlacesByUserIdWithPaging(userId, pageable);
+
+        // then
+        assertThat(actual.getTotalElements()).isEqualTo(expected.size());
+        assertThat(actual.getContent()).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @Test
