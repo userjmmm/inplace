@@ -13,17 +13,17 @@ VALUES (1, 'user1', 'user1@mail', 'USER', 'KAKAO'),
        (4, 'user4', 'user4@mail', 'USER', 'KAKAO'),
        (5, 'user5', 'user5@mail', 'USER', 'KAKAO');
 
-INSERT INTO reviews (id, place_id, user_id, is_liked, comment)
-VALUES (1, 1, 1, true, '1->1 like'),
-       (2, 1, 2, true, '2->1 like'),
-       (3, 1, 3, false, '3->1 dislike'),
-       (4, 1, 4, false, '4->1 dislike'),
-       (5, 1, 5, false, '5->1 dislike'),
-       (6, 2, 1, true, '1->2 like'),
-       (7, 2, 2, true, '2->2 like'),
-       (8, 2, 3, true, '3->2 like'),
-       (9, 2, 4, true, '4->2 like'),
-       (10, 2, 5, true, '5->2 like');
+INSERT INTO reviews (id, place_id, user_id, is_liked, comment, created_at)
+VALUES (1, 1, 1, true, '1->1 like', '2025-09-01T00:00:01'),
+       (2, 1, 2, true, '2->1 like', '2025-09-02T00:00:02'),
+       (3, 1, 3, false, '3->1 dislike', '2025-09-03T00:00:03'),
+       (4, 1, 4, false, '4->1 dislike', '2025-09-04T00:00:04'),
+       (5, 1, 5, false, '5->1 dislike', '2025-09-05T00:00:05'),
+       (6, 2, 1, true, '1->2 like', '2025-09-06T00:00:06'),
+       (7, 2, 2, true, '2->2 like', '2025-09-07T00:00:07'),
+       (8, 2, 3, true, '3->2 like', '2025-09-08T00:00:08'),
+       (9, 2, 4, true, '4->2 like', '2025-09-09T00:00:09'),
+       (10, 2, 5, true, '5->2 like', '2025-09-10T00:00:10');
 
 INSERT INTO influencers (id, name, job, channel_id, img_url)
 VALUES (1, '인플루언서1', '직업1', 'channel1', 'img1'),

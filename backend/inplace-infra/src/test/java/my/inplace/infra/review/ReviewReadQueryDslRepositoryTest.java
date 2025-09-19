@@ -2,11 +2,9 @@ package my.inplace.infra.review;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import my.inplace.domain.review.query.ReviewQueryResult;
-import my.inplace.domain.review.query.ReviewQueryResult.LikeRate;
-import my.inplace.domain.review.query.ReviewQueryResult.Simple;
 import my.inplace.infra.config.TestQueryDslConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +37,8 @@ class ReviewReadQueryDslRepositoryTest {
         Long userId = 1L;
         Pageable pageable = Pageable.ofSize(5);
         List<ReviewQueryResult.Detail> expected = List.of(
-            new ReviewQueryResult.Detail(1L, true, "1->1 like", null, 1L, "테스트장소1", "주소1", "주소2", "주소3"),
-            new ReviewQueryResult.Detail(6L, true, "1->2 like", null, 2L, "테스트장소2", "주소1", "주소2", "주소3")
+            new ReviewQueryResult.Detail(1L, true, "1->1 like", LocalDate.of(2025, 9, 1), 1L, "테스트장소1", "주소1", "주소2", "주소3"),
+            new ReviewQueryResult.Detail(6L, true, "1->2 like", LocalDate.of(2025, 9, 6), 2L, "테스트장소2", "주소1", "주소2", "주소3")
         );
 
         // when
@@ -57,15 +55,16 @@ class ReviewReadQueryDslRepositoryTest {
         Long userId = 1L;
         Pageable pageable = Pageable.ofSize(5);
         List<ReviewQueryResult.Simple> expected = List.of(
-            new ReviewQueryResult.Simple(1L, true, "1->1 like", "user1", null, true),
-            new ReviewQueryResult.Simple(2L, true, "2->1 like", "user2", null, false),
-            new ReviewQueryResult.Simple(3L, false, "3->1 dislike", "user3", null, false),
-            new ReviewQueryResult.Simple(4L, false, "4->1 dislike", "user4", null, false),
-            new ReviewQueryResult.Simple(5L, false, "5->1 dislike", "user5", null, false)
+            new ReviewQueryResult.Simple(1L, true, "1->1 like", "user1", LocalDate.of(2025, 9, 1), true),
+            new ReviewQueryResult.Simple(2L, true, "2->1 like", "user2", LocalDate.of(2025, 9, 2), false),
+            new ReviewQueryResult.Simple(3L, false, "3->1 dislike", "user3", LocalDate.of(2025, 9, 3), false),
+            new ReviewQueryResult.Simple(4L, false, "4->1 dislike", "user4", LocalDate.of(2025, 9, 4), false),
+            new ReviewQueryResult.Simple(5L, false, "5->1 dislike", "user5", LocalDate.of(2025, 9, 5), false)
         );
 
         // when
-        Page<ReviewQueryResult.Simple> actual = reviewReadRepository.findSimpleReviewByUserIdAndPlaceId(placeId, userId, pageable);
+        Page<ReviewQueryResult.Simple> actual = reviewReadRepository.findSimpleReviewByUserIdAndPlaceId(placeId, userId,
+            pageable);
 
         // then
         assertThat(actual.getContent()).containsExactlyElementsOf(expected);
