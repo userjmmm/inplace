@@ -22,63 +22,79 @@ VALUES  (1, 1, 1), -- 유저1 → 글쟁이
         (6, 3, 3), -- 유저3 → 인기인
         (7, 4, 1);
 
-INSERT INTO posts (id, title, content, author_id, image_infos)
+INSERT INTO posts (id, title, content, author_id, image_infos, created_at, total_like_count, total_comment_count)
 VALUES (1, '첫 번째 게시글', '첫 번째 게시글 내용', 1,
         '[
             {
                 \"imageUrl\": \"https://example.com/image1.jpg\",
                 \"imageHash\": \"abc123\"
             }
-        ]'),
+        ]',
+        '2025-09-01T00:00:00', 2, 2
+       ),
        (2, '두 번째 게시글', '두 번째 게시글 내용', 1,
         '[
             {
                 \"imageUrl\": \"https://example.com/image2.jpg\",
                 \"imageHash\": \"def456\"
             }
-        ]'),
+        ]',
+        '2025-09-01T00:00:01', 2, 2
+       ),
        (3, '세 번째 게시글', '세 번째 게시글 내용', 2,
         '[
             {
                 \"imageUrl\": \"https://example.com/image3.jpg\",
                 \"imageHash\": \"ghi789\"
             }
-        ]'),
+        ]',
+        '2025-09-01T00:00:02', 2, 2
+       ),
        (4, '네 번째 게시글', '네 번째 게시글 내용', 2,
         '[
             {
                 \"imageUrl\": \"https://example.com/image4.jpg\",
                 \"imageHash\": \"jkl012\"
             }
-        ]'),
+        ]',
+        '2025-09-01T00:00:03', 1, 2
+       ),
        (5, '다섯 번째 게시글', '다섯 번째 게시글 내용', 3,
         '[
             {
                 \"imageUrl\": \"https://example.com/image5.jpg\",
                 \"imageHash\": \"mno345\"
             }
-        ]'),
+        ]',
+        '2025-09-01T00:00:04', 2, 0
+       ),
        (6, '여섯 번째 게시글', '여섯 번째 게시글 내용', 3,
         '[
             {
                 \"imageUrl\": \"https://example.com/image6.jpg\",
                 \"imageHash\": \"pqr678\"
             }
-        ]'),
+        ]',
+        '2025-09-01T00:00:05', 2, 0
+       ),
        (7, '일곱 번째 게시글', '일곱 번째 게시글 내용', 4,
         '[
             {
                 \"imageUrl\": \"https://example.com/image7.jpg\",
                 \"imageHash\": \"stu901\"
             }
-        ]'),
+        ]',
+        '2025-09-01T00:00:06', 1, 0
+       ),
        (8, '여덟 번째 게시글', '여덟 번째 게시글 내용', 4,
         '[
             {
                 \"imageUrl\": \"https://example.com/image8.jpg\",
                 \"imageHash\": \"vwx234\"
             }
-        ]');
+        ]',
+        '2025-09-01T00:00:07', 1, 0
+       );
 
 INSERT INTO comments (id, content, author_id, post_id, created_at, total_like_count)
 VALUES (1, '첫 번째 댓글', 2, 1, '2025-09-01T00:00:01', 1),
@@ -103,3 +119,25 @@ INSERT INTO liked_comments (id, comment_id, user_id, is_liked) VALUES
        (10, 5, 1, false),
        (11, 8, 3, true),
        (12, 1, 4, true);
+
+INSERT INTO liked_posts (id, post_id, user_id, is_liked) VALUES
+         (1, 5, 2, true),
+         (2, 8, 1, false),
+         (3, 3, 3, true),
+         (4, 1, 4, true),
+         (5, 7, 2, false),
+         (6, 2, 1, true),
+         (7, 6, 4, true),
+         (8, 4, 3, false),
+         (9, 5, 1, true),
+         (10, 8, 2, true),
+         (11, 1, 3, true),
+         (12, 7, 4, false),
+         (13, 2, 2, false),
+         (14, 6, 3, true),
+         (15, 4, 1, true),
+         (16, 8, 4, false),
+         (17, 3, 2, true),
+         (18, 5, 3, false),
+         (19, 2, 4, true),
+         (20, 7, 1, true);
