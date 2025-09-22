@@ -84,6 +84,14 @@ jobs:
           echo "EAS CLI version:"
           eas --version
 
+      - name: 🔧 Fix Expo Gradle Configuration
+        run: |
+          # Expo 의존성 정리 및 재설치
+          npx expo install --fix
+          
+          # Android 프로젝트 생성 시 올바른 설정 적용
+          npx expo prebuild --platform android --clean
+
       - name: 📋 Update metro.config.js for SVG support
         run: |
           if [ -f ./metro.config.js ]; then
