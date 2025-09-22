@@ -104,6 +104,9 @@ jobs:
         run: |
           # Expo 의존성 정리 및 재설치
           npx expo install --fix
+
+          # 누락된 패키지 수동 설치
+          npx expo install expo-asset
           
           # Android 프로젝트 생성 시 올바른 설정 적용
           npx expo prebuild --platform android --clean
