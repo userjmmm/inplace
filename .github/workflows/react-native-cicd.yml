@@ -100,16 +100,16 @@ jobs:
           
           echo "Cache cleanup completed"
 
-      - name: 🔧 Fix Expo Gradle Configuration
+      - name: 🔧 Fix Expo Dependencies
         run: |
-          # Expo 의존성 정리 및 재설치
-          npx expo install --fix
-
-          # 누락된 패키지 수동 설치
-          npx expo install expo-asset
+          # 필요한 모듈들을 미리 설치
+          npx expo install expo-modules-core expo-asset
           
-          # Android 프로젝트 생성 시 올바른 설정 적용
-          npx expo prebuild --platform android --clean
+          # 의존성 정리
+          npx expo install --fix
+          
+          # 한 번에 올바른 Android 프로젝트 생성
+          npx expo prebuild --platform android --clean --clear
 
       - name: 📋 Update metro.config.js for SVG support
         run: |
