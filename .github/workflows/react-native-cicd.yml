@@ -84,6 +84,22 @@ jobs:
           echo "EAS CLI version:"
           eas --version
 
+      - name: 🧹 Clear Metro and Node Cache
+        run: |
+          echo "Clearing all caches..."
+          # Metro 캐시 정리
+          rm -rf /tmp/metro-*
+          rm -rf /tmp/react-*
+          rm -rf ~/.metro
+          
+          # Node 캐시 정리
+          npm cache clean --force
+          
+          # pnpm 캐시 정리
+          pnpm store prune
+          
+          echo "Cache cleanup completed"
+
       - name: 🔧 Fix Expo Gradle Configuration
         run: |
           # Expo 의존성 정리 및 재설치

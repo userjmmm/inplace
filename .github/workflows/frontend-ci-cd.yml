@@ -1,8 +1,6 @@
 name: Frontend CI/CD for main branches
 on:
   push:
-    branches:
-      - "**"
     paths:
       - "frontend/web/**"
       - ".github/**"
