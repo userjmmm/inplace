@@ -102,6 +102,13 @@ jobs:
 
       - name: 🔧 Fix Expo Dependencies
         run: |
+          # 현재 expo 버전에 맞는 autolinking 버전 확인
+          EXPO_VERSION=$(node -p "require('./package.json').dependencies.expo")
+          echo "Current Expo version: $EXPO_VERSION"
+          
+          # SDK 52에 맞는 autolinking 버전 명시적 설치
+          pnpm add expo-modules-autolinking@2.0.12
+          
           # 필요한 모듈들을 미리 설치
           npx expo install expo-modules-core expo-asset
           
