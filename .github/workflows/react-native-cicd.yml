@@ -115,7 +115,7 @@ jobs:
           
           # 최신이 실패하면 SDK 51 버전 시도
           pnpm add expo-modules-autolinking@1.11.1 || echo "SDK 51 version failed, using current version..."
-          
+
           # 필요한 모듈들을 미리 설치
           npx expo install expo-modules-core expo-asset
           
@@ -186,6 +186,30 @@ jobs:
           else
             git log --pretty=format:"- %s" -n 10 > changelog.md
           fi
+# CI/CD의 GitHub Release 단계 수정
+
+      - name: 🔍 Debug File Locations
+        run: |
+          echo "현재 디렉토리:"
+          pwd
+          echo "파일 목록:"
+          ls -la
+          echo "APK 파일 찾기:"
+          find . -name "*.apk" -type f
+          echo "changelog 파일 찾기:"
+          find . -name "changelog.md" -type f
+
+      - name: 📝 Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          name: "Release v${{ steps.build-info.outputs.version }}-${{ steps.build-info.outputs.build_number }}"
+          tag_name: "v${{ steps.build-info.outputs.version }}-${{ steps.build-info.outputs.build_number }}"
+          files: |
+            ./frontend/mobile/app-prod.apk
+          body_path: ./frontend/mobile/changelog.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 📝 Create GitHub Release
         uses: softprops/action-gh-release@v1
