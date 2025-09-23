@@ -109,7 +109,7 @@ jobs:
           npx expo install --fix
           
           # 한 번에 올바른 Android 프로젝트 생성
-          npx expo prebuild --platform android --clean --clear
+          npx expo prebuild --platform android --clean
 
       - name: 📋 Update metro.config.js for SVG support
         run: |
