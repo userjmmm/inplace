@@ -3,7 +3,6 @@ on:
   push:
     paths:
       - "frontend/web/**"
-      - ".github/**"
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest

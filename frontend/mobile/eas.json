@@ -9,12 +9,20 @@
     },
     "production-apk": {
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "env": {
+          "EXPO_USE_COMMUNITY_AUTOLINKING": "0",
+          "EXPO_NO_CACHE": "1"
+        }
       }
     },
     "production": {
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "app-bundle",
+        "env": {
+          "EXPO_USE_COMMUNITY_AUTOLINKING": "0",
+          "EXPO_NO_CACHE": "1"
+        }
       }
     }
   }
