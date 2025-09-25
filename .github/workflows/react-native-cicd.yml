@@ -1,4 +1,4 @@
-name: React Native CI/CD
+name: Expo CI/CD
 
 on:
   workflow_dispatch:
@@ -84,47 +84,6 @@ jobs:
           echo "EAS CLI version:"
           eas --version
 
-      - name: 🧹 Clear Metro and Node Cache
-        run: |
-          echo "Clearing all caches..."
-          # Metro 캐시 정리
-          rm -rf /tmp/metro-*
-          rm -rf /tmp/react-*
-          rm -rf ~/.metro
-          
-          # Node 캐시 정리
-          npm cache clean --force
-          
-          # pnpm 캐시 정리
-          pnpm store prune
-          
-          echo "Cache cleanup completed"
-
-      - name: 🔧 Fix Expo Dependencies
-        run: |
-          # 현재 expo 버전에 맞는 autolinking 버전 확인
-          EXPO_VERSION=$(node -p "require('./package.json').dependencies.expo")
-          echo "Current Expo version: $EXPO_VERSION"
-          
-          # 사용 가능한 autolinking 버전 확인
-          echo "Available autolinking versions:"
-          pnpm view expo-modules-autolinking dist-tags
-          
-          # 최신 버전으로 명시적 설치 시도
-          pnpm add expo-modules-autolinking@latest || echo "Latest version failed, trying SDK 51 version..."
-          
-          # 최신이 실패하면 SDK 51 버전 시도
-          pnpm add expo-modules-autolinking@1.11.1 || echo "SDK 51 version failed, using current version..."
-
-          # 필요한 모듈들을 미리 설치
-          npx expo install expo-modules-core expo-asset
-          
-          # 의존성 정리
-          npx expo install --fix
-          
-          # 한 번에 올바른 Android 프로젝트 생성
-          npx expo prebuild --platform android --clean
-
       - name: 📋 Update metro.config.js for SVG support
         run: |
           if [ -f ./metro.config.js ]; then
@@ -186,18 +145,6 @@ jobs:
           else
             git log --pretty=format:"- %s" -n 10 > changelog.md
           fi
-# CI/CD의 GitHub Release 단계 수정
-
-      - name: 🔍 Debug File Locations
-        run: |
-          echo "현재 디렉토리:"
-          pwd
-          echo "파일 목록:"
-          ls -la
-          echo "APK 파일 찾기:"
-          find . -name "*.apk" -type f
-          echo "changelog 파일 찾기:"
-          find . -name "changelog.md" -type f
 
       - name: 📝 Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -211,17 +158,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📝 Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: true
-          name: "Release v${{ steps.build-info.outputs.version }}-${{ steps.build-info.outputs.build_number }}"
-          tag_name: "v${{ steps.build-info.outputs.version }}-${{ steps.build-info.outputs.build_number }}"
-          files: |
-            ./app-prod.apk
-          body_path: changelog.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 📦 Upload build artifacts to GitHub
         uses: actions/upload-artifact@v4
         with:
