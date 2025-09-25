@@ -64,7 +64,7 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          cd ../../
+          cd ../
           pnpm install
 
       - name: 🏗 Setup EAS CLI
