@@ -85,7 +85,7 @@ jobs:
           eas --version
 
           # 누락된 패키지 수동 설치
-          npx expo install expo-asset
+          npx expo install expo-asset expo-modules-core
 
           # Expo 의존성 정리 및 재설치
           npx expo install --fix
