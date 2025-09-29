@@ -28,7 +28,7 @@ public class AlarmEventHandler {
     @Async("fcmExecutor")
     @EventListener
     public void processMentionAlarm(MentionAlarmEvent mentionAlarmEvent) {
-        Long userId = userQueryService.getUserIdByNickname(mentionAlarmEvent.receiver());
+        Long userId = mentionAlarmEvent.receiverId();
         String title = postQueryService.getPostTitleById(mentionAlarmEvent.postId());
 
         String content = title + " 게시글에서 " + mentionAlarmEvent.sender() + " 님이 언급했습니다.";
