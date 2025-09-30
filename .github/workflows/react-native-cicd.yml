@@ -63,7 +63,9 @@ jobs:
           version: latest
 
       - name: 📦 Install dependencies
-        run: pnpm --filter mobile install
+        run: |
+          cd ../
+          pnpm install
 
       - name: 🏗 Setup EAS CLI
         run: npm install -g eas-cli@latest
