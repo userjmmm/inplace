@@ -17,6 +17,7 @@ beforeAll(() => {
   (window as Window).dataLayer = [];
 });
 
+
 afterEach(() => server.resetHandlers());
 
 afterAll(() => server.close());
