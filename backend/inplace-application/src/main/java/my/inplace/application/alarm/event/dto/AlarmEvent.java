@@ -1,10 +1,14 @@
 package my.inplace.application.alarm.event.dto;
 
-public class AlarmEvent {
-    
-    public record MentionAlarmEvent(Long postId, Long commentId, String sender, Long receiverId, String receiver) {}
-    
-    public record PostReportAlarmEvent(Long postId) {}
-    
-    public record CommentReportAlarmEvent(Long commentId) {}
+import my.inplace.domain.alarm.AlarmType;
+
+import jakarta.annotation.Nullable;
+
+public record AlarmEvent(
+    Long postId,
+    Long commentId,
+    @Nullable String sender,
+    @Nullable String receiver,
+    AlarmType alarmType
+) {
 }

@@ -1,15 +1,13 @@
 package my.inplace.application.alarm.event;
 
+import my.inplace.application.alarm.event.dto.AlarmEvent;
 import my.inplace.domain.alarm.AlarmType;
 import my.inplace.infra.alarm.FcmClient;
 import my.inplace.application.alarm.command.AlarmCommandService;
-import my.inplace.application.alarm.event.dto.AlarmEvent.CommentReportAlarmEvent;
-import my.inplace.application.alarm.event.dto.AlarmEvent.MentionAlarmEvent;
-import my.inplace.application.alarm.event.dto.AlarmEvent.PostReportAlarmEvent;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
+import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import my.inplace.application.post.query.PostQueryService;
@@ -19,6 +17,10 @@ import my.inplace.application.user.query.UserQueryService;
 @Component
 @RequiredArgsConstructor
 public class AlarmEventHandler {
+    private static final String MENTION_TITLE = "새로운 언급 알림";
+    private static final String MENTION_CONTENT = "%s 게시글에서 %s 님이 언급했습니다.";
+    private static final String REPORT_TITLE = "%s 신고로 인한 삭제 알림";
+    private static final String REPORT_CONTENT = "%s 게시글%s이 신고로 인하여 삭제되었습니다.";
 
     private final FcmClient fcmClient;
     private final AlarmCommandService alarmCommandService;
@@ -26,46 +28,39 @@ public class AlarmEventHandler {
     private final PostQueryService postQueryService;
 
     @Async("fcmExecutor")
-    @EventListener
-    public void processMentionAlarm(MentionAlarmEvent mentionAlarmEvent) {
-        Long userId = mentionAlarmEvent.receiverId();
-        String title = postQueryService.getPostTitleById(mentionAlarmEvent.postId()).getTitle();
-
-        String content = title + " 게시글에서 " + mentionAlarmEvent.sender() + " 님이 언급했습니다.";
+    public void processMentionAlarm(AlarmEvent mentionEvent) {
+        Long receiverId = userQueryService.getUserIdByNickname(mentionEvent.receiver());
         
-        Long index = postQueryService.getCommentIndexByPostIdAndCommentId(
-            mentionAlarmEvent.postId(), mentionAlarmEvent.commentId());
+        String postTitle = postQueryService.getPostTitleById(mentionEvent.postId()).getTitle();
+        String content = String.format(MENTION_CONTENT, postTitle, mentionEvent.sender());
         
-        int pageNumber = index.intValue() / 10;
-        int offset = index.intValue() % 10;
-        
-        if(userQueryService.isMentionResented(userId)) {
-            sendFcmMessage("새로운 언급 알림", content, userQueryService.getFcmTokenByUser(userId));
-        }
+        Pair<Integer, Integer> index = postQueryService.getCommentIndexByPostIdAndCommentId(
+            mentionEvent.postId(), mentionEvent.commentId());
         
         alarmCommandService.saveAlarm(
-            userId,
-            mentionAlarmEvent.postId(),
-            mentionAlarmEvent.commentId(),
-            pageNumber,
-            offset,
+            receiverId,
+            mentionEvent.postId(),
+            mentionEvent.commentId(),
+            index.getFirst(),
+            index.getSecond(),
             content,
             AlarmType.MENTION
         );
+        
+        if(userQueryService.isMentionResented(receiverId)) {
+            sendFcmMessage(MENTION_TITLE, content, userQueryService.getFcmTokenByUser(receiverId));
+        }
     }
 
     @Async("fcmExecutor")
-    @EventListener
-    public void processPostReportAlarm(PostReportAlarmEvent postReportAlarmEvent) {
+    public void processPostReportAlarm(AlarmEvent postReportAlarmEvent) {
         Long postId = postReportAlarmEvent.postId();
         Long userId = postQueryService.getPostAuthorIdById(postId);
-        String title = postQueryService.getPostTitleById(postId).getTitle();
-
-        String content = title + " 게시글이 신고로 인하여 삭제되었습니다.";
-
-        if(userQueryService.isReportPushResented(userId)) {
-            sendFcmMessage("게시글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId));
-        }
+        
+        String title = String.format(REPORT_TITLE, "게시글");
+        
+        String postTitle = postQueryService.getPostTitleById(postId).getTitle();
+        String content = String.format(REPORT_CONTENT, postTitle, "");
         
         alarmCommandService.saveAlarm(
             userId,
@@ -76,22 +71,23 @@ public class AlarmEventHandler {
             content,
             AlarmType.REPORT
         );
+        
+        if(userQueryService.isReportPushResented(userId)) {
+            sendFcmMessage(title, content, userQueryService.getFcmTokenByUser(userId));
+        }
     }
 
     @Async("fcmExecutor")
-    @EventListener
-    public void processPostReportAlarm(CommentReportAlarmEvent commentReportAlarmEvent) {
+    public void processCommentReportAlarm(AlarmEvent commentReportAlarmEvent) {
         Long commentId = commentReportAlarmEvent.commentId();
         Long postId = postQueryService.getPostIdById(commentId);
         Long userId = postQueryService.getCommentAuthorIdById(commentId);
-        String title = postQueryService.getPostTitleById(postId).getTitle();
-
-        String content = title + " 게시글에 작성한 댓글이 신고로 인하여 삭제되었습니다";
-    
-        if(userQueryService.isReportPushResented(userId)) {
-            sendFcmMessage("댓글 신고로 인한 삭제 알림", content, userQueryService.getFcmTokenByUser(userId));
-        }
-
+        
+        String title = String.format(REPORT_TITLE, "댓글");
+        
+        String postTitle = postQueryService.getPostTitleById(postId).getTitle();
+        String content = String.format(REPORT_CONTENT, postTitle, "에 작성한 댓글");
+        
         alarmCommandService.saveAlarm(
             userId,
             postId,
@@ -101,10 +97,14 @@ public class AlarmEventHandler {
             content,
             AlarmType.REPORT
         );
+        
+        if(userQueryService.isReportPushResented(userId)) {
+            sendFcmMessage(title, content, userQueryService.getFcmTokenByUser(userId));
+        }
     }
 
     public void sendFcmMessage(String title, String content, String fcmToken) {
-        log.info("alarm 보내기 시도");
+        log.info("FCM 클라이언트 호출");
         try {
             fcmClient.sendMessageByToken(title, content, fcmToken);
         } catch (FirebaseMessagingException e) {
