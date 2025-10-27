@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useState, useRef } from "react";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import { BackHandler, Platform, SafeAreaView, StyleSheet } from "react-native";
 
@@ -9,31 +9,22 @@ export interface CustomWebViewProps {
 
 const CustomWebView = forwardRef<WebView, CustomWebViewProps>(
   ({ url, onMessage }, ref) => {
-    const webViewRef = useRef<WebView>(null);
     const [backPressedOnce, setBackPressedOnce] = useState(false);
-
-    // ref를 부모에게 전달하면서 내부에서도 사용
-    useEffect(() => {
-      if (ref) {
-        if (typeof ref === 'function') {
-          ref(webViewRef.current);
-        } else {
-          ref.current = webViewRef.current;
-        }
-      }
-    }, [ref]);
+    const webViewRef = useRef<WebView | null>(null);
 
     useEffect(() => {
-      if (Platform.OS !== 'android') return;
-
       const backAction = () => {
-        // 웹에서 뒤로가기 처리하도록 메시지 전송
+        // 웹뷰에 뒤로가기 메시지 전송
         if (webViewRef.current) {
-          webViewRef.current.postMessage(JSON.stringify({ type: 'BACK_PRESSED' }));
-          return true;
+          const message = JSON.stringify({
+            type: 'BACK_BUTTON_PRESSED',
+            data: {}
+          });
+          webViewRef.current.postMessage(message);
+          return true; // 기본 동작 막음
         }
 
-        // WebView가 없으면 앱 종료 로직
+        // 웹뷰가 없으면 기존 로직 실행
         if (backPressedOnce) {
           BackHandler.exitApp();
           return true;
@@ -49,13 +40,21 @@ const CustomWebView = forwardRef<WebView, CustomWebViewProps>(
       const backHandler = BackHandler.addEventListener(
         "hardwareBackPress",
         backAction
-      );
+      )
       return () => backHandler.remove();
     }, [backPressedOnce]);
 
     return (
       <SafeAreaView style={styles.container}>
         <WebView
+          ref={(webView) => {
+            webViewRef.current = webView;
+            if (typeof ref === 'function') {
+              ref(webView);
+            } else if (ref) {
+              ref.current = webView;
+            }
+          }}
           source={{ uri: url }}
           onMessage={(event) => {
             try {
@@ -74,7 +73,6 @@ const CustomWebView = forwardRef<WebView, CustomWebViewProps>(
             onMessage?.(event);
           }}
           style={styles.webview}
-          ref={webViewRef}
           javaScriptEnabled={true}
           domStorageEnabled={true}
         />
