@@ -1,5 +1,5 @@
-import { Route, Routes, useNavigate } from 'react-router-dom';
-import { lazy, useEffect } from 'react';
+import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
+import { lazy, useEffect, useRef } from 'react';
 import AuthProvider from '@/provider/Auth';
 import MainLayout from '@/components/common/layouts/MainLayout';
 import PrivatedRoute from '@/routes/component/PrivatedRoute';
@@ -25,11 +25,29 @@ const PostDetailPage = lazy(() => import('@/pages/PostDetail'));
 
 function AppContent() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const navigationHistory = useRef<string[]>([location.pathname]);
+  const isInitialized = useRef(false);
+
+  useEffect(() => {
+    if (!isInitialized.current) {
+      isInitialized.current = true;
+      return;
+    }
+
+    const currentPath = location.pathname;
+    const lastPath = navigationHistory.current[navigationHistory.current.length - 1];
+
+    if (currentPath !== lastPath) {
+      navigationHistory.current.push(currentPath);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data && event.data.type === 'BACK_PRESSED') {
-        if (window.history.length > 1) {
+        if (navigationHistory.current.length > 1) {
+          navigationHistory.current.pop();
           navigate(-1);
         } else {
           window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'APP_EXIT' }));
