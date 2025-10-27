@@ -1,5 +1,5 @@
-import { Route, Routes } from 'react-router-dom';
-import { lazy } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { lazy, useEffect } from 'react';
 import AuthProvider from '@/provider/Auth';
 import MainLayout from '@/components/common/layouts/MainLayout';
 import PrivatedRoute from '@/routes/component/PrivatedRoute';
@@ -23,58 +23,81 @@ const NotFoundPage = lazy(() => import('@/pages/NotFound'));
 const PostPage = lazy(() => import('@/pages/Post'));
 const PostDetailPage = lazy(() => import('@/pages/PostDetail'));
 
+function AppContent() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === 'BACK_PRESSED') {
+        if (window.history.length > 1) {
+          navigate(-1);
+        } else {
+          window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'APP_EXIT' }));
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [navigate]);
+
+  return (
+    <Routes>
+      <Route path="/" element={<MainLayout />}>
+        <Route index path="/" element={<MainPage />} />
+        <Route path="/influencer" element={<InfluencerPage />} />
+        <Route path="/influencer/:id" element={<InfluencerInfoPage />} />
+        <Route path="/map" element={<MapPage />} />
+        <Route path="/detail/:id" element={<DetailPage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/post" element={<PostPage />} />
+        <Route
+          path="/posting"
+          element={
+            <PrivatedRoute>
+              <PostingPage />
+            </PrivatedRoute>
+          }
+        />
+        <Route path="/post/:id" element={<PostDetailPage />} />
+        <Route
+          path="/my"
+          element={
+            <PrivatedRoute>
+              <MyPage />
+            </PrivatedRoute>
+          }
+        />
+        <Route
+          path="/choice"
+          element={
+            <PrivatedRoute>
+              <ChoicePage />
+            </PrivatedRoute>
+          }
+        />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+      <Route
+        path="/auth"
+        element={
+          <PrivatedRoute>
+            <AuthPage />
+          </PrivatedRoute>
+        }
+      />
+      {/* <Route path="/reviews/:uuid" element={<ReviewPage />} /> */}
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
         <GlobalStyle />
         <ABTestProvider>
-          <Routes>
-            <Route path="/" element={<MainLayout />}>
-              <Route index path="/" element={<MainPage />} />
-              <Route path="/influencer" element={<InfluencerPage />} />
-              <Route path="/influencer/:id" element={<InfluencerInfoPage />} />
-              <Route path="/map" element={<MapPage />} />
-              <Route path="/detail/:id" element={<DetailPage />} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/post" element={<PostPage />} />
-              <Route
-                path="/posting"
-                element={
-                  <PrivatedRoute>
-                    <PostingPage />
-                  </PrivatedRoute>
-                }
-              />
-              <Route path="/post/:id" element={<PostDetailPage />} />
-              <Route
-                path="/my"
-                element={
-                  <PrivatedRoute>
-                    <MyPage />
-                  </PrivatedRoute>
-                }
-              />
-              <Route
-                path="/choice"
-                element={
-                  <PrivatedRoute>
-                    <ChoicePage />
-                  </PrivatedRoute>
-                }
-              />
-              <Route path="*" element={<NotFoundPage />} />
-            </Route>
-            <Route
-              path="/auth"
-              element={
-                <PrivatedRoute>
-                  <AuthPage />
-                </PrivatedRoute>
-              }
-            />
-            {/* <Route path="/reviews/:uuid" element={<ReviewPage />} /> */}
-          </Routes>
+          <AppContent />
         </ABTestProvider>
       </ThemeProvider>
     </AuthProvider>
