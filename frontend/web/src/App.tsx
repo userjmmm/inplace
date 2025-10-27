@@ -49,8 +49,9 @@ function AppContent() {
         if (navigationHistory.current.length > 1) {
           navigationHistory.current.pop();
           navigate(-1);
-        } else {
-          window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'APP_EXIT' }));
+        } else if (window.ReactNativeWebView) {
+          // GPS_PERMISSIONS 방식과 동일하게 처리
+          window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'APP_EXIT' }));
         }
       }
     };

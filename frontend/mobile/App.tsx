@@ -17,6 +17,9 @@ export default function WebViewScreen() {
       case "GPS_PERMISSIONS":
         showLocationModal();
         break;
+      case "APP_EXIT":
+        // 이미 CustomWebView에서 처리되므로 여기서는 아무것도 하지 않음
+        break;
       // case "AUTH_TOKEN":
       //   saveToken(message.payload);
       //   break;
