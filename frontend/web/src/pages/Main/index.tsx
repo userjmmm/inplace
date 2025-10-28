@@ -68,7 +68,7 @@ export default function MainPage() {
         <BaseLayout
           type="influencer"
           mainText="인플루언서"
-          SubText=" 가 방문한 장소를 찾아볼까요?"
+          SubText=" 가 빵문한 장소를 찾아볼까요?"
           items={influencersData.content}
         />
         {testGroup === 'B' && <MapSection highlightText="내 주변" />}
