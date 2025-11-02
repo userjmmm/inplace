@@ -10,6 +10,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import my.inplace.api.user.dto.UserRequest;
 import my.inplace.api.user.dto.UserResponse;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public interface UserControllerApiSpec {
 
@@ -19,6 +20,14 @@ public interface UserControllerApiSpec {
     )
     ResponseEntity<Void> updateNickname(
         @RequestBody UserRequest.UpdateNickname request
+    );
+    
+    @Operation(summary = "내가 작성한 글 반환", description = "내가 작성한 글들을 반환합니다.")
+    ResponseEntity<UserResponse.SimpleList> getMyPosts(
+        @RequestParam(required = false) Long cursorValue,
+        @RequestParam(required = false) Long cursorId,
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "createdAt") String sort
     );
 
     @Operation(summary = "좋아요한 인플루언서 반환", description = "좋아요한 인플루언서를 반환합니다.")
