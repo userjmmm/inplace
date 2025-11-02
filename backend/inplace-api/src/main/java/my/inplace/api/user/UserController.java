@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import my.inplace.api.user.dto.UserRequest;
 import my.inplace.api.user.dto.UserResponse;
+import my.inplace.api.post.dto.PostResponse;
 import my.inplace.application.user.UserFacade;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +34,19 @@ public class UserController implements UserControllerApiSpec {
     ) {
         userFacade.updateNickname(request.nickname());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @GetMapping("/posts")
+    public ResponseEntity<PostResponse.SimpleList> getMyPosts(
+        @RequestParam(required = false) Long cursorValue,
+        @RequestParam(required = false) Long cursorId,
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "createdAt") String sort
+    ) {
+        var posts = userFacade.getMyPosts(cursorValue, cursorId, size, sort);
+        
+        var response = PostResponse.SimpleList.from(posts);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/influencers")
