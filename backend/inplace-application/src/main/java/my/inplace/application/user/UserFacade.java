@@ -1,16 +1,15 @@
 package my.inplace.application.user;
 
-import java.util.List;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.influencer.query.InfluencerQueryService;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import my.inplace.application.post.query.PostQueryService;
 import my.inplace.application.post.query.dto.PostResult;
-import my.inplace.common.cursor.CursorResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import my.inplace.domain.place.query.PlaceQueryResult;
@@ -18,7 +17,6 @@ import my.inplace.application.place.query.PlaceQueryService;
 import my.inplace.application.place.query.dto.PlaceResult;
 import my.inplace.application.review.ReviewService;
 import my.inplace.domain.review.query.ReviewQueryResult;
-import my.inplace.security.token.OauthTokenService;
 import my.inplace.application.user.command.UserCommandService;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.application.user.query.UserQueryService;
@@ -37,7 +35,6 @@ public class UserFacade {
     private final PostQueryService postQueryService;
 
     private final UserCommandService userCommandService;
-    private final OauthTokenService oauthTokenService;
 
     //TODO: Return 클래스 변경 필요
     public Page<InfluencerResult.Simple> getMyFavoriteInfluencers(Pageable pageable) {
@@ -84,7 +81,6 @@ public class UserFacade {
 
     public void deleteUser() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        oauthTokenService.unlinkOauthToken(userId);
         userCommandService.deleteUser(userId);
     }
 
@@ -115,21 +111,11 @@ public class UserFacade {
         userCommandService.updateMentionPushResent(userId, isResented);
     }
     
-    public CursorResult<PostResult.DetailedPost> getMyPosts(Long cursorValue, Long cursorId, int size, String orderBy) {
+    public Page<PostResult.DetailedPost> getMyPosts(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        String nickname = userQueryService.getUserInfo(userId).nickname();
+        UserResult.Simple userInfo = userQueryService.getUserInfo(userId);
+        Page<PostResult.MyPost> myPosts = postQueryService.getMyPosts(userId, pageable);
         
-        var queryResult = postQueryService.getPosts(userId, cursorValue, cursorId, size, orderBy);
-        var result = queryResult.value().stream()
-            .filter(post -> post.userNickname().equals(nickname))
-            .map(PostResult.DetailedPost::from)
-            .toList();
-        
-        return new CursorResult<>(
-            result,
-            queryResult.hasNext(),
-            queryResult.nextCursorValue(),
-            queryResult.nextCursorId()
-        );
+        return myPosts.map(myPost -> PostResult.DetailedPost.of(myPost, userInfo));
     }
 }
