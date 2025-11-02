@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import my.inplace.api.user.dto.UserRequest;
 import my.inplace.api.user.dto.UserResponse;
-import my.inplace.api.post.dto.PostResponse;
 import my.inplace.application.user.UserFacade;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,16 +34,13 @@ public class UserController implements UserControllerApiSpec {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     
-    @GetMapping("/posts")
-    public ResponseEntity<UserResponse.SimpleList> getMyPosts(
-        @RequestParam(required = false) Long cursorValue,
-        @RequestParam(required = false) Long cursorId,
-        @RequestParam(defaultValue = "5") int size,
-        @RequestParam(defaultValue = "createdAt") String sort
+    @GetMapping("/posts/my")
+    public ResponseEntity<Page<UserResponse.SimplePost>> getMyPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        var posts = userFacade.getMyPosts(cursorValue, cursorId, size, sort);
+        var posts = userFacade.getMyPosts(pageable);
         
-        var response = UserResponse.SimpleList.from(posts);
+        var response = posts.map(UserResponse.SimplePost::from);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
