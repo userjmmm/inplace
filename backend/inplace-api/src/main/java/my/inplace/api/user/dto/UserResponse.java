@@ -1,15 +1,17 @@
 package my.inplace.api.user.dto;
 
-import my.inplace.api.global.CursorResponse;
-import my.inplace.api.post.dto.PostResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
+
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 import my.inplace.application.place.query.dto.PlaceResult;
 import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.application.video.query.dto.VideoResult;
-import my.inplace.common.cursor.CursorResult;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static my.inplace.api.post.dto.PostResponse.formatCreatedAt;
 
 public class UserResponse {
 
@@ -188,25 +190,39 @@ public class UserResponse {
         }
     }
     
-    public record SimpleList(
-        List<PostResponse.SimplePost> posts,
-        CursorResponse cursor
+    public record SimplePost(
+        Long postId,
+        UserResponse.Simple author,
+        String title,
+        String content,
+        @JsonInclude(NON_NULL)
+        String imageUrl,
+        Boolean selfLike,
+        Integer totalLikeCount,
+        Integer totalCommentCount,
+        Boolean isMine,
+        String createdAt
     ) {
         
-        public static UserResponse.SimpleList from(
-            CursorResult<PostResult.DetailedPost> postResult
-        ) {
-            List<PostResponse.SimplePost> posts = postResult.value().stream()
-                 .map(PostResponse.SimplePost::from)
-                 .toList();
-            
-            return new UserResponse.SimpleList(
-                posts,
-                new CursorResponse(
-                    postResult.hasNext(),
-                    postResult.nextCursorValue(),
-                    postResult.nextCursorId()
-                )
+        public static UserResponse.SimplePost from(PostResult.DetailedPost postResult) {
+            return new UserResponse.SimplePost(
+                postResult.postId(),
+                new UserResponse.Simple(
+                    postResult.userNickname(),
+                    postResult.userImageUrl(),
+                    postResult.tierImageUrl(),
+                    postResult.mainBadgeImageUrl()
+                ),
+                postResult.title(),
+                postResult.content(),
+                postResult.imageInfos().isEmpty()
+                    ? null
+                    : postResult.imageInfos().get(0).imageUrl(),
+                postResult.selfLike(),
+                postResult.totalLikeCount(),
+                postResult.totalCommentCount(),
+                postResult.isMine(),
+                formatCreatedAt(postResult.createdAt())
             );
         }
     }
