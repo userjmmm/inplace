@@ -114,7 +114,7 @@ public class UserFacade {
     
     public Page<PostResult.DetailedPost> getMyPosts(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        UserResult.Simple userInfo = userQueryService.getUserInfo(userId);
+        UserResult.Info userInfo = userQueryService.getUserInfo(userId);
         
         return postQueryService.getMyPosts(userId, pageable)
             .map(simplePost -> PostResult.DetailedPost.of(simplePost, userInfo));
@@ -122,7 +122,7 @@ public class UserFacade {
     
     public Page<PostResult.DetailedPost> getMyLikedPosts(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        UserResult.Simple userInfo = userQueryService.getUserInfo(userId);
+        UserResult.Info userInfo = userQueryService.getUserInfo(userId);
         
         return postQueryService.getLikedPosts(userId, pageable)
             .map(simplePost -> PostResult.DetailedPost.of(simplePost, userInfo));
@@ -130,7 +130,7 @@ public class UserFacade {
     
     public Page<PostResult.DetailedPost> getMyCommentedPosts(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        UserResult.Simple userInfo = userQueryService.getUserInfo(userId);
+        UserResult.Info userInfo = userQueryService.getUserInfo(userId);
         
         return postQueryService.getCommentedPosts(userId, pageable)
             .map(simplePost -> PostResult.DetailedPost.of(simplePost, userInfo));
