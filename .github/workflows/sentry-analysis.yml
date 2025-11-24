@@ -1,0 +1,58 @@
+name: Sentry Error Analysis
+
+on:
+  repository_dispatch:
+    types: [sentry_error]
+
+jobs:
+  analyze-error:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd scripts
+          npm install
+
+      - name: Analyze Sentry error with Claude AI
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SENTRY_EVENT_ID: ${{ github.event.client_payload.sentry_event_id }}
+          SENTRY_ISSUE_ID: ${{ github.event.client_payload.sentry_issue_id }}
+          ERROR_TITLE: ${{ github.event.client_payload.error_title }}
+          ERROR_CULPRIT: ${{ github.event.client_payload.error_culprit }}
+          ERROR_LEVEL: ${{ github.event.client_payload.error_level }}
+          PROJECT: ${{ github.event.client_payload.project }}
+          PERMALINK: ${{ github.event.client_payload.permalink }}
+        run: |
+          cd scripts
+          node analyze-sentry-error.js
+
+      - name: Create GitHub Issue
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const analysisResult = JSON.parse(fs.readFileSync('scripts/analysis-result.json', 'utf8'));
+
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[Sentry] ${analysisResult.title}`,
+              body: analysisResult.body,
+              labels: ['bug', 'sentry', analysisResult.severity]
+            });
+
+            console.log(`Created issue #${issue.data.number}: ${issue.data.html_url}`);
