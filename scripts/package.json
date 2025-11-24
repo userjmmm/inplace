@@ -1,13 +1,13 @@
 {
   "name": "sentry-error-analyzer",
   "version": "1.0.0",
-  "description": "Analyze Sentry errors with Claude AI",
+  "description": "Analyze Sentry errors with Google Gemini AI",
   "type": "module",
   "scripts": {
     "analyze": "node analyze-sentry-error.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.30.0",
+    "@google/generative-ai": "^0.21.0",
     "node-fetch": "^3.3.2"
   }
 }

@@ -1,22 +1,22 @@
 #!/usr/bin/env node
 
 /**
- * Sentry Error Analyzer with Claude AI
+ * Sentry Error Analyzer with Google Gemini AI
  *
  * This script:
  * 1. Fetches detailed error information from Sentry API
  * 2. Reads the source code file where the error occurred
- * 3. Uses Claude AI to analyze the error and suggest fixes
+ * 3. Uses Google Gemini AI to analyze the error and suggest fixes
  * 4. Generates a formatted GitHub issue body
  */
 
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import fetch from 'node-fetch';
 import fs from 'fs/promises';
 import path from 'path';
 
 // Environment variables
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
 const SENTRY_ORG = process.env.SENTRY_ORG;
 const SENTRY_EVENT_ID = process.env.SENTRY_EVENT_ID;
@@ -86,12 +86,11 @@ async function readSourceCode(filePath, lineNumber) {
   }
 }
 
-async function analyzeWithClaude(sentryEvent, sourceCode) {
-  console.log('Analyzing error with Claude AI...');
+async function analyzeWithGemini(sentryEvent, sourceCode) {
+  console.log('Analyzing error with Gemini AI...');
 
-  const anthropic = new Anthropic({
-    apiKey: ANTHROPIC_API_KEY,
-  });
+  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
 
   // Prepare error context
   const stackTrace = sentryEvent.entries
@@ -106,7 +105,7 @@ async function analyzeWithClaude(sentryEvent, sourceCode) {
     ?.find(entry => entry.type === 'exception')
     ?.data?.values?.[0]?.type || 'Error';
 
-  // Build prompt for Claude
+  // Build prompt for Gemini
   let prompt = `You are a senior software engineer analyzing a production error from Sentry.
 
 ## Error Information
@@ -171,18 +170,9 @@ ${sentryEvent.contexts?.browser ? `
 
 Please format your response in clear markdown that can be used directly in a GitHub issue.`;
 
-  const message = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
-    max_tokens: 4096,
-    messages: [
-      {
-        role: 'user',
-        content: prompt,
-      },
-    ],
-  });
-
-  return message.content[0].text;
+  const result = await model.generateContent(prompt);
+  const response = result.response;
+  return response.text();
 }
 
 async function generateIssueBody(analysis, sentryEvent, sourceCode) {
@@ -217,7 +207,7 @@ async function generateIssueBody(analysis, sentryEvent, sourceCode) {
 
   body += `---
 
-## AI Analysis (Claude)
+## AI Analysis (Gemini)
 
 ${analysis}
 
@@ -250,14 +240,14 @@ ${sentryEvent.entries
 
 ---
 
-*This issue was automatically created by Claude AI based on a Sentry error report.*
+*This issue was automatically created by Gemini AI based on a Sentry error report.*
 `;
 
   return body;
 }
 
 function determineSeverity(errorLevel, analysis) {
-  // Parse severity from Claude's analysis
+  // Parse severity from AI analysis
   const lowerAnalysis = analysis.toLowerCase();
 
   if (lowerAnalysis.includes('priority: critical') || lowerAnalysis.includes('critical')) {
@@ -279,8 +269,8 @@ async function main() {
     console.log(`Project: ${PROJECT}`);
 
     // Validate environment variables
-    if (!ANTHROPIC_API_KEY) {
-      throw new Error('ANTHROPIC_API_KEY is not set');
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY is not set');
     }
     if (!SENTRY_AUTH_TOKEN) {
       throw new Error('SENTRY_AUTH_TOKEN is not set');
@@ -306,8 +296,8 @@ async function main() {
       console.log('✓ Read source code context');
     }
 
-    // 3. Analyze with Claude AI
-    const analysis = await analyzeWithClaude(sentryEvent, sourceCode);
+    // 3. Analyze with Gemini AI
+    const analysis = await analyzeWithGemini(sentryEvent, sourceCode);
     console.log('✓ Completed AI analysis');
 
     // 4. Generate GitHub issue body

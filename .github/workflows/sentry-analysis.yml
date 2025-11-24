@@ -22,9 +22,9 @@ jobs:
           cd scripts
           npm install
 
-      - name: Analyze Sentry error with Claude AI
+      - name: Analyze Sentry error with Gemini AI
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
