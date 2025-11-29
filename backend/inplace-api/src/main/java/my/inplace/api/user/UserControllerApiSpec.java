@@ -20,6 +20,21 @@ public interface UserControllerApiSpec {
     ResponseEntity<Void> updateNickname(
         @RequestBody UserRequest.UpdateNickname request
     );
+    
+    @Operation(summary = "내가 작성한 글 반환", description = "내가 작성한 글들을 반환합니다.")
+    ResponseEntity<Page<UserResponse.SimplePost>> getMyPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    );
+    
+    @Operation(summary = "내가 좋아요 한 글 반환", description = "내가 좋아요 한 글들을 반환합니다.")
+    ResponseEntity<Page<UserResponse.SimplePost>> getMyLikedPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    );
+    
+    @Operation(summary = "내가 댓글 단 글 반환", description = "내가 댓글을 단 글들을 반환합니다.")
+    public ResponseEntity<Page<UserResponse.SimplePost>> getMyCommentedPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    );
 
     @Operation(summary = "좋아요한 인플루언서 반환", description = "좋아요한 인플루언서를 반환합니다.")
     ResponseEntity<Page<UserResponse.LikedInfluencer>> getMyFavoriteInfluencers(

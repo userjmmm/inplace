@@ -33,6 +33,36 @@ public class UserController implements UserControllerApiSpec {
         userFacade.updateNickname(request.nickname());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    
+    @GetMapping("/posts/my")
+    public ResponseEntity<Page<UserResponse.SimplePost>> getMyPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        var posts = userFacade.getMyPosts(pageable);
+        
+        var response = posts.map(UserResponse.SimplePost::from);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @GetMapping("/posts/likes")
+    public ResponseEntity<Page<UserResponse.SimplePost>> getMyLikedPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        var posts = userFacade.getMyLikedPosts(pageable);
+        
+        var response = posts.map(UserResponse.SimplePost::from);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @GetMapping("/posts/comments")
+    public ResponseEntity<Page<UserResponse.SimplePost>> getMyCommentedPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        var posts = userFacade.getMyCommentedPosts(pageable);
+        
+        var response = posts.map(UserResponse.SimplePost::from);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping("/influencers")
     public ResponseEntity<Page<UserResponse.LikedInfluencer>> getMyFavoriteInfluencers(
