@@ -28,6 +28,9 @@ jobs:
   test:
     needs: check-skip
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
       - name: 🏗 Checkout repository
         uses: actions/checkout@v4
@@ -35,7 +38,7 @@ jobs:
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.22.0
+          version: latest
 
       - name: 📦 Install dependencies
         run: pnpm --filter web install
@@ -62,7 +65,7 @@ jobs:
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10.22.0
+          version: latest
 
       - name: 📦 Install dependencies
         run: pnpm --filter mobile install
