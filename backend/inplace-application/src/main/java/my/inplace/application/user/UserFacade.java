@@ -4,10 +4,12 @@ import java.util.List;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.influencer.query.InfluencerQueryService;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import my.inplace.application.user.dto.UserResult.Info;
+import my.inplace.application.post.query.PostQueryService;
+import my.inplace.application.post.query.dto.PostResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import my.inplace.domain.place.query.PlaceQueryResult;
@@ -31,9 +33,9 @@ public class UserFacade {
     private final ReviewService reviewService;
     private final VideoQueryService videoQueryService;
     private final UserQueryService userQueryService;
+    private final PostQueryService postQueryService;
 
     private final UserCommandService userCommandService;
-    private final OauthTokenService oauthTokenService;
 
     //TODO: Return 클래스 변경 필요
     public Page<InfluencerResult.Simple> getMyFavoriteInfluencers(Pageable pageable) {
@@ -80,7 +82,6 @@ public class UserFacade {
 
     public void deleteUser() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        oauthTokenService.unlinkOauthToken(userId);
         userCommandService.deleteUser(userId);
     }
 
@@ -109,5 +110,29 @@ public class UserFacade {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         
         userCommandService.updateMentionPushResent(userId, isResented);
+    }
+    
+    public Page<PostResult.DetailedPost> getMyPosts(Pageable pageable) {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        UserResult.Info userInfo = userQueryService.getUserInfo(userId);
+        
+        return postQueryService.getMyPosts(userId, pageable)
+            .map(simplePost -> PostResult.DetailedPost.of(simplePost, userInfo));
+    }
+    
+    public Page<PostResult.DetailedPost> getMyLikedPosts(Pageable pageable) {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        UserResult.Info userInfo = userQueryService.getUserInfo(userId);
+        
+        return postQueryService.getLikedPosts(userId, pageable)
+            .map(simplePost -> PostResult.DetailedPost.of(simplePost, userInfo));
+    }
+    
+    public Page<PostResult.DetailedPost> getMyCommentedPosts(Pageable pageable) {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        UserResult.Info userInfo = userQueryService.getUserInfo(userId);
+        
+        return postQueryService.getCommentedPosts(userId, pageable)
+            .map(simplePost -> PostResult.DetailedPost.of(simplePost, userInfo));
     }
 }
