@@ -6,12 +6,24 @@ import WebView from "react-native-webview";
 export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
   const handleKakaoLogin = async () => {
     try {
+      if (webViewRef.current) {
+        webViewRef.current.injectJavaScript(`alert('1. 카카오 로그인 시작'); true;`);
+      }
+
       const kakaoToken = await login();
+
+      if (webViewRef.current) {
+        webViewRef.current.injectJavaScript(`alert('2. 카카오 토큰 받기 성공'); true;`);
+      }
 
       const tokens = await getAccessToken(kakaoToken.accessToken);
 
       if (tokens) {
         const { accessToken, refreshToken } = tokens;
+
+        if (webViewRef.current) {
+          webViewRef.current.injectJavaScript(`alert('3. 백엔드 토큰 받기 성공'); true;`);
+        }
 
         await Promise.all([
           SecureStore.setItemAsync("accessToken", accessToken),
@@ -22,15 +34,22 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
           const script = `
           window.localStorage.setItem('authToken', '${accessToken}');
           window.setAuthToken('${accessToken}');
+          alert('4. 토큰 저장 완료, /auth로 이동');
+          window.location.href = '/auth';
           true;
         `;
           webViewRef.current.injectJavaScript(script);
-
-          console.log("로그인 성공 및 웹뷰에 토큰 주입 완료!");
+        }
+      } else {
+        if (webViewRef.current) {
+          webViewRef.current.injectJavaScript(`alert('에러: 백엔드에서 토큰 못받음'); true;`);
         }
       }
     } catch (error) {
-      console.error("카카오 로그인 실패:", error);
+      if (webViewRef.current) {
+        const errorMsg = String(error).replace(/'/g, "\\'");
+        webViewRef.current.injectJavaScript(`alert('카카오 로그인 실패: ${errorMsg}'); true;`);
+      }
     }
   };
   return { handleKakaoLogin };

@@ -41,7 +41,7 @@ export default function WebViewScreen() {
         <>
           <CustomWebView
             ref={webViewRef}
-            url="https://ecalpni-dev.inplace.my/"
+            url="http://192.168.1.33:5174"
             onMessage={handleMessage}
           />
           {modalContent && (
