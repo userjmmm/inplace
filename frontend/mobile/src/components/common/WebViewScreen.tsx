@@ -31,8 +31,31 @@ export default function WebViewScreen() {
     onNotificationPermission: handleNotificationPermission,
   });
   useEffect(() => {
-    initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY);
-    setWebViewReady(true);
+    const init = async () => {
+      initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY);
+
+      // 키 해시 확인 (임시 디버깅용)
+      try {
+        const { NativeModules } = require("react-native");
+        const { RNCKakaoCore } = NativeModules;
+        if (RNCKakaoCore && RNCKakaoCore.getKeyHash) {
+          const keyHash = await RNCKakaoCore.getKeyHash();
+          console.log("Kakao KeyHash:", keyHash);
+          if (webViewRef.current) {
+            webViewRef.current.injectJavaScript(`
+              alert('카카오 키 해시:\\n${keyHash}\\n\\n이 값을 카카오 개발자 콘솔에 등록하세요.');
+              true;
+            `);
+          }
+        }
+      } catch (e) {
+        console.error("키 해시 가져오기 실패:", e);
+      }
+
+      setWebViewReady(true);
+    };
+
+    init();
   }, []);
 
   return (
