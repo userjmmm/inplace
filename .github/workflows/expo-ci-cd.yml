@@ -46,13 +46,6 @@ jobs:
       - name: 🧹 Run ESLint
         run: pnpm --filter web run lint
 
-      - name: Debug - tool versions
-        run: |
-          node -v
-          pnpm -v
-          pnpm exec eslint -v
-          pnpm list --depth=0 | grep eslint || true
-
       - name: 🎨 Run Prettier check
         run: pnpm --filter web run format
 
