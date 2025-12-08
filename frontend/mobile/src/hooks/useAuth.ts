@@ -3,14 +3,23 @@ import { getKeyHashAndroid } from "@react-native-kakao/core";
 import { getAccessToken } from "../api/getAccessToken";
 import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
+import * as Application from "expo-application";
 
 export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
   const handleKakaoLogin = async () => {
     try {
-      const keyHash = await getKeyHashAndroid();
-      
+      // 1. 진단 데이터 수집
+      const currentHash = await getKeyHashAndroid();
+      const currentPackageName = Application.applicationId;
+      const configuredAppKey = process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY;
+
+      const debugMessage = `[진단 정보]
+1. 패키지명: ${currentPackageName}
+2. 앱 키: ${configuredAppKey}
+3. 해시 키: ${currentHash}`;
+
       if (webViewRef.current) {
-        webViewRef.current.injectJavaScript(`alert('현재 키 해시: ${keyHash}'); true;`);
+        webViewRef.current.injectJavaScript(`alert(\`${debugMessage}\`); true;`);
       }
 
       if (webViewRef.current) {
