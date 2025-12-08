@@ -1,4 +1,5 @@
 import { login } from "@react-native-kakao/user";
+import { getKeyHashAndroid } from "@react-native-kakao/core";
 import { getAccessToken } from "../api/getAccessToken";
 import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
@@ -6,6 +7,12 @@ import WebView from "react-native-webview";
 export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
   const handleKakaoLogin = async () => {
     try {
+      const keyHash = await getKeyHashAndroid();
+      
+      if (webViewRef.current) {
+        webViewRef.current.injectJavaScript(`alert('현재 키 해시: ${keyHash}'); true;`);
+      }
+
       if (webViewRef.current) {
         webViewRef.current.injectJavaScript(`alert('1. 카카오 로그인 시작'); true;`);
       }
