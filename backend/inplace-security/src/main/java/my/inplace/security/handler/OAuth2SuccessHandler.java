@@ -52,12 +52,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         setTokenToCookie(response, customOAuth2User);
         setFirstUserToCookie(response, customOAuth2User.isFirstUser());
         
-        String redirectUrl = frontEndUrl;
-        redirectUrl += customOAuth2User.isFirstUser()
-                           ? "/choice"
-                           : "/auth";
+        String redirectPath = customOAuth2User.isFirstUser()
+                                  ? "/choice"
+                                  : "/auth";
         
-        log.info(redirectUrl);
+        String redirectUrl = frontEndUrl + redirectPath;
+        
+        log.info("Redirect to: {}", redirectUrl);
         response.sendRedirect(redirectUrl);
     }
     
