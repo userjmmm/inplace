@@ -55,8 +55,6 @@ public class SecurityConfig {
                 .loginProcessingUrl("/admin/login")
                 .successHandler(formLoginSuccessHandler))
             
-            .authenticationManager(authenticationManager)
-            
             .oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
                     .userService(customOauth2UserService))
