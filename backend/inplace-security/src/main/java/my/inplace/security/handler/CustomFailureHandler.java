@@ -1,17 +1,18 @@
 package my.inplace.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import my.inplace.common.exception.InplaceException;
-import my.inplace.common.exception.code.AuthorizationErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import my.inplace.common.exception.InplaceException;
+import my.inplace.common.exception.code.AuthorizationErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.util.StringUtils;
+
+import java.io.IOException;
 
 public class CustomFailureHandler implements AuthenticationFailureHandler {
 
@@ -30,6 +31,7 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
         HttpServletResponse response,
         AuthenticationException exception
     ) throws IOException {
+        System.out.println("=== FAILURE HANDLER CALLED ===");
         String accept = request.getHeader("Accept");
         if (StringUtils.hasText(accept) && accept.contains("text/html")) {
             response.sendRedirect(frontEndUrl);
