@@ -1,0 +1,127 @@
+package my.inplace.security.filter;
+
+import my.inplace.common.exception.InplaceException;
+import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.filter.OncePerRequestFilter;
+import my.inplace.security.application.dto.CustomOAuth2User;
+import my.inplace.security.util.JwtUtil;
+
+@Slf4j
+public class AuthorizationFilter extends OncePerRequestFilter {
+
+    private final JwtUtil jwtUtil;
+
+    @Value("${spring.application.domain}")
+    private String domain;
+
+    public AuthorizationFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
+    @Override
+    protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
+    ) throws ServletException, IOException {
+        if (hasTokenCookie(request)) {
+            doCookieUser(request);
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        if (hasTokenAuthorization(request)) {
+            doAuthorizationUser(request);
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
+        filterChain.doFilter(request, response);
+    }
+    
+    private boolean hasTokenAuthorization(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        
+        return header != null && header.startsWith("Bearer ");
+    }
+    
+    private void doAuthorizationUser(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization")
+                            .substring(7)
+                            .trim();
+        
+        addUserToAuthentication(accessToken);
+    }
+
+    private boolean hasTokenCookie(HttpServletRequest request) {
+        return Optional.ofNullable(request.getCookies())
+            .flatMap(cookies -> Arrays.stream(cookies)
+                .filter(
+                    cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue())
+                        || cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue())
+                )
+                .findAny())
+            .isPresent();
+    }
+    
+    private void doCookieUser(HttpServletRequest request) {
+        String accessToken = getAccessToken(request);
+        if (StringUtils.isNotEmpty(accessToken) && jwtUtil.isNotExpired(accessToken)) {
+            addUserToAuthentication(accessToken);
+        }
+        
+        String refreshToken = getRefreshToken(request);
+        if (StringUtils.isNotEmpty(refreshToken) && jwtUtil.isNotExpired(refreshToken)) {
+            addUserToAuthentication(refreshToken);
+        }
+    }
+
+    private String getAccessToken(HttpServletRequest request) throws InplaceException {
+        Cookie accessTokenCookie = Arrays.stream(request.getCookies())
+            .filter(
+                cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue()))
+            .findAny()
+            .orElseGet(() -> null);
+        if (Objects.isNull(accessTokenCookie)) {
+            return null;
+        }
+        return accessTokenCookie.getValue();
+    }
+
+    private String getRefreshToken(HttpServletRequest request) throws InplaceException {
+        Cookie refreshTokenCookie = Arrays.stream(request.getCookies())
+            .filter(
+                cookie -> cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue()))
+            .findAny()
+            .orElseGet(() -> null);
+        if (Objects.isNull(refreshTokenCookie)) {
+            return null;
+        }
+        return refreshTokenCookie.getValue();
+    }
+
+    private void addUserToAuthentication(String token) throws InplaceException {
+        String username = jwtUtil.getUsername(token);
+        Long id = jwtUtil.getId(token);
+        String roles = jwtUtil.getRoles(token);
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, id, roles);
+        Authentication authToken = new OAuth2AuthenticationToken(customOAuth2User,
+            customOAuth2User.getAuthorities(), customOAuth2User.getRegistrationId());
+        SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+
+}

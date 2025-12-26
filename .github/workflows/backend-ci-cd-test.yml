@@ -38,11 +38,17 @@ jobs:
       - name: Run chmod to make gradlew executable
         working-directory: ./backend
         run: chmod +x ./gradlew
+        
+      - name: Create FCM key file
+        working-directory: ./backend
+        run: |
+          mkdir -p inplace-api/src/main/resources/key
+          echo "${{ secrets.FCM_KEY_JSON }}" | base64 --decode > inplace-api/src/main/resources/key/firebase-admin-sdk.json
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
-          arguments: clean bootJar
+          arguments: clean :inplace-api:bootJar
           build-root-directory: ./backend
 
       - name: Docker image build
@@ -60,7 +66,7 @@ jobs:
 
   deploy-to-test-server:
       needs: build-docker-image
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-22.04
       steps:
         - name: Verify dev branch
           run: |
@@ -100,11 +106,13 @@ jobs:
         - name: Run new container
           run: |
             ssh ubuntu@${{ secrets.EC2_HOST_TEST_SERVER }} "
-              sudo docker run -d \
+              sudo docker run \
                 --name inplace-test \
+                -d \
                 -p 8080:8080 \
+                -p 5005:5005 \
                 -p ${{ secrets.EC2_MONITORING_PORT }}:${{ secrets.EC2_MONITORING_PORT }} \
-                --restart unless-stopped \
+            -e JAVA_TOOL_OPTIONS='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005' \
                 --env-file .env \
-                ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test
+                ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test 
             "

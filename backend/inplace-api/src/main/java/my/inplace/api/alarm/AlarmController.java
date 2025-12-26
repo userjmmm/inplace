@@ -1,0 +1,63 @@
+package my.inplace.api.alarm;
+
+import my.inplace.application.alarm.command.AlarmCommandFacade;
+import my.inplace.api.alarm.dto.AlarmRequest;
+import my.inplace.api.alarm.dto.AlarmResponse;
+import my.inplace.application.alarm.query.AlarmQueryFacade;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/alarms")
+public class AlarmController implements AlarmControllerApiSpec {
+
+    private final AlarmCommandFacade alarmCommandFacade;
+    private final AlarmQueryFacade alarmQueryFacade;
+
+    @PostMapping
+    public ResponseEntity<Void> upsertAlarmToken(
+        @RequestBody AlarmRequest alarmRequest
+    ) {
+        alarmCommandFacade.updateAlarmToken(alarmRequest.fcmToken(), alarmRequest.expoToken());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @DeleteMapping
+    public ResponseEntity<Void> deleteFcmToken() {
+        alarmCommandFacade.deleteFcmToken();
+        
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AlarmResponse>> getAlarmList() {
+        var response = alarmQueryFacade.getAlarmInfos().stream()
+            .map(AlarmResponse::from)
+            .toList();
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @PostMapping("/{id}")
+    public ResponseEntity<Void> processOneAlarm(
+        @PathVariable Long id
+    ) {
+        alarmCommandFacade.processAlarm(id);
+        
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAlarm(
+        @PathVariable Long id
+    ) {
+        alarmQueryFacade.deleteAlarm(id);
+        
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}
