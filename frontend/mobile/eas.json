@@ -10,12 +10,22 @@
         "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "0b89c213866b64e07cc8c0a049024d4a"
       }
     },
+    "development-apk": {
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "0b89c213866b64e07cc8c0a049024d4a",
+        "EXPO_PUBLIC_ENV": "development"
+      }
+    },
     "production-apk": {
       "android": {
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "0b89c213866b64e07cc8c0a049024d4a"
+        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "0b89c213866b64e07cc8c0a049024d4a",
+        "EXPO_PUBLIC_ENV": "production"
       }
     },
     "production": {
@@ -23,7 +33,8 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "0b89c213866b64e07cc8c0a049024d4a"
+        "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "0b89c213866b64e07cc8c0a049024d4a",
+        "EXPO_PUBLIC_ENV": "production"
       }
     }
   }
