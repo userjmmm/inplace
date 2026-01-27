@@ -45,7 +45,7 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
                 window.localStorage.removeItem('redirectPath');
                 window.location.href = redirectPath;
               } else {
-                window.location.reload();
+                window.location.href = '/';
               }
             })();
             true;
