@@ -83,10 +83,10 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       };
 
       debug('[AuthProvider] 초기화 시작');
-      debug('[AuthProvider] savedAuthStatus: ' + savedAuthStatus);
-      debug('[AuthProvider] isReactNativeWebView: ' + isReactNativeWebView);
-      debug('[AuthProvider] localStorage.authToken: ' + (localStorage.getItem('authToken') ? '있음' : '없음'));
-      debug('[AuthProvider] localStorage.nickname: ' + localStorage.getItem('nickname'));
+      debug(`[AuthProvider] savedAuthStatus: ${savedAuthStatus}`);
+      debug(`[AuthProvider] isReactNativeWebView: ${isReactNativeWebView}`);
+      debug(`[AuthProvider] localStorage.authToken: ${localStorage.getItem('authToken') ? '있음' : '없음'}`);
+      debug(`[AuthProvider] localStorage.nickname: ${localStorage.getItem('nickname')}`);
 
       if (savedAuthStatus && !isReactNativeWebView) {
         // WebView가 아닐 때만 초기 refreshToken 호출
@@ -95,7 +95,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
           await refreshTokenRegularly();
           debug('[AuthProvider] refreshToken 성공');
         } catch (error) {
-          debug('[AuthProvider] refreshToken 실패, 로그아웃 처리: ' + error);
+          debug(`[AuthProvider] refreshToken 실패, 로그아웃 처리: ${error}`);
           console.error('[AuthProvider] refreshToken 실패, 로그아웃 처리:', error);
           handleLogout();
         }
@@ -103,7 +103,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         debug('[AuthProvider] refreshToken 건너뜀 (WebView 또는 미로그인)');
       }
 
-      debug('[AuthProvider] 초기화 완료, isAuthenticated: ' + savedAuthStatus);
+      debug(`[AuthProvider] 초기화 완료, isAuthenticated: ${savedAuthStatus}`);
       setIsInitialized(true);
     };
 
