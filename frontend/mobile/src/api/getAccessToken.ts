@@ -37,8 +37,17 @@ export const getAccessToken = async (userInfo: UserInfo) => {
       throw new Error("서버 인증에 실패했습니다.");
     }
 
-    const { accessToken, refreshToken }: Tokens = await response.json();
+    const responseData = await response.json();
+    alert(`받은 응답: ${JSON.stringify(responseData, null, 2)}`);
 
+    const { accessToken, refreshToken }: Tokens = responseData;
+
+    if (!accessToken || !refreshToken) {
+      alert(`토큰 누락! accessToken: ${accessToken}, refreshToken: ${refreshToken}`);
+      throw new Error("토큰을 받지 못했습니다.");
+    }
+
+    alert(`토큰 받기 성공! accessToken: ${accessToken?.substring(0, 20)}...`);
     return { accessToken, refreshToken };
   } catch (error) {
     console.error("API 통신 오류:", error);
