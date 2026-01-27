@@ -74,15 +74,27 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       const savedAuthStatus = localStorage.getItem('isAuthenticated') === 'true';
       const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
 
+      console.log('[AuthProvider] 초기화 시작');
+      console.log('[AuthProvider] savedAuthStatus:', savedAuthStatus);
+      console.log('[AuthProvider] isReactNativeWebView:', isReactNativeWebView);
+      console.log('[AuthProvider] localStorage.authToken:', localStorage.getItem('authToken') ? '있음' : '없음');
+      console.log('[AuthProvider] localStorage.nickname:', localStorage.getItem('nickname'));
+
       if (savedAuthStatus && !isReactNativeWebView) {
         // WebView가 아닐 때만 초기 refreshToken 호출
+        console.log('[AuthProvider] refreshToken 호출 시도');
         try {
           await refreshTokenRegularly();
+          console.log('[AuthProvider] refreshToken 성공');
         } catch (error) {
-          console.error('Failed to refresh token during initialization:', error);
+          console.error('[AuthProvider] refreshToken 실패, 로그아웃 처리:', error);
           handleLogout();
         }
+      } else {
+        console.log('[AuthProvider] refreshToken 건너뜀 (WebView 또는 미로그인)');
       }
+
+      console.log('[AuthProvider] 초기화 완료, isAuthenticated:', savedAuthStatus);
       setIsInitialized(true);
     };
 
