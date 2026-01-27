@@ -74,27 +74,36 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       const savedAuthStatus = localStorage.getItem('isAuthenticated') === 'true';
       const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
 
-      console.log('[AuthProvider] 초기화 시작');
-      console.log('[AuthProvider] savedAuthStatus:', savedAuthStatus);
-      console.log('[AuthProvider] isReactNativeWebView:', isReactNativeWebView);
-      console.log('[AuthProvider] localStorage.authToken:', localStorage.getItem('authToken') ? '있음' : '없음');
-      console.log('[AuthProvider] localStorage.nickname:', localStorage.getItem('nickname'));
+      // WebView에서는 alert로, 일반 브라우저에서는 console.log로
+      const debug = (msg: string) => {
+        console.log(msg);
+        if (isReactNativeWebView) {
+          alert(msg);
+        }
+      };
+
+      debug('[AuthProvider] 초기화 시작');
+      debug('[AuthProvider] savedAuthStatus: ' + savedAuthStatus);
+      debug('[AuthProvider] isReactNativeWebView: ' + isReactNativeWebView);
+      debug('[AuthProvider] localStorage.authToken: ' + (localStorage.getItem('authToken') ? '있음' : '없음'));
+      debug('[AuthProvider] localStorage.nickname: ' + localStorage.getItem('nickname'));
 
       if (savedAuthStatus && !isReactNativeWebView) {
         // WebView가 아닐 때만 초기 refreshToken 호출
-        console.log('[AuthProvider] refreshToken 호출 시도');
+        debug('[AuthProvider] refreshToken 호출 시도');
         try {
           await refreshTokenRegularly();
-          console.log('[AuthProvider] refreshToken 성공');
+          debug('[AuthProvider] refreshToken 성공');
         } catch (error) {
+          debug('[AuthProvider] refreshToken 실패, 로그아웃 처리: ' + error);
           console.error('[AuthProvider] refreshToken 실패, 로그아웃 처리:', error);
           handleLogout();
         }
       } else {
-        console.log('[AuthProvider] refreshToken 건너뜀 (WebView 또는 미로그인)');
+        debug('[AuthProvider] refreshToken 건너뜀 (WebView 또는 미로그인)');
       }
 
-      console.log('[AuthProvider] 초기화 완료, isAuthenticated:', savedAuthStatus);
+      debug('[AuthProvider] 초기화 완료, isAuthenticated: ' + savedAuthStatus);
       setIsInitialized(true);
     };
 
