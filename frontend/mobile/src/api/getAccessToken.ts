@@ -3,7 +3,7 @@ import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
 type UserInfo = {
   nickname: string;
   username: string;
-  profile_image_url: string;
+  profileImageUrl: string;
 };
 
 type Tokens = {
@@ -14,6 +14,10 @@ type Tokens = {
 export const getAccessToken = async (userInfo: UserInfo) => {
   const config = getConfig();
   try {
+    // 디버깅: 보내는 데이터 확인
+    alert(`보내는 데이터: ${JSON.stringify(userInfo, null, 2)}`);
+    alert(`전체 URL: ${config.baseURL}/login/oauth2/code/kakao/mobile`);
+
     const response = await fetch(
       `${config.baseURL}/login/oauth2/code/kakao/mobile`,
       {
@@ -26,6 +30,10 @@ export const getAccessToken = async (userInfo: UserInfo) => {
     );
 
     if (!response.ok) {
+      // 디버깅: 에러 응답 상세 정보
+      const errorText = await response.text();
+      alert(`에러 응답: ${errorText}`);
+      alert(`상태 코드: ${response.status}`);
       throw new Error("서버 인증에 실패했습니다.");
     }
 
