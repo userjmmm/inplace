@@ -13,7 +13,7 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
       const userInfo = {
         nickname: userProfile.nickname ?? "Guest",
         username: userProfile.email ?? "",
-        profile_image_url: userProfile.thumbnailImageUrl ?? "",
+        profileImageUrl: userProfile.thumbnailImageUrl ?? "",
       };
 
       const tokens = await getAccessToken(userInfo);
@@ -28,10 +28,21 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
 
         if (webViewRef.current) {
           const script = `
-          window.localStorage.setItem('authToken', '${accessToken}');
-          window.setAuthToken('${accessToken}');
-          true;
-        `;
+            (function() {
+              window.localStorage.setItem('authToken', '${accessToken}');
+              window.localStorage.setItem('isAuthenticated', 'true');
+              window.setAuthToken('${accessToken}');
+
+              const redirectPath = window.localStorage.getItem('redirectPath');
+              if (redirectPath) {
+                window.localStorage.removeItem('redirectPath');
+                window.location.href = redirectPath;
+              } else {
+                window.location.reload();
+              }
+            })();
+            true;
+          `;
           webViewRef.current.injectJavaScript(script);
 
           console.log("로그인 성공 및 웹뷰에 토큰 주입 완료!");
