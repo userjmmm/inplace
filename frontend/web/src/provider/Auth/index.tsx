@@ -54,15 +54,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const refreshTokenRegularly = useCallback(async () => {
     try {
       await refreshToken();
-      const timestamp = new Date().toLocaleTimeString();
-      console.log('✅ 토큰 갱신 성공:', timestamp);
-      alert(`✅ 토큰 갱신 성공\n시간: ${timestamp}`);
     } catch (error) {
-      console.error('❌ Token refresh failed:', error);
-      alert(`❌ 토큰 갱신 실패\n에러: ${error}`);
+      console.error('Token refresh failed:', error);
       handleLogout();
     }
-  }, [handleLogout, refreshToken]);
+  }, [handleLogout]);
 
   const handleLoginSuccess = useCallback(
     async (userInfo: UserInfoData) => {
@@ -85,6 +81,20 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         } catch (error) {
           console.error('Failed to refresh token during initialization:', error);
           handleLogout();
+        }
+      } else if (savedAuthStatus && isReactNativeWebView) {
+        // 웹뷰 환경: 로그인 직후가 아닌 경우에만 토큰 갱신 요청
+        // authToken이 있으면 로그인 직후이므로 스킵
+        const hasAuthToken = localStorage.getItem('authToken');
+        if (hasAuthToken) {
+          setIsAuthenticated(true);
+        } else {
+          // authToken이 없으면 토큰 만료 가능성 → 갱신 요청
+          window.ReactNativeWebView?.postMessage(
+            JSON.stringify({
+              type: 'REQUEST_REFRESH_TOKEN',
+            }),
+          );
         }
       }
       setIsInitialized(true);
