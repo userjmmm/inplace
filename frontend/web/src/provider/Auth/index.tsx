@@ -16,7 +16,9 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-const ACCESS_TOKEN_REFRESH_INTERVAL = 10 * 60 * 1000;
+const ACCESS_TOKEN_REFRESH_INTERVAL = 1 * 30 * 1000; // 30초마다 갱신
+
+const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
 
 export default function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
@@ -52,11 +54,15 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const refreshTokenRegularly = useCallback(async () => {
     try {
       await refreshToken();
+      const timestamp = new Date().toLocaleTimeString();
+      console.log('✅ 토큰 갱신 성공:', timestamp);
+      alert(`✅ 토큰 갱신 성공\n시간: ${timestamp}`);
     } catch (error) {
-      console.error('Token refresh failed:', error);
+      console.error('❌ Token refresh failed:', error);
+      alert(`❌ 토큰 갱신 실패\n에러: ${error}`);
       handleLogout();
     }
-  }, [handleLogout]);
+  }, [handleLogout, refreshToken]);
 
   const handleLoginSuccess = useCallback(
     async (userInfo: UserInfoData) => {
@@ -72,7 +78,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const initialize = async () => {
       const savedAuthStatus = localStorage.getItem('isAuthenticated') === 'true';
-      const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
 
       if (savedAuthStatus && !isReactNativeWebView) {
         try {
@@ -91,7 +96,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
-    if (isAuthenticated) {
+    // 웹뷰 환경에서는 자동 갱신하지 않음 (모바일 앱이 자체적으로 관리)
+    if (isAuthenticated && !isReactNativeWebView) {
       intervalId = setInterval(() => {
         refreshTokenRegularly();
       }, ACCESS_TOKEN_REFRESH_INTERVAL);
