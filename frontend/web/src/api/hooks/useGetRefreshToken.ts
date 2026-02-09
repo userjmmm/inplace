@@ -11,5 +11,6 @@ export const getRefreshToken = async () => {
 export const useGetRefreshToken = () => {
   return useMutation({
     mutationFn: () => getRefreshToken(),
+    throwOnError: false,
   });
 };
