@@ -11,5 +11,6 @@ export const deleteFCMToken = async () => {
 export const useDeleteFCMToken = () => {
   return useMutation({
     mutationFn: () => deleteFCMToken(),
+    throwOnError: false,
   });
 };

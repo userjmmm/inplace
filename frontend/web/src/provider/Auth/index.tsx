@@ -37,6 +37,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
             type: 'LOGOUT',
           }),
         );
+        alert('로그아웃 요청을 모바일 앱에 전달했습니다.');
         return;
       }
       await deleteFCMToken();
@@ -56,6 +57,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       await refreshToken();
     } catch (error) {
       console.error('Token refresh failed:', error);
+      alert('토큰 갱신에 실패 -> 로그아웃 로직 시도');
       handleLogout();
     }
   }, [handleLogout]);

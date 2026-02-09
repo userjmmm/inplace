@@ -11,5 +11,6 @@ export const deleteRefreshToken = async () => {
 export const useDeleteToken = () => {
   return useMutation({
     mutationFn: () => deleteRefreshToken(),
+    throwOnError: false,
   });
 };
