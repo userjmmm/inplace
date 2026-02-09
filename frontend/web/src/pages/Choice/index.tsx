@@ -31,12 +31,15 @@ export default function ChoicePage() {
   const isDarkMode = theme === 'dark';
 
   useEffect(() => {
-    const isFirstUser = document.cookie
+    // 쿠키 또는 localStorage에서 isFirstUser 확인 (모바일 앱은 localStorage 사용)
+    const isFirstUserFromCookie = document.cookie
       .split('; ')
       .find((row) => row.startsWith('is_first_user='))
       ?.split('=')[1];
+    const isFirstUserFromStorage = localStorage.getItem('isFirstUser');
+    const isFirstUser = isFirstUserFromCookie === 'true' || isFirstUserFromStorage === 'true';
 
-    if (isFirstUser !== 'true') {
+    if (!isFirstUser) {
       navigate('/', { replace: true });
       return;
     }
@@ -48,8 +51,11 @@ export default function ChoicePage() {
       }
     };
     setupFCMForNewUser();
+
+    // 쿠키와 localStorage 모두 정리
     document.cookie = 'is_first_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.inplace.my; Secure';
-  }, [navigate]);
+    localStorage.removeItem('isFirstUser');
+  }, [navigate, postDeviceToken]);
 
   const debouncedInputValue = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
 

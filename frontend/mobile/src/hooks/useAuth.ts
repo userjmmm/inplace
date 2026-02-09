@@ -39,6 +39,7 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
 
               ${isFirstUser
                 ? `alert('[DEBUG] isFirstUser=true - /choice로 이동 예정');
+                   window.localStorage.setItem('isFirstUser', 'true');
                    window.location.href = '/choice';`
                 : `alert('[DEBUG] isFirstUser=false - 기존 사용자');
                    const redirectPath = window.localStorage.getItem('redirectPath');
