@@ -25,42 +25,59 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     () => localStorage.getItem('isAuthenticated') === 'true',
   );
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const { mutateAsync: refreshToken } = useGetRefreshToken();
-  const { mutateAsync: logout } = useDeleteToken();
-  const { mutateAsync: deleteFCMToken } = useDeleteFCMToken();
+  const { mutate: refreshToken } = useGetRefreshToken();
+  const { mutate: logout } = useDeleteToken();
+  const { mutate: deleteFCMToken } = useDeleteFCMToken();
 
-  const handleLogout = useCallback(async () => {
-    try {
-      if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'LOGOUT',
-          }),
-        );
-        alert('로그아웃 요청을 모바일 앱에 전달했습니다.');
-        return;
-      }
-      await deleteFCMToken();
-      await logout();
-    } catch (error) {
-      console.error('로그아웃 요청 실패:', error);
-    } finally {
+  const handleLogout = useCallback(() => {
+    if (window.ReactNativeWebView) {
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          type: 'LOGOUT',
+        }),
+      );
+      alert('로그아웃 요청을 모바일 앱에 전달했습니다.');
+      return;
+    }
+
+    const cleanupAndRedirect = () => {
       setIsAuthenticated(false);
       localStorage.removeItem('isAuthenticated');
       localStorage.removeItem('nickname');
       window.location.href = '/';
-    }
-  }, [logout]);
+    };
 
-  const refreshTokenRegularly = useCallback(async () => {
-    try {
-      await refreshToken();
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-      alert('토큰 갱신에 실패 -> 로그아웃 로직 시도');
-      handleLogout();
-    }
-  }, [handleLogout]);
+    // FCM 토큰 삭제 시도 후 로그아웃 API 호출
+    deleteFCMToken(undefined, {
+      onSettled: () => {
+        // FCM 성공/실패 무관하게 로그아웃 진행
+        logout(undefined, {
+          onSettled: cleanupAndRedirect,
+          onError: (error) => {
+            console.error('로그아웃 API 실패:', error);
+            cleanupAndRedirect(); // API 실패해도 로컬 정리는 진행
+          },
+        });
+      },
+      onError: (error) => {
+        console.error('FCM 토큰 삭제 실패:', error);
+        // FCM 실패해도 로그아웃은 진행
+        logout(undefined, {
+          onSettled: cleanupAndRedirect,
+        });
+      },
+    });
+  }, [logout, deleteFCMToken]);
+
+  const refreshTokenRegularly = useCallback(() => {
+    refreshToken(undefined, {
+      onError: (error) => {
+        console.error('Token refresh failed:', error);
+        alert('토큰 갱신에 실패 -> 로그아웃 로직 시도');
+        handleLogout();
+      },
+    });
+  }, [refreshToken, handleLogout]);
 
   const handleLoginSuccess = useCallback(
     async (userInfo: UserInfoData) => {
@@ -74,16 +91,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   );
 
   useEffect(() => {
-    const initialize = async () => {
+    const initialize = () => {
       const savedAuthStatus = localStorage.getItem('isAuthenticated') === 'true';
 
       if (savedAuthStatus && !isReactNativeWebView) {
-        try {
-          await refreshTokenRegularly();
-        } catch (error) {
-          console.error('Failed to refresh token during initialization:', error);
-          handleLogout();
-        }
+        refreshTokenRegularly();
       } else if (savedAuthStatus && isReactNativeWebView) {
         // 웹뷰 환경: 로그인 직후가 아닌 경우에만 토큰 갱신 요청
         // authToken이 있으면 로그인 직후이므로 스킵
