@@ -19,7 +19,9 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
       const tokens = await getAccessToken(userInfo);
 
       if (tokens) {
-        const { accessToken, refreshToken } = tokens;
+        const { accessToken, refreshToken, isFirstUser } = tokens;
+
+        alert(`[DEBUG] useAuth - isFirstUser: ${isFirstUser}, type: ${typeof isFirstUser}`);
 
         await Promise.all([
           SecureStore.setItemAsync("accessToken", accessToken),
@@ -29,16 +31,23 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
         if (webViewRef.current) {
           const script = `
             (function() {
+              alert('[DEBUG] WebView script 시작 - isFirstUser: ${isFirstUser}');
+
               window.localStorage.setItem('authToken', '${accessToken}');
               window.localStorage.setItem('isAuthenticated', 'true');
               window.setAuthToken('${accessToken}');
 
-              const redirectPath = window.localStorage.getItem('redirectPath');
-              if (redirectPath) {
-                window.localStorage.removeItem('redirectPath');
-                window.location.href = redirectPath;
-              } else {
-                window.location.reload();
+              ${isFirstUser
+                ? `alert('[DEBUG] isFirstUser=true - /choice로 이동 예정');
+                   window.location.href = '/choice';`
+                : `alert('[DEBUG] isFirstUser=false - 기존 사용자');
+                   const redirectPath = window.localStorage.getItem('redirectPath');
+                  if (redirectPath) {
+                    window.localStorage.removeItem('redirectPath');
+                    window.location.href = redirectPath;
+                  } else {
+                    window.location.reload();
+                  }`
               }
             })();
             true;
