@@ -121,6 +121,10 @@ jobs:
       - name: 🏗 Build shared library
         run: pnpm --filter shared build
 
+      - name: 🔧 Setup google-services.json
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > google-services.json
+
       - name: 🔄 Verify EAS CLI installation
         run: |
           echo "EAS CLI version:"
