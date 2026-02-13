@@ -10,9 +10,12 @@ export const useAuth = (
   const handleKakaoLogin = async () => {
     try {
       await login();
-
+      alert("[DEBUG] userProfile 호출 직전");
       const userProfile = await me();
+
+      alert("[DEBUG] getExpoPushToken 호출 직전");
       const expoDeviceToken = await getExpoPushToken();
+      alert("[DEBUG] getExpoPushToken 호출 직후");
 
       alert(`[DEBUG] Expo Token 발급 잘 됐는지: ${expoDeviceToken ?? "토큰 없음"}`);
 
@@ -67,6 +70,7 @@ export const useAuth = (
       }
     } catch (error) {
       console.error("카카오 로그인 실패:", error);
+      alert(`[ERROR] 카카오 로그인 실패: ${error}`);
     }
   };
   return { handleKakaoLogin };

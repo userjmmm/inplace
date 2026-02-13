@@ -33,31 +33,40 @@ export const useNotification = (webViewRef: React.RefObject<WebView | null>) => 
 
   const getExpoPushToken = async () => {
     try {
+      alert("[DEBUG] getExpoPushToken 함수 시작");
+
       // 권한 확인
       let { status } = await Notifications.getPermissionsAsync();
       console.log(`[DEBUG] 초기 알림 권한 상태: ${status}`);
+      alert(`[DEBUG] 초기 알림 권한 상태: ${status}`);
 
       // 권한이 없으면 요청
       if (status !== "granted") {
         console.log("알림 권한 요청 중...");
+        alert("알림 권한 요청 중...");
         const result = await Notifications.requestPermissionsAsync();
         status = result.status;
         console.log(`[DEBUG] 권한 요청 후 상태: ${status}`);
+        alert(`[DEBUG] 권한 요청 후 상태: ${status}`);
       }
 
       if (status !== "granted") {
         console.log("알림 권한이 거부되어 Expo Token을 가져올 수 없습니다");
+        alert("알림 권한이 거부되어 Expo Token을 가져올 수 없습니다");
         return null;
       }
 
+      alert(`[DEBUG] EXPO_PUBLIC_PROJECT_ID: ${process.env.EXPO_PUBLIC_PROJECT_ID ?? "없음"}`);
       console.log(`[DEBUG] EXPO_PUBLIC_PROJECT_ID: ${process.env.EXPO_PUBLIC_PROJECT_ID}`);
 
+      alert("[DEBUG] getExpoPushTokenAsync 호출 시작");
       const tokenData = await Notifications.getExpoPushTokenAsync({
         projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
       });
       const expoPushToken = tokenData.data;
 
       console.log(`[DEBUG] Expo Token 발급 성공: ${expoPushToken}`);
+      alert(`[DEBUG] Expo Token 발급 성공: ${expoPushToken}`);
 
       if (webViewRef.current) {
         const script = `
@@ -72,6 +81,7 @@ export const useNotification = (webViewRef: React.RefObject<WebView | null>) => 
       return expoPushToken;
     } catch (tokenError) {
       console.error("Expo Token 가져오기 실패:", tokenError);
+      alert(`[ERROR] Expo Token 가져오기 실패: ${tokenError}`);
       // 토큰 가져오기는 실패해도 승인된 권한은 전달해줘야 됨
       if (webViewRef.current) {
         const script = `
