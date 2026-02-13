@@ -2,26 +2,33 @@ import { login, me } from "@react-native-kakao/user";
 import { getAccessToken } from "../api/getAccessToken";
 import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
+import { useNotification } from "./useNotification";
 
 export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
+  const { getExpoPushToken } = useNotification(webViewRef);
+
   const handleKakaoLogin = async () => {
     try {
       await login();
 
       const userProfile = await me();
+      const expoDeviceToken = await getExpoPushToken();
+
+      alert(`[DEBUG] Expo Token 발급 잘 됐는지: ${expoDeviceToken ?? "토큰 없음"}`);
 
       const userInfo = {
         nickname: userProfile.nickname ?? "Guest",
         username: userProfile.email ?? "",
         profileImageUrl: userProfile.thumbnailImageUrl ?? "",
+        expoToken: expoDeviceToken ?? "",
       };
+
+      alert(`[DEBUG] userInfo.expoToken: ${userInfo.expoToken || "빈 문자열"}`);
 
       const tokens = await getAccessToken(userInfo);
 
       if (tokens) {
         const { accessToken, refreshToken, isFirstUser } = tokens;
-
-        alert(`[DEBUG] useAuth - isFirstUser: ${isFirstUser}, type: ${typeof isFirstUser}`);
 
         await Promise.all([
           SecureStore.setItemAsync("accessToken", accessToken),
