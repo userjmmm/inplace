@@ -17,7 +17,7 @@
     "expo": "~52.0.47",
     "expo-build-properties": "~0.13.3",
     "expo-location": "^18.1.6",
-    "expo-notifications": "^0.31.4",
+    "expo-notifications": "~0.29.14",
     "expo-random": "^14.0.1",
     "expo-secure-store": "14.0.1",
     "expo-status-bar": "~2.0.1",
