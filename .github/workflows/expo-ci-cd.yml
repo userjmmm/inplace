@@ -114,7 +114,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.eas-build-local
-          key: ${{ runner.os }}-eas-build-local-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }}-eas-build-local-${{ hashFiles('**/package.json', '**/app.json') }}
           restore-keys: |
             ${{ runner.os }}-eas-build-local-
 
