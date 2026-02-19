@@ -37,6 +37,7 @@
       [
         "expo-secure-store",
         {
+          "configureAndroidBackup": false,
           "faceIDPermission": "Allow $(inplace) to access your Face ID biometric data."
         }
       ],
