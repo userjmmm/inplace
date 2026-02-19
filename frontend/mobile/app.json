@@ -4,7 +4,7 @@
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "../frontend/web/src/assets/images/basic-image.webp",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -27,6 +27,13 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "../frontend/web/src/assets/images/basic-image.webp",
+          "defaultChannel": "default"
+        }
+      ],
       [
         "expo-secure-store",
         {
