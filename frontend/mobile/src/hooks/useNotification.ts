@@ -56,13 +56,8 @@ export const useNotification = (webViewRef: React.RefObject<WebView | null>) => 
         return null;
       }
 
-      alert(`[DEBUG] EXPO_PUBLIC_PROJECT_ID: ${process.env.EXPO_PUBLIC_PROJECT_ID ?? "없음"}`);
-      console.log(`[DEBUG] EXPO_PUBLIC_PROJECT_ID: ${process.env.EXPO_PUBLIC_PROJECT_ID}`);
-
-      alert("[DEBUG] getExpoPushTokenAsync 호출 시작");
-      const tokenData = await Notifications.getExpoPushTokenAsync({
-        projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
-      });
+      alert("[DEBUG] getExpoPushTokenAsync 호출 시작 (app.json의 projectId 자동 사용)");
+      const tokenData = await Notifications.getExpoPushTokenAsync();
       const expoPushToken = tokenData.data;
 
       console.log(`[DEBUG] Expo Token 발급 성공: ${expoPushToken}`);
