@@ -30,7 +30,6 @@
       [
         "expo-secure-store",
         {
-          "configureAndroidBackup": true,
           "faceIDPermission": "Allow $(inplace) to access your Face ID biometric data."
         }
       ],
@@ -38,6 +37,7 @@
         "expo-build-properties",
         {
           "android": {
+            "allowBackup": false,
             "extraMavenRepos": [
               "https://devrepo.kakao.com/nexus/content/groups/public/"
             ]
