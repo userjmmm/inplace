@@ -35,20 +35,6 @@ export const useNotification = (webViewRef: React.RefObject<WebView | null>) => 
     try {
       alert("[DEBUG] getExpoPushToken 함수 시작");
 
-      // Firebase 초기화 상태 체크
-      try {
-        // @ts-ignore
-        const { firebase } = require("@react-native-firebase/app");
-        const isInitialized = firebase?.apps?.length > 0;
-        alert(
-          `[DEBUG] getExpoPushToken 시작 시점\nFirebase 초기화: ${isInitialized ? "✅ 됨" : "❌ 안됨"}\n앱 개수: ${firebase?.apps?.length || 0}`
-        );
-      } catch (e: any) {
-        alert(
-          `[DEBUG] getExpoPushToken 시작 시점\nFirebase 네이티브 모듈 없음 (Expo FCM 사용)`
-        );
-      }
-
       // 권한 확인
       let { status } = await Notifications.getPermissionsAsync();
       console.log(`[DEBUG] 초기 알림 권한 상태: ${status}`);
@@ -71,18 +57,6 @@ export const useNotification = (webViewRef: React.RefObject<WebView | null>) => 
       }
 
       alert("[DEBUG] getExpoPushTokenAsync 호출 시작 (app.json의 projectId 자동 사용)");
-
-      // Firebase 초기화 상태 재확인 (토큰 요청 직전)
-      try {
-        // @ts-ignore
-        const { firebase } = require("@react-native-firebase/app");
-        alert(
-          `[DEBUG] getExpoPushTokenAsync 호출 직전\nFirebase 앱 개수: ${firebase?.apps?.length || 0}`
-        );
-      } catch (e) {
-        // Expo FCM 사용 중
-      }
-
       const tokenData = await Notifications.getExpoPushTokenAsync();
       const expoPushToken = tokenData.data;
 
@@ -100,25 +74,9 @@ export const useNotification = (webViewRef: React.RefObject<WebView | null>) => 
       }
 
       return expoPushToken;
-    } catch (tokenError: any) {
+    } catch (tokenError) {
       console.error("Expo Token 가져오기 실패:", tokenError);
-
-      // 에러 정보 상세 출력
-      const errorMessage = tokenError?.message || String(tokenError);
-      const errorName = tokenError?.name || "알 수 없는 에러";
-      const isFirebaseError = errorMessage.includes("Firebase") || errorMessage.includes("firebase");
-      const isInitializeError = errorMessage.includes("initialize") || errorMessage.includes("initialized");
-
-      alert(
-        `[ERROR] Expo Token 가져오기 실패\n\n` +
-        `에러 타입: ${errorName}\n` +
-        `메시지: ${errorMessage}\n\n` +
-        `Firebase 관련: ${isFirebaseError ? "✅ 예" : "❌ 아니오"}\n` +
-        `초기화 에러: ${isInitializeError ? "✅ 예" : "❌ 아니오"}`
-      );
-
-      console.error("에러 스택:", tokenError?.stack);
-
+      alert(`[ERROR] Expo Token 가져오기 실패: ${tokenError}`);
       // 토큰 가져오기는 실패해도 승인된 권한은 전달해줘야 됨
       if (webViewRef.current) {
         const script = `
