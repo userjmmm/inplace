@@ -5,17 +5,25 @@ import * as Notifications from "expo-notifications";
 export const useNotification = (webViewRef: React.RefObject<WebView | null>) => {
   const handleNotificationPermission = async (): Promise<void> => {
     try {
+      alert("[DEBUG] 1. 알림 권한 요청 시작");
+
       const { status: existingStatus } =
         await Notifications.getPermissionsAsync();
-      
-      const finalStatus = existingStatus !== "granted" // 권한이 없으면 요청(없거나 거부된 상태)
+
+      alert(`[DEBUG] 2. 현재 권한 상태: ${existingStatus}`);
+
+      const finalStatus = existingStatus !== "granted"
         ? (await Notifications.requestPermissionsAsync()).status
         : existingStatus;
 
+      alert(`[DEBUG] 3. 최종 권한 상태: ${finalStatus}`);
+
       if (finalStatus !== "granted") {
         console.log("알림 권한이 거부되었습니다");
+        alert("[ERROR] 알림 권한이 거부되었습니다");
         return;
       }
+
       // 안드로이드에서 채널 설정
       if (Platform.OS === "android") {
         await Notifications.setNotificationChannelAsync("default", {
@@ -25,43 +33,26 @@ export const useNotification = (webViewRef: React.RefObject<WebView | null>) => 
           lightColor: "#FF231F7C",
         });
       }
+
+      alert("[DEBUG] 4. 권한 승인됨, Expo Token 요청 시작");
+
+      // 권한이 승인된 상태에서만 토큰 요청
       await getExpoPushToken();
     } catch (error) {
       console.error("알림 권한 요청 실패:", error);
+      alert(`[ERROR] 알림 권한 요청 실패: ${error}`);
     }
   };
 
   const getExpoPushToken = async () => {
     try {
-      alert("[DEBUG] getExpoPushToken 함수 시작");
+      alert("[DEBUG] 5. getExpoPushTokenAsync 호출 시작");
 
-      // 권한 확인
-      let { status } = await Notifications.getPermissionsAsync();
-      console.log(`[DEBUG] 초기 알림 권한 상태: ${status}`);
-      alert(`[DEBUG] 초기 알림 권한 상태: ${status}`);
-
-      // 권한이 없으면 요청
-      if (status !== "granted") {
-        console.log("알림 권한 요청 중...");
-        alert("알림 권한 요청 중...");
-        const result = await Notifications.requestPermissionsAsync();
-        status = result.status;
-        console.log(`[DEBUG] 권한 요청 후 상태: ${status}`);
-        alert(`[DEBUG] 권한 요청 후 상태: ${status}`);
-      }
-
-      if (status !== "granted") {
-        console.log("알림 권한이 거부되어 Expo Token을 가져올 수 없습니다");
-        alert("알림 권한이 거부되어 Expo Token을 가져올 수 없습니다");
-        return null;
-      }
-
-      alert("[DEBUG] getExpoPushTokenAsync 호출 시작 (app.json의 projectId 자동 사용)");
       const tokenData = await Notifications.getExpoPushTokenAsync();
       const expoPushToken = tokenData.data;
 
-      console.log(`[DEBUG] Expo Token 발급 성공: ${expoPushToken}`);
-      alert(`[DEBUG] Expo Token 발급 성공: ${expoPushToken}`);
+      console.log(`[DEBUG] 6. Expo Token 발급 성공: ${expoPushToken}`);
+      alert(`[DEBUG] 6. Expo Token 발급 성공: ${expoPushToken}`);
 
       if (webViewRef.current) {
         const script = `
