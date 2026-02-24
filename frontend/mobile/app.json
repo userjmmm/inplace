@@ -18,7 +18,6 @@
     "android": {
       "package": "my.inplace.mobile",
       "googleServicesFile": "./google-services.json",
-      "useNextNotificationsApi": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"

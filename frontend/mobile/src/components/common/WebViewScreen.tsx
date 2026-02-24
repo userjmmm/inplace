@@ -19,8 +19,8 @@ export default function WebViewScreen() {
 
   const { modalVisible, modalContent, showLocationModal, hideModal } =
     useLocation(webViewRef);
-  const { handleNotificationPermission, getExpoPushToken } = useNotification(webViewRef);
-  const { handleKakaoLogin } = useAuth(webViewRef, getExpoPushToken);
+  const { handleNotificationPermission } = useNotification(webViewRef);
+  const { handleKakaoLogin } = useAuth(webViewRef);
   const { handleRefreshToken } = useRefreshToken(webViewRef);
   const { handleLogout } = useLogout(webViewRef);
   const { handleMessage } = useWebViewMessageHandler({

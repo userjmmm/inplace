@@ -4,8 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
 
 export const useAuth = (
-  webViewRef: React.RefObject<WebView | null>,
-  getExpoPushToken: () => Promise<string | null>
+  webViewRef: React.RefObject<WebView | null>
 ) => {
   const handleKakaoLogin = async () => {
     try {
@@ -13,20 +12,12 @@ export const useAuth = (
       alert("[DEBUG] userProfile 호출 직전");
       const userProfile = await me();
 
-      alert("[DEBUG] getExpoPushToken 호출 직전");
-      const expoDeviceToken = await getExpoPushToken();
-      alert("[DEBUG] getExpoPushToken 호출 직후");
-
-      alert(`[DEBUG] Expo Token 발급 잘 됐는지: ${expoDeviceToken ?? "토큰 없음"}`);
-
       const userInfo = {
         nickname: userProfile.nickname ?? "Guest",
         username: userProfile.email ?? "",
         profileImageUrl: userProfile.thumbnailImageUrl ?? "",
-        expoToken: expoDeviceToken ?? "",
+        expoToken: "", // 알림 권한 요청 시 WebView로 전달됨
       };
-
-      alert(`[DEBUG] userInfo.expoToken: ${userInfo.expoToken || "빈 문자열"}`);
 
       const tokens = await getAccessToken(userInfo);
 
