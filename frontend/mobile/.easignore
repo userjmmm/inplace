@@ -37,4 +37,4 @@ yarn-error.*
 *.tsbuildinfo
 
 # Firebase - DO NOT ignore google-services.json for EAS Build
-# google-services.json  <- COMMENTED OUT so EAS Build includes it
+!google-services.json  <- COMMENTED OUT so EAS Build includes it
