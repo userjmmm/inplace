@@ -35,6 +35,7 @@ module.exports = {
     },
     android: {
       package: "my.inplace.mobile",
+      googleServicesFile: "./google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#292929",
@@ -57,6 +58,13 @@ module.exports = {
       favicon: "./assets/favicon.png",
     },
     plugins: [
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/icon.png",
+          defaultChannel: "default",
+        },
+      ],
       [
         "expo-secure-store",
         {
