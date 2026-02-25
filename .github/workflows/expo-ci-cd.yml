@@ -127,10 +127,16 @@ jobs:
       - name: 🧹 Clean and regenerate native code
         run: |
           rm -rf android ios
-          npx expo prebuild --clean --platform android
+          npx expo prebuild --clean --platform android --no-install --no-jetifier
         env:
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
           EXPO_PUBLIC_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_PROJECT_ID }}
+          
+      - name: 🔍 Verify Google Services Plugin
+        run: |
+          echo "Checking build.gradle..."
+          grep google-services android/build.gradle || echo "❌ classpath missing"
+          grep google-services android/app/build.gradle || echo "❌ apply plugin missing"
 
       - name: 🔄 Verify EAS CLI installation
         run: |
@@ -140,8 +146,6 @@ jobs:
           # 누락된 패키지 수동 설치
           npx expo install expo-modules-autolinking expo-modules-core expo-asset
 
-          # Expo 의존성 정리 및 재설치
-          npx expo install --fix
         env:
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
           EXPO_PUBLIC_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_PROJECT_ID }}
