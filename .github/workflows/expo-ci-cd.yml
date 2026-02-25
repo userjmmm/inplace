@@ -123,59 +123,14 @@ jobs:
       - name: 🔧 Setup google-services.json
         run: |
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > google-services.json
+          echo "✅ Created google-services.json in project root"
 
-      - name: 🧹 Clean and regenerate native code
-        run: |
-          rm -rf android ios
-          npx expo prebuild --clean --platform android
-        env:
-          EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
-          EXPO_PUBLIC_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_PROJECT_ID }}
-
-      - name: 🔧 Add Google Services Plugin
-        run: |
-          echo "Adding Google Services Plugin to build.gradle files..."
-
-          # Add classpath to project-level build.gradle
-          if ! grep -q "google-services" android/build.gradle; then
-            sed -i "/classpath('com.android.tools.build:gradle')/a\\        classpath('com.google.gms:google-services:4.4.2')" android/build.gradle
-            echo "✅ Added Google Services classpath to project build.gradle"
-          else
-            echo "ℹ️ Google Services classpath already exists"
-          fi
-
-          # Add apply plugin to app-level build.gradle (must be at the end)
-          if ! grep -q "com.google.gms.google-services" android/app/build.gradle; then
-            echo "" >> android/app/build.gradle
-            echo "apply plugin: 'com.google.gms.google-services'" >> android/app/build.gradle
-            echo "✅ Applied Google Services plugin to app build.gradle"
-          else
-            echo "ℹ️ Google Services plugin already applied"
-          fi
-
-          # Copy google-services.json to android/app directory
+          # 디버깅: 파일이 생성되었는지 확인
           if [ -f google-services.json ]; then
-            cp google-services.json android/app/google-services.json
-            echo "✅ Copied google-services.json to android/app/"
+            echo "✓ google-services.json exists in project root"
+            echo "File size: $(wc -c < google-services.json) bytes"
           else
-            echo "❌ google-services.json not found in project root"
-            exit 1
-          fi
-
-          echo "✅ Google Services Plugin setup completed"
-
-      - name: 🔍 Verify Google Services Plugin
-        run: |
-          echo "Checking build.gradle files..."
-          grep google-services android/build.gradle || echo "❌ classpath missing"
-          grep google-services android/app/build.gradle || echo "❌ apply plugin missing"
-
-          echo ""
-          echo "Checking google-services.json location..."
-          if [ -f android/app/google-services.json ]; then
-            echo "✅ google-services.json found in android/app/"
-          else
-            echo "❌ google-services.json NOT found in android/app/"
+            echo "❌ google-services.json NOT found in project root"
             exit 1
           fi
 
@@ -229,7 +184,18 @@ jobs:
         if: (github.event_name == 'push' && github.ref == 'refs/heads/dev') || github.event.inputs.buildType == 'all'
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+
+          echo "🔍 [DEBUG] Starting EAS build..."
           eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
+
+          echo "🔍 [DEBUG] Checking google-services.json locations after prebuild:"
+          echo "  - Project root: $([ -f google-services.json ] && echo '✓ EXISTS' || echo '✗ NOT FOUND')"
+          echo "  - android/app/: $([ -f android/app/google-services.json ] && echo '✓ EXISTS' || echo '✗ NOT FOUND')"
+
+          if [ -f android/app/google-services.json ]; then
+            echo "  - File size in android/app/: $(wc -c < android/app/google-services.json) bytes"
+            echo "  - First line preview: $(head -n 1 android/app/google-services.json)"
+          fi
         env:
           NODE_ENV: development
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
