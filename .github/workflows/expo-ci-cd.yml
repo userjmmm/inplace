@@ -185,23 +185,11 @@ jobs:
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
 
-          echo "🔍 [DEBUG] Step 1: Running expo prebuild to generate android folder..."
-          npx expo prebuild --clean --platform android
+          echo "🔍 [INFO] Building with EAS..."
+          echo "  - .easignore will include google-services.json in archive"
+          echo "  - EAS will automatically run prebuild"
+          echo "  - googleServicesFile config will copy to android/app/"
 
-          echo "🔍 [DEBUG] Step 2: Manually copying google-services.json to android/app/"
-          mkdir -p android/app
-          cp google-services.json android/app/google-services.json
-
-          echo "🔍 [DEBUG] Step 3: Verifying file locations:"
-          echo "  - Project root: $([ -f google-services.json ] && echo '✓ EXISTS' || echo '✗ NOT FOUND')"
-          echo "  - android/app/: $([ -f android/app/google-services.json ] && echo '✓ EXISTS' || echo '✗ NOT FOUND')"
-
-          if [ -f android/app/google-services.json ]; then
-            echo "  ✓ File size in android/app/: $(wc -c < android/app/google-services.json) bytes"
-            echo "  ✓ First line preview: $(head -n 1 android/app/google-services.json)"
-          fi
-
-          echo "🔍 [DEBUG] Step 4: Running EAS build (prebuild will be skipped since android/ exists)..."
           eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
         env:
           NODE_ENV: development
@@ -212,6 +200,12 @@ jobs:
         if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.inputs.buildType == 'prod-apk'
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+
+          echo "🔍 [INFO] Building with EAS..."
+          echo "  - .easignore will include google-services.json in archive"
+          echo "  - EAS will automatically run prebuild"
+          echo "  - googleServicesFile config will copy to android/app/"
+
           eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
         env:
           NODE_ENV: production
