@@ -10,5 +10,4 @@ frontend/mobile/web-build/
 # frontend/mobile/android/  <- 주석 처리하거나 negation으로 처리
 
 # 중요: 다음 항목들은 EAS Build에 포함
-!frontend/mobile/android/
 !frontend/mobile/google-services.json
