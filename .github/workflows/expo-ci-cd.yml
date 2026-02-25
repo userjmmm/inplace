@@ -153,13 +153,31 @@ jobs:
             echo "ℹ️ Google Services plugin already applied"
           fi
 
+          # Copy google-services.json to android/app directory
+          if [ -f google-services.json ]; then
+            cp google-services.json android/app/google-services.json
+            echo "✅ Copied google-services.json to android/app/"
+          else
+            echo "❌ google-services.json not found in project root"
+            exit 1
+          fi
+
           echo "✅ Google Services Plugin setup completed"
 
       - name: 🔍 Verify Google Services Plugin
         run: |
-          echo "Checking build.gradle..."
+          echo "Checking build.gradle files..."
           grep google-services android/build.gradle || echo "❌ classpath missing"
           grep google-services android/app/build.gradle || echo "❌ apply plugin missing"
+
+          echo ""
+          echo "Checking google-services.json location..."
+          if [ -f android/app/google-services.json ]; then
+            echo "✅ google-services.json found in android/app/"
+          else
+            echo "❌ google-services.json NOT found in android/app/"
+            exit 1
+          fi
 
       - name: 🔄 Verify EAS CLI installation
         run: |
