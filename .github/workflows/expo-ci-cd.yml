@@ -185,17 +185,24 @@ jobs:
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
 
-          echo "🔍 [DEBUG] Starting EAS build..."
-          eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
+          echo "🔍 [DEBUG] Step 1: Running expo prebuild to generate android folder..."
+          npx expo prebuild --clean --platform android
 
-          echo "🔍 [DEBUG] Checking google-services.json locations after prebuild:"
+          echo "🔍 [DEBUG] Step 2: Manually copying google-services.json to android/app/"
+          mkdir -p android/app
+          cp google-services.json android/app/google-services.json
+
+          echo "🔍 [DEBUG] Step 3: Verifying file locations:"
           echo "  - Project root: $([ -f google-services.json ] && echo '✓ EXISTS' || echo '✗ NOT FOUND')"
           echo "  - android/app/: $([ -f android/app/google-services.json ] && echo '✓ EXISTS' || echo '✗ NOT FOUND')"
 
           if [ -f android/app/google-services.json ]; then
-            echo "  - File size in android/app/: $(wc -c < android/app/google-services.json) bytes"
-            echo "  - First line preview: $(head -n 1 android/app/google-services.json)"
+            echo "  ✓ File size in android/app/: $(wc -c < android/app/google-services.json) bytes"
+            echo "  ✓ First line preview: $(head -n 1 android/app/google-services.json)"
           fi
+
+          echo "🔍 [DEBUG] Step 4: Running EAS build (prebuild will be skipped since android/ exists)..."
+          eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
         env:
           NODE_ENV: development
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
