@@ -7,7 +7,6 @@
       "android": {
         "buildType": "apk"
       },
-      "prebuildCommand": "npx expo prebuild --clean --platform android && cp google-services.json android/app/google-services.json",
       "env": {
         "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "0b89c213866b64e07cc8c0a049024d4a",
         "EXPO_PUBLIC_ENV": "development"
@@ -17,7 +16,6 @@
       "android": {
         "buildType": "apk"
       },
-      "prebuildCommand": "npx expo prebuild --clean --platform android && cp google-services.json android/app/google-services.json",
       "env": {
         "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "0b89c213866b64e07cc8c0a049024d4a",
         "EXPO_PUBLIC_ENV": "production"
@@ -27,7 +25,6 @@
       "android": {
         "buildType": "app-bundle"
       },
-      "prebuildCommand": "npx expo prebuild --clean --platform android && cp google-services.json android/app/google-services.json",
       "env": {
         "EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY": "0b89c213866b64e07cc8c0a049024d4a",
         "EXPO_PUBLIC_ENV": "production"
