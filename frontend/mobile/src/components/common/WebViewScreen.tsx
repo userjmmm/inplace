@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, SafeAreaView, StyleSheet } from "react-native";
 import WebView from "react-native-webview";
+import * as Notifications from "expo-notifications";
 import { useLocation } from "../../hooks/useLocation";
 import CustomWebView from "./CustomWebview";
 import LocationPermissionModal from "../location/LocationPermissionModal";
@@ -33,6 +34,49 @@ export default function WebViewScreen() {
   useEffect(() => {
     initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY);
     setWebViewReady(true);
+  }, []);
+
+  useEffect(() => {
+    // 포그라운드 알림 수신 시 WebView에 이벤트 전달
+    const receivedSub = Notifications.addNotificationReceivedListener((notification) => {
+      const data = notification.request.content.data;
+      if (webViewRef.current) {
+        const script = `
+          window.dispatchEvent(new CustomEvent('nativeNotification', {
+            detail: ${JSON.stringify(data)}
+          }));
+          true;
+        `;
+        webViewRef.current.injectJavaScript(script);
+      }
+    });
+
+    // 알림 탭 시 WebView URL 이동
+    const responseSub = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
+      if (webViewRef.current && data?.url) {
+        webViewRef.current.injectJavaScript(
+          `window.location.href = '${data.url}'; true;`
+        );
+      }
+    });
+
+    // 앱이 종료된 상태에서 알림 탭으로 실행된 경우 처리
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (response) {
+        const data = response.notification.request.content.data;
+        if (webViewRef.current && data?.url) {
+          webViewRef.current.injectJavaScript(
+            `window.location.href = '${data.url}'; true;`
+          );
+        }
+      }
+    });
+
+    return () => {
+      receivedSub.remove();
+      responseSub.remove();
+    };
   }, []);
 
   return (
