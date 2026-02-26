@@ -4,7 +4,6 @@ type UserInfo = {
   nickname: string;
   username: string;
   profileImageUrl: string;
-  expoToken: string;
 };
 
 type Tokens = {
