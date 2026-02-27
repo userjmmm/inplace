@@ -33,7 +33,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     alert('[DEBUG] handleLogout 시작');
 
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView?.postMessage(
+      window.ReactNativeWebView.postMessage(
         JSON.stringify({
           type: 'LOGOUT',
         }),
@@ -100,14 +100,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         // 웹뷰 환경: authToken이 있어도 토큰 검증 필요
         const hasAuthToken = localStorage.getItem('authToken');
         if (hasAuthToken) {
-          setIsAuthenticated(true);
+          // authToken이 있어도 만료되었을 수 있으므로 검증
+          await refreshTokenRegularly();
         } else {
           // authToken이 없으면 토큰 만료 가능성 → 갱신 요청
-          window.ReactNativeWebView?.postMessage(
-            JSON.stringify({
-              type: 'REQUEST_REFRESH_TOKEN',
-            }),
-          );
+          window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'REQUEST_REFRESH_TOKEN' }));
         }
       }
       setIsInitialized(true);
