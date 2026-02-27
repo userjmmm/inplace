@@ -32,7 +32,6 @@ export const useAuth = (
   const handleKakaoLogin = async () => {
     try {
       await login();
-      alert("[DEBUG] userProfile 호출 직전");
       const userProfile = await me();
 
       const userInfo = {

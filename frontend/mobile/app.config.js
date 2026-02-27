@@ -38,8 +38,8 @@ module.exports = {
       googleServicesFile: "./google-services.json",
       allowBackup: false,
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
-        backgroundColor: "#292929",
+        foregroundImage: "../web/assets/images/InplaceLogo.png",
+        backgroundColor: "#ffffff",
       },
       intentFilters: [
         {
@@ -95,7 +95,7 @@ module.exports = {
     ],
     extra: {
       eas: {
-        projectId: "1f938aec-ae98-4f0c-ab7a-c4c37114e2a7",
+        projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
       },
     },
   },

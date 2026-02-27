@@ -33,7 +33,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     alert('[DEBUG] handleLogout 시작');
 
     if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(
+      window.ReactNativeWebView?.postMessage(
         JSON.stringify({
           type: 'LOGOUT',
         }),
@@ -92,17 +92,15 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const initialize = async () => {
-      const isInWebView = window.ReactNativeWebView != null;
       const savedAuthStatus = localStorage.getItem('isAuthenticated') === 'true';
 
-      if (savedAuthStatus && !isInWebView) {
+      if (savedAuthStatus && !isReactNativeWebView) {
         await refreshTokenRegularly(); // ✅ 완료될 때까지 대기
-      } else if (savedAuthStatus && isInWebView) {
+      } else if (savedAuthStatus && isReactNativeWebView) {
         // 웹뷰 환경: authToken이 있어도 토큰 검증 필요
         const hasAuthToken = localStorage.getItem('authToken');
         if (hasAuthToken) {
-          // authToken이 있어도 만료되었을 수 있으므로 검증
-          await refreshTokenRegularly();
+          setIsAuthenticated(true);
         } else {
           // authToken이 없으면 토큰 만료 가능성 → 갱신 요청
           window.ReactNativeWebView?.postMessage(
@@ -116,7 +114,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     };
 
     initialize();
-  }, [refreshTokenRegularly]);
+  }, [refreshTokenRegularly, handleLogout]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
