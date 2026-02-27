@@ -92,27 +92,31 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const initialize = async () => {
+      const isInWebView = window.ReactNativeWebView != null;
       const savedAuthStatus = localStorage.getItem('isAuthenticated') === 'true';
 
-      if (savedAuthStatus && !isReactNativeWebView) {
+      if (savedAuthStatus && !isInWebView) {
         await refreshTokenRegularly(); // ✅ 완료될 때까지 대기
-      } else if (savedAuthStatus && isReactNativeWebView) {
+      } else if (savedAuthStatus && isInWebView) {
+        // 웹뷰 환경: authToken이 있어도 토큰 검증 필요
         const hasAuthToken = localStorage.getItem('authToken');
-        if (!hasAuthToken) {
-          // authToken이 없으면 native에 갱신 요청 (native가 토큰 관리)
+        if (hasAuthToken) {
+          // authToken이 있어도 만료되었을 수 있으므로 검증
+          await refreshTokenRegularly();
+        } else {
+          // authToken이 없으면 토큰 만료 가능성 → 갱신 요청
           window.ReactNativeWebView?.postMessage(
             JSON.stringify({
               type: 'REQUEST_REFRESH_TOKEN',
             }),
           );
         }
-        // authToken이 있으면 native가 토큰 갱신을 직접 관리하므로 쿠키 기반 refresh 호출하지 않음
       }
       setIsInitialized(true);
     };
 
     initialize();
-  }, [refreshTokenRegularly, handleLogout]);
+  }, [refreshTokenRegularly]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
