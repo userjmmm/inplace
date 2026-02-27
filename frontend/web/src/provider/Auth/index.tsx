@@ -16,7 +16,7 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-const ACCESS_TOKEN_REFRESH_INTERVAL = 10 * 30 * 1000; // 30초마다 갱신
+const ACCESS_TOKEN_REFRESH_INTERVAL = 1 * 30 * 1000;
 
 const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
 
@@ -30,54 +30,35 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const { mutateAsync: deleteFCMToken } = useDeleteFCMToken();
 
   const handleLogout = useCallback(async () => {
-    alert('[DEBUG] handleLogout 시작');
-
-    if (window.ReactNativeWebView) {
-      window.ReactNativeWebView.postMessage(
-        JSON.stringify({
-          type: 'LOGOUT',
-        }),
-      );
-      alert('[DEBUG] 웹뷰 환경 - 모바일 앱에 로그아웃 요청 전달');
-      return;
-    }
-
-    alert('[DEBUG] 웹 환경 - 로컬 상태 정리 시작');
-    // API 호출 전에 먼저 로컬 상태 정리
-    setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('nickname');
-
     try {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'LOGOUT',
+          }),
+        );
+        return;
+      }
       await deleteFCMToken();
-    } catch (error) {
-      console.error('FCM 토큰 삭제 실패:', error);
-    }
-
-    try {
       await logout();
     } catch (error) {
-      console.error('로그아웃 API 실패:', error);
+      console.error('로그아웃 요청 실패:', error);
+    } finally {
+      setIsAuthenticated(false);
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('nickname');
+      window.location.href = '/';
     }
-
-    // 마지막에 리다이렉트
-    window.location.href = '/';
-  }, [logout, deleteFCMToken]);
+  }, [logout]);
 
   const refreshTokenRegularly = useCallback(async () => {
     try {
       await refreshToken();
     } catch (error) {
       console.error('Token refresh failed:', error);
-
-      // 즉시 상태 업데이트 (다른 API 호출 막기)
-      setIsAuthenticated(false);
-      localStorage.removeItem('isAuthenticated');
-      localStorage.removeItem('nickname');
-
-      await handleLogout();
+      handleLogout();
     }
-  }, [refreshToken, handleLogout]);
+  }, [handleLogout]);
 
   const handleLoginSuccess = useCallback(
     async (userInfo: UserInfoData) => {
@@ -93,18 +74,24 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const initialize = async () => {
       const savedAuthStatus = localStorage.getItem('isAuthenticated') === 'true';
+      const hasMobileAuthToken = localStorage.getItem('authToken');
 
       if (savedAuthStatus && !isReactNativeWebView) {
-        await refreshTokenRegularly(); // ✅ 완료될 때까지 대기
-      } else if (savedAuthStatus && isReactNativeWebView) {
-        // 웹뷰 환경: authToken이 있어도 토큰 검증 필요
-        const hasAuthToken = localStorage.getItem('authToken');
-        if (hasAuthToken) {
-          // authToken이 있어도 만료되었을 수 있으므로 검증
+        try {
           await refreshTokenRegularly();
+        } catch (error) {
+          console.error('Failed to refresh token during initialization:', error);
+          handleLogout();
+        }
+      } else if (savedAuthStatus && isReactNativeWebView) {
+        if (hasMobileAuthToken) {
+          setIsAuthenticated(true);
         } else {
-          // authToken이 없으면 토큰 만료 가능성 → 갱신 요청
-          window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'REQUEST_REFRESH_TOKEN' }));
+          window.ReactNativeWebView?.postMessage(
+            JSON.stringify({
+              type: 'REQUEST_REFRESH_TOKEN',
+            }),
+          );
         }
       }
       setIsInitialized(true);
@@ -116,7 +103,6 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
-    // 웹뷰 환경에서는 자동 갱신하지 않음 (모바일 앱이 자체적으로 관리)
     if (isAuthenticated && !isReactNativeWebView) {
       intervalId = setInterval(() => {
         refreshTokenRegularly();
