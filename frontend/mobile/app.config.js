@@ -36,7 +36,6 @@ module.exports = {
     android: {
       package: "my.inplace.mobile",
       googleServicesFile: "./google-services.json",
-      allowBackup: false,
       adaptiveIcon: {
         foregroundImage: "./assets/InplaceLogo.png",
         backgroundColor: "#ffffff",
