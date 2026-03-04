@@ -1,0 +1,13 @@
+# Dependencies
+frontend/mobile/node_modules/
+
+# Expo
+frontend/mobile/.expo/
+frontend/mobile/dist/
+frontend/mobile/web-build/
+
+# Native (일반적으로는 제외하지만)
+# frontend/mobile/android/  <- 주석 처리하거나 negation으로 처리
+
+# 중요: 다음 항목들은 EAS Build에 포함
+!frontend/mobile/google-services.json
