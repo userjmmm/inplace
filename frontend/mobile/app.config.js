@@ -2,7 +2,7 @@ require("dotenv").config();
 
 module.exports = {
   expo: {
-    name: "mobile",
+    name: "인플레이스",
     slug: "mobile",
     newArchEnabled: true,
     version: "1.0.0",
@@ -35,9 +35,10 @@ module.exports = {
     },
     android: {
       package: "my.inplace.mobile",
+      googleServicesFile: "./google-services.json",
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
-        backgroundColor: "#292929",
+        foregroundImage: "./assets/InplaceLogo.png",
+        backgroundColor: "#ffffff",
       },
       intentFilters: [
         {
@@ -57,6 +58,13 @@ module.exports = {
       favicon: "./assets/favicon.png",
     },
     plugins: [
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/icon.png",
+          defaultChannel: "default",
+        },
+      ],
       [
         "expo-secure-store",
         {
@@ -86,7 +94,7 @@ module.exports = {
     ],
     extra: {
       eas: {
-        projectId: "1f938aec-ae98-4f0c-ab7a-c4c37114e2a7",
+        projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
       },
     },
   },
