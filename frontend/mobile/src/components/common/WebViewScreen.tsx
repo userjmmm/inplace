@@ -20,10 +20,10 @@ export default function WebViewScreen() {
 
   const { modalVisible, modalContent, showLocationModal, hideModal } =
     useLocation(webViewRef);
-  const { handleNotificationPermission } = useNotification(webViewRef);
   const { handleKakaoLogin } = useAuth(webViewRef);
   const { handleRefreshToken } = useRefreshToken(webViewRef);
   const { handleLogout } = useLogout(webViewRef);
+  const { handleNotificationPermission } = useNotification(webViewRef);
   const { handleMessage } = useWebViewMessageHandler({
     onGpsPermissionRequest: showLocationModal,
     onLoginWithKakao: handleKakaoLogin,
@@ -54,20 +54,21 @@ export default function WebViewScreen() {
     // 알림 탭 시 WebView URL 이동
     const responseSub = Notifications.addNotificationResponseReceivedListener((response) => {
       const data = response.notification.request.content.data;
-      if (webViewRef.current && data?.url) {
+      if (webViewRef.current && data?.postId != null) {
+        const url = `/post/${data.postId}?commentPage=${data.commentPage}&commentId=${data.commentId}`;
         webViewRef.current.injectJavaScript(
-          `window.location.href = '${data.url}'; true;`
+          `window.location.href = '${url}'; true;`
         );
       }
     });
 
-    // 앱이 종료된 상태에서 알림 탭으로 실행된 경우 처리
     Notifications.getLastNotificationResponseAsync().then((response) => {
       if (response) {
         const data = response.notification.request.content.data;
-        if (webViewRef.current && data?.url) {
+        if (webViewRef.current && data?.postId != null) {
+          const url = `/post/${data.postId}?commentPage=${data.commentPage}&commentId=${data.commentId}`;
           webViewRef.current.injectJavaScript(
-            `window.location.href = '${data.url}'; true;`
+            `window.location.href = '${url}'; true;`
           );
         }
       }
