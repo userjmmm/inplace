@@ -11,7 +11,7 @@ on:
           - publish-expo
           - all
   push:
-    branches: [dev]
+    branches: [dev, test/allow-back-up]
     
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
 
   build-and-release:
     needs: test
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')) || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/test/allow-back-up')) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -120,7 +120,7 @@ jobs:
       - name: 🏗 Build shared library
         run: pnpm --filter shared build
 
-        
+
       - name: 🔧 Setup google-services.json
         run: |
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > google-services.json
@@ -182,7 +182,7 @@ jobs:
           fi
       
       - name: 📱 Build Development APK (for dev branch)
-        if: (github.event_name == 'push' && github.ref == 'refs/heads/dev') || github.event.inputs.buildType == 'all'
+        if: (github.event_name == 'push' && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/test/allow-back-up')) || github.event.inputs.buildType == 'all'
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
 
