@@ -3,7 +3,7 @@ require("dotenv").config();
 module.exports = {
   expo: {
     name: "인플레이스",
-    slug: "inplace-app",
+    slug: "mobile",
     newArchEnabled: true,
     version: "1.0.0",
     orientation: "portrait",
