@@ -2,8 +2,34 @@ import { login, me } from "@react-native-kakao/user";
 import { getAccessToken } from "../api/getAccessToken";
 import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
+import { useNotification } from "./useNotification";
+import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
 
-export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
+export const useAuth = (
+  webViewRef: React.RefObject<WebView | null>
+) => {
+  const { getExpoPushToken } = useNotification(webViewRef);
+
+  const sendDeviceToken = async (accessToken: string) => {
+    try {
+      const expoToken = await getExpoPushToken();
+      if (!expoToken) return;
+      const rawToken = expoToken.match(/ExponentPushToken\[(.+)\]/)?.[1] ?? expoToken;
+
+      const config = getConfig();
+      await fetch(`${config.baseURL}/alarms`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ fcmToken: null, expoToken: rawToken }),
+      });
+    } catch (error) {
+      console.error("디바이스 토큰 전송 실패:", error);
+    }
+  };
+
   const handleKakaoLogin = async () => {
     try {
       await login();
@@ -34,11 +60,9 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
               window.setAuthToken('${accessToken}');
 
               ${isFirstUser
-                ? `alert('[DEBUG] isFirstUser=true - /choice로 이동 예정');
-                   window.localStorage.setItem('isFirstUser', 'true');
+                ? `window.localStorage.setItem('isFirstUser', 'true');
                    window.location.href = '/choice';`
-                : `alert('[DEBUG] isFirstUser=false - 기존 사용자');
-                   const redirectPath = window.localStorage.getItem('redirectPath');
+                : `const redirectPath = window.localStorage.getItem('redirectPath');
                   if (redirectPath) {
                     window.localStorage.removeItem('redirectPath');
                     window.location.href = redirectPath;
@@ -52,10 +76,13 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
           webViewRef.current.injectJavaScript(script);
 
           console.log("로그인 성공 및 웹뷰에 토큰 주입 완료!");
+
+          await sendDeviceToken(accessToken);
         }
       }
     } catch (error) {
       console.error("카카오 로그인 실패:", error);
+      alert(`카카오 로그인에 실패했습니다.`);
     }
   };
   return { handleKakaoLogin };
