@@ -36,26 +36,6 @@ export default function WebViewScreen() {
     setWebViewReady(true);
   }, []);
 
-  useEffect(() => {
-    // 포그라운드 알림 수신 시 WebView에 이벤트 전달
-    const receivedSub = Notifications.addNotificationReceivedListener((notification) => {
-      const data = notification.request.content.data;
-      if (webViewRef.current) {
-        const script = `
-          window.dispatchEvent(new CustomEvent('nativeNotification', {
-            detail: ${JSON.stringify(data)}
-          }));
-          true;
-        `;
-        webViewRef.current.injectJavaScript(script);
-      }
-    });
-
-    return () => {
-      receivedSub.remove();
-    };
-  }, []);
-
   return (
     <SafeAreaView style={styles.container}>
       {isWebViewReady ? (
