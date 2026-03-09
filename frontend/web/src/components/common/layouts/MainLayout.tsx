@@ -9,10 +9,12 @@ import Header, { HEADER_HEIGHT } from '@/components/common/layouts/Header/index'
 import MainSkeleton from '@/components/Main/MainSkeleton';
 import DetailSkeleton from '@/components/Detail/DetailSkeleton';
 import useScrollToTop from '@/hooks/useScrollToTop';
+import useNotificationNavigation from '@/hooks/useNotificationNavigation';
 import ErrorComponent from '@/components/common/layouts/Error';
 
 export default function MainLayout() {
   const location = useLocation();
+  useNotificationNavigation();
   const renderSkeleton = () => {
     if (location.pathname === '/') {
       return <MainSkeleton />;

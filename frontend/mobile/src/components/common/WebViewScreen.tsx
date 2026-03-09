@@ -20,7 +20,7 @@ export default function WebViewScreen() {
 
   const { modalVisible, modalContent, showLocationModal, hideModal } =
     useLocation(webViewRef);
-  const { handleNotificationPermission } = useNotification(webViewRef);
+  const { handleNotificationPermission, handlePendingNavigation } = useNotification(webViewRef);
   const { handleKakaoLogin } = useAuth(webViewRef);
   const { handleRefreshToken } = useRefreshToken(webViewRef);
   const { handleLogout } = useLogout(webViewRef);
@@ -44,6 +44,7 @@ export default function WebViewScreen() {
             ref={webViewRef}
             url={config.webViewUrl}
             onMessage={handleMessage}
+            onLoadEnd={handlePendingNavigation}
           />
           {modalContent && (
             <LocationPermissionModal

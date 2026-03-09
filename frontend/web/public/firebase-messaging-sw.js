@@ -22,13 +22,34 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   const { title, body, icon } = payload.notification || {};
-  self.registration.showNotification(title || '알림', { body, icon });
+  const notificationData = payload.data || {};
+  self.registration.showNotification(title || '알림', { body, icon, data: notificationData });
 });
 
 self.addEventListener('push', (event) => {
   const data = event.data?.json() || {};
   const { title, body, icon } = data.notification || {};
+  const notificationData = data.data || {};
   event.waitUntil(
-    self.registration.showNotification(title || '알림', { body, icon })
+    self.registration.showNotification(title || '알림', { body, icon, data: notificationData })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const { postId, commentId } = event.notification.data || {};
+  const url = postId && commentId
+    ? `/?notifPostId=${postId}&notifCommentId=${commentId}`
+    : '/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if ('focus' in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      return clients.openWindow(url);
+    })
   );
 });

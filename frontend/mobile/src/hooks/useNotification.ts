@@ -1,8 +1,65 @@
+import { useCallback, useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import WebView from "react-native-webview";
 import * as Notifications from "expo-notifications";
 
 export const useNotification = (webViewRef: React.RefObject<WebView | null>) => {
+  const pendingNavigation = useRef<{ postId: string; commentId: string } | null>(null);
+
+  const injectNavigationScript = useCallback(
+    (postId: string, commentId: string) => {
+      if (webViewRef.current) {
+        const script = `
+          window.dispatchEvent(new CustomEvent('mobileNotificationClick', {
+            detail: { postId: '${postId}', commentId: '${commentId}' }
+          }));
+          true;
+        `;
+        webViewRef.current.injectJavaScript(script);
+        return true;
+      }
+      return false;
+    },
+    [webViewRef],
+  );
+
+  const handlePendingNavigation = useCallback(() => {
+    if (pendingNavigation.current) {
+      const { postId, commentId } = pendingNavigation.current;
+      injectNavigationScript(postId, commentId);
+      pendingNavigation.current = null;
+    }
+  }, [injectNavigationScript]);
+
+  // 앱 활성/백그라운드 상태에서 알림 클릭
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data || {};
+      const postId = String(data.postId ?? "");
+      const commentId = String(data.commentId ?? "");
+      if (postId && commentId) {
+        const injected = injectNavigationScript(postId, commentId);
+        if (!injected) {
+          pendingNavigation.current = { postId, commentId };
+        }
+      }
+    });
+    return () => subscription.remove();
+  }, [injectNavigationScript]);
+
+  // 앱 콜드 스타트: 알림 클릭으로 앱이 시작된 경우
+  useEffect(() => {
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (!response) return;
+      const data = response.notification.request.content.data || {};
+      const postId = String(data.postId ?? "");
+      const commentId = String(data.commentId ?? "");
+      if (postId && commentId) {
+        pendingNavigation.current = { postId, commentId };
+      }
+    });
+  }, []);
+
   const handleNotificationPermission = async (): Promise<void> => {
     try {
       const { status: existingStatus } =
@@ -71,5 +128,6 @@ export const useNotification = (webViewRef: React.RefObject<WebView | null>) => 
   return {
     handleNotificationPermission,
     getExpoPushToken,
+    handlePendingNavigation,
   };
 };

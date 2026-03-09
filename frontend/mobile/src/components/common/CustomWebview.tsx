@@ -5,10 +5,11 @@ import { BackHandler, Platform, SafeAreaView, StyleSheet } from "react-native";
 export interface CustomWebViewProps {
   url: string;
   onMessage?: (event: WebViewMessageEvent) => void;
+  onLoadEnd?: () => void;
 }
 
 const CustomWebView = forwardRef<WebView, CustomWebViewProps>(
-  ({ url, onMessage }, ref) => {
+  ({ url, onMessage, onLoadEnd }, ref) => {
     const [canGoBack, setCanGoBack] = useState(false);
     const webViewRef = useRef<WebView | null>(null);
 
@@ -44,6 +45,7 @@ const CustomWebView = forwardRef<WebView, CustomWebViewProps>(
             setCanGoBack(navState.canGoBack);
           }}
           onMessage={onMessage}
+          onLoadEnd={onLoadEnd}
           allowsBackForwardNavigationGestures={true}
           style={styles.webview}
           javaScriptEnabled={true}
