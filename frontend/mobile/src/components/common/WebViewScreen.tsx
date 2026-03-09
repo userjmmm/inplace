@@ -51,31 +51,8 @@ export default function WebViewScreen() {
       }
     });
 
-    // 알림 탭 시 WebView URL 이동
-    const responseSub = Notifications.addNotificationResponseReceivedListener((response) => {
-      const data = response.notification.request.content.data;
-      if (webViewRef.current && data?.url) {
-        webViewRef.current.injectJavaScript(
-          `window.location.href = '${data.url}'; true;`
-        );
-      }
-    });
-
-    // 앱이 종료된 상태에서 알림 탭으로 실행된 경우 처리
-    Notifications.getLastNotificationResponseAsync().then((response) => {
-      if (response) {
-        const data = response.notification.request.content.data;
-        if (webViewRef.current && data?.url) {
-          webViewRef.current.injectJavaScript(
-            `window.location.href = '${data.url}'; true;`
-          );
-        }
-      }
-    });
-
     return () => {
       receivedSub.remove();
-      responseSub.remove();
     };
   }, []);
 
