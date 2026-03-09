@@ -51,32 +51,8 @@ export default function WebViewScreen() {
       }
     });
 
-    // 알림 탭 시 WebView URL 이동
-    const responseSub = Notifications.addNotificationResponseReceivedListener((response) => {
-      const data = response.notification.request.content.data;
-      if (webViewRef.current && data?.postId != null) {
-        const url = `/post/${data.postId}?commentPage=${data.commentPage}&commentId=${data.commentId}`;
-        webViewRef.current.injectJavaScript(
-          `window.location.href = '${url}'; true;`
-        );
-      }
-    });
-
-    Notifications.getLastNotificationResponseAsync().then((response) => {
-      if (response) {
-        const data = response.notification.request.content.data;
-        if (webViewRef.current && data?.postId != null) {
-          const url = `/post/${data.postId}?commentPage=${data.commentPage}&commentId=${data.commentId}`;
-          webViewRef.current.injectJavaScript(
-            `window.location.href = '${url}'; true;`
-          );
-        }
-      }
-    });
-
     return () => {
       receivedSub.remove();
-      responseSub.remove();
     };
   }, []);
 
