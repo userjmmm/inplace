@@ -1,10 +1,15 @@
 import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { PageableData, PlaceData, RequestPlaceLike, UserPlaceData } from '@/types';
+import { CursorData, PageableData, PlaceData, RequestPlaceLike, UserPlaceData } from '@/types';
 
 interface InfiniteQueryData {
   pages: PageableData<UserPlaceData>[];
   pageParams: number[];
+}
+
+interface InfinitePlaceListData {
+  pages: CursorData<PlaceData>[];
+  pageParams: unknown[];
 }
 
 export const postPlaceLikePath = () => `/places/likes`;
@@ -60,16 +65,16 @@ export const usePostPlaceLike = () => {
         };
       });
 
-      queryClient.setQueriesData({ queryKey: ['infinitePlaceList'] }, (oldData: InfiniteQueryData | undefined) => {
+      queryClient.setQueriesData({ queryKey: ['infinitePlaceList'] }, (oldData: InfinitePlaceListData | undefined) => {
         if (!oldData) return oldData;
 
         return {
           ...oldData,
           pages: oldData.pages.map((page) => ({
             ...page,
-            contents: page.content.map((place) => {
+            contents: page.contents.map((place) => {
               if (place.placeId === Number(placeId)) {
-                return { ...place, likes };
+                return { ...place, likes, likeCount: likes ? place.likeCount + 1 : Math.max(0, place.likeCount - 1) };
               }
               return place;
             }),
