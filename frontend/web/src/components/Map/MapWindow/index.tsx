@@ -262,7 +262,7 @@ export default function MapWindow({
 
   // 네이티브에서 보내는 NATIVE_LOCATION 메시지 수신
   useEffect(() => {
-    if (!isReactNativeWebView) return;
+    if (!isReactNativeWebView) return undefined;
 
     const handleNativeMessage = (event: MessageEvent) => {
       try {
