@@ -260,6 +260,34 @@ export default function MapWindow({
     setSavedZoomLevel(currentZoomLevel);
   }, [setMapBounds, setCenter, setSavedZoomLevel]);
 
+  // 네이티브에서 보내는 NATIVE_LOCATION 메시지 수신
+  useEffect(() => {
+    if (!isReactNativeWebView) return;
+
+    const handleNativeMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'NATIVE_LOCATION' && data.payload) {
+          const userLoc = {
+            lat: data.payload.latitude,
+            lng: data.payload.longitude,
+          };
+          setUserLocation(userLoc);
+          if (mapRef.current) {
+            mapRef.current.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
+            setCenter(userLoc);
+            updateMapBounds();
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    window.addEventListener('message', handleNativeMessage);
+    return () => window.removeEventListener('message', handleNativeMessage);
+  }, [isReactNativeWebView, setCenter, updateMapBounds]);
+
   const updateSessionOnly = useCallback(() => {
     if (!mapRef.current || isRestoredFromDetail) return;
 
