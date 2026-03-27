@@ -17,34 +17,38 @@ export const useLocation = (webViewRef: React.RefObject<WebView | null>) => {
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
   const showLocationModal = async () => {
+    alert("[DEBUG] showLocationModal 시작");
     const servicesEnabled = await checkLocation();
+    alert(`[DEBUG] checkLocation: ${servicesEnabled}`);
     if (!servicesEnabled) {
       setModalContent({
         title: "위치 서비스 필요",
         message:
           '위치 서비스를 사용하려면\n"기기의 설정 > 개인 정보 보호"에서\n위치 서비스를 켜주세요.',
-        onConfirm: () => Linking.openSettings(), // '설정으로 이동' 버튼
+        onConfirm: () => Linking.openSettings(),
       });
       setModalVisible(true);
       return;
     }
 
     const permissionsGranted = await requestPermissions();
+    alert(`[DEBUG] requestPermissions: ${permissionsGranted}`);
     if (!permissionsGranted) {
       setModalContent({
         title: "위치 정보 접근 권한 필요",
         message:
           "정확한 위치 정보를 제공하기 위해\n위치 정보 접근 권한이 필요합니다.",
-        onConfirm: () => Linking.openSettings(), // '설정으로 이동' 버튼
+        onConfirm: () => Linking.openSettings(),
       });
       setModalVisible(true);
       return;
     }
 
     if (webViewRef.current) {
+      alert("[DEBUG] getLocation 호출");
       getLocation(webViewRef.current, () => {});
     } else {
-      console.warn("WebView ref가 아직 설정되지 않았습니다.");
+      alert("[DEBUG] webViewRef.current가 null");
     }
   };
 
