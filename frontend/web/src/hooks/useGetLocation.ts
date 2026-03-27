@@ -10,9 +10,6 @@ export default function useGetLocation(enable: boolean) {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
-    if (!enable) {
-      return undefined;
-    }
     if (isReactNativeWebView) {
       window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
 
@@ -32,6 +29,9 @@ export default function useGetLocation(enable: boolean) {
 
       window.addEventListener('message', handleMessage);
       return () => window.removeEventListener('message', handleMessage);
+    }
+    if (!enable) {
+      return undefined;
     }
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
