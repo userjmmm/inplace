@@ -164,6 +164,7 @@ export default function InfluencerMapWindow({
     } else {
       console.warn('Geolocation is not supported by this browser.');
     }
+    return undefined;
   }, []);
 
   useEffect(() => {
