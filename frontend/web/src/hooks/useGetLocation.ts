@@ -50,6 +50,7 @@ export default function useGetLocation(enable: boolean) {
     } else {
       console.error('Geolocation is not supported by this browser.');
     }
+    return undefined;
   }, [enable]);
 
   return location;
