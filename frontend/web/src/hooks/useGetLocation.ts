@@ -10,31 +10,28 @@ export default function useGetLocation(enable: boolean) {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
+    if (!enable) {
+      return;
+    }
     if (isReactNativeWebView) {
       window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
 
-      window.addEventListener('message', (event) => {
-        const message = JSON.parse(event.data);
-        if (message.latitude && message.longitude) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const newCenter = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              };
-              setLocation(newCenter);
-            },
-            (error) => {
-              console.error('Error fetching location', error);
-            },
-          );
+      const handleMessage = (event: MessageEvent) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'NATIVE_LOCATION' && message.payload?.latitude && message.payload?.longitude) {
+            setLocation({
+              lat: message.payload.latitude,
+              lng: message.payload.longitude,
+            });
+          }
+        } catch (e) {
+          // ignore parse errors
         }
-      });
+      };
 
-      return;
-    }
-    if (!enable) {
-      return;
+      window.addEventListener('message', handleMessage);
+      return () => window.removeEventListener('message', handleMessage);
     }
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
