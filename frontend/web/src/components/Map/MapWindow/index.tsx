@@ -168,11 +168,9 @@ export default function MapWindow({
   useEffect(() => {
     if (isReactNativeWebView) {
       setIsLoading(false);
-      if (isMapReady) {
-        updateMapBounds();
-        setIsInitialLoad(false);
-        setHasInitialLoad(true);
-      }
+      updateMapBounds();
+      setIsInitialLoad(false);
+      setHasInitialLoad(true);
       return;
     }
 
