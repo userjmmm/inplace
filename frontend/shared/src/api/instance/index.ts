@@ -8,10 +8,7 @@ let accessToken: string | null = null;
 let instance: AxiosInstance | null = null;
 
 const isWebView = (): boolean => {
-  return (
-    typeof window !== "undefined" &&
-    /ReactNativeWebView/.test(window.navigator.userAgent)
-  );
+  return typeof window !== "undefined" && window.ReactNativeWebView != null;
 };
 
 export const setAuthToken = (token: string | null) => {
@@ -62,9 +59,9 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
         );
         return Promise.reject(error);
       }
-      if (isWebView() && error.response?.status === 401) {
+      if (isWebView() && (error.response?.status === 401 || (error.response?.status === 400 && accessToken))) {
         if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage("REQUEST_REFRESH_TOKEN");
+          window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'REQUEST_REFRESH_TOKEN' }));
         }
         return Promise.reject(error);
       }

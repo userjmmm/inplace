@@ -17,18 +17,36 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig)
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   const { title, body, icon } = payload.notification || {};
-  self.registration.showNotification(title || '알림', { body, icon });
+  const { postId, commentId, alarmId } = payload.data || {};
+  self.registration.showNotification(title || '알림', {
+    body,
+    icon,
+    data: postId && commentId ? { postId, commentId, alarmId } : { alarmId },
+  });
 });
 
-self.addEventListener('push', (event) => {
-  const data = event.data?.json() || {};
-  const { title, body, icon } = data.notification || {};
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const { postId, commentId, alarmId } = event.notification.data || {};
+
   event.waitUntil(
-    self.registration.showNotification(title || '알림', { body, icon })
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if ('focus' in client) {
+          client.postMessage({ type: 'FCM_NOTIFICATION_NAVIGATE', postId, commentId, alarmId });
+          return client.focus();
+        }
+      }
+      if (!postId || !commentId) return;
+      return fetch(`/posts/${postId}/comments/${commentId}/position`, { credentials: 'include' })
+        .then((res) => res.json())
+        .then((data) => clients.openWindow(`/post/${postId}?commentPage=${data.commentPage}&commentId=${commentId}`))
+        .catch(() => clients.openWindow(`/post/${postId}`));
+    })
   );
 });

@@ -10,16 +10,18 @@ const getLocation = async (
     const { coords } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.High,
     });
-
     const location = {
       latitude: coords.latitude,
       longitude: coords.longitude,
     };
 
-    webView.postMessage(
-      JSON.stringify({ type: "NATIVE_LOCATION", payload: location })
-    );
+    const messageData = JSON.stringify({ type: "NATIVE_LOCATION", payload: location });
+    webView.injectJavaScript(`
+      window.dispatchEvent(new MessageEvent('message', { data: ${JSON.stringify(messageData)} }));
+      true;
+    `);
   } catch (error) {
+    alert(`[DEBUG] getLocation 에러: ${error}`);
     console.error("위치 정보를 가져오는 데 실패했습니다:", error);
   } finally {
     setGpsLoading(false);

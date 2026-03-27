@@ -1,31 +1,39 @@
 package my.inplace.application.alarm.query.dto;
 
-import my.inplace.domain.alarm.Alarm;
 import my.inplace.application.alarm.util.TimeUtil;
+import my.inplace.domain.alarm.query.AlarmQueryResult;
 
 public record AlarmResult(
     Long alarmId,
     Long postId,
     Long commentId,
     int pageNumber,
-    int offset,
     String content,
     Boolean checked,
     String type,
-    String createdAt
+    String createdAt,
+    Boolean postDeleted,
+    Boolean commentDeleted
 ) {
 
-    public static AlarmResult from(Alarm alarm, Long index) {
+    public static AlarmResult from(AlarmQueryResult.Detail alarm) {
+        var postDeleted = alarm.postDeleted();
+        var commentDeleted = alarm.commentDeleted();
+        var postId = postDeleted ? null : alarm.postId();
+        var commentId = (postDeleted || commentDeleted) ? null : alarm.commentId();
+
         return new AlarmResult(
-            alarm.getId(),
-            alarm.getPostId(),
-            alarm.getCommentId(),
-            index.intValue() % 10,
-            index.intValue() / 10,
-            alarm.getContent(),
-            alarm.isChecked(),
-            alarm.getAlarmType().name(),
-            TimeUtil.betweenTime(alarm.getCreatedAt())
+            alarm.id(),
+            postId,
+            commentId,
+            alarm.pageNumber().intValue() / 10,
+            alarm.content(),
+            alarm.checked(),
+            alarm.alarmType().name(),
+            TimeUtil.betweenTime(alarm.createdAt()),
+            postDeleted,
+            commentDeleted
         );
     }
+
 }

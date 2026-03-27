@@ -1,8 +1,6 @@
 package my.inplace.application.post.query;
 
 import java.util.List;
-import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.inplace.application.post.query.dto.CommentResult;
@@ -21,7 +19,6 @@ import my.inplace.infra.post.jpa.CommentJpaRepository;
 import my.inplace.infra.post.jpa.LikedPostJpaRepository;
 import my.inplace.infra.post.jpa.PostJpaRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,12 +109,6 @@ public class PostQueryService {
     }
 
     @Transactional(readOnly = true)
-    public Long getPostAuthorIdById(Long postId) {
-        return postJpaRepository.findUserIdById(postId)
-            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
-    }
-
-    @Transactional(readOnly = true)
     public Long getCommentAuthorIdById(Long commentId) {
         return commentJpaRepository.findAuthorIdById(commentId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
@@ -168,8 +159,9 @@ public class PostQueryService {
             .map(PostResult.ReportedComment::from)
             .toList();
     }
-    
-    public Long getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
-        return postJpaRepository.findIndexOfComment(postId, commentId);
+
+    public CommentResult.Position getCommentPosition(Long postId, Long commentId) {
+        var position = commentReadRepository.findCommentPosition(postId, commentId);
+        return CommentResult.Position.from(position);
     }
 }

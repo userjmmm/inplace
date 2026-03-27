@@ -1,10 +1,15 @@
 import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { PageableData, PlaceData, RequestPlaceLike, UserPlaceData } from '@/types';
+import { CursorData, PageableData, PlaceData, RequestPlaceLike, UserPlaceData } from '@/types';
 
 interface InfiniteQueryData {
   pages: PageableData<UserPlaceData>[];
   pageParams: number[];
+}
+
+interface InfinitePlaceListData {
+  pages: CursorData<PlaceData>[];
+  pageParams: unknown[];
 }
 
 export const postPlaceLikePath = () => `/places/likes`;
@@ -28,11 +33,11 @@ export const usePostPlaceLike = () => {
     onMutate: async ({ placeId, likes }) => {
       await queryClient.cancelQueries({ queryKey: ['UserPlace'] });
       await queryClient.cancelQueries({ queryKey: ['placeInfo', String(placeId)] });
-      await queryClient.cancelQueries({ queryKey: ['placeList'] });
+      await queryClient.cancelQueries({ queryKey: ['infinitePlaceList'] });
 
       const prevUserPlace = queryClient.getQueryData<PageableData<UserPlaceData>>(['UserPlace']);
       const prevPlaceInfo = queryClient.getQueryData<PlaceData>(['placeInfo', String(placeId)]);
-      const prevPlaceList = queryClient.getQueryData<PageableData<PlaceData>>(['placeList']);
+      const prevPlaceList = queryClient.getQueryData<PageableData<PlaceData>>(['infinitePlaceList']);
 
       queryClient.setQueriesData({ queryKey: ['UserPlace'] }, (oldData: InfiniteQueryData | undefined) => {
         if (!oldData) return oldData;
@@ -56,20 +61,20 @@ export const usePostPlaceLike = () => {
         return {
           ...old,
           likes,
-          likedCount: likes ? old.likedCount + 1 : Math.max(0, old.likedCount - 1),
+          likeCount: likes ? old.likeCount + 1 : Math.max(0, old.likeCount - 1),
         };
       });
 
-      queryClient.setQueriesData({ queryKey: ['placeList'] }, (oldData: InfiniteQueryData | undefined) => {
+      queryClient.setQueriesData({ queryKey: ['infinitePlaceList'] }, (oldData: InfinitePlaceListData | undefined) => {
         if (!oldData) return oldData;
 
         return {
           ...oldData,
           pages: oldData.pages.map((page) => ({
             ...page,
-            content: page.content.map((place) => {
+            contents: page.contents.map((place) => {
               if (place.placeId === Number(placeId)) {
-                return { ...place, likes };
+                return { ...place, likes, likeCount: likes ? place.likeCount + 1 : Math.max(0, place.likeCount - 1) };
               }
               return place;
             }),
@@ -84,7 +89,7 @@ export const usePostPlaceLike = () => {
       if (context) {
         queryClient.setQueryData(['UserPlace'], context.prevUserPlace);
         queryClient.setQueryData(['placeInfo', String(placeId)], context.prevPlaceInfo);
-        queryClient.setQueryData(['placeList'], context.prevPlaceList);
+        queryClient.setQueryData(['infinitePlaceList'], context.prevPlaceList);
       }
       alert('좋아요 처리에 실패했습니다.');
     },

@@ -166,12 +166,12 @@ export default function MapWindow({
   // 초기 접속 시
   useEffect(() => {
     if (isReactNativeWebView) {
-      // Alert 표시 후 바로 지도 로딩 완료 처리
       setIsLoading(false);
-      updateMapBounds();
-      setIsInitialLoad(false);
-      setHasInitialLoad(true);
-
+      if (isMapReady) {
+        updateMapBounds();
+        setIsInitialLoad(false);
+        setHasInitialLoad(true);
+      }
       return;
     }
 
@@ -259,6 +259,34 @@ export default function MapWindow({
     setCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     setSavedZoomLevel(currentZoomLevel);
   }, [setMapBounds, setCenter, setSavedZoomLevel]);
+
+  // 네이티브에서 보내는 NATIVE_LOCATION 메시지 수신
+  useEffect(() => {
+    if (!isReactNativeWebView) return undefined;
+
+    const handleNativeMessage = (event: MessageEvent) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'NATIVE_LOCATION' && data.payload) {
+          const userLoc = {
+            lat: data.payload.latitude,
+            lng: data.payload.longitude,
+          };
+          setUserLocation(userLoc);
+          if (mapRef.current) {
+            mapRef.current.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
+            setCenter(userLoc);
+            updateMapBounds();
+          }
+        }
+      } catch (e) {
+        console.error('NATIVE_LOCATION 파싱 에러:', e);
+      }
+    };
+
+    window.addEventListener('message', handleNativeMessage);
+    return () => window.removeEventListener('message', handleNativeMessage);
+  }, [isReactNativeWebView, setCenter, updateMapBounds]);
 
   const updateSessionOnly = useCallback(() => {
     if (!mapRef.current || isRestoredFromDetail) return;

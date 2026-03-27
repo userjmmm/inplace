@@ -71,7 +71,7 @@ export type PlaceData = {
   longitude: string;
   latitude: string;
   likes: boolean;
-  likedCount: number;
+  likeCount: number;
 };
 
 export type LocationData = {
@@ -110,7 +110,7 @@ export type PlaceInfo = {
   latitude: string;
   facility: FacilityInfo;
   reviewLikes: PlaceLikes;
-  likedCount: number;
+  likeCount: number;
   likes: boolean;
   surroundVideos: SpotData[];
 };
@@ -372,6 +372,8 @@ export type AlarmData = {
   type: string;
   createdAt: string;
   commentPage?: number;
+  postDeleted?: boolean;
+  commentDeleted?: boolean;
 };
 
 export type RequestReport = {
@@ -382,4 +384,10 @@ export type RequestReport = {
 export type AlarmTokenData = {
   fcmToken: string | null;
   expoToken: string | null;
+};
+
+export type CommentPositionData = {
+  commentPage: number;
+  postDeleted?: boolean;
+  commentDeleted?: boolean;
 };

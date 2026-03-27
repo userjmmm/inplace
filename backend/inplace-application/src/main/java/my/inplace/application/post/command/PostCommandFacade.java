@@ -2,19 +2,23 @@ package my.inplace.application.post.command;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import my.inplace.application.alarm.command.AlarmCommandService;
 import my.inplace.application.alarm.util.MentionMessageFactory;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.post.command.dto.PostCommand;
 import my.inplace.application.post.query.PostQueryService;
 import my.inplace.application.post.util.ReceiverParser;
+import my.inplace.application.report.event.dto.ModerationEvent;
 import my.inplace.application.user.command.UserCommandService;
 import my.inplace.application.user.query.UserQueryService;
 import my.inplace.domain.alarm.AlarmType;
 import my.inplace.security.util.AuthorizationUtil;
 
 import java.util.List;
+import org.springframework.context.ApplicationEventPublisher;
 
+@Slf4j
 @Facade
 @RequiredArgsConstructor
 @Transactional
@@ -29,7 +33,9 @@ public class PostCommandFacade {
     private final AlarmCommandService alarmCommandService;
     private final ReceiverParser receiverParser;
     private final MentionMessageFactory mentionMessageFactory;
-    
+
+    private final ApplicationEventPublisher eventPublisher;
+
     public void createPost(PostCommand.CreatePost command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postCommandService.createPost(command, userId);
@@ -79,17 +85,17 @@ public class PostCommandFacade {
     private void mention(Long postId, Long commentId, String commentContent) {
         List<Long> receiverIds = receiverParser.parseMentionedUser(commentContent);
         String title = mentionMessageFactory.createTitle();
-        
+        String postTitle = postQueryService.getPostTitleById(postId).getTitle();
+        String senderNickname = AuthorizationUtil.getUserNicknameOrThrow();
+
         for (Long receiverId : receiverIds) {
-            String content = mentionMessageFactory.createMessage(
-                postQueryService.getPostTitleById(postId).getTitle(),
-                AuthorizationUtil.getUserNicknameOrThrow());
+            String content = mentionMessageFactory.createMessage( postTitle, senderNickname);
             
             // 비즈니스 데이터 저장
-            alarmCommandService.saveAlarm(receiverId, postId, commentId, content, AlarmType.MENTION);
+            Long alarmId = alarmCommandService.saveAlarm(receiverId, postId, commentId, content, AlarmType.MENTION);
             
             // 이벤트 데이터 저장
-            alarmCommandService.saveAlarmEvent(receiverId, title, content);
+            alarmCommandService.saveAlarmEvent(receiverId, title, content, alarmId, postId, commentId, AlarmType.MENTION);
         }
     }
 
@@ -105,8 +111,13 @@ public class PostCommandFacade {
         userCommandService.addToReceivedCommentByUserId(authorId, -1);
     }
 
-    public void deletePostSoftly(Long postId) {
+    public void deletePostSoftlyByAdmin(Long postId) {
+        Long receiverId = postQueryService.getAuthorIdByPostId(postId);
+        String postTitle = postQueryService.getPostTitleById(postId).getTitle();
+
         postCommandService.deletePostSoftly(postId);
+
+        eventPublisher.publishEvent(new ModerationEvent.PostDeleted(postId, receiverId, postTitle));
     }
 
     public void unreportPost(Long postId) {
@@ -114,7 +125,15 @@ public class PostCommandFacade {
     }
 
     public void deleteCommentSoftly(Long commentId) {
+        Long postId = postQueryService.getPostIdById(commentId);
+        Long receiverId = postQueryService.getCommentAuthorIdById(commentId);
+        String postTitle = postQueryService.getPostTitleById(postId).getTitle();
+
         postCommandService.deleteCommentSoftly(commentId);
+
+        eventPublisher.publishEvent(
+            new ModerationEvent.CommentDeleted(postId, commentId, receiverId, postTitle)
+        );
     }
 
     public void unreportComment(Long commentId) {
