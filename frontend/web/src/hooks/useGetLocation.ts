@@ -11,7 +11,7 @@ export default function useGetLocation(enable: boolean) {
 
   useEffect(() => {
     if (!enable) {
-      return;
+      return undefined;
     }
     if (isReactNativeWebView) {
       window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
